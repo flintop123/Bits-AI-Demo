@@ -1,0 +1,13 @@
+# Core LangChain + Ollama integration
+langchain>=0.2.0
+langchain-ollama>=0.1.0
+langchain-core>=0.2.0
+
+# MongoDB driver
+pymongo>=4.7.0
+
+# Data validation
+pydantic>=2.7.0
+
+# Environment variables
+python-dotenv>=1.0.0
