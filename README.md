@@ -1,6 +1,11 @@
 # Bits-AI-Demo-For-BIHAR
 
-# Data Collection link - https://statedata.bihar.gov.in/dataLab/
+# Data Collection link - 
+                       - https://statedata.bihar.gov.in/dataLab/
+                       - https://www.biharkrishi.in/
+                       - https://horticulture.bihar.gov.in/
+                       - https://bssca.co.in/SeedReports.aspx
+                     
                        - https://appeears.earthdatacloud.nasa.gov/
                        - https://www.earthdata.nasa.gov/data/catalog/lpcloud-mcd12q1-061#documents-and-resources
 
