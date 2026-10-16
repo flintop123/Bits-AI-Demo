@@ -35,6 +35,7 @@ class InsertTheBiharKrishiData:
             logger.info("All records were written to MongoDB.")
         logger.info("********")
 
+''' This metod is right now not using, but we will once we will write all different types of data.'''
 @app.route("/bihar-crop-chatbot/ask", methods=["GET"])
 def ask_question():
 
