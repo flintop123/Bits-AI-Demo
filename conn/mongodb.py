@@ -1,87 +1,88 @@
-# from pymongo import MongoClient
-
-# client = MongoClient("mongodb://localhost:27017/")
-# print(client.list_database_names())
-
-
 import json
 import re
 from datetime import datetime
 from pymongo import MongoClient
-from tools.translateEngToHindi.translate import translate_text
-
-# MongoDB connection
-client = MongoClient("mongodb://localhost:27017/")
-db = client["bihar_agriculture"]
-collection = db["mandi_prices"]
+from tools.api_extractor.document import Documents
 
 
+class BiharCropMongo:
+    def __init__(self):
+        self.client = MongoClient("mongodb://localhost:27017/")
+        self.db = self.client["bihar_agriculture"]
+        self.collection = self.db["mandi_prices"]
 
-def extract_price(value):
-    # Example: "1600.00/क्विंटल" -> 1600.0
-    match = re.search(r"\d+(?:,\d{3})*(?:\.\d+)?", str(value))
-    return float(match.group(0).replace(",", "")) if match else None
+    def insert_records(self, records):
+        if records:
+            result = self.collection.insert_many(records)
+            return len(result.inserted_ids)
+        return 0
 
+    def find_records(self, limit=3):
+        return list(self.collection.find().limit(limit))
 
-def prepare_mandi_record(record, source_url):
-    # Translate only text fields; don't translate numbers or dates.
-    district = translate_text(record.get("district", ""))
-    market = translate_text(record.get("market", ""))
-    crop = translate_text(record.get("crop", ""))
-    variety = translate_text(record.get("variety", ""))
-
-    raw_date = record.get("date", "")
-    try:
-        parsed_date = datetime.strptime(
-            raw_date, "%d/%m/%Y"
-        ).strftime("%Y-%m-%d")
-    except ValueError:
-        parsed_date = raw_date
-
-    return {
-        "district": district,
-        "market": market,
-        "date": parsed_date,
-        "crop": crop,
-        "variety": variety,
-        "price": extract_price(record.get("price", "")),
-        "minimum_price": extract_price(
-            record.get("minimum_price", "")
-        ),
-        "maximum_price": extract_price(
-            record.get("maximum_price", "")
-        ),
-        "unit": "quintal",
-        "source_language": "hi",
-        "source_url": source_url,
-        "scraped_at": datetime.now()
-    }
+    def extract_price(self, value):
+        # Example: "1600.00/क्विंटल" -> 1600.0
+        match = re.search(r"\d+(?:,\d{3})*(?:\.\d+)?", str(value))
+        return float(match.group(0).replace(",", "")) if match else None
 
 
-# Read records from your existing scraper output.
-source_url = "https://www.biharkrishi.in/mandi"
-records = []
+    def write_mandi_records(self, documents: list[Documents], source_url: str):
+        records = []
+        required_fields = (
+            "district",
+            "bajar",
+            "tarikh",
+            "phasal",
+            "vividhata",
+            "kimat",
+            "nuntamkimat",
+            "adhikatamkimat",
+        )
 
-for doc in loaded_documents:
-    records.extend(json.loads(doc.page_content))
+        for document in documents:
+            page_records = json.loads(document.page_content)
+            if not isinstance(page_records, list):
+                raise ValueError("Mandi document content must be a JSON list")
 
-print("Scraped records:", len(records))
+            for record_index, record in enumerate(page_records):
+                if not isinstance(record, dict):
+                    raise ValueError(
+                        f"Mandi record {record_index} must be a JSON object"
+                    )
 
-translated_records = [
-    prepare_mandi_record(record, source_url)
-    for record in records
-]
+                missing_fields = set(required_fields) - record.keys()
+                if missing_fields:
+                    raise ValueError(
+                        "Mandi record is missing required fields: "
+                        + ", ".join(sorted(missing_fields))
+                    )
 
-# Insert records into MongoDB.
-if translated_records:
-    result = collection.insert_many(translated_records)
-    print("Inserted records:", len(result.inserted_ids))
-else:
-    print("No records to insert.")
+                raw_date = record["tarikh"]
+                try:
+                    parsed_date = datetime.strptime(
+                        raw_date, "%d/%m/%Y"
+                    ).strftime("%Y-%m-%d")
+                except ValueError:
+                    parsed_date = raw_date
 
-# Verify the saved data.
-for document in collection.find().limit(3):
-    document["_id"] = str(document["_id"])
-    print(document)
+                records.append({
+                    "district": record["district"],
+                    "market": record["bajar"],
+                    "date": parsed_date,
+                    "crop": record["phasal"],
+                    "variety": record["vividhata"],
+                    "price": self.extract_price(record["kimat"]),
+                    "minimum_price": self.extract_price(
+                        record["nuntamkimat"]
+                    ),
+                    "maximum_price": self.extract_price(
+                        record["adhikatamkimat"]
+                    ),
+                    "unit": "quintal",
+                    "source_language": "hi",
+                    "source_url": source_url,
+                    "scraped_at": datetime.now(),
+                    "metadata": document.metadata,
+                })
 
-client.close()
+        return self.insert_records(records)

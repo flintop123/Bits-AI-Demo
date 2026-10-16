@@ -3,4 +3,13 @@ milvus:
   port: 19530
   collectionName: recVectorDB
   zilliz_token: 
-  zilliz_uri: https://in03-109fdb1d5b8eea3.serverless.gcp-us-west1.cloud.zilliz.com
+  zilliz_uri:
+
+bihar_krishi:
+  urls: ['https://www.biharkrishi.in/mandi']
+
+langSmith:
+    LANGSMITH_TRACING : "true"
+    LANGSMITH_ENDPOINT : "https://api.smith.langchain.com"
+    LANGSMITH_API_KEY : ""
+    LANGSMITH_PROJECT : "bihar-crop-chatbot"
