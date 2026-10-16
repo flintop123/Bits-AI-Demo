@@ -11,3 +11,12 @@ pydantic>=2.7.0
 
 # Environment variables
 python-dotenv>=1.0.0
+
+beautifulsoup4>=4.13.2
+playwright==1.52.0
+PyYAML==6.0.2
+deep_translator
+transformers>=4.45,<5
+sentencepiece
+torch
+IndicTransToolkit

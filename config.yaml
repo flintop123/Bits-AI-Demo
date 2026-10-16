@@ -1,0 +1,6 @@
+milvus:
+  host: localhost
+  port: 19530
+  collectionName: recVectorDB
+  zilliz_token: 
+  zilliz_uri: https://in03-109fdb1d5b8eea3.serverless.gcp-us-west1.cloud.zilliz.com
