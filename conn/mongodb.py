@@ -1,30 +1,54 @@
 import json
 import re
 from datetime import datetime
-from pymongo import MongoClient
+
+from pymongo import MongoClient, UpdateOne
+
 from tools.api_extractor.document import Documents
 
 
 class BiharCropMongo:
+    IDENTITY_FIELDS = (
+        "district",
+        "market",
+        "date",
+        "crop",
+        "variety",
+        "source_url",
+    )
+
     def __init__(self):
         self.client = MongoClient("mongodb://localhost:27017/")
         self.db = self.client["bihar_agriculture"]
         self.collection = self.db["mandi_prices"]
+        self.collection.create_index(
+            [(field, 1) for field in self.IDENTITY_FIELDS],
+            unique=True,
+            name="unique_mandi_record",
+        )
 
     def insert_records(self, records):
-        if records:
-            result = self.collection.insert_many(records)
-            return len(result.inserted_ids)
-        return 0
+        if not records:
+            return 0
+
+        operations = [
+            UpdateOne(
+                {field: record[field] for field in self.IDENTITY_FIELDS},
+                {"$set": record},
+                upsert=True,
+            )
+            for record in records
+        ]
+
+        result = self.collection.bulk_write(operations)
+        return result.upserted_count
 
     def find_records(self, limit=3):
         return list(self.collection.find().limit(limit))
 
     def extract_price(self, value):
-        # Example: "1600.00/क्विंटल" -> 1600.0
         match = re.search(r"\d+(?:,\d{3})*(?:\.\d+)?", str(value))
         return float(match.group(0).replace(",", "")) if match else None
-
 
     def write_mandi_records(self, documents: list[Documents], source_url: str):
         records = []
