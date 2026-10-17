@@ -1,0 +1,296 @@
+{
+  "run_id": "8e0aace2-7c8a-4220-be7b-9b4d64389e0b",
+  "orchestrator": "phase2_supervisor",
+  "routing_strategy": "deterministic_source_type",
+  "requested_sources": [
+    "mandi",
+    "crop_statistics",
+    "agriculture_documents"
+  ],
+  "dry_run": true,
+  "status": "completed",
+  "started_at": "2026-10-17T20:21:06.015637+00:00",
+  "events": [
+    {
+      "event": "agent_selected",
+      "timestamp": "2026-10-17T20:21:06.983277+00:00",
+      "source_id": "mandi",
+      "agent_id": "mandi_web_agent",
+      "reason": "fixed mapping from source type to specialist agent"
+    },
+    {
+      "event": "tool_invoked",
+      "timestamp": "2026-10-17T20:21:06.986137+00:00",
+      "source_id": "mandi",
+      "agent_id": "mandi_web_agent",
+      "tool_name": "playwright_mandi_extractor",
+      "attempt": 1
+    },
+    {
+      "event": "tool_result",
+      "timestamp": "2026-10-17T20:21:24.263849+00:00",
+      "source_id": "mandi",
+      "agent_id": "mandi_web_agent",
+      "tool_name": "playwright_mandi_extractor",
+      "attempt": 1,
+      "status": "success",
+      "summary": {
+        "sources_processed": 1,
+        "records_processed": 10,
+        "inserted": 0,
+        "count_before": null,
+        "count_after": null,
+        "dry_run": true,
+        "provenance": {
+          "extraction_run_id": "8e0aace2-7c8a-4220-be7b-9b4d64389e0b",
+          "extracting_agent": "mandi_web_agent",
+          "source_type": "website",
+          "extracted_at": "2026-10-17T20:21:24.263849+00:00"
+        }
+      }
+    },
+    {
+      "event": "agent_selected",
+      "timestamp": "2026-10-17T20:21:24.268972+00:00",
+      "source_id": "crop_statistics",
+      "agent_id": "crop_statistics_excel_agent",
+      "reason": "fixed mapping from source type to specialist agent"
+    },
+    {
+      "event": "tool_invoked",
+      "timestamp": "2026-10-17T20:21:24.271106+00:00",
+      "source_id": "crop_statistics",
+      "agent_id": "crop_statistics_excel_agent",
+      "tool_name": "pandas_excel_extractor",
+      "attempt": 1
+    },
+    {
+      "event": "tool_result",
+      "timestamp": "2026-10-17T20:21:25.023734+00:00",
+      "source_id": "crop_statistics",
+      "agent_id": "crop_statistics_excel_agent",
+      "tool_name": "pandas_excel_extractor",
+      "attempt": 1,
+      "status": "success",
+      "summary": {
+        "records_processed": 4372,
+        "crop_groups": 36,
+        "period": {
+          "first": "1966-67",
+          "last": "2024-25"
+        },
+        "inserted": 0,
+        "matched": 0,
+        "modified": 0,
+        "count_before": null,
+        "count_after": null,
+        "dry_run": true,
+        "provenance": {
+          "extraction_run_id": "8e0aace2-7c8a-4220-be7b-9b4d64389e0b",
+          "extracting_agent": "crop_statistics_excel_agent",
+          "source_type": "excel",
+          "extracted_at": "2026-10-17T20:21:25.023734+00:00"
+        }
+      }
+    },
+    {
+      "event": "agent_selected",
+      "timestamp": "2026-10-17T20:21:25.034210+00:00",
+      "source_id": "agriculture_documents",
+      "agent_id": "multilingual_pdf_agent",
+      "reason": "fixed mapping from source type to specialist agent"
+    },
+    {
+      "event": "tool_invoked",
+      "timestamp": "2026-10-17T20:21:25.036026+00:00",
+      "source_id": "agriculture_documents",
+      "agent_id": "multilingual_pdf_agent",
+      "tool_name": "pypdf_tesseract_extractor",
+      "attempt": 1
+    },
+    {
+      "event": "tool_result",
+      "timestamp": "2026-10-17T20:21:26.230385+00:00",
+      "source_id": "agriculture_documents",
+      "agent_id": "multilingual_pdf_agent",
+      "tool_name": "pypdf_tesseract_extractor",
+      "attempt": 1,
+      "status": "success",
+      "summary": {
+        "sources_processed": 1,
+        "pages_requested": 20,
+        "pages_extracted": 20,
+        "direct_pages": 20,
+        "ocr_pages": 0,
+        "skipped_pages": 0,
+        "chunks_processed": 54,
+        "inserted": 0,
+        "matched": 0,
+        "modified": 0,
+        "count_before": null,
+        "count_after": null,
+        "dry_run": true,
+        "sources": [
+          {
+            "source_id": "bihar_annual_scheme_2022_23",
+            "title": "Bihar Annual Scheme 2022-23 - Agriculture and Allied Sector",
+            "language": "en",
+            "chunks_processed": 54,
+            "pages_requested": 20,
+            "pages_extracted": 20,
+            "direct_pages": 20,
+            "ocr_pages": 0,
+            "skipped_pages": 0,
+            "language_counts": {
+              "en": 20
+            },
+            "inserted": 0,
+            "matched": 0,
+            "modified": 0
+          }
+        ],
+        "provenance": {
+          "extraction_run_id": "8e0aace2-7c8a-4220-be7b-9b4d64389e0b",
+          "extracting_agent": "multilingual_pdf_agent",
+          "source_type": "pdf",
+          "extracted_at": "2026-10-17T20:21:25.050255+00:00"
+        }
+      }
+    }
+  ],
+  "langsmith": {
+    "enabled": true,
+    "project": "bihar-crop-phase2",
+    "reason": null
+  },
+  "automation_metrics": {
+    "inputs_attempted": 3,
+    "inputs_without_manual_intervention": 3,
+    "automation_rate": 1.0,
+    "manual_interventions": 0,
+    "tool_calls": 3,
+    "retries": 0,
+    "unnecessary_tool_calls": 0
+  },
+  "completed_at": "2026-10-17T20:21:26.255830+00:00",
+  "results": [
+    {
+      "agent_id": "mandi_web_agent",
+      "source_id": "mandi",
+      "tool_name": "playwright_mandi_extractor",
+      "tool_input": {
+        "urls": [
+          "https://www.biharkrishi.in/mandi"
+        ],
+        "dry_run": true
+      },
+      "status": "completed",
+      "summary": {
+        "sources_processed": 1,
+        "records_processed": 10,
+        "inserted": 0,
+        "count_before": null,
+        "count_after": null,
+        "dry_run": true,
+        "provenance": {
+          "extraction_run_id": "8e0aace2-7c8a-4220-be7b-9b4d64389e0b",
+          "extracting_agent": "mandi_web_agent",
+          "source_type": "website",
+          "extracted_at": "2026-10-17T20:21:24.263849+00:00"
+        }
+      },
+      "error": null,
+      "started_at": "2026-10-17T20:21:07.442202+00:00",
+      "completed_at": "2026-10-17T20:21:24.263849+00:00"
+    },
+    {
+      "agent_id": "crop_statistics_excel_agent",
+      "source_id": "crop_statistics",
+      "tool_name": "pandas_excel_extractor",
+      "tool_input": {
+        "file": "D:\\BiharAgriculture\\Bits-AI-Demo\\data\\Crop wise Area Production & Yield.xlsx",
+        "dry_run": true
+      },
+      "status": "completed",
+      "summary": {
+        "records_processed": 4372,
+        "crop_groups": 36,
+        "period": {
+          "first": "1966-67",
+          "last": "2024-25"
+        },
+        "inserted": 0,
+        "matched": 0,
+        "modified": 0,
+        "count_before": null,
+        "count_after": null,
+        "dry_run": true,
+        "provenance": {
+          "extraction_run_id": "8e0aace2-7c8a-4220-be7b-9b4d64389e0b",
+          "extracting_agent": "crop_statistics_excel_agent",
+          "source_type": "excel",
+          "extracted_at": "2026-10-17T20:21:25.023734+00:00"
+        }
+      },
+      "error": null,
+      "started_at": "2026-10-17T20:21:24.273270+00:00",
+      "completed_at": "2026-10-17T20:21:25.023734+00:00"
+    },
+    {
+      "agent_id": "multilingual_pdf_agent",
+      "source_id": "agriculture_documents",
+      "tool_name": "pypdf_tesseract_extractor",
+      "tool_input": {
+        "manifest": "D:\\BiharAgriculture\\Bits-AI-Demo\\sources\\agriculture_sources.yaml",
+        "source_ids": [
+          "bihar_annual_scheme_2022_23"
+        ],
+        "dry_run": true
+      },
+      "status": "completed",
+      "summary": {
+        "sources_processed": 1,
+        "pages_requested": 20,
+        "pages_extracted": 20,
+        "direct_pages": 20,
+        "ocr_pages": 0,
+        "skipped_pages": 0,
+        "chunks_processed": 54,
+        "inserted": 0,
+        "matched": 0,
+        "modified": 0,
+        "count_before": null,
+        "count_after": null,
+        "dry_run": true,
+        "sources": [
+          {
+            "source_id": "bihar_annual_scheme_2022_23",
+            "title": "Bihar Annual Scheme 2022-23 - Agriculture and Allied Sector",
+            "language": "en",
+            "chunks_processed": 54,
+            "pages_requested": 20,
+            "pages_extracted": 20,
+            "direct_pages": 20,
+            "ocr_pages": 0,
+            "skipped_pages": 0,
+            "language_counts": {
+              "en": 20
+            },
+            "inserted": 0,
+            "matched": 0,
+            "modified": 0
+          }
+        ],
+        "provenance": {
+          "extraction_run_id": "8e0aace2-7c8a-4220-be7b-9b4d64389e0b",
+          "extracting_agent": "multilingual_pdf_agent",
+          "source_type": "pdf",
+          "extracted_at": "2026-10-17T20:21:25.050255+00:00"
+        }
+      },
+      "error": null,
+      "started_at": "2026-10-17T20:21:25.037617+00:00",
+      "completed_at": "2026-10-17T20:21:26.230385+00:00"
+    }
+  ]
+}

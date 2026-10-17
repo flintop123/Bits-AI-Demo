@@ -151,3 +151,28 @@ failure handling, provenance, and evaluation. Phase 3 remains responsible for
 full geospatial/satellite integration, deployment hardening, authentication,
 scheduled ingestion, broader safety evaluation, and production-scale
 monitoring.
+
+## 10. Observed three-agent evidence
+
+An unattended dry run was completed on 18 October 2026 using the three
+implemented ingestion agents. The supervisor routed each source to its fixed
+specialist and uploaded the parent and child tool traces to the LangSmith
+project bihar-crop-phase2.
+
+- Run ID: 8e0aace2-7c8a-4220-be7b-9b4d64389e0b
+- Mandi Web Agent: PASS
+- Crop Statistics Excel Agent: PASS
+- Multilingual PDF Agent: PASS
+- AgentEvals result: 3/3 agents passed; overall PASS
+- Automation: 3/3 inputs completed without manual intervention (100 percent)
+- Tool calls: 3
+- Retries: 0
+- Unnecessary tool calls: 0
+
+The reproducible run trace is stored in
+[phase2_complete_run.json](evidence/phase2_complete_run.json), and the complete
+AgentEvals report is stored in
+[phase2_complete_evaluation.json](evidence/phase2_complete_evaluation.json).
+LangSmith recorded a supervisor chain plus three child tool runs with structured
+inputs and outputs. Access to the cloud trace remains controlled separately by
+the LangSmith workspace.
