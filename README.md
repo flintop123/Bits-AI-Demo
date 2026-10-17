@@ -84,3 +84,26 @@ Available endpoints:
 
 The API binds to `127.0.0.1:5000` by default. Query limits must be between 1
 and 100.
+## Asking grounded natural-language questions
+
+The `POST /api/v1/ask` endpoint uses the local `qwen3:4b` Ollama model to
+convert a natural-language question into an allowlisted query plan. MongoDB is
+then queried through the read-only service, and the answer is generated only
+from the retrieved records.
+
+Start the API:
+
+```powershell
+python data_api.py
+```
+
+Example request:
+
+```powershell
+$body = @{ question = "What was Rice production in 2024-25?" } | ConvertTo-Json
+Invoke-RestMethod -Method Post -Uri "http://127.0.0.1:5000/api/v1/ask" -ContentType "application/json" -Body $body
+```
+
+The response includes the answer, interpreted intent and filters, supporting
+database records, source information, and model name. The language model never
+receives permission to create arbitrary MongoDB queries.
