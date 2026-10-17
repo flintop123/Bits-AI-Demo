@@ -50,6 +50,37 @@ python ingest_mandi.py
 
 A repeated run should process the available records but insert zero duplicates.
 
+## Phase 2 agent orchestration
+
+The Phase 2 supervisor routes known source types to four specialist agents:
+Playwright for mandi data, pandas/openpyxl for Excel statistics, and
+pypdf/Tesseract for multilingual PDFs, followed by grounded English/Hindi QA
+through MongoDB and the local Ollama model. Each run records tool events,
+retries, failure status, automation metrics, and source provenance in MongoDB.
+
+Run a fast, non-writing demonstration and evaluate the observed trajectory:
+
+```powershell
+python run_phase2_pipeline.py --source mandi --source crop_statistics --dry-run --trace-out artifacts\phase2\latest_run.json
+python evaluate_phase2_agents.py artifacts\phase2\latest_run.json --output artifacts\phase2\latest_evaluation.json
+```
+
+See `docs/PHASE2_AGENT_EVALUATION.md` for the architecture, source-to-agent
+mapping, evaluation criteria, database fields, limitations, and LangSmith setup.
+
+Run the final manifest-driven evaluation across the live mandi source, Excel,
+English PDF text extraction, Hindi OCR, English/Hindi grounded QA, and a
+transient-failure recovery case:
+
+```powershell
+python run_phase2_evaluation_suite.py --output docs/evidence/phase2_final_suite.json
+python export_team_contributions.py
+```
+
+The suite uses independent expected inputs from
+`sources/phase2_evaluation_cases.yaml`; it does not construct its reference
+trajectory from the observed tool call.
+
 ## Ingesting the crop statistics workbook
 
 The supplied DA&FW workbook contains crop-wise area, production and yield data from 1966-67 to 2024-25. Validate it without changing the database:
@@ -107,6 +138,8 @@ Invoke-RestMethod -Method Post -Uri "http://127.0.0.1:5000/api/v1/ask" -ContentT
 The response includes the answer, interpreted intent and filters, supporting
 database records, source information, and model name. The language model never
 receives permission to create arbitrary MongoDB queries.
+
+Generated answers are checked against the requested English or Hindi script. If the local model responds in the wrong language, the service performs one grounded language-correction pass over the same retrieved records without adding new evidence. If that correction still uses the wrong script, a deterministic extractive fallback returns concise text from the ranked source records instead of accepting an unsupported model response.
 
 ## Ingesting the official Bihar agriculture PDF
 
@@ -186,3 +219,19 @@ is preserved; it is not replaced by a translation.
 Use `--no-ocr` to disable fallback or `--force-ocr` to OCR every selected page.
 Downloaded documents and OCR language files are reproducible local artifacts
 under `data/` and are excluded from Git.
+
+## Phase 2 database schema and evidence
+
+The formal MongoDB collection contract, identity rules, provenance mapping,
+duplicate handling and observed population evidence are documented in
+[docs/DATABASE_SCHEMA.md](docs/DATABASE_SCHEMA.md). The machine-readable schema
+catalog is stored in
+[docs/schema/bihar_agriculture.schema.json](docs/schema/bihar_agriculture.schema.json).
+
+To reproduce the database counts, index inventory and provenance coverage:
+
+    python export_database_evidence.py --run-id 5d062f9d-6f69-42bd-bedb-f7a6b521071f
+
+## Challenge and supporting literature
+
+The project-specific design comparison, measured findings, limitations and references are documented in [Challenge and Supporting Literature](docs/CHALLENGE_AND_LITERATURE.md).

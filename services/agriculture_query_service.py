@@ -12,9 +12,11 @@ class AgricultureQueryService:
             uri = uri or os.getenv("MONGODB_URI", "mongodb://localhost:27017/")
             self.client = MongoClient(uri)
             self.database = self.client["bihar_agriculture"]
+            self._owns_client = True
         else:
             self.database = database
             self.client = database.client
+            self._owns_client = False
 
         self.mandi_prices = self.database["mandi_prices"]
         self.crop_statistics = self.database["crop_statistics"]
@@ -98,6 +100,11 @@ class AgricultureQueryService:
             ),
             "seasons": sorted(self.crop_statistics.distinct("season")),
         }
+
+    def close(self):
+        """Close only a Mongo client created by this service."""
+        if self._owns_client:
+            self.client.close()
 
     @staticmethod
     def _exact_text(value):

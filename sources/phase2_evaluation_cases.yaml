@@ -1,0 +1,73 @@
+version: 1
+cases:
+  - id: mandi_live_table
+    source_id: mandi
+    expected_tool_input:
+      urls: [https://www.biharkrishi.in/mandi]
+      dry_run: true
+    acceptance:
+      min_records: 1
+
+  - id: crop_statistics_workbook
+    source_id: crop_statistics
+    expected_tool_input:
+      file: data/Crop wise Area Production & Yield.xlsx
+      dry_run: true
+    acceptance:
+      expected_records: 4372
+      expected_crop_groups: 36
+      period: {first: 1966-67, last: 2024-25}
+
+  - id: pdf_english_direct_text
+    source_id: agriculture_documents
+    expected_tool_input:
+      manifest: sources/agriculture_sources.yaml
+      source_ids: [bihar_annual_scheme_2022_23]
+      dry_run: true
+    acceptance:
+      source_ids: [bihar_annual_scheme_2022_23]
+      min_records: 1
+      min_direct_pages: 1
+
+  - id: pdf_hindi_ocr
+    source_id: agriculture_documents
+    expected_tool_input:
+      manifest: sources/agriculture_sources.yaml
+      source_ids: [pmfme_makhana_handbook_hindi]
+      dry_run: true
+    acceptance:
+      source_ids: [pmfme_makhana_handbook_hindi]
+      min_records: 1
+      min_ocr_pages: 1
+
+  - id: qa_english_statistics
+    source_id: grounded_qa
+    expected_tool_input:
+      question: What was rice production in 2024-25?
+      dry_run: true
+    acceptance:
+      intent: crop_statistics
+      answer_language: en
+      min_records: 1
+      min_sources: 1
+
+  - id: qa_hindi_documents
+    source_id: grounded_qa
+    expected_tool_input:
+      question: पीएमएफएमई मखाना पुस्तिका में मखाना प्रसंस्करण और संबंधित योजनाओं के बारे में क्या बताया गया है?
+      dry_run: true
+    acceptance:
+      intent: document_search
+      answer_language: hi
+      min_records: 1
+      min_sources: 1
+
+  - id: retry_recovery_crop_statistics
+    source_id: crop_statistics
+    fault_injection: transient_once
+    expected_tool_input:
+      file: data/Crop wise Area Production & Yield.xlsx
+      dry_run: true
+    acceptance:
+      expected_records: 4372
+      expected_retries: 1

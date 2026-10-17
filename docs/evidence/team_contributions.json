@@ -1,0 +1,107 @@
+{
+  "evidence_source": "git log --no-merges --name-only",
+  "scope_note": "This records committed repository work only. Research, reviews, presentations, and verbal contributions must be added by the team.",
+  "authors": [
+    {
+      "author": "Anuj Tomar",
+      "commits": 14,
+      "commit_ids": [
+        "2f9df173",
+        "3d0b7c20",
+        "35999d8c",
+        "de824a7b",
+        "c6bf95f6",
+        "afec20fc",
+        "24b0e546",
+        "363c6d7b",
+        "c0309477",
+        "41f179b4",
+        "3785f06b",
+        "fdb01d03",
+        "f3ee3ae2",
+        "aff1aa46"
+      ],
+      "subjects": [
+        "Document Phase 2 challenge and supporting literature",
+        "Document Phase 2 database schema and provenance",
+        "Document complete Phase 2 agent evaluation",
+        "Record structured LangSmith agent outputs",
+        "Add Phase 2 agent orchestration and evaluation",
+        "Add multilingual agriculture source ingestion",
+        "Add browser demo for grounded agriculture QA",
+        "Add PDF-grounded agriculture QA",
+        "Add official agriculture PDF ingestion",
+        "Add grounded natural-language agriculture QA",
+        "Add read-only agriculture data API",
+        "Add crop statistics Excel ingestion",
+        "Add tested mandi ingestion command",
+        "Make mandi ingestion duplicate-safe"
+      ],
+      "files_changed": 54,
+      "work_areas": {
+        "agent_orchestration": 9,
+        "demo_ui": 3,
+        "documentation": 20,
+        "ingestion_and_storage": 9,
+        "project_support": 17,
+        "qa_and_api": 12,
+        "sources_and_data": 3,
+        "tests": 14
+      }
+    },
+    {
+      "author": "Jitendra",
+      "commits": 1,
+      "commit_ids": [
+        "400c9748"
+      ],
+      "subjects": [
+        "Initial commit"
+      ],
+      "files_changed": 2,
+      "work_areas": {
+        "documentation": 1,
+        "project_support": 1
+      }
+    },
+    {
+      "author": "jitendra",
+      "commits": 2,
+      "commit_ids": [
+        "8d883dd2",
+        "f0e48a21"
+      ],
+      "subjects": [
+        "extracting data from excel",
+        "updating readme.md with some research paper link and dataset link"
+      ],
+      "files_changed": 6,
+      "work_areas": {
+        "documentation": 2,
+        "ingestion_and_storage": 2,
+        "project_support": 2,
+        "sources_and_data": 1
+      }
+    },
+    {
+      "author": "jitendra.kumar",
+      "commits": 3,
+      "commit_ids": [
+        "b1d02d47",
+        "ed0f4c61",
+        "c201c912"
+      ],
+      "subjects": [
+        "Reading mundi data adding the method in class",
+        "Reading mundi data adding the method in class",
+        "Reading mundi data"
+      ],
+      "files_changed": 19,
+      "work_areas": {
+        "ingestion_and_storage": 10,
+        "project_support": 12,
+        "qa_and_api": 1
+      }
+    }
+  ]
+}

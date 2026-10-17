@@ -1,5 +1,6 @@
 """Read-only HTTP API for Bihar agriculture data."""
 
+import atexit
 import os
 
 from flask import Flask, jsonify, render_template, request
@@ -31,6 +32,8 @@ def selected_filters(names):
 def create_app(service=None, qa_service=None):
     app = Flask(__name__)
     query_service = service or AgricultureQueryService()
+    if service is None:
+        atexit.register(query_service.close)
     agriculture_qa = qa_service or AgricultureQAService(query_service)
 
     @app.errorhandler(ValueError)
