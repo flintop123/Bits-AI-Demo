@@ -80,6 +80,19 @@ def create_app(service=None, qa_service=None):
     def catalog():
         return jsonify(query_service.list_values())
 
+    @app.get("/api/v1/documents/search")
+    def document_search():
+        limit = parse_limit(request.args.get("limit", "5"))
+        search_terms = request.args.get("q", "").strip()
+        records = query_service.search_agriculture_documents(
+            search_terms, limit
+        )
+        return jsonify({
+            "count": len(records),
+            "query": search_terms,
+            "records": records,
+        })
+
     @app.post("/api/v1/ask")
     def ask_question():
         body = request.get_json(silent=True) or {}
