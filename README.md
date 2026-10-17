@@ -49,3 +49,19 @@ python ingest_mandi.py
 ```
 
 A repeated run should process the available records but insert zero duplicates.
+
+## Ingesting the crop statistics workbook
+
+The supplied DA&FW workbook contains crop-wise area, production and yield data from 1966-67 to 2024-25. Validate it without changing the database:
+
+```powershell
+python ingest_crop_statistics.py --dry-run
+```
+
+Load the normalized records into MongoDB:
+
+```powershell
+python ingest_crop_statistics.py
+```
+
+The records are stored in `bihar_agriculture.crop_statistics`. Repeated runs update existing crop-season-year records without creating duplicates.
