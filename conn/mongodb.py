@@ -50,7 +50,12 @@ class BiharCropMongo:
         match = re.search(r"\d+(?:,\d{3})*(?:\.\d+)?", str(value))
         return float(match.group(0).replace(",", "")) if match else None
 
-    def write_mandi_records(self, documents: list[Documents], source_url: str):
+    def write_mandi_records(
+        self,
+        documents: list[Documents],
+        source_url: str,
+        provenance=None,
+    ):
         records = []
         required_fields = (
             "district",
@@ -89,7 +94,7 @@ class BiharCropMongo:
                 except ValueError:
                     parsed_date = raw_date
 
-                records.append({
+                stored_record = {
                     "district": record["district"],
                     "market": record["bajar"],
                     "date": parsed_date,
@@ -107,6 +112,8 @@ class BiharCropMongo:
                     "source_url": source_url,
                     "scraped_at": datetime.now(),
                     "metadata": document.metadata,
-                })
+                }
+                stored_record.update(provenance or {})
+                records.append(stored_record)
 
         return self.insert_records(records)

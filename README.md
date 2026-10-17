@@ -50,6 +50,23 @@ python ingest_mandi.py
 
 A repeated run should process the available records but insert zero duplicates.
 
+## Phase 2 agent orchestration
+
+The Phase 2 supervisor routes known source types to three specialist agents:
+Playwright for mandi data, pandas/openpyxl for Excel statistics, and
+pypdf/Tesseract for multilingual PDFs. Each run records tool events, retries,
+failure status, automation metrics, and source provenance in MongoDB.
+
+Run a fast, non-writing demonstration and evaluate the observed trajectory:
+
+```powershell
+python run_phase2_pipeline.py --source mandi --source crop_statistics --dry-run --trace-out artifacts\phase2\latest_run.json
+python evaluate_phase2_agents.py artifacts\phase2\latest_run.json --output artifacts\phase2\latest_evaluation.json
+```
+
+See `docs/PHASE2_AGENT_EVALUATION.md` for the architecture, source-to-agent
+mapping, evaluation criteria, database fields, limitations, and LangSmith setup.
+
 ## Ingesting the crop statistics workbook
 
 The supplied DA&FW workbook contains crop-wise area, production and yield data from 1966-67 to 2024-25. Validate it without changing the database:
