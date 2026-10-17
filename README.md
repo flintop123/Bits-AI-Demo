@@ -152,3 +152,37 @@ python data_api.py
 Open `http://127.0.0.1:5000` in a browser. The demo displays collection counts,
 accepts natural-language questions, and presents the grounded answer together
 with its applied filters, retrieved records, and page-aware source links.
+
+## Multilingual source expansion
+
+The source manifest at `sources/agriculture_sources.yaml` contains an
+allowlisted collection of official Bihar and Government of India agriculture
+PDFs. It includes English, Hindi, and mixed-language sources. List them with:
+
+```powershell
+python ingest_agriculture_sources.py --list-sources
+```
+
+Validate extraction without writing to MongoDB:
+
+```powershell
+python ingest_agriculture_sources.py --dry-run
+```
+
+Ingest all enabled sources and verify duplicate protection by repeating the
+same command:
+
+```powershell
+python ingest_agriculture_sources.py
+python ingest_agriculture_sources.py
+```
+
+The extractor first uses the PDF text layer. Pages with missing or unusable
+text automatically fall back to local Tesseract OCR with `hin+eng`. Every
+stored chunk retains the detected language, extraction method, source
+organization, document title, page number and source URL. Original Hindi text
+is preserved; it is not replaced by a translation.
+
+Use `--no-ocr` to disable fallback or `--force-ocr` to OCR every selected page.
+Downloaded documents and OCR language files are reproducible local artifacts
+under `data/` and are excluded from Git.

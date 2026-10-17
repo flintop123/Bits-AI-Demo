@@ -75,6 +75,11 @@ class AgricultureQueryService:
             "content": 1,
             "source_url": 1,
             "source_file": 1,
+            "source_id": 1,
+            "source_organization": 1,
+            "language": 1,
+            "declared_language": 1,
+            "extraction_method": 1,
             "score": {"$meta": "textScore"},
         }
         cursor = self.agriculture_documents.find(

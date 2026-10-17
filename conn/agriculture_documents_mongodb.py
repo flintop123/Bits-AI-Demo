@@ -19,9 +19,24 @@ class AgricultureDocumentsMongo:
             unique=True,
             name="unique_document_page_chunk",
         )
+        self._ensure_multilingual_text_index()
+
+    def _ensure_multilingual_text_index(self):
+        """Create one language-neutral text index for English and Hindi."""
+        index_name = "agriculture_document_text"
+        language_override = "text_search_language"
+        existing = self.collection.index_information().get(index_name)
+        if existing and (
+            existing.get("default_language") != "none"
+            or existing.get("language_override", "language")
+            != language_override
+        ):
+            self.collection.drop_index(index_name)
         self.collection.create_index(
             [("content", "text"), ("document_title", "text")],
-            name="agriculture_document_text",
+            name=index_name,
+            default_language="none",
+            language_override=language_override,
         )
 
     def upsert_records(self, records):
