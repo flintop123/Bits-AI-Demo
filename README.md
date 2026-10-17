@@ -203,3 +203,15 @@ is preserved; it is not replaced by a translation.
 Use `--no-ocr` to disable fallback or `--force-ocr` to OCR every selected page.
 Downloaded documents and OCR language files are reproducible local artifacts
 under `data/` and are excluded from Git.
+
+## Phase 2 database schema and evidence
+
+The formal MongoDB collection contract, identity rules, provenance mapping,
+duplicate handling and observed population evidence are documented in
+[docs/DATABASE_SCHEMA.md](docs/DATABASE_SCHEMA.md). The machine-readable schema
+catalog is stored in
+[docs/schema/bihar_agriculture.schema.json](docs/schema/bihar_agriculture.schema.json).
+
+To reproduce the database counts, index inventory and provenance coverage:
+
+    python export_database_evidence.py --run-id 5d062f9d-6f69-42bd-bedb-f7a6b521071f

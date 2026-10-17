@@ -1,0 +1,201 @@
+{
+  "schema_version": 1,
+  "generated_at": "2026-10-17T20:31:57.872745+00:00",
+  "database": "bihar_agriculture",
+  "agent_run": {
+    "run_id": "5d062f9d-6f69-42bd-bedb-f7a6b521071f",
+    "routing_strategy": "deterministic_source_type",
+    "requested_sources": [
+      "mandi",
+      "crop_statistics",
+      "agriculture_documents"
+    ],
+    "dry_run": false,
+    "status": "completed",
+    "started_at": "2026-10-17T20:26:14.579257+00:00",
+    "automation_metrics": {
+      "inputs_attempted": 3,
+      "inputs_without_manual_intervention": 3,
+      "automation_rate": 1.0,
+      "manual_interventions": 0,
+      "tool_calls": 3,
+      "retries": 0,
+      "unnecessary_tool_calls": 0
+    },
+    "completed_at": "2026-10-17T20:27:48.849442+00:00"
+  },
+  "collections": {
+    "mandi_prices": {
+      "total_records": 10,
+      "records_with_complete_provenance": 10,
+      "provenance_coverage": 1.0,
+      "indexes": [
+        {
+          "name": "_id_",
+          "keys": [
+            [
+              "_id",
+              1
+            ]
+          ],
+          "unique": false
+        },
+        {
+          "name": "unique_mandi_record",
+          "keys": [
+            [
+              "district",
+              1
+            ],
+            [
+              "market",
+              1
+            ],
+            [
+              "date",
+              1
+            ],
+            [
+              "crop",
+              1
+            ],
+            [
+              "variety",
+              1
+            ],
+            [
+              "source_url",
+              1
+            ]
+          ],
+          "unique": true
+        }
+      ],
+      "representative_record": {
+        "district": "अरवल",
+        "market": "अरवल",
+        "date": "2026-10-17",
+        "crop": "आलू",
+        "variety": "Local",
+        "unit": "quintal",
+        "source_url": "https://www.biharkrishi.in/mandi",
+        "extracted_at": "2026-10-17T20:26:19.523637+00:00",
+        "extracting_agent": "mandi_web_agent",
+        "extraction_run_id": "5d062f9d-6f69-42bd-bedb-f7a6b521071f",
+        "source_type": "website"
+      }
+    },
+    "crop_statistics": {
+      "total_records": 4372,
+      "records_with_complete_provenance": 4372,
+      "provenance_coverage": 1.0,
+      "indexes": [
+        {
+          "name": "_id_",
+          "keys": [
+            [
+              "_id",
+              1
+            ]
+          ],
+          "unique": false
+        },
+        {
+          "name": "unique_crop_season_year",
+          "keys": [
+            [
+              "crop",
+              1
+            ],
+            [
+              "season",
+              1
+            ],
+            [
+              "year",
+              1
+            ]
+          ],
+          "unique": true
+        }
+      ],
+      "representative_record": {
+        "year": "2024-25",
+        "season": "Kharif",
+        "crop": "Bajra",
+        "area_unit": "hectare",
+        "production_unit": "tonne",
+        "source_file": "Crop wise Area Production & Yield.xlsx",
+        "source_row": 23,
+        "yield_unit": "kg_per_hectare",
+        "extracted_at": "2026-10-17T20:26:20.651128+00:00",
+        "extracting_agent": "crop_statistics_excel_agent",
+        "extraction_run_id": "5d062f9d-6f69-42bd-bedb-f7a6b521071f",
+        "source_type": "excel"
+      }
+    },
+    "agriculture_documents": {
+      "total_records": 153,
+      "records_with_complete_provenance": 153,
+      "provenance_coverage": 1.0,
+      "indexes": [
+        {
+          "name": "_id_",
+          "keys": [
+            [
+              "_id",
+              1
+            ]
+          ],
+          "unique": false
+        },
+        {
+          "name": "agriculture_document_text",
+          "keys": [
+            [
+              "_fts",
+              "text"
+            ],
+            [
+              "_ftsx",
+              1
+            ]
+          ],
+          "unique": false
+        },
+        {
+          "name": "unique_document_page_chunk",
+          "keys": [
+            [
+              "source_url",
+              1
+            ],
+            [
+              "page_number",
+              1
+            ],
+            [
+              "chunk_index",
+              1
+            ]
+          ],
+          "unique": true
+        }
+      ],
+      "representative_record": {
+        "chunk_index": 0,
+        "page_number": 1,
+        "source_url": "https://apeda.gov.in/hindi/sites/default/files/study_reports/Makhana_Report_Hindi.pdf",
+        "document_title": "भारत से मखाना निर्यात को प्रोत्साहित किए जाने हेतु कार्यनीति",
+        "extraction_method": "tesseract_ocr",
+        "language": "mixed",
+        "source_id": "apeda_makhana_hindi",
+        "source_type": "pdf",
+        "extracted_at": "2026-10-17T20:26:22.196484+00:00",
+        "extracting_agent": "multilingual_pdf_agent",
+        "extraction_run_id": "5d062f9d-6f69-42bd-bedb-f7a6b521071f"
+      }
+    }
+  },
+  "all_records_have_provenance": true
+}

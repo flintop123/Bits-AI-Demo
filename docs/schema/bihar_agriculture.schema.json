@@ -1,0 +1,156 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Bihar Agriculture MongoDB Schema Catalog",
+  "schema_version": 1,
+  "database": "bihar_agriculture",
+  "shared_provenance_fields": [
+    "extraction_run_id",
+    "extracting_agent",
+    "source_type",
+    "extracted_at"
+  ],
+  "collections": {
+    "mandi_prices": {
+      "description": "One market price observation per crop, variety, market and date.",
+      "identity_fields": ["district", "market", "date", "crop", "variety", "source_url"],
+      "required": [
+        "district", "market", "date", "crop", "variety", "unit",
+        "source_language", "source_url", "scraped_at", "extraction_run_id",
+        "extracting_agent", "source_type", "extracted_at"
+      ],
+      "properties": {
+        "district": {"bsonType": "string"},
+        "market": {"bsonType": "string"},
+        "date": {"bsonType": "string", "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}$"},
+        "crop": {"bsonType": "string"},
+        "variety": {"bsonType": "string"},
+        "price": {"bsonType": ["double", "int", "long", "decimal", "null"]},
+        "minimum_price": {"bsonType": ["double", "int", "long", "decimal", "null"]},
+        "maximum_price": {"bsonType": ["double", "int", "long", "decimal", "null"]},
+        "unit": {"bsonType": "string"},
+        "source_language": {"bsonType": "string"},
+        "source_url": {"bsonType": "string"},
+        "scraped_at": {"bsonType": "date"},
+        "metadata": {"bsonType": "object"},
+        "extraction_run_id": {"bsonType": "string"},
+        "extracting_agent": {"bsonType": "string"},
+        "source_type": {"bsonType": "string"},
+        "extracted_at": {"bsonType": "string"}
+      },
+      "indexes": [
+        {
+          "name": "unique_mandi_record",
+          "keys": ["district", "market", "date", "crop", "variety", "source_url"],
+          "unique": true
+        }
+      ]
+    },
+    "crop_statistics": {
+      "description": "One crop, season and financial-year statistics observation.",
+      "identity_fields": ["crop", "season", "year"],
+      "required": [
+        "crop", "season", "year", "area_unit", "production_unit",
+        "yield_unit", "is_advance_estimate", "source", "source_file",
+        "source_row", "extraction_run_id", "extracting_agent", "source_type",
+        "extracted_at"
+      ],
+      "properties": {
+        "crop": {"bsonType": "string"},
+        "season": {"bsonType": "string", "enum": ["Kharif", "Rabi", "Summer", "Total"]},
+        "year": {"bsonType": "string", "pattern": "^[0-9]{4}-[0-9]{2}$"},
+        "area_hectares": {"bsonType": ["double", "int", "long", "decimal", "null"]},
+        "production": {"bsonType": ["double", "int", "long", "decimal", "null"]},
+        "yield_kg_per_hectare": {"bsonType": ["double", "int", "long", "decimal", "null"]},
+        "area_unit": {"bsonType": "string"},
+        "production_unit": {"bsonType": "string"},
+        "yield_unit": {"bsonType": "string"},
+        "is_advance_estimate": {"bsonType": "bool"},
+        "source": {"bsonType": "string"},
+        "source_file": {"bsonType": "string"},
+        "source_row": {"bsonType": "int"},
+        "ingested_at": {"bsonType": "date"},
+        "extraction_run_id": {"bsonType": "string"},
+        "extracting_agent": {"bsonType": "string"},
+        "source_type": {"bsonType": "string"},
+        "extracted_at": {"bsonType": "string"}
+      },
+      "indexes": [
+        {
+          "name": "unique_crop_season_year",
+          "keys": ["crop", "season", "year"],
+          "unique": true
+        }
+      ]
+    },
+    "agriculture_documents": {
+      "description": "One page-aware searchable chunk from an allowlisted official PDF.",
+      "identity_fields": ["source_url", "page_number", "chunk_index"],
+      "required": [
+        "document_title", "page_number", "chunk_index", "content",
+        "character_count", "language", "extraction_method", "source_type",
+        "source_url", "source_file", "content_hash", "source_id",
+        "source_organization", "declared_language", "extraction_run_id",
+        "extracting_agent", "extracted_at"
+      ],
+      "properties": {
+        "document_title": {"bsonType": "string"},
+        "page_number": {"bsonType": "int", "minimum": 1},
+        "chunk_index": {"bsonType": "int", "minimum": 0},
+        "content": {"bsonType": "string"},
+        "character_count": {"bsonType": "int", "minimum": 1},
+        "language": {"bsonType": "string", "enum": ["en", "hi", "mixed", "und"]},
+        "declared_language": {"bsonType": "string"},
+        "extraction_method": {"bsonType": "string", "enum": ["pypdf", "tesseract_ocr"]},
+        "source_type": {"bsonType": "string"},
+        "source_url": {"bsonType": "string"},
+        "source_file": {"bsonType": "string"},
+        "source_id": {"bsonType": "string"},
+        "source_organization": {"bsonType": "string"},
+        "content_hash": {"bsonType": "string", "pattern": "^[a-f0-9]{64}$"},
+        "ingested_at": {"bsonType": "date"},
+        "extraction_run_id": {"bsonType": "string"},
+        "extracting_agent": {"bsonType": "string"},
+        "extracted_at": {"bsonType": "string"}
+      },
+      "indexes": [
+        {
+          "name": "unique_document_page_chunk",
+          "keys": ["source_url", "page_number", "chunk_index"],
+          "unique": true
+        },
+        {
+          "name": "agriculture_document_text",
+          "keys": ["content", "document_title"],
+          "type": "text",
+          "default_language": "none"
+        }
+      ]
+    },
+    "agent_runs": {
+      "description": "One auditable Phase 2 supervisor execution.",
+      "identity_fields": ["run_id"],
+      "required": [
+        "run_id", "orchestrator", "routing_strategy", "requested_sources",
+        "dry_run", "status", "started_at", "events", "langsmith"
+      ],
+      "properties": {
+        "run_id": {"bsonType": "string"},
+        "orchestrator": {"bsonType": "string"},
+        "routing_strategy": {"bsonType": "string"},
+        "requested_sources": {"bsonType": "array", "items": {"bsonType": "string"}},
+        "dry_run": {"bsonType": "bool"},
+        "status": {"bsonType": "string", "enum": ["running", "completed", "partial_failure", "failed"]},
+        "started_at": {"bsonType": "string"},
+        "completed_at": {"bsonType": "string"},
+        "events": {"bsonType": "array"},
+        "results": {"bsonType": "array"},
+        "automation_metrics": {"bsonType": "object"},
+        "langsmith": {"bsonType": "object"}
+      },
+      "indexes": [
+        {"name": "run_id_1", "keys": ["run_id"], "unique": true},
+        {"name": "started_at_-1", "keys": ["started_at"], "direction": -1}
+      ]
+    }
+  }
+}
