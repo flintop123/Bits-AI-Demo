@@ -57,13 +57,21 @@ class AgricultureQAService:
         plan = self._create_plan(question, catalog)
 
         if plan.intent == "unsupported":
-            return {
-                "answer": (
+            if plan.language == "hi":
+                answer = (
+                    "मैं उपलब्ध मंडी भाव, ऐतिहासिक फसल क्षेत्रफल, उत्पादन "
+                    "और उपज के आँकड़ों तथा सूचीबद्ध आधिकारिक कृषि दस्तावेजों "
+                    "की सामग्री से जुड़े प्रश्नों का उत्तर दे सकता हूँ।"
+                )
+            else:
+                answer = (
                     "I can answer questions about the available mandi prices "
                     "and historical crop area, production, and yield data, "
                     "as well as material in the indexed official agriculture "
-                    "report."
-                ),
+                    "documents."
+                )
+            return {
+                "answer": answer,
                 "intent": plan.intent,
                 "filters": {},
                 "records": [],
@@ -111,8 +119,9 @@ Rules:
   policies, programmes, objectives, seeds, mechanization, organic farming,
   horticulture, irrigation, soil conservation, livestock, fisheries, or other
   narrative material in the official report.
-- For document_search, provide concise English search_terms containing the
-  important nouns from the question.
+- For document_search, provide concise search_terms containing the important
+  nouns from the question. Preserve important Devanagari nouns for a Hindi
+  question. Hindi search terms may also include a useful English equivalent.
 - Use unsupported for advice, weather forecasts, or topics not answerable from
   the available prices, statistics, or official agriculture report.
 - Never invent a filter. Use null when the user did not specify it.
@@ -147,6 +156,11 @@ Question:
 
     def _answer_from_records(self, question, plan, records):
         if not records:
+            if plan.language == "hi":
+                return (
+                    "इस प्रश्न के लिए उपलब्ध कृषि डेटा स्रोतों में कोई "
+                    "मिलता-जुलता रिकॉर्ड नहीं मिला।"
+                )
             return (
                 "No matching records were found in the available agriculture "
                 "datasets for this question."
@@ -246,6 +260,8 @@ Records:
             source_file = record.get("source_file")
             page_number = record.get("page_number")
             document_title = record.get("document_title")
+            source_organization = record.get("source_organization")
+            language = record.get("language")
             item = {
                 key: value
                 for key, value in {
@@ -253,6 +269,8 @@ Records:
                     "source_file": source_file,
                     "document_title": document_title,
                     "page_number": page_number,
+                    "organization": source_organization,
+                    "language": language,
                 }.items()
                 if value is not None
             }

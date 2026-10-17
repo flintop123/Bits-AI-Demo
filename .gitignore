@@ -219,3 +219,4 @@ __marimo__/
 
 # Downloaded source documents (retrieved reproducibly by ingestion commands)
 data/pdfs/
+data/tessdata/
