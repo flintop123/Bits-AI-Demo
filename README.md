@@ -65,3 +65,22 @@ python ingest_crop_statistics.py
 ```
 
 The records are stored in `bihar_agriculture.crop_statistics`. Repeated runs update existing crop-season-year records without creating duplicates.
+## Querying stored agriculture data
+
+The read-only Flask API exposes the mandi prices and normalized crop statistics
+stored in MongoDB. Start Docker Desktop, ensure `bihar-mongodb` is running, and
+run:
+
+```powershell
+python data_api.py
+```
+
+Available endpoints:
+
+- `GET /health`
+- `GET /api/v1/mandi-prices?limit=10`
+- `GET /api/v1/crop-statistics?crop=Rice&year=2024-25&limit=10`
+- `GET /api/v1/catalog`
+
+The API binds to `127.0.0.1:5000` by default. Query limits must be between 1
+and 100.

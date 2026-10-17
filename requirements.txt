@@ -21,3 +21,6 @@ sentencepiece
 torch
 IndicTransToolkitpandas>=2.2,<3
 openpyxl>=3.1,<4
+
+# HTTP API
+Flask>=3.1,<4
