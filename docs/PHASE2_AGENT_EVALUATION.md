@@ -83,6 +83,12 @@ For a PDF demonstration, add:
 python run_phase2_pipeline.py --source agriculture_documents --document-source bihar_annual_scheme_2022_23 --dry-run --trace-out artifacts\phase2\pdf_run.json
 ```
 
+The grounded QA agent can be included in the same supervisor:
+
+```powershell
+python run_phase2_pipeline.py --source grounded_qa --qa-question "What was rice production in 2024-25?" --dry-run --trace-out artifacts\phase2\qa_run.json
+```
+
 The demo should show input, supervisor selection, tool invocation, tool output,
 status, and provenance. A tested difficult case forces a temporary tool failure:
 the trace records the error, retries once, and completes. A permanent-failure
@@ -91,7 +97,10 @@ test proves that the workflow does not silently claim success.
 ## 6. Evaluation design
 
 AgentEvals performs strict trajectory matching against the expected specialist
-tool path. Code evaluators report results separately for every source agent:
+tool path. The final suite reads expected tool arguments from
+`sources/phase2_evaluation_cases.yaml`, independently of the observed trace.
+This prevents a wrong observed input from being copied into its own reference.
+Code evaluators report results separately for every source agent:
 
 - trajectory/tool-call accuracy;
 - tool selection;
@@ -102,14 +111,36 @@ tool path. Code evaluators report results separately for every source agent:
 
 These correspond to the Microsoft Foundry evaluator menu items Tool Call
 Accuracy, Tool Selection, Tool Input Accuracy, Tool Call Success, and Task
-Completion. Groundedness and intent resolution are applied to the QA workflow,
-not to deterministic extractors. Safety evaluators are deferred to Phase 3,
+Completion. For grounded QA, the suite additionally requires the expected
+intent, at least one retrieved record, at least one source, the expected answer
+language, and numeric fidelity between the answer and retrieved records. Safety
+evaluators are deferred to Phase 3,
 when external deployment and broader user inputs are introduced.
 
-The acceptance rule is: all selected agents must pass all six checks. Unit and
+The acceptance rule is: every case must pass every applicable check. Unit and
 integration tests cover normal routing, transient failure/retry, permanent
 failure, multilingual OCR, duplicate protection, query filters, API behavior,
-and Hindi QA. At this revision, 49 automated tests pass.
+and Hindi QA. At this revision, 63 automated tests pass.
+
+### Final evaluation matrix
+
+| Case | Evidence exercised | Required result |
+|---|---|---|
+| Live mandi table | Playwright extraction and normalization | Records returned; correct tool/input/provenance |
+| Crop statistics workbook | pandas/openpyxl extraction | 4,372 records, 36 crop groups, correct period |
+| English official PDF | Direct pypdf text path | Selected source and at least one direct-text page |
+| Hindi official PDF | Tesseract `hin+eng` OCR path | Selected source and at least one OCR page |
+| English statistics QA | MongoDB retrieval plus Ollama answer | Correct intent/language, sources and numeric fidelity |
+| Hindi document QA | Hindi retrieval plus Ollama answer | Correct intent/language and page-aware sources |
+| Retry recovery | Injected first-call failure around the real Excel agent | One recorded retry, then normal real-agent output |
+
+Run all seven cases and save the evidence intended for review:
+
+```powershell
+python run_phase2_evaluation_suite.py --output docs/evidence/phase2_final_suite.json
+```
+
+The command returns a failure exit code unless all seven cases pass.
 
 ## 7. Automation metrics
 
@@ -135,8 +166,15 @@ the current terminal:
 ```powershell
 $env:LANGSMITH_TRACING="true"
 $env:LANGSMITH_PROJECT="bihar-crop-phase2"
+$env:LANGSMITH_ENDPOINT="YOUR_REGIONAL_API_ENDPOINT"
 $env:LANGSMITH_API_KEY="YOUR_PRIVATE_KEY"
 ```
+
+Use the API endpoint matching the LangSmith web region: GCP US
+`https://api.smith.langchain.com`, GCP EU
+`https://eu.api.smith.langchain.com`, GCP APAC
+`https://apac.api.smith.langchain.com`, or AWS US
+`https://aws.api.smith.langchain.com`.
 
 The next orchestration run creates a parent supervisor trace and a tool-type
 child trace for each selected agent. Both levels record structured inputs and
@@ -152,7 +190,7 @@ full geospatial/satellite integration, deployment hardening, authentication,
 scheduled ingestion, broader safety evaluation, and production-scale
 monitoring.
 
-## 10. Observed three-agent evidence
+## 10. Observed three-agent ingestion evidence
 
 An unattended dry run was completed on 18 October 2026 using the three
 implemented ingestion agents. The supervisor routed each source to its fixed
@@ -176,3 +214,12 @@ AgentEvals report is stored in
 LangSmith recorded a supervisor chain plus three child tool runs with structured
 inputs and outputs. Access to the cloud trace remains controlled separately by
 the LangSmith workspace.
+
+## 11. Team contribution evidence
+
+`python export_team_contributions.py` generates
+`docs/TEAM_CONTRIBUTIONS.md` and
+`docs/evidence/team_contributions.json` from Git commit authors, subjects, and
+changed-file categories. It deliberately labels its scope: committed repository
+work is factual evidence, while research, review, presentation, and verbal work
+must be explained by the team rather than inferred or fabricated.

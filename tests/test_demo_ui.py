@@ -22,20 +22,25 @@ class DemoUiTests(unittest.TestCase):
 
     def test_home_page_renders_demo_interface(self):
         response = self.client.get("/")
-
-        self.assertEqual(response.status_code, 200)
-        self.assertIn(b"Bihar Agriculture Intelligence", response.data)
-        self.assertIn(b'id="question-form"', response.data)
-        self.assertIn(b'/static/app.js', response.data)
+        try:
+            self.assertEqual(response.status_code, 200)
+            self.assertIn(b"Bihar Agriculture Intelligence", response.data)
+            self.assertIn(b'id="question-form"', response.data)
+            self.assertIn(b'/static/app.js', response.data)
+        finally:
+            response.close()
 
     def test_static_assets_are_available(self):
         css_response = self.client.get("/static/app.css")
         js_response = self.client.get("/static/app.js")
-
-        self.assertEqual(css_response.status_code, 200)
-        self.assertEqual(js_response.status_code, 200)
-        self.assertIn(b"--forest", css_response.data)
-        self.assertIn(b"loadHealth", js_response.data)
+        try:
+            self.assertEqual(css_response.status_code, 200)
+            self.assertEqual(js_response.status_code, 200)
+            self.assertIn(b"--forest", css_response.data)
+            self.assertIn(b"loadHealth", js_response.data)
+        finally:
+            css_response.close()
+            js_response.close()
 
 
 if __name__ == "__main__":

@@ -1,6 +1,7 @@
-"""AgentEvals trajectory and code-based Phase 2 evaluators."""
+"""Independent AgentEvals trajectories and code-based Phase 2 checks."""
 
 import json
+import re
 
 
 EXPECTED_TOOLS = {
@@ -19,6 +20,11 @@ EXPECTED_TOOLS = {
         "tool_name": "pypdf_tesseract_extractor",
         "required_inputs": {"manifest", "source_ids", "dry_run"},
     },
+    "grounded_qa": {
+        "agent_id": "grounded_qa_agent",
+        "tool_name": "ollama_grounded_qa",
+        "required_inputs": {"question", "dry_run"},
+    },
 }
 
 
@@ -26,7 +32,9 @@ def _tool_call(tool_name, arguments):
     return {
         "function": {
             "name": tool_name,
-            "arguments": json.dumps(arguments, sort_keys=True),
+            "arguments": json.dumps(
+                arguments, ensure_ascii=False, sort_keys=True
+            ),
         }
     }
 
@@ -44,7 +52,8 @@ def result_trajectory(result):
         {
             "role": "tool",
             "content": json.dumps(
-                result.get("summary", {}), default=str, sort_keys=True
+                result.get("summary", {}), ensure_ascii=False, default=str,
+                sort_keys=True,
             ),
         },
         {
@@ -54,16 +63,20 @@ def result_trajectory(result):
     ]
 
 
-def reference_trajectory(result):
+def reference_trajectory(result, expected_tool_input=None):
+    """Build a reference that can be independent of the observed result."""
     expected = EXPECTED_TOOLS[result["source_id"]]
+    arguments = (
+        expected_tool_input
+        if expected_tool_input is not None
+        else result.get("tool_input", {})
+    )
     return [
         {"role": "user", "content": f"Process {result['source_id']}"},
         {
             "role": "assistant",
             "content": "",
-            "tool_calls": [
-                _tool_call(expected["tool_name"], result.get("tool_input", {}))
-            ],
+            "tool_calls": [_tool_call(expected["tool_name"], arguments)],
         },
         {"role": "tool", "content": "Expected source extraction result"},
         {"role": "assistant", "content": "Expected completion status"},
@@ -86,7 +99,83 @@ def _trajectory_evaluator():
     )
 
 
-def evaluate_trace(trace):
+def _numeric_tokens(value):
+    return set(re.findall(r"(?<!\w)\d[\d,]*(?:\.\d+)?", str(value)))
+
+
+def _qa_checks(summary, acceptance):
+    answer = str(summary.get("answer", "")).strip()
+    record_text = json.dumps(
+        summary.get("records", []), ensure_ascii=False, default=str
+    )
+    checks = {
+        "answer_present": bool(answer),
+        "records_retrieved": summary.get("records_retrieved", 0)
+        >= acceptance.get("min_records", 1),
+        "sources_returned": summary.get("source_count", 0)
+        >= acceptance.get("min_sources", 1),
+        "numeric_fidelity": _numeric_tokens(answer).issubset(
+            _numeric_tokens(record_text)
+        ),
+    }
+    if acceptance.get("intent"):
+        checks["intent_accuracy"] = (
+            summary.get("intent") == acceptance["intent"]
+        )
+    if acceptance.get("answer_language"):
+        checks["answer_language"] = (
+            summary.get("answer_language") == acceptance["answer_language"]
+        )
+    return checks
+
+
+def _case_checks(result, case_reference, trace):
+    if not case_reference:
+        return {}
+    acceptance = case_reference.get("acceptance", {})
+    summary = result.get("summary", {})
+    checks = {
+        "independent_tool_input": result.get("tool_input")
+        == case_reference.get("expected_tool_input"),
+    }
+    if "min_records" in acceptance and result["source_id"] != "grounded_qa":
+        processed = summary.get(
+            "records_processed", summary.get("chunks_processed", 0)
+        )
+        checks["minimum_records"] = processed >= acceptance["min_records"]
+    if "expected_records" in acceptance:
+        checks["expected_records"] = (
+            summary.get("records_processed") == acceptance["expected_records"]
+        )
+    if "expected_crop_groups" in acceptance:
+        checks["expected_crop_groups"] = (
+            summary.get("crop_groups") == acceptance["expected_crop_groups"]
+        )
+    if acceptance.get("period"):
+        checks["expected_period"] = summary.get("period") == acceptance["period"]
+    if "min_direct_pages" in acceptance:
+        checks["direct_text_extraction"] = (
+            summary.get("direct_pages", 0) >= acceptance["min_direct_pages"]
+        )
+    if "min_ocr_pages" in acceptance:
+        checks["ocr_extraction"] = (
+            summary.get("ocr_pages", 0) >= acceptance["min_ocr_pages"]
+        )
+    if acceptance.get("source_ids") is not None:
+        observed = [item.get("source_id") for item in summary.get("sources", [])]
+        checks["source_group"] = observed == acceptance["source_ids"]
+    if "expected_retries" in acceptance:
+        checks["retry_observed"] = (
+            trace.get("automation_metrics", {}).get("retries")
+            == acceptance["expected_retries"]
+        )
+    if result["source_id"] == "grounded_qa":
+        checks.update(_qa_checks(summary, acceptance))
+    return checks
+
+
+def evaluate_trace(trace, case_reference=None):
+    """Evaluate one trace, optionally against an independent case manifest."""
     evaluator = _trajectory_evaluator()
     per_agent = []
     for result in trace.get("results", []):
@@ -99,9 +188,13 @@ def evaluate_trace(trace):
                 "passed": False,
             })
             continue
+        expected_input = (
+            case_reference.get("expected_tool_input")
+            if case_reference else None
+        )
         trajectory = evaluator(
             outputs=result_trajectory(result),
-            reference_outputs=reference_trajectory(result),
+            reference_outputs=reference_trajectory(result, expected_input),
         )
         tool_input = result.get("tool_input", {})
         checks = {
@@ -123,6 +216,7 @@ def evaluate_trace(trace):
                 )
             ),
         }
+        checks.update(_case_checks(result, case_reference, trace))
         per_agent.append({
             "source_id": source_id,
             "agent_id": result.get("agent_id"),
@@ -139,20 +233,21 @@ def evaluate_trace(trace):
     }
     passed = bool(per_agent) and all(item["passed"] for item in per_agent)
     return {
+        "case_id": case_reference.get("id") if case_reference else None,
         "run_id": trace.get("run_id"),
-        "framework": "AgentEvals deterministic trajectory match",
+        "framework": "AgentEvals strict trajectory + independent checks",
         "passed": passed,
         "agents_evaluated": len(per_agent),
         "agents_passed": sum(item["passed"] for item in per_agent),
         "per_agent": per_agent,
         "automation": automation,
         "foundry_metric_mapping": {
-            "task_completion": "implemented as code evaluator",
-            "tool_selection": "implemented as reference mapping check",
-            "tool_input_accuracy": "implemented as required-field check",
-            "tool_call_accuracy": "implemented by AgentEvals strict trajectory match",
-            "tool_call_success": "implemented from observed tool result status",
-            "tool_output_utilization": "covered by trace result and downstream persistence",
-            "groundedness": "evaluated separately for the QA agent",
+            "task_completion": "code evaluator",
+            "tool_selection": "independent agent/tool reference",
+            "tool_input_accuracy": "independent exact case input",
+            "tool_call_accuracy": "AgentEvals strict trajectory match",
+            "tool_call_success": "observed tool result status",
+            "tool_output_utilization": "case-specific output assertions",
+            "groundedness": "retrieval, source, and numeric-fidelity checks",
         },
     }

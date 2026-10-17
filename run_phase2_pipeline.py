@@ -9,13 +9,19 @@ from config_reader import read_config
 from phase2.agents import (
     AgricultureDocumentsSourceAgent,
     CropStatisticsSourceAgent,
+    GroundedQAAgent,
     MandiSourceAgent,
 )
 from phase2.orchestrator import Phase2Supervisor
 from phase2.run_store import MongoRunStore
 
 
-SOURCE_CHOICES = ("mandi", "crop_statistics", "agriculture_documents")
+INGESTION_SOURCE_CHOICES = (
+    "mandi",
+    "crop_statistics",
+    "agriculture_documents",
+)
+SOURCE_CHOICES = (*INGESTION_SOURCE_CHOICES, "grounded_qa")
 
 
 def parse_args(argv=None):
@@ -30,19 +36,25 @@ def parse_args(argv=None):
         "--document-source", action="append", dest="document_sources",
         help="Optional PDF source id from sources/agriculture_sources.yaml.",
     )
+    parser.add_argument(
+        "--qa-question",
+        help="Run the grounded QA agent with this question.",
+    )
     parser.add_argument("--dry-run", action="store_true")
     parser.add_argument("--stop-on-error", action="store_true")
     parser.add_argument("--trace-out", help="Optional path for the JSON trace.")
     return parser.parse_args(argv)
 
 
-def build_supervisor(document_sources=None, run_store=None):
+def build_supervisor(document_sources=None, qa_question=None, run_store=None):
     config = read_config()
     agents = [
         MandiSourceAgent(config.get("bihar_krishi", {}).get("urls", [])),
         CropStatisticsSourceAgent(),
         AgricultureDocumentsSourceAgent(source_ids=document_sources),
     ]
+    if qa_question:
+        agents.append(GroundedQAAgent(qa_question))
     return Phase2Supervisor(
         agents,
         run_store=run_store or MongoRunStore(),
@@ -79,10 +91,20 @@ def print_summary(trace):
 
 
 def main(argv=None):
+    run_store = None
     try:
         args = parse_args(argv)
-        sources = args.source or list(SOURCE_CHOICES)
-        trace = build_supervisor(args.document_sources).run(
+        sources = args.source or list(INGESTION_SOURCE_CHOICES)
+        if args.qa_question and "grounded_qa" not in sources:
+            sources.append("grounded_qa")
+        if "grounded_qa" in sources and not args.qa_question:
+            raise ValueError("--qa-question is required for grounded_qa")
+        run_store = MongoRunStore()
+        trace = build_supervisor(
+            args.document_sources,
+            args.qa_question,
+            run_store=run_store,
+        ).run(
             sources,
             dry_run=args.dry_run,
             continue_on_error=not args.stop_on_error,
@@ -100,6 +122,9 @@ def main(argv=None):
     except Exception as exc:
         print(f"Phase 2 orchestration failed: {exc}", file=sys.stderr)
         return 1
+    finally:
+        if run_store is not None:
+            run_store.close()
 
 
 if __name__ == "__main__":

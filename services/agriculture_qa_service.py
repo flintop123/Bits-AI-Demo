@@ -1,6 +1,7 @@
 """Grounded natural-language questions over the agriculture collections."""
 
 import json
+import re
 from typing import Literal
 
 from pydantic import BaseModel, Field
@@ -43,8 +44,15 @@ class GroundedAnswer(BaseModel):
 
 class AgricultureQAService:
     def __init__(self, query_service=None, llm=None):
+        self._owns_query_service = query_service is None
         self.query_service = query_service or AgricultureQueryService()
         self.llm = llm or OllamaClient()
+
+    def close(self):
+        if self._owns_query_service:
+            close = getattr(self.query_service, "close", None)
+            if close is not None:
+                close()
 
     def ask(self, question):
         question = str(question or "").strip()
@@ -119,6 +127,9 @@ Rules:
   policies, programmes, objectives, seeds, mechanization, organic farming,
   horticulture, irrigation, soil conservation, livestock, fisheries, or other
   narrative material in the official report.
+- If the question explicitly refers to a report, handbook, brochure, policy,
+  scheme, पुस्तिका, रिपोर्ट, or योजना, always use document_search even when
+  words such as production or yield also appear.
 - For document_search, provide concise search_terms containing the important
   nouns from the question. Preserve important Devanagari nouns for a Hindi
   question. Hindi search terms may also include a useful English equivalent.
@@ -202,7 +213,98 @@ Records:
             ],
             schema,
         )
-        return GroundedAnswer.model_validate(response).answer
+        answer = GroundedAnswer.model_validate(response).answer
+        if self._answer_language_matches(answer, plan.language):
+            return answer
+
+        target = (
+            "Hindi written in Devanagari script"
+            if plan.language == "hi" else "English using Latin script"
+        )
+        correction_prompt = f"""
+The previous response used the wrong language. Answer the user's question
+again using only the supplied records.
+
+Mandatory rules:
+- Write the answer entirely in {target}.
+- Do not discuss the prompt, translation, OCR, or what the user requested.
+- Do not introduce facts, recommendations, or units absent from the records.
+- Preserve all numbers exactly.
+- Return only data conforming to this JSON schema:
+{json.dumps(schema, ensure_ascii=False)}
+
+Question:
+{question}
+
+Records:
+{json.dumps(records, ensure_ascii=False, default=str)}
+""".strip()
+        corrected_response = self.llm.chat_json(
+            [
+                {
+                    "role": "system",
+                    "content": (
+                        "You are a grounded bilingual agriculture assistant. "
+                        "The requested output language is mandatory."
+                    ),
+                },
+                {"role": "user", "content": correction_prompt},
+            ],
+            schema,
+        )
+        corrected = GroundedAnswer.model_validate(
+            corrected_response
+        ).answer
+        if self._answer_language_matches(corrected, plan.language):
+            return corrected
+        return self._extractive_language_fallback(records, plan.language)
+
+    @classmethod
+    def _extractive_language_fallback(
+        cls, records, language, max_characters=800
+    ):
+        snippets = []
+        used_characters = 0
+        for record in records:
+            content = re.sub(
+                r"\s+", " ", str(record.get("content", ""))
+            ).strip()
+            for sentence in re.split(r"(?<=[.!?\u0964])\s+", content):
+                sentence = sentence.strip()
+                if (
+                    len(sentence) < 20
+                    or not cls._answer_language_matches(sentence, language)
+                ):
+                    continue
+                remaining = max_characters - used_characters
+                if remaining <= 0:
+                    break
+                if len(sentence) > remaining:
+                    sentence = sentence[:remaining].rstrip()
+                snippets.append(sentence)
+                used_characters += len(sentence) + 1
+                if used_characters >= max_characters:
+                    break
+            if used_characters >= max_characters:
+                break
+        if not snippets:
+            raise ValueError(
+                "No retrieved source text matched the requested answer language"
+            )
+        prefix = (
+            "\u0909\u092a\u0932\u092c\u094d\u0927 \u0938\u094d\u0930\u094b\u0924\u094b\u0902 "
+            "\u0915\u0947 \u0905\u0928\u0941\u0938\u093e\u0930: "
+            if language == "hi" else "According to the available sources: "
+        )
+        return prefix + " ".join(snippets)
+
+    @staticmethod
+    def _answer_language_matches(answer, language):
+        has_devanagari = any(
+            "\u0900" <= character <= "\u097f"
+            for character in str(answer)
+        )
+        return has_devanagari if language == "hi" else not has_devanagari
 
     @staticmethod
     def _filters_for(plan, catalog):

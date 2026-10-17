@@ -1,0 +1,1563 @@
+{
+  "framework": "AgentEvals manifest-driven Phase 2 suite",
+  "passed": true,
+  "cases_evaluated": 7,
+  "cases_passed": 7,
+  "automation_rate": 1.0,
+  "results": [
+    {
+      "case_id": "mandi_live_table",
+      "description": null,
+      "source_id": "mandi",
+      "fault_injection": null,
+      "passed": true,
+      "trace": {
+        "run_id": "4c0b3b0a-d607-40ed-bacf-2a960528f869",
+        "orchestrator": "phase2_supervisor",
+        "routing_strategy": "deterministic_source_type",
+        "requested_sources": [
+          "mandi"
+        ],
+        "dry_run": true,
+        "status": "completed",
+        "started_at": "2026-10-17T21:44:53.074464+00:00",
+        "events": [
+          {
+            "event": "agent_selected",
+            "timestamp": "2026-10-17T21:44:54.234479+00:00",
+            "source_id": "mandi",
+            "agent_id": "mandi_web_agent",
+            "reason": "fixed mapping from source type to specialist agent"
+          },
+          {
+            "event": "tool_invoked",
+            "timestamp": "2026-10-17T21:44:54.234479+00:00",
+            "source_id": "mandi",
+            "agent_id": "mandi_web_agent",
+            "tool_name": "playwright_mandi_extractor",
+            "attempt": 1
+          },
+          {
+            "event": "tool_result",
+            "timestamp": "2026-10-17T21:45:04.400652+00:00",
+            "source_id": "mandi",
+            "agent_id": "mandi_web_agent",
+            "tool_name": "playwright_mandi_extractor",
+            "attempt": 1,
+            "status": "success",
+            "summary": {
+              "sources_processed": 1,
+              "records_processed": 10,
+              "inserted": 0,
+              "count_before": null,
+              "count_after": null,
+              "dry_run": true,
+              "provenance": {
+                "extraction_run_id": "4c0b3b0a-d607-40ed-bacf-2a960528f869",
+                "extracting_agent": "mandi_web_agent",
+                "source_type": "website",
+                "extracted_at": "2026-10-17T21:45:04.400652+00:00"
+              }
+            }
+          }
+        ],
+        "langsmith": {
+          "enabled": true,
+          "project": "bihar-crop-phase2",
+          "reason": null
+        },
+        "completed_at": "2026-10-17T21:45:04.400652+00:00",
+        "results": [
+          {
+            "agent_id": "mandi_web_agent",
+            "source_id": "mandi",
+            "tool_name": "playwright_mandi_extractor",
+            "tool_input": {
+              "urls": [
+                "https://www.biharkrishi.in/mandi"
+              ],
+              "dry_run": true
+            },
+            "status": "completed",
+            "summary": {
+              "sources_processed": 1,
+              "records_processed": 10,
+              "inserted": 0,
+              "count_before": null,
+              "count_after": null,
+              "dry_run": true,
+              "provenance": {
+                "extraction_run_id": "4c0b3b0a-d607-40ed-bacf-2a960528f869",
+                "extracting_agent": "mandi_web_agent",
+                "source_type": "website",
+                "extracted_at": "2026-10-17T21:45:04.400652+00:00"
+              }
+            },
+            "error": null,
+            "started_at": "2026-10-17T21:44:54.962462+00:00",
+            "completed_at": "2026-10-17T21:45:04.400652+00:00"
+          }
+        ],
+        "automation_metrics": {
+          "inputs_attempted": 1,
+          "inputs_without_manual_intervention": 1,
+          "automation_rate": 1.0,
+          "manual_interventions": 0,
+          "tool_calls": 1,
+          "retries": 0,
+          "unnecessary_tool_calls": 0
+        }
+      },
+      "evaluation": {
+        "case_id": "mandi_live_table",
+        "run_id": "4c0b3b0a-d607-40ed-bacf-2a960528f869",
+        "framework": "AgentEvals strict trajectory + independent checks",
+        "passed": true,
+        "agents_evaluated": 1,
+        "agents_passed": 1,
+        "per_agent": [
+          {
+            "source_id": "mandi",
+            "agent_id": "mandi_web_agent",
+            "checks": {
+              "trajectory_match": true,
+              "tool_selection": true,
+              "tool_input_accuracy": true,
+              "tool_call_success": true,
+              "task_completion": true,
+              "provenance_completeness": true,
+              "independent_tool_input": true,
+              "minimum_records": true
+            },
+            "passed": true
+          }
+        ],
+        "automation": {
+          "rate": 1.0,
+          "manual_interventions": 0,
+          "retries": 0,
+          "unnecessary_tool_calls": 0
+        },
+        "foundry_metric_mapping": {
+          "task_completion": "code evaluator",
+          "tool_selection": "independent agent/tool reference",
+          "tool_input_accuracy": "independent exact case input",
+          "tool_call_accuracy": "AgentEvals strict trajectory match",
+          "tool_call_success": "observed tool result status",
+          "tool_output_utilization": "case-specific output assertions",
+          "groundedness": "retrieval, source, and numeric-fidelity checks"
+        }
+      }
+    },
+    {
+      "case_id": "crop_statistics_workbook",
+      "description": null,
+      "source_id": "crop_statistics",
+      "fault_injection": null,
+      "passed": true,
+      "trace": {
+        "run_id": "43d6e68b-bfdb-411b-9c13-0772dae6d04a",
+        "orchestrator": "phase2_supervisor",
+        "routing_strategy": "deterministic_source_type",
+        "requested_sources": [
+          "crop_statistics"
+        ],
+        "dry_run": true,
+        "status": "completed",
+        "started_at": "2026-10-17T21:45:04.835108+00:00",
+        "events": [
+          {
+            "event": "agent_selected",
+            "timestamp": "2026-10-17T21:45:04.835108+00:00",
+            "source_id": "crop_statistics",
+            "agent_id": "crop_statistics_excel_agent",
+            "reason": "fixed mapping from source type to specialist agent"
+          },
+          {
+            "event": "tool_invoked",
+            "timestamp": "2026-10-17T21:45:04.835108+00:00",
+            "source_id": "crop_statistics",
+            "agent_id": "crop_statistics_excel_agent",
+            "tool_name": "pandas_excel_extractor",
+            "attempt": 1
+          },
+          {
+            "event": "tool_result",
+            "timestamp": "2026-10-17T21:45:05.869783+00:00",
+            "source_id": "crop_statistics",
+            "agent_id": "crop_statistics_excel_agent",
+            "tool_name": "pandas_excel_extractor",
+            "attempt": 1,
+            "status": "success",
+            "summary": {
+              "records_processed": 4372,
+              "crop_groups": 36,
+              "period": {
+                "first": "1966-67",
+                "last": "2024-25"
+              },
+              "inserted": 0,
+              "matched": 0,
+              "modified": 0,
+              "count_before": null,
+              "count_after": null,
+              "dry_run": true,
+              "provenance": {
+                "extraction_run_id": "43d6e68b-bfdb-411b-9c13-0772dae6d04a",
+                "extracting_agent": "crop_statistics_excel_agent",
+                "source_type": "excel",
+                "extracted_at": "2026-10-17T21:45:05.867233+00:00"
+              }
+            }
+          }
+        ],
+        "langsmith": {
+          "enabled": true,
+          "project": "bihar-crop-phase2",
+          "reason": null
+        },
+        "completed_at": "2026-10-17T21:45:05.869783+00:00",
+        "results": [
+          {
+            "agent_id": "crop_statistics_excel_agent",
+            "source_id": "crop_statistics",
+            "tool_name": "pandas_excel_extractor",
+            "tool_input": {
+              "file": "D:\\BiharAgriculture\\Bits-AI-Demo\\data\\Crop wise Area Production & Yield.xlsx",
+              "dry_run": true
+            },
+            "status": "completed",
+            "summary": {
+              "records_processed": 4372,
+              "crop_groups": 36,
+              "period": {
+                "first": "1966-67",
+                "last": "2024-25"
+              },
+              "inserted": 0,
+              "matched": 0,
+              "modified": 0,
+              "count_before": null,
+              "count_after": null,
+              "dry_run": true,
+              "provenance": {
+                "extraction_run_id": "43d6e68b-bfdb-411b-9c13-0772dae6d04a",
+                "extracting_agent": "crop_statistics_excel_agent",
+                "source_type": "excel",
+                "extracted_at": "2026-10-17T21:45:05.867233+00:00"
+              }
+            },
+            "error": null,
+            "started_at": "2026-10-17T21:45:04.835108+00:00",
+            "completed_at": "2026-10-17T21:45:05.869783+00:00"
+          }
+        ],
+        "automation_metrics": {
+          "inputs_attempted": 1,
+          "inputs_without_manual_intervention": 1,
+          "automation_rate": 1.0,
+          "manual_interventions": 0,
+          "tool_calls": 1,
+          "retries": 0,
+          "unnecessary_tool_calls": 0
+        }
+      },
+      "evaluation": {
+        "case_id": "crop_statistics_workbook",
+        "run_id": "43d6e68b-bfdb-411b-9c13-0772dae6d04a",
+        "framework": "AgentEvals strict trajectory + independent checks",
+        "passed": true,
+        "agents_evaluated": 1,
+        "agents_passed": 1,
+        "per_agent": [
+          {
+            "source_id": "crop_statistics",
+            "agent_id": "crop_statistics_excel_agent",
+            "checks": {
+              "trajectory_match": true,
+              "tool_selection": true,
+              "tool_input_accuracy": true,
+              "tool_call_success": true,
+              "task_completion": true,
+              "provenance_completeness": true,
+              "independent_tool_input": true,
+              "expected_records": true,
+              "expected_crop_groups": true,
+              "expected_period": true
+            },
+            "passed": true
+          }
+        ],
+        "automation": {
+          "rate": 1.0,
+          "manual_interventions": 0,
+          "retries": 0,
+          "unnecessary_tool_calls": 0
+        },
+        "foundry_metric_mapping": {
+          "task_completion": "code evaluator",
+          "tool_selection": "independent agent/tool reference",
+          "tool_input_accuracy": "independent exact case input",
+          "tool_call_accuracy": "AgentEvals strict trajectory match",
+          "tool_call_success": "observed tool result status",
+          "tool_output_utilization": "case-specific output assertions",
+          "groundedness": "retrieval, source, and numeric-fidelity checks"
+        }
+      }
+    },
+    {
+      "case_id": "pdf_english_direct_text",
+      "description": null,
+      "source_id": "agriculture_documents",
+      "fault_injection": null,
+      "passed": true,
+      "trace": {
+        "run_id": "823cbc48-82e5-42df-8443-49eb68c0d240",
+        "orchestrator": "phase2_supervisor",
+        "routing_strategy": "deterministic_source_type",
+        "requested_sources": [
+          "agriculture_documents"
+        ],
+        "dry_run": true,
+        "status": "completed",
+        "started_at": "2026-10-17T21:45:05.874121+00:00",
+        "events": [
+          {
+            "event": "agent_selected",
+            "timestamp": "2026-10-17T21:45:05.874121+00:00",
+            "source_id": "agriculture_documents",
+            "agent_id": "multilingual_pdf_agent",
+            "reason": "fixed mapping from source type to specialist agent"
+          },
+          {
+            "event": "tool_invoked",
+            "timestamp": "2026-10-17T21:45:05.874121+00:00",
+            "source_id": "agriculture_documents",
+            "agent_id": "multilingual_pdf_agent",
+            "tool_name": "pypdf_tesseract_extractor",
+            "attempt": 1
+          },
+          {
+            "event": "tool_result",
+            "timestamp": "2026-10-17T21:45:07.533720+00:00",
+            "source_id": "agriculture_documents",
+            "agent_id": "multilingual_pdf_agent",
+            "tool_name": "pypdf_tesseract_extractor",
+            "attempt": 1,
+            "status": "success",
+            "summary": {
+              "sources_processed": 1,
+              "pages_requested": 20,
+              "pages_extracted": 20,
+              "direct_pages": 20,
+              "ocr_pages": 0,
+              "skipped_pages": 0,
+              "chunks_processed": 54,
+              "inserted": 0,
+              "matched": 0,
+              "modified": 0,
+              "count_before": null,
+              "count_after": null,
+              "dry_run": true,
+              "sources": [
+                {
+                  "source_id": "bihar_annual_scheme_2022_23",
+                  "title": "Bihar Annual Scheme 2022-23 - Agriculture and Allied Sector",
+                  "language": "en",
+                  "chunks_processed": 54,
+                  "pages_requested": 20,
+                  "pages_extracted": 20,
+                  "direct_pages": 20,
+                  "ocr_pages": 0,
+                  "skipped_pages": 0,
+                  "language_counts": {
+                    "en": 20
+                  },
+                  "inserted": 0,
+                  "matched": 0,
+                  "modified": 0
+                }
+              ],
+              "provenance": {
+                "extraction_run_id": "823cbc48-82e5-42df-8443-49eb68c0d240",
+                "extracting_agent": "multilingual_pdf_agent",
+                "source_type": "pdf",
+                "extracted_at": "2026-10-17T21:45:05.878136+00:00"
+              }
+            }
+          }
+        ],
+        "langsmith": {
+          "enabled": true,
+          "project": "bihar-crop-phase2",
+          "reason": null
+        },
+        "completed_at": "2026-10-17T21:45:07.533720+00:00",
+        "results": [
+          {
+            "agent_id": "multilingual_pdf_agent",
+            "source_id": "agriculture_documents",
+            "tool_name": "pypdf_tesseract_extractor",
+            "tool_input": {
+              "manifest": "D:\\BiharAgriculture\\Bits-AI-Demo\\sources\\agriculture_sources.yaml",
+              "source_ids": [
+                "bihar_annual_scheme_2022_23"
+              ],
+              "dry_run": true
+            },
+            "status": "completed",
+            "summary": {
+              "sources_processed": 1,
+              "pages_requested": 20,
+              "pages_extracted": 20,
+              "direct_pages": 20,
+              "ocr_pages": 0,
+              "skipped_pages": 0,
+              "chunks_processed": 54,
+              "inserted": 0,
+              "matched": 0,
+              "modified": 0,
+              "count_before": null,
+              "count_after": null,
+              "dry_run": true,
+              "sources": [
+                {
+                  "source_id": "bihar_annual_scheme_2022_23",
+                  "title": "Bihar Annual Scheme 2022-23 - Agriculture and Allied Sector",
+                  "language": "en",
+                  "chunks_processed": 54,
+                  "pages_requested": 20,
+                  "pages_extracted": 20,
+                  "direct_pages": 20,
+                  "ocr_pages": 0,
+                  "skipped_pages": 0,
+                  "language_counts": {
+                    "en": 20
+                  },
+                  "inserted": 0,
+                  "matched": 0,
+                  "modified": 0
+                }
+              ],
+              "provenance": {
+                "extraction_run_id": "823cbc48-82e5-42df-8443-49eb68c0d240",
+                "extracting_agent": "multilingual_pdf_agent",
+                "source_type": "pdf",
+                "extracted_at": "2026-10-17T21:45:05.878136+00:00"
+              }
+            },
+            "error": null,
+            "started_at": "2026-10-17T21:45:05.874121+00:00",
+            "completed_at": "2026-10-17T21:45:07.533720+00:00"
+          }
+        ],
+        "automation_metrics": {
+          "inputs_attempted": 1,
+          "inputs_without_manual_intervention": 1,
+          "automation_rate": 1.0,
+          "manual_interventions": 0,
+          "tool_calls": 1,
+          "retries": 0,
+          "unnecessary_tool_calls": 0
+        }
+      },
+      "evaluation": {
+        "case_id": "pdf_english_direct_text",
+        "run_id": "823cbc48-82e5-42df-8443-49eb68c0d240",
+        "framework": "AgentEvals strict trajectory + independent checks",
+        "passed": true,
+        "agents_evaluated": 1,
+        "agents_passed": 1,
+        "per_agent": [
+          {
+            "source_id": "agriculture_documents",
+            "agent_id": "multilingual_pdf_agent",
+            "checks": {
+              "trajectory_match": true,
+              "tool_selection": true,
+              "tool_input_accuracy": true,
+              "tool_call_success": true,
+              "task_completion": true,
+              "provenance_completeness": true,
+              "independent_tool_input": true,
+              "minimum_records": true,
+              "direct_text_extraction": true,
+              "source_group": true
+            },
+            "passed": true
+          }
+        ],
+        "automation": {
+          "rate": 1.0,
+          "manual_interventions": 0,
+          "retries": 0,
+          "unnecessary_tool_calls": 0
+        },
+        "foundry_metric_mapping": {
+          "task_completion": "code evaluator",
+          "tool_selection": "independent agent/tool reference",
+          "tool_input_accuracy": "independent exact case input",
+          "tool_call_accuracy": "AgentEvals strict trajectory match",
+          "tool_call_success": "observed tool result status",
+          "tool_output_utilization": "case-specific output assertions",
+          "groundedness": "retrieval, source, and numeric-fidelity checks"
+        }
+      }
+    },
+    {
+      "case_id": "pdf_hindi_ocr",
+      "description": null,
+      "source_id": "agriculture_documents",
+      "fault_injection": null,
+      "passed": true,
+      "trace": {
+        "run_id": "dde51429-9ac7-4699-b989-60778f656ad3",
+        "orchestrator": "phase2_supervisor",
+        "routing_strategy": "deterministic_source_type",
+        "requested_sources": [
+          "agriculture_documents"
+        ],
+        "dry_run": true,
+        "status": "completed",
+        "started_at": "2026-10-17T21:45:07.539244+00:00",
+        "events": [
+          {
+            "event": "agent_selected",
+            "timestamp": "2026-10-17T21:45:07.539244+00:00",
+            "source_id": "agriculture_documents",
+            "agent_id": "multilingual_pdf_agent",
+            "reason": "fixed mapping from source type to specialist agent"
+          },
+          {
+            "event": "tool_invoked",
+            "timestamp": "2026-10-17T21:45:07.539244+00:00",
+            "source_id": "agriculture_documents",
+            "agent_id": "multilingual_pdf_agent",
+            "tool_name": "pypdf_tesseract_extractor",
+            "attempt": 1
+          },
+          {
+            "event": "tool_result",
+            "timestamp": "2026-10-17T21:45:52.441611+00:00",
+            "source_id": "agriculture_documents",
+            "agent_id": "multilingual_pdf_agent",
+            "tool_name": "pypdf_tesseract_extractor",
+            "attempt": 1,
+            "status": "success",
+            "summary": {
+              "sources_processed": 1,
+              "pages_requested": 15,
+              "pages_extracted": 15,
+              "direct_pages": 0,
+              "ocr_pages": 15,
+              "skipped_pages": 0,
+              "chunks_processed": 24,
+              "inserted": 0,
+              "matched": 0,
+              "modified": 0,
+              "count_before": null,
+              "count_after": null,
+              "dry_run": true,
+              "sources": [
+                {
+                  "source_id": "pmfme_makhana_handbook_hindi",
+                  "title": "पीएमएफएमई मखाना पुस्तिका",
+                  "language": "hi",
+                  "chunks_processed": 24,
+                  "pages_requested": 15,
+                  "pages_extracted": 15,
+                  "direct_pages": 0,
+                  "ocr_pages": 15,
+                  "skipped_pages": 0,
+                  "language_counts": {
+                    "mixed": 3,
+                    "hi": 12
+                  },
+                  "inserted": 0,
+                  "matched": 0,
+                  "modified": 0
+                }
+              ],
+              "provenance": {
+                "extraction_run_id": "dde51429-9ac7-4699-b989-60778f656ad3",
+                "extracting_agent": "multilingual_pdf_agent",
+                "source_type": "pdf",
+                "extracted_at": "2026-10-17T21:45:07.543249+00:00"
+              }
+            }
+          }
+        ],
+        "langsmith": {
+          "enabled": true,
+          "project": "bihar-crop-phase2",
+          "reason": null
+        },
+        "completed_at": "2026-10-17T21:45:52.441611+00:00",
+        "results": [
+          {
+            "agent_id": "multilingual_pdf_agent",
+            "source_id": "agriculture_documents",
+            "tool_name": "pypdf_tesseract_extractor",
+            "tool_input": {
+              "manifest": "D:\\BiharAgriculture\\Bits-AI-Demo\\sources\\agriculture_sources.yaml",
+              "source_ids": [
+                "pmfme_makhana_handbook_hindi"
+              ],
+              "dry_run": true
+            },
+            "status": "completed",
+            "summary": {
+              "sources_processed": 1,
+              "pages_requested": 15,
+              "pages_extracted": 15,
+              "direct_pages": 0,
+              "ocr_pages": 15,
+              "skipped_pages": 0,
+              "chunks_processed": 24,
+              "inserted": 0,
+              "matched": 0,
+              "modified": 0,
+              "count_before": null,
+              "count_after": null,
+              "dry_run": true,
+              "sources": [
+                {
+                  "source_id": "pmfme_makhana_handbook_hindi",
+                  "title": "पीएमएफएमई मखाना पुस्तिका",
+                  "language": "hi",
+                  "chunks_processed": 24,
+                  "pages_requested": 15,
+                  "pages_extracted": 15,
+                  "direct_pages": 0,
+                  "ocr_pages": 15,
+                  "skipped_pages": 0,
+                  "language_counts": {
+                    "mixed": 3,
+                    "hi": 12
+                  },
+                  "inserted": 0,
+                  "matched": 0,
+                  "modified": 0
+                }
+              ],
+              "provenance": {
+                "extraction_run_id": "dde51429-9ac7-4699-b989-60778f656ad3",
+                "extracting_agent": "multilingual_pdf_agent",
+                "source_type": "pdf",
+                "extracted_at": "2026-10-17T21:45:07.543249+00:00"
+              }
+            },
+            "error": null,
+            "started_at": "2026-10-17T21:45:07.539244+00:00",
+            "completed_at": "2026-10-17T21:45:52.441611+00:00"
+          }
+        ],
+        "automation_metrics": {
+          "inputs_attempted": 1,
+          "inputs_without_manual_intervention": 1,
+          "automation_rate": 1.0,
+          "manual_interventions": 0,
+          "tool_calls": 1,
+          "retries": 0,
+          "unnecessary_tool_calls": 0
+        }
+      },
+      "evaluation": {
+        "case_id": "pdf_hindi_ocr",
+        "run_id": "dde51429-9ac7-4699-b989-60778f656ad3",
+        "framework": "AgentEvals strict trajectory + independent checks",
+        "passed": true,
+        "agents_evaluated": 1,
+        "agents_passed": 1,
+        "per_agent": [
+          {
+            "source_id": "agriculture_documents",
+            "agent_id": "multilingual_pdf_agent",
+            "checks": {
+              "trajectory_match": true,
+              "tool_selection": true,
+              "tool_input_accuracy": true,
+              "tool_call_success": true,
+              "task_completion": true,
+              "provenance_completeness": true,
+              "independent_tool_input": true,
+              "minimum_records": true,
+              "ocr_extraction": true,
+              "source_group": true
+            },
+            "passed": true
+          }
+        ],
+        "automation": {
+          "rate": 1.0,
+          "manual_interventions": 0,
+          "retries": 0,
+          "unnecessary_tool_calls": 0
+        },
+        "foundry_metric_mapping": {
+          "task_completion": "code evaluator",
+          "tool_selection": "independent agent/tool reference",
+          "tool_input_accuracy": "independent exact case input",
+          "tool_call_accuracy": "AgentEvals strict trajectory match",
+          "tool_call_success": "observed tool result status",
+          "tool_output_utilization": "case-specific output assertions",
+          "groundedness": "retrieval, source, and numeric-fidelity checks"
+        }
+      }
+    },
+    {
+      "case_id": "qa_english_statistics",
+      "description": null,
+      "source_id": "grounded_qa",
+      "fault_injection": null,
+      "passed": true,
+      "trace": {
+        "run_id": "02eb4036-aa6b-474c-aab7-0357931ef39b",
+        "orchestrator": "phase2_supervisor",
+        "routing_strategy": "deterministic_source_type",
+        "requested_sources": [
+          "grounded_qa"
+        ],
+        "dry_run": true,
+        "status": "completed",
+        "started_at": "2026-10-17T21:45:52.449562+00:00",
+        "events": [
+          {
+            "event": "agent_selected",
+            "timestamp": "2026-10-17T21:45:52.449562+00:00",
+            "source_id": "grounded_qa",
+            "agent_id": "grounded_qa_agent",
+            "reason": "fixed mapping from source type to specialist agent"
+          },
+          {
+            "event": "tool_invoked",
+            "timestamp": "2026-10-17T21:45:52.449562+00:00",
+            "source_id": "grounded_qa",
+            "agent_id": "grounded_qa_agent",
+            "tool_name": "ollama_grounded_qa",
+            "attempt": 1
+          },
+          {
+            "event": "tool_result",
+            "timestamp": "2026-10-17T21:46:20.528114+00:00",
+            "source_id": "grounded_qa",
+            "agent_id": "grounded_qa_agent",
+            "tool_name": "ollama_grounded_qa",
+            "attempt": 1,
+            "status": "success",
+            "summary": {
+              "question": "What was rice production in 2024-25?",
+              "answer": "Rice production for 2024-25 is 8440825.31 tonnes as per the total season data from the Department of Agriculture & Farmers Welfare.",
+              "answer_language": "en",
+              "intent": "crop_statistics",
+              "metric": "production",
+              "filters": {
+                "crop": "Rice",
+                "year": "2024-25"
+              },
+              "records_retrieved": 3,
+              "records": [
+                {
+                  "year": "2024-25",
+                  "season": "Kharif",
+                  "crop": "Rice",
+                  "area_hectares": 3159120,
+                  "area_unit": "hectare",
+                  "ingested_at": "2026-10-17 17:06:28.843000",
+                  "is_advance_estimate": true,
+                  "production": 8285108.11,
+                  "production_unit": "tonne",
+                  "source": "Department of Agriculture & Farmers Welfare",
+                  "source_file": "Crop wise Area Production & Yield.xlsx",
+                  "source_row": 8,
+                  "yield_kg_per_hectare": 2623,
+                  "yield_unit": "kg_per_hectare",
+                  "extracted_at": "2026-10-17T20:26:20.651128+00:00",
+                  "extracting_agent": "crop_statistics_excel_agent",
+                  "extraction_run_id": "5d062f9d-6f69-42bd-bedb-f7a6b521071f",
+                  "source_type": "excel"
+                },
+                {
+                  "year": "2024-25",
+                  "season": "Summer",
+                  "crop": "Rice",
+                  "area_hectares": 55953,
+                  "area_unit": "hectare",
+                  "ingested_at": "2026-10-17 17:06:28.843000",
+                  "is_advance_estimate": true,
+                  "production": 155717.2,
+                  "production_unit": "tonne",
+                  "source": "Department of Agriculture & Farmers Welfare",
+                  "source_file": "Crop wise Area Production & Yield.xlsx",
+                  "source_row": 10,
+                  "yield_kg_per_hectare": 2783,
+                  "yield_unit": "kg_per_hectare",
+                  "extracted_at": "2026-10-17T20:26:20.651128+00:00",
+                  "extracting_agent": "crop_statistics_excel_agent",
+                  "extraction_run_id": "5d062f9d-6f69-42bd-bedb-f7a6b521071f",
+                  "source_type": "excel"
+                },
+                {
+                  "year": "2024-25",
+                  "season": "Total",
+                  "crop": "Rice",
+                  "area_hectares": 3215073,
+                  "area_unit": "hectare",
+                  "ingested_at": "2026-10-17 17:06:28.843000",
+                  "is_advance_estimate": true,
+                  "production": 8440825.31,
+                  "production_unit": "tonne",
+                  "source": "Department of Agriculture & Farmers Welfare",
+                  "source_file": "Crop wise Area Production & Yield.xlsx",
+                  "source_row": 11,
+                  "yield_kg_per_hectare": 2625,
+                  "yield_unit": "kg_per_hectare",
+                  "extracted_at": "2026-10-17T20:26:20.651128+00:00",
+                  "extracting_agent": "crop_statistics_excel_agent",
+                  "extraction_run_id": "5d062f9d-6f69-42bd-bedb-f7a6b521071f",
+                  "source_type": "excel"
+                }
+              ],
+              "sources": [
+                {
+                  "source": "Department of Agriculture & Farmers Welfare",
+                  "source_file": "Crop wise Area Production & Yield.xlsx"
+                }
+              ],
+              "source_count": 1,
+              "model": "qwen3:4b",
+              "provenance": {
+                "extraction_run_id": "02eb4036-aa6b-474c-aab7-0357931ef39b",
+                "extracting_agent": "grounded_qa_agent",
+                "source_type": "grounded_query",
+                "extracted_at": "2026-10-17T21:46:20.526474+00:00"
+              }
+            }
+          }
+        ],
+        "langsmith": {
+          "enabled": true,
+          "project": "bihar-crop-phase2",
+          "reason": null
+        },
+        "completed_at": "2026-10-17T21:46:20.528675+00:00",
+        "results": [
+          {
+            "agent_id": "grounded_qa_agent",
+            "source_id": "grounded_qa",
+            "tool_name": "ollama_grounded_qa",
+            "tool_input": {
+              "question": "What was rice production in 2024-25?",
+              "dry_run": true
+            },
+            "status": "completed",
+            "summary": {
+              "question": "What was rice production in 2024-25?",
+              "answer": "Rice production for 2024-25 is 8440825.31 tonnes as per the total season data from the Department of Agriculture & Farmers Welfare.",
+              "answer_language": "en",
+              "intent": "crop_statistics",
+              "metric": "production",
+              "filters": {
+                "crop": "Rice",
+                "year": "2024-25"
+              },
+              "records_retrieved": 3,
+              "records": [
+                {
+                  "year": "2024-25",
+                  "season": "Kharif",
+                  "crop": "Rice",
+                  "area_hectares": 3159120,
+                  "area_unit": "hectare",
+                  "ingested_at": "2026-10-17 17:06:28.843000",
+                  "is_advance_estimate": true,
+                  "production": 8285108.11,
+                  "production_unit": "tonne",
+                  "source": "Department of Agriculture & Farmers Welfare",
+                  "source_file": "Crop wise Area Production & Yield.xlsx",
+                  "source_row": 8,
+                  "yield_kg_per_hectare": 2623,
+                  "yield_unit": "kg_per_hectare",
+                  "extracted_at": "2026-10-17T20:26:20.651128+00:00",
+                  "extracting_agent": "crop_statistics_excel_agent",
+                  "extraction_run_id": "5d062f9d-6f69-42bd-bedb-f7a6b521071f",
+                  "source_type": "excel"
+                },
+                {
+                  "year": "2024-25",
+                  "season": "Summer",
+                  "crop": "Rice",
+                  "area_hectares": 55953,
+                  "area_unit": "hectare",
+                  "ingested_at": "2026-10-17 17:06:28.843000",
+                  "is_advance_estimate": true,
+                  "production": 155717.2,
+                  "production_unit": "tonne",
+                  "source": "Department of Agriculture & Farmers Welfare",
+                  "source_file": "Crop wise Area Production & Yield.xlsx",
+                  "source_row": 10,
+                  "yield_kg_per_hectare": 2783,
+                  "yield_unit": "kg_per_hectare",
+                  "extracted_at": "2026-10-17T20:26:20.651128+00:00",
+                  "extracting_agent": "crop_statistics_excel_agent",
+                  "extraction_run_id": "5d062f9d-6f69-42bd-bedb-f7a6b521071f",
+                  "source_type": "excel"
+                },
+                {
+                  "year": "2024-25",
+                  "season": "Total",
+                  "crop": "Rice",
+                  "area_hectares": 3215073,
+                  "area_unit": "hectare",
+                  "ingested_at": "2026-10-17 17:06:28.843000",
+                  "is_advance_estimate": true,
+                  "production": 8440825.31,
+                  "production_unit": "tonne",
+                  "source": "Department of Agriculture & Farmers Welfare",
+                  "source_file": "Crop wise Area Production & Yield.xlsx",
+                  "source_row": 11,
+                  "yield_kg_per_hectare": 2625,
+                  "yield_unit": "kg_per_hectare",
+                  "extracted_at": "2026-10-17T20:26:20.651128+00:00",
+                  "extracting_agent": "crop_statistics_excel_agent",
+                  "extraction_run_id": "5d062f9d-6f69-42bd-bedb-f7a6b521071f",
+                  "source_type": "excel"
+                }
+              ],
+              "sources": [
+                {
+                  "source": "Department of Agriculture & Farmers Welfare",
+                  "source_file": "Crop wise Area Production & Yield.xlsx"
+                }
+              ],
+              "source_count": 1,
+              "model": "qwen3:4b",
+              "provenance": {
+                "extraction_run_id": "02eb4036-aa6b-474c-aab7-0357931ef39b",
+                "extracting_agent": "grounded_qa_agent",
+                "source_type": "grounded_query",
+                "extracted_at": "2026-10-17T21:46:20.526474+00:00"
+              }
+            },
+            "error": null,
+            "started_at": "2026-10-17T21:45:52.462356+00:00",
+            "completed_at": "2026-10-17T21:46:20.526474+00:00"
+          }
+        ],
+        "automation_metrics": {
+          "inputs_attempted": 1,
+          "inputs_without_manual_intervention": 1,
+          "automation_rate": 1.0,
+          "manual_interventions": 0,
+          "tool_calls": 1,
+          "retries": 0,
+          "unnecessary_tool_calls": 0
+        }
+      },
+      "evaluation": {
+        "case_id": "qa_english_statistics",
+        "run_id": "02eb4036-aa6b-474c-aab7-0357931ef39b",
+        "framework": "AgentEvals strict trajectory + independent checks",
+        "passed": true,
+        "agents_evaluated": 1,
+        "agents_passed": 1,
+        "per_agent": [
+          {
+            "source_id": "grounded_qa",
+            "agent_id": "grounded_qa_agent",
+            "checks": {
+              "trajectory_match": true,
+              "tool_selection": true,
+              "tool_input_accuracy": true,
+              "tool_call_success": true,
+              "task_completion": true,
+              "provenance_completeness": true,
+              "independent_tool_input": true,
+              "answer_present": true,
+              "records_retrieved": true,
+              "sources_returned": true,
+              "numeric_fidelity": true,
+              "intent_accuracy": true,
+              "answer_language": true
+            },
+            "passed": true
+          }
+        ],
+        "automation": {
+          "rate": 1.0,
+          "manual_interventions": 0,
+          "retries": 0,
+          "unnecessary_tool_calls": 0
+        },
+        "foundry_metric_mapping": {
+          "task_completion": "code evaluator",
+          "tool_selection": "independent agent/tool reference",
+          "tool_input_accuracy": "independent exact case input",
+          "tool_call_accuracy": "AgentEvals strict trajectory match",
+          "tool_call_success": "observed tool result status",
+          "tool_output_utilization": "case-specific output assertions",
+          "groundedness": "retrieval, source, and numeric-fidelity checks"
+        }
+      }
+    },
+    {
+      "case_id": "qa_hindi_documents",
+      "description": null,
+      "source_id": "grounded_qa",
+      "fault_injection": null,
+      "passed": true,
+      "trace": {
+        "run_id": "21c8519d-47be-495d-bab4-5126ca215c41",
+        "orchestrator": "phase2_supervisor",
+        "routing_strategy": "deterministic_source_type",
+        "requested_sources": [
+          "grounded_qa"
+        ],
+        "dry_run": true,
+        "status": "completed",
+        "started_at": "2026-10-17T21:46:20.533781+00:00",
+        "events": [
+          {
+            "event": "agent_selected",
+            "timestamp": "2026-10-17T21:46:20.534972+00:00",
+            "source_id": "grounded_qa",
+            "agent_id": "grounded_qa_agent",
+            "reason": "fixed mapping from source type to specialist agent"
+          },
+          {
+            "event": "tool_invoked",
+            "timestamp": "2026-10-17T21:46:20.534972+00:00",
+            "source_id": "grounded_qa",
+            "agent_id": "grounded_qa_agent",
+            "tool_name": "ollama_grounded_qa",
+            "attempt": 1
+          },
+          {
+            "event": "tool_result",
+            "timestamp": "2026-10-17T21:47:12.377826+00:00",
+            "source_id": "grounded_qa",
+            "agent_id": "grounded_qa_agent",
+            "tool_name": "ollama_grounded_qa",
+            "attempt": 1,
+            "status": "success",
+            "summary": {
+              "question": "पीएमएफएमई मखाना पुस्तिका में मखाना प्रसंस्करण और संबंधित योजनाओं के बारे में क्या बताया गया है?",
+              "answer": "उपलब्ध स्रोतों के अनुसार: पीएमएफएमई - फॉक्सनट (मखाना) 3 घंटे के लिए तेज धूप में सुखाया जाता है ताकि अस्थायी भंडारण और परिवहन प्रक्रिया के लिए नमी को लगभग 3% तक कम किया जा सके। मखाना के बीजों का भंडारण परिवेशीय परिस्थितियों में रखा जाता है। आमतौर पर बीजों को प्रसंस्करण से पहले 20-25 दिनों के लिए भंडारित किया जाता है। भंडारण के दौरान पानी का नियमित अंतराल पर छिड़काव उन्हें ताजा रखने और बीज की गुणवत्ता बनाए रखने के लिए किया जाता है। साइज ग्रेडिंग: धूप में सुखाए गए बीजों को तब उनके आकार के अनुसार 5 से 7 ग्रेड में वर्गीकृत किया जाता है। मखाना बीज की ग्रेडिंग भूनने के दौरान प्रत्येक बीज के समान हीटिंग की सुविधा प्रदान करती है और यह प्रसंस्करण की दक्षता को बढ़ाती है। प्री-हीटिंग: धूप में सुखाए गए मेवों को आमतौर पर मिट्टी के घड़े या ढलवां लोहे के पैन में आग पर रखकर और लगातार हिलाते हुए गर्म किया जाता है। पैन की सतह का तापम",
+              "answer_language": "hi",
+              "intent": "document_search",
+              "metric": "records",
+              "filters": {
+                "search_terms": "पीएमएफएमई मखाना पुस्तिका, मखाना प्रसंस्करण, संबंधित योजनाएं"
+              },
+              "records_retrieved": 5,
+              "records": [
+                {
+                  "source_url": "https://niftem.ac.in/newsite/pmfme/wp-content/uploads/2022/08/Makhana-Handbook-Hindi.pdf",
+                  "page_number": 12,
+                  "chunk_index": 0,
+                  "content": "पीएमएफएमई - फॉक्सनट (मखाना)\n3 घंटे के लिए तेज धूप में सुखाया जाता है ताकि अस्थायी भंडारण और परिवहन प्रक्रिया के लिए नमी को लगभग\n3% तक कम किया जा सके।\nमखाना के बीजों का भंडारण परिवेशीय परिस्थितियों में रखा जाता है। आमतौर पर बीजों को प्रसंस्करण से पहले\n20-25 दिनों के लिए भंडारित किया जाता है। भंडारण के दौरान पानी का नियमित अंतराल पर छिड़काव उन्हें\nताजा रखने और बीज की गुणवत्ता बनाए रखने के लिए किया जाता है।\n3. साइज ग्रेडिंग: धूप में सुखाए गए बीजों को तब उनके आकार के अनुसार 5 से 7 ग्रेड में वर्गीकृत किया जाता\nहै। मखाना बीज की ग्रेडिंग भूनने के दौरान प्रत्येक बीज के समान हीटिंग की सुविधा प्रदान करती है और यह\nप्रसंस्करण की दक्षता को बढ़ाती है।\n4. प्री-हीटिंग: धूप में सुखाए गए मेवों को आमतौर पर मिट्टी के घड़े या ढलवां लोहे के पैन में आग पर रखकर\nऔर लगातार हिलाते हुए गर्म किया जाता है। पैन की सतह का तापमान 250 डिग्री सेल्सियस से 3000 डिग्री\nसेल्सियस तक होता है और पैन की पूरी क्षमता पर आवश्यक समय लगभग 5 से 6 मिनट होता है। मखाने के प्री-\nहीटिंग के बाद नमी की मात्रा लगभग 20 प्रतिशत तक कम हो जाती है।\n5. टेम्परिंग: परिवेशी स्थिति में पहले से गरम किए हुए ( प्री-हीटेड) बीजों को 48 से 72 घंटे तक के भंडारण को\nबीजों के टेम्परिंग के रूप में जाना जाता है। सख्त बीज कोट के भीतर गुठली को ढीला करने के उद्देश्य से बीजों\nका टेम्परिंग किया जाता है |\n6. रोस्टिंग और पॉपिंग: यह मखाना प्रसंस्करण का सबसे महत्वपूर्ण लेकिन श्रमसाध्य और कष्टदायक कार्य है।\nलगभग 300 ग्राम प्री-हीटेड और टेम्पर्ड नटस को लिया जाता है",
+                  "declared_language": "hi",
+                  "document_title": "पीएमएफएमई मखाना पुस्तिका",
+                  "extraction_method": "tesseract_ocr",
+                  "language": "hi",
+                  "source_file": "pmfme_makhana_handbook_hindi.pdf",
+                  "source_id": "pmfme_makhana_handbook_hindi",
+                  "source_organization": "National Institute of Food Technology Entrepreneurship and Management",
+                  "score": 4.336793286219081
+                },
+                {
+                  "source_url": "https://niftem.ac.in/newsite/pmfme/wp-content/uploads/2022/08/Makhana-Handbook-Hindi.pdf",
+                  "page_number": 13,
+                  "chunk_index": 0,
+                  "content": "पीएमएफएमई - फॉक्सनट (मखाना)\nचित्र 2: पोस्ट STARE SI मखाना प्रसंस्करण\nव्यावसायिक यंत्र एवं उपकरण\nमाखन की कटाई और प्रसंस्करण के दौरान निम्नलिखित यंत्रों और उपकरणों का उपयोग किया जाता है:\nL. खोनघी या डेली: यह बेलनाकार आकार वाली बांस की छड़ी की एक छोटी बाल्टी होती है। इसका उपयोग\nकच्चे, पॉप्ड बीज के भंडारण और पॉलिशिंग ऑपरेशन में किया जाता है।\n2. छन्नी: छन्नी लकड़ी के तख्ते वाली लोहे की चादरों से बनी होती है। आम तौर पर कच्चे मखाना के बीज की\nपृष्ठ संख्या 43",
+                  "declared_language": "hi",
+                  "document_title": "पीएमएफएमई मखाना पुस्तिका",
+                  "extraction_method": "tesseract_ocr",
+                  "language": "hi",
+                  "source_file": "pmfme_makhana_handbook_hindi.pdf",
+                  "source_id": "pmfme_makhana_handbook_hindi",
+                  "source_organization": "National Institute of Food Technology Entrepreneurship and Management",
+                  "score": 4.178779069767442
+                },
+                {
+                  "source_url": "https://niftem.ac.in/newsite/pmfme/wp-content/uploads/2022/08/Makhana-Handbook-Hindi.pdf",
+                  "page_number": 5,
+                  "chunk_index": 0,
+                  "content": "पीएमएफएमई - फॉक्सनट (मखाना)\nसामग्री के कारण लोगों द्वारा उपयोग किए जाने वाले सबसे आम सूखे फलों में से एक है। यह 0 -:2% प्रोटीन\nकी मात्रा के साथ पौष्टिक और स्वस्थ भोजन माना जाता है। अन्य सूखे मेवे जैसे काजू , बादाम, अखरोट और\nनारियल की तुलना में मखाने में श्रेष्ठ गुणवत्ता का शर्करा , प्रोटीन , एस्कॉर्बिक एसिड और फिनोल पाया जाता\nहै। इसके कर्नल में सोलह प्रकार के एमिनो एसिड मौजूद होते हैं। कच्चे और तले हुए दोनों मखाना आवश्यक\nअमीनो एसिड में काफी समृद्ध हैं।\nमखाना के आवश्यक अमीनो एसिड इंडेक्स (ईएएआई) और रासायनिक स्कोर Sita से संबंधित मूल्य\nमछली के करीब हैं। कच्चे मखाना और पॉपअप मखाना में ईएएआई क्रमशः 93% और 89% हैं जो चावल\n(83%), गेहूं (65%), बंगाल ग्राम (8.5%), गाय के दूध (88.8%), मछली (89.2%) और मटन (87.24%) की\nमात्रा से अधिक हैं। | अनाज की तुलना में मखाना WH (0-4%) कम होता है, लेकिन फिर भी यह उच्च\nईएएआई और सीएस के कारण कई पौधों और जानवरों पर आधारित आहार से बेहतर है।\nतालिका i- मखाना बीज और पॉप्ड मखाना के पोषण सामग्री\nमापदंड मखाना बीज पॉप मखाना\nकार्बोहाइड्रेट (% वजन द्वारा) 57.0 79.8\nप्रोटीन (% वजन द्वारा) 7.2 8.7\nवसा (% वजन द्वारा) 0.3 0.5\nनमी (% वजन द्वारा) 34.7 0.4\nकूल राख (% वजन द्वारा) 0.3 0.4\nकच्चे फाइबर (% वजन द्वारा ) 0.5 0.2\nएमाइलोज (%) 9.0 8.2\nकैलोरिफिक (उष्णता) मूल्य 259 358\n(किलोकैलोरी/00 ग्राम)\n66.I 53.2\nफास्फोरस (मिलीग्राम/00 ग्राम)\nपोटेशियम (मिलीग्राम/00 ग्राम) 35.6 42.0\nआयरन (मिलीग्राम/00 ग्राम) 0.8 L4\nकैल्शियम (मिलीग्राम/00 ग्राम) 9.5 8.5\nमैग्नीशियम (Preiar/00 a) 3",
+                  "declared_language": "hi",
+                  "document_title": "पीएमएफएमई मखाना पुस्तिका",
+                  "extraction_method": "tesseract_ocr",
+                  "language": "hi",
+                  "source_file": "pmfme_makhana_handbook_hindi.pdf",
+                  "source_id": "pmfme_makhana_handbook_hindi",
+                  "source_organization": "National Institute of Food Technology Entrepreneurship and Management",
+                  "score": 4.038274274553571
+                },
+                {
+                  "source_url": "https://niftem.ac.in/newsite/pmfme/wp-content/uploads/2022/08/Makhana-Handbook-Hindi.pdf",
+                  "page_number": 11,
+                  "chunk_index": 0,
+                  "content": "पीएमएफएमई - फॉक्सनट (मखाना)\nप्रसंस्करण और मशीनरी\nकटाई उपरांत मखाना\nसामान्य तौर पर, कटाई के बाद की तकनीक में धूप में सुखाने की क्रिया, साइज ग्रेडिंग, प्री-हीटिंग,\nपॉपिंग, पॉलिशिंग, ग्रेडिंग और पैकेजिंग शामिल हैं, जिन्हें नीचे दर्शाया गया है।\nकच्चा मखाना बीज |\n. ‘\nसफाई और धलाई\nगे र\nधूप में सुखाकर बीज भंडारण\nरे\nग्रेड निर्धारण\n. I\nपहली रोस्टिंग |\nरूम तापमान पर रखना\nहै v\nदसरी रोस्टिंग |\nथप्पी द्वारा बीज को तोडना\n. I\nपॉप और शैल का पथक्करण\nमखाना पॉप की ग्रेडिंग |\n; t\nविभिन्न आकार के बैग में पैकिंग\nतालिका 4- कटाई उपरांत मखाना\nL. सफाई और धुलाई: परिपक्व ताजा मखाना बीज को पहले साफ किया जाता है और बीज के अलावा कई\nबाह्य सामग्री को हटा दिया जाता है और फिर गंदगी और कीचड़ को हटाने के लिए धोया जाता है।\n2. धूप में सुखाकर बीजों का भंडारण: साफ किए गए मखाने के बीजों को एक चटाई या सीमेंट के फर्श पर 2-\nपृष्ठ संख्या 44",
+                  "declared_language": "hi",
+                  "document_title": "पीएमएफएमई मखाना पुस्तिका",
+                  "extraction_method": "tesseract_ocr",
+                  "language": "hi",
+                  "source_file": "pmfme_makhana_handbook_hindi.pdf",
+                  "source_id": "pmfme_makhana_handbook_hindi",
+                  "source_organization": "National Institute of Food Technology Entrepreneurship and Management",
+                  "score": 4.028645833333333
+                },
+                {
+                  "source_url": "https://niftem.ac.in/newsite/pmfme/wp-content/uploads/2022/08/Makhana-Handbook-Hindi.pdf",
+                  "page_number": 4,
+                  "chunk_index": 1,
+                  "content": "्रिपुरा, असम, जम्मू और कश्मीर, ओडिशा, राजस्थान,\nमध्य प्रदेश और उत्तर प्रदेश राज्यों में वितरित किया जाता है, लेकिन व्यावसायिक रूप से केवल कुछ राज्यों में\nउत्पादित होता है।\nबिहार के प्रमुख मखाना उत्पादक जिलों में दरभंगा, मधुबनी, सीतामढ़ी, सहरसा, सुपौल, अररिया\nपूर्णिया, किशनगंज, और कटिहार शामिल हैं।। पश्चिम बंगाल के प्रमुख मखाना उत्पादक जिले मालदा और उत्तर\nदिनाजपुर तक सीमित हैं।\nमखाना को भारत में जलीय नकदी फसल के रूप में माना जाता है भारत में बिहार इसके उत्पादन और\nप्रसंस्करण में अग्रणी राज्य है।यह अनुमान लगाया जाता है कि देश के कुल मखाना उत्पादन का 80 प्रतिशत से\nअधिक हिस्सा बिहार में उत्पादित होता है। भारत में मखाना की खेती का कुल क्षेत्रफल 5000 SHCA है। यह\n,20,000 मीट्रिक टन मखाना के बीजों का उत्पादन करता है, जो प्रसंस्करण के बाद 40,000 मीट्रिक टन मखाना\nपॉप का उत्पादन करता है। किसानों द्वारा उत्पादित मखाने का अनुमानित मूल्य 250 करोड़ रुपये है और यह\nव्यापार के स्तर पर 550 करोड़ रुपये का राजस्व उत्पन्न करता है।\nबिहार के दरभंगा जिले में, मखाना के विभिन्न पहलुओं पर अनुसंधान के लिए पूर्वी क्षेत्र के आईसीएआर\nअनुसंधान परिसर के नियंत्रण में मखाना का अनुसंधान केंद्र स्थापित किया गया था। हालाँकि यह क्षेत्र मूल्य\nसंवर्धन, उत्पाद विकास और नवाचार के ie aga बहुत अधिक संभावनाएं रखता है, जो न केवल लाखों मछुआरों की\nआजीविका को बढ़ाएगा, बल्कि राज्य के स्वास्थ्य को भी मजबूत करेगा और इस आश्चर्य फसल को\nमखाना कहा जाता है।\nपोषण के लाभ\nमखाना या फॉक्स AC एक तरह का हाइड्रोफाइट है जिसका इस्तेमाल दवा और",
+                  "declared_language": "hi",
+                  "document_title": "पीएमएफएमई मखाना पुस्तिका",
+                  "extraction_method": "tesseract_ocr",
+                  "language": "hi",
+                  "source_file": "pmfme_makhana_handbook_hindi.pdf",
+                  "source_id": "pmfme_makhana_handbook_hindi",
+                  "source_organization": "National Institute of Food Technology Entrepreneurship and Management",
+                  "score": 3.7977535291988413
+                }
+              ],
+              "sources": [
+                {
+                  "source": "https://niftem.ac.in/newsite/pmfme/wp-content/uploads/2022/08/Makhana-Handbook-Hindi.pdf",
+                  "source_file": "pmfme_makhana_handbook_hindi.pdf",
+                  "document_title": "पीएमएफएमई मखाना पुस्तिका",
+                  "page_number": 12,
+                  "organization": "National Institute of Food Technology Entrepreneurship and Management",
+                  "language": "hi"
+                },
+                {
+                  "source": "https://niftem.ac.in/newsite/pmfme/wp-content/uploads/2022/08/Makhana-Handbook-Hindi.pdf",
+                  "source_file": "pmfme_makhana_handbook_hindi.pdf",
+                  "document_title": "पीएमएफएमई मखाना पुस्तिका",
+                  "page_number": 13,
+                  "organization": "National Institute of Food Technology Entrepreneurship and Management",
+                  "language": "hi"
+                },
+                {
+                  "source": "https://niftem.ac.in/newsite/pmfme/wp-content/uploads/2022/08/Makhana-Handbook-Hindi.pdf",
+                  "source_file": "pmfme_makhana_handbook_hindi.pdf",
+                  "document_title": "पीएमएफएमई मखाना पुस्तिका",
+                  "page_number": 5,
+                  "organization": "National Institute of Food Technology Entrepreneurship and Management",
+                  "language": "hi"
+                },
+                {
+                  "source": "https://niftem.ac.in/newsite/pmfme/wp-content/uploads/2022/08/Makhana-Handbook-Hindi.pdf",
+                  "source_file": "pmfme_makhana_handbook_hindi.pdf",
+                  "document_title": "पीएमएफएमई मखाना पुस्तिका",
+                  "page_number": 11,
+                  "organization": "National Institute of Food Technology Entrepreneurship and Management",
+                  "language": "hi"
+                },
+                {
+                  "source": "https://niftem.ac.in/newsite/pmfme/wp-content/uploads/2022/08/Makhana-Handbook-Hindi.pdf",
+                  "source_file": "pmfme_makhana_handbook_hindi.pdf",
+                  "document_title": "पीएमएफएमई मखाना पुस्तिका",
+                  "page_number": 4,
+                  "organization": "National Institute of Food Technology Entrepreneurship and Management",
+                  "language": "hi"
+                }
+              ],
+              "source_count": 5,
+              "model": "qwen3:4b",
+              "provenance": {
+                "extraction_run_id": "21c8519d-47be-495d-bab4-5126ca215c41",
+                "extracting_agent": "grounded_qa_agent",
+                "source_type": "grounded_query",
+                "extracted_at": "2026-10-17T21:47:12.375517+00:00"
+              }
+            }
+          }
+        ],
+        "langsmith": {
+          "enabled": true,
+          "project": "bihar-crop-phase2",
+          "reason": null
+        },
+        "completed_at": "2026-10-17T21:47:12.378361+00:00",
+        "results": [
+          {
+            "agent_id": "grounded_qa_agent",
+            "source_id": "grounded_qa",
+            "tool_name": "ollama_grounded_qa",
+            "tool_input": {
+              "question": "पीएमएफएमई मखाना पुस्तिका में मखाना प्रसंस्करण और संबंधित योजनाओं के बारे में क्या बताया गया है?",
+              "dry_run": true
+            },
+            "status": "completed",
+            "summary": {
+              "question": "पीएमएफएमई मखाना पुस्तिका में मखाना प्रसंस्करण और संबंधित योजनाओं के बारे में क्या बताया गया है?",
+              "answer": "उपलब्ध स्रोतों के अनुसार: पीएमएफएमई - फॉक्सनट (मखाना) 3 घंटे के लिए तेज धूप में सुखाया जाता है ताकि अस्थायी भंडारण और परिवहन प्रक्रिया के लिए नमी को लगभग 3% तक कम किया जा सके। मखाना के बीजों का भंडारण परिवेशीय परिस्थितियों में रखा जाता है। आमतौर पर बीजों को प्रसंस्करण से पहले 20-25 दिनों के लिए भंडारित किया जाता है। भंडारण के दौरान पानी का नियमित अंतराल पर छिड़काव उन्हें ताजा रखने और बीज की गुणवत्ता बनाए रखने के लिए किया जाता है। साइज ग्रेडिंग: धूप में सुखाए गए बीजों को तब उनके आकार के अनुसार 5 से 7 ग्रेड में वर्गीकृत किया जाता है। मखाना बीज की ग्रेडिंग भूनने के दौरान प्रत्येक बीज के समान हीटिंग की सुविधा प्रदान करती है और यह प्रसंस्करण की दक्षता को बढ़ाती है। प्री-हीटिंग: धूप में सुखाए गए मेवों को आमतौर पर मिट्टी के घड़े या ढलवां लोहे के पैन में आग पर रखकर और लगातार हिलाते हुए गर्म किया जाता है। पैन की सतह का तापम",
+              "answer_language": "hi",
+              "intent": "document_search",
+              "metric": "records",
+              "filters": {
+                "search_terms": "पीएमएफएमई मखाना पुस्तिका, मखाना प्रसंस्करण, संबंधित योजनाएं"
+              },
+              "records_retrieved": 5,
+              "records": [
+                {
+                  "source_url": "https://niftem.ac.in/newsite/pmfme/wp-content/uploads/2022/08/Makhana-Handbook-Hindi.pdf",
+                  "page_number": 12,
+                  "chunk_index": 0,
+                  "content": "पीएमएफएमई - फॉक्सनट (मखाना)\n3 घंटे के लिए तेज धूप में सुखाया जाता है ताकि अस्थायी भंडारण और परिवहन प्रक्रिया के लिए नमी को लगभग\n3% तक कम किया जा सके।\nमखाना के बीजों का भंडारण परिवेशीय परिस्थितियों में रखा जाता है। आमतौर पर बीजों को प्रसंस्करण से पहले\n20-25 दिनों के लिए भंडारित किया जाता है। भंडारण के दौरान पानी का नियमित अंतराल पर छिड़काव उन्हें\nताजा रखने और बीज की गुणवत्ता बनाए रखने के लिए किया जाता है।\n3. साइज ग्रेडिंग: धूप में सुखाए गए बीजों को तब उनके आकार के अनुसार 5 से 7 ग्रेड में वर्गीकृत किया जाता\nहै। मखाना बीज की ग्रेडिंग भूनने के दौरान प्रत्येक बीज के समान हीटिंग की सुविधा प्रदान करती है और यह\nप्रसंस्करण की दक्षता को बढ़ाती है।\n4. प्री-हीटिंग: धूप में सुखाए गए मेवों को आमतौर पर मिट्टी के घड़े या ढलवां लोहे के पैन में आग पर रखकर\nऔर लगातार हिलाते हुए गर्म किया जाता है। पैन की सतह का तापमान 250 डिग्री सेल्सियस से 3000 डिग्री\nसेल्सियस तक होता है और पैन की पूरी क्षमता पर आवश्यक समय लगभग 5 से 6 मिनट होता है। मखाने के प्री-\nहीटिंग के बाद नमी की मात्रा लगभग 20 प्रतिशत तक कम हो जाती है।\n5. टेम्परिंग: परिवेशी स्थिति में पहले से गरम किए हुए ( प्री-हीटेड) बीजों को 48 से 72 घंटे तक के भंडारण को\nबीजों के टेम्परिंग के रूप में जाना जाता है। सख्त बीज कोट के भीतर गुठली को ढीला करने के उद्देश्य से बीजों\nका टेम्परिंग किया जाता है |\n6. रोस्टिंग और पॉपिंग: यह मखाना प्रसंस्करण का सबसे महत्वपूर्ण लेकिन श्रमसाध्य और कष्टदायक कार्य है।\nलगभग 300 ग्राम प्री-हीटेड और टेम्पर्ड नटस को लिया जाता है",
+                  "declared_language": "hi",
+                  "document_title": "पीएमएफएमई मखाना पुस्तिका",
+                  "extraction_method": "tesseract_ocr",
+                  "language": "hi",
+                  "source_file": "pmfme_makhana_handbook_hindi.pdf",
+                  "source_id": "pmfme_makhana_handbook_hindi",
+                  "source_organization": "National Institute of Food Technology Entrepreneurship and Management",
+                  "score": 4.336793286219081
+                },
+                {
+                  "source_url": "https://niftem.ac.in/newsite/pmfme/wp-content/uploads/2022/08/Makhana-Handbook-Hindi.pdf",
+                  "page_number": 13,
+                  "chunk_index": 0,
+                  "content": "पीएमएफएमई - फॉक्सनट (मखाना)\nचित्र 2: पोस्ट STARE SI मखाना प्रसंस्करण\nव्यावसायिक यंत्र एवं उपकरण\nमाखन की कटाई और प्रसंस्करण के दौरान निम्नलिखित यंत्रों और उपकरणों का उपयोग किया जाता है:\nL. खोनघी या डेली: यह बेलनाकार आकार वाली बांस की छड़ी की एक छोटी बाल्टी होती है। इसका उपयोग\nकच्चे, पॉप्ड बीज के भंडारण और पॉलिशिंग ऑपरेशन में किया जाता है।\n2. छन्नी: छन्नी लकड़ी के तख्ते वाली लोहे की चादरों से बनी होती है। आम तौर पर कच्चे मखाना के बीज की\nपृष्ठ संख्या 43",
+                  "declared_language": "hi",
+                  "document_title": "पीएमएफएमई मखाना पुस्तिका",
+                  "extraction_method": "tesseract_ocr",
+                  "language": "hi",
+                  "source_file": "pmfme_makhana_handbook_hindi.pdf",
+                  "source_id": "pmfme_makhana_handbook_hindi",
+                  "source_organization": "National Institute of Food Technology Entrepreneurship and Management",
+                  "score": 4.178779069767442
+                },
+                {
+                  "source_url": "https://niftem.ac.in/newsite/pmfme/wp-content/uploads/2022/08/Makhana-Handbook-Hindi.pdf",
+                  "page_number": 5,
+                  "chunk_index": 0,
+                  "content": "पीएमएफएमई - फॉक्सनट (मखाना)\nसामग्री के कारण लोगों द्वारा उपयोग किए जाने वाले सबसे आम सूखे फलों में से एक है। यह 0 -:2% प्रोटीन\nकी मात्रा के साथ पौष्टिक और स्वस्थ भोजन माना जाता है। अन्य सूखे मेवे जैसे काजू , बादाम, अखरोट और\nनारियल की तुलना में मखाने में श्रेष्ठ गुणवत्ता का शर्करा , प्रोटीन , एस्कॉर्बिक एसिड और फिनोल पाया जाता\nहै। इसके कर्नल में सोलह प्रकार के एमिनो एसिड मौजूद होते हैं। कच्चे और तले हुए दोनों मखाना आवश्यक\nअमीनो एसिड में काफी समृद्ध हैं।\nमखाना के आवश्यक अमीनो एसिड इंडेक्स (ईएएआई) और रासायनिक स्कोर Sita से संबंधित मूल्य\nमछली के करीब हैं। कच्चे मखाना और पॉपअप मखाना में ईएएआई क्रमशः 93% और 89% हैं जो चावल\n(83%), गेहूं (65%), बंगाल ग्राम (8.5%), गाय के दूध (88.8%), मछली (89.2%) और मटन (87.24%) की\nमात्रा से अधिक हैं। | अनाज की तुलना में मखाना WH (0-4%) कम होता है, लेकिन फिर भी यह उच्च\nईएएआई और सीएस के कारण कई पौधों और जानवरों पर आधारित आहार से बेहतर है।\nतालिका i- मखाना बीज और पॉप्ड मखाना के पोषण सामग्री\nमापदंड मखाना बीज पॉप मखाना\nकार्बोहाइड्रेट (% वजन द्वारा) 57.0 79.8\nप्रोटीन (% वजन द्वारा) 7.2 8.7\nवसा (% वजन द्वारा) 0.3 0.5\nनमी (% वजन द्वारा) 34.7 0.4\nकूल राख (% वजन द्वारा) 0.3 0.4\nकच्चे फाइबर (% वजन द्वारा ) 0.5 0.2\nएमाइलोज (%) 9.0 8.2\nकैलोरिफिक (उष्णता) मूल्य 259 358\n(किलोकैलोरी/00 ग्राम)\n66.I 53.2\nफास्फोरस (मिलीग्राम/00 ग्राम)\nपोटेशियम (मिलीग्राम/00 ग्राम) 35.6 42.0\nआयरन (मिलीग्राम/00 ग्राम) 0.8 L4\nकैल्शियम (मिलीग्राम/00 ग्राम) 9.5 8.5\nमैग्नीशियम (Preiar/00 a) 3",
+                  "declared_language": "hi",
+                  "document_title": "पीएमएफएमई मखाना पुस्तिका",
+                  "extraction_method": "tesseract_ocr",
+                  "language": "hi",
+                  "source_file": "pmfme_makhana_handbook_hindi.pdf",
+                  "source_id": "pmfme_makhana_handbook_hindi",
+                  "source_organization": "National Institute of Food Technology Entrepreneurship and Management",
+                  "score": 4.038274274553571
+                },
+                {
+                  "source_url": "https://niftem.ac.in/newsite/pmfme/wp-content/uploads/2022/08/Makhana-Handbook-Hindi.pdf",
+                  "page_number": 11,
+                  "chunk_index": 0,
+                  "content": "पीएमएफएमई - फॉक्सनट (मखाना)\nप्रसंस्करण और मशीनरी\nकटाई उपरांत मखाना\nसामान्य तौर पर, कटाई के बाद की तकनीक में धूप में सुखाने की क्रिया, साइज ग्रेडिंग, प्री-हीटिंग,\nपॉपिंग, पॉलिशिंग, ग्रेडिंग और पैकेजिंग शामिल हैं, जिन्हें नीचे दर्शाया गया है।\nकच्चा मखाना बीज |\n. ‘\nसफाई और धलाई\nगे र\nधूप में सुखाकर बीज भंडारण\nरे\nग्रेड निर्धारण\n. I\nपहली रोस्टिंग |\nरूम तापमान पर रखना\nहै v\nदसरी रोस्टिंग |\nथप्पी द्वारा बीज को तोडना\n. I\nपॉप और शैल का पथक्करण\nमखाना पॉप की ग्रेडिंग |\n; t\nविभिन्न आकार के बैग में पैकिंग\nतालिका 4- कटाई उपरांत मखाना\nL. सफाई और धुलाई: परिपक्व ताजा मखाना बीज को पहले साफ किया जाता है और बीज के अलावा कई\nबाह्य सामग्री को हटा दिया जाता है और फिर गंदगी और कीचड़ को हटाने के लिए धोया जाता है।\n2. धूप में सुखाकर बीजों का भंडारण: साफ किए गए मखाने के बीजों को एक चटाई या सीमेंट के फर्श पर 2-\nपृष्ठ संख्या 44",
+                  "declared_language": "hi",
+                  "document_title": "पीएमएफएमई मखाना पुस्तिका",
+                  "extraction_method": "tesseract_ocr",
+                  "language": "hi",
+                  "source_file": "pmfme_makhana_handbook_hindi.pdf",
+                  "source_id": "pmfme_makhana_handbook_hindi",
+                  "source_organization": "National Institute of Food Technology Entrepreneurship and Management",
+                  "score": 4.028645833333333
+                },
+                {
+                  "source_url": "https://niftem.ac.in/newsite/pmfme/wp-content/uploads/2022/08/Makhana-Handbook-Hindi.pdf",
+                  "page_number": 4,
+                  "chunk_index": 1,
+                  "content": "्रिपुरा, असम, जम्मू और कश्मीर, ओडिशा, राजस्थान,\nमध्य प्रदेश और उत्तर प्रदेश राज्यों में वितरित किया जाता है, लेकिन व्यावसायिक रूप से केवल कुछ राज्यों में\nउत्पादित होता है।\nबिहार के प्रमुख मखाना उत्पादक जिलों में दरभंगा, मधुबनी, सीतामढ़ी, सहरसा, सुपौल, अररिया\nपूर्णिया, किशनगंज, और कटिहार शामिल हैं।। पश्चिम बंगाल के प्रमुख मखाना उत्पादक जिले मालदा और उत्तर\nदिनाजपुर तक सीमित हैं।\nमखाना को भारत में जलीय नकदी फसल के रूप में माना जाता है भारत में बिहार इसके उत्पादन और\nप्रसंस्करण में अग्रणी राज्य है।यह अनुमान लगाया जाता है कि देश के कुल मखाना उत्पादन का 80 प्रतिशत से\nअधिक हिस्सा बिहार में उत्पादित होता है। भारत में मखाना की खेती का कुल क्षेत्रफल 5000 SHCA है। यह\n,20,000 मीट्रिक टन मखाना के बीजों का उत्पादन करता है, जो प्रसंस्करण के बाद 40,000 मीट्रिक टन मखाना\nपॉप का उत्पादन करता है। किसानों द्वारा उत्पादित मखाने का अनुमानित मूल्य 250 करोड़ रुपये है और यह\nव्यापार के स्तर पर 550 करोड़ रुपये का राजस्व उत्पन्न करता है।\nबिहार के दरभंगा जिले में, मखाना के विभिन्न पहलुओं पर अनुसंधान के लिए पूर्वी क्षेत्र के आईसीएआर\nअनुसंधान परिसर के नियंत्रण में मखाना का अनुसंधान केंद्र स्थापित किया गया था। हालाँकि यह क्षेत्र मूल्य\nसंवर्धन, उत्पाद विकास और नवाचार के ie aga बहुत अधिक संभावनाएं रखता है, जो न केवल लाखों मछुआरों की\nआजीविका को बढ़ाएगा, बल्कि राज्य के स्वास्थ्य को भी मजबूत करेगा और इस आश्चर्य फसल को\nमखाना कहा जाता है।\nपोषण के लाभ\nमखाना या फॉक्स AC एक तरह का हाइड्रोफाइट है जिसका इस्तेमाल दवा और",
+                  "declared_language": "hi",
+                  "document_title": "पीएमएफएमई मखाना पुस्तिका",
+                  "extraction_method": "tesseract_ocr",
+                  "language": "hi",
+                  "source_file": "pmfme_makhana_handbook_hindi.pdf",
+                  "source_id": "pmfme_makhana_handbook_hindi",
+                  "source_organization": "National Institute of Food Technology Entrepreneurship and Management",
+                  "score": 3.7977535291988413
+                }
+              ],
+              "sources": [
+                {
+                  "source": "https://niftem.ac.in/newsite/pmfme/wp-content/uploads/2022/08/Makhana-Handbook-Hindi.pdf",
+                  "source_file": "pmfme_makhana_handbook_hindi.pdf",
+                  "document_title": "पीएमएफएमई मखाना पुस्तिका",
+                  "page_number": 12,
+                  "organization": "National Institute of Food Technology Entrepreneurship and Management",
+                  "language": "hi"
+                },
+                {
+                  "source": "https://niftem.ac.in/newsite/pmfme/wp-content/uploads/2022/08/Makhana-Handbook-Hindi.pdf",
+                  "source_file": "pmfme_makhana_handbook_hindi.pdf",
+                  "document_title": "पीएमएफएमई मखाना पुस्तिका",
+                  "page_number": 13,
+                  "organization": "National Institute of Food Technology Entrepreneurship and Management",
+                  "language": "hi"
+                },
+                {
+                  "source": "https://niftem.ac.in/newsite/pmfme/wp-content/uploads/2022/08/Makhana-Handbook-Hindi.pdf",
+                  "source_file": "pmfme_makhana_handbook_hindi.pdf",
+                  "document_title": "पीएमएफएमई मखाना पुस्तिका",
+                  "page_number": 5,
+                  "organization": "National Institute of Food Technology Entrepreneurship and Management",
+                  "language": "hi"
+                },
+                {
+                  "source": "https://niftem.ac.in/newsite/pmfme/wp-content/uploads/2022/08/Makhana-Handbook-Hindi.pdf",
+                  "source_file": "pmfme_makhana_handbook_hindi.pdf",
+                  "document_title": "पीएमएफएमई मखाना पुस्तिका",
+                  "page_number": 11,
+                  "organization": "National Institute of Food Technology Entrepreneurship and Management",
+                  "language": "hi"
+                },
+                {
+                  "source": "https://niftem.ac.in/newsite/pmfme/wp-content/uploads/2022/08/Makhana-Handbook-Hindi.pdf",
+                  "source_file": "pmfme_makhana_handbook_hindi.pdf",
+                  "document_title": "पीएमएफएमई मखाना पुस्तिका",
+                  "page_number": 4,
+                  "organization": "National Institute of Food Technology Entrepreneurship and Management",
+                  "language": "hi"
+                }
+              ],
+              "source_count": 5,
+              "model": "qwen3:4b",
+              "provenance": {
+                "extraction_run_id": "21c8519d-47be-495d-bab4-5126ca215c41",
+                "extracting_agent": "grounded_qa_agent",
+                "source_type": "grounded_query",
+                "extracted_at": "2026-10-17T21:47:12.375517+00:00"
+              }
+            },
+            "error": null,
+            "started_at": "2026-10-17T21:46:20.539234+00:00",
+            "completed_at": "2026-10-17T21:47:12.375517+00:00"
+          }
+        ],
+        "automation_metrics": {
+          "inputs_attempted": 1,
+          "inputs_without_manual_intervention": 1,
+          "automation_rate": 1.0,
+          "manual_interventions": 0,
+          "tool_calls": 1,
+          "retries": 0,
+          "unnecessary_tool_calls": 0
+        }
+      },
+      "evaluation": {
+        "case_id": "qa_hindi_documents",
+        "run_id": "21c8519d-47be-495d-bab4-5126ca215c41",
+        "framework": "AgentEvals strict trajectory + independent checks",
+        "passed": true,
+        "agents_evaluated": 1,
+        "agents_passed": 1,
+        "per_agent": [
+          {
+            "source_id": "grounded_qa",
+            "agent_id": "grounded_qa_agent",
+            "checks": {
+              "trajectory_match": true,
+              "tool_selection": true,
+              "tool_input_accuracy": true,
+              "tool_call_success": true,
+              "task_completion": true,
+              "provenance_completeness": true,
+              "independent_tool_input": true,
+              "answer_present": true,
+              "records_retrieved": true,
+              "sources_returned": true,
+              "numeric_fidelity": true,
+              "intent_accuracy": true,
+              "answer_language": true
+            },
+            "passed": true
+          }
+        ],
+        "automation": {
+          "rate": 1.0,
+          "manual_interventions": 0,
+          "retries": 0,
+          "unnecessary_tool_calls": 0
+        },
+        "foundry_metric_mapping": {
+          "task_completion": "code evaluator",
+          "tool_selection": "independent agent/tool reference",
+          "tool_input_accuracy": "independent exact case input",
+          "tool_call_accuracy": "AgentEvals strict trajectory match",
+          "tool_call_success": "observed tool result status",
+          "tool_output_utilization": "case-specific output assertions",
+          "groundedness": "retrieval, source, and numeric-fidelity checks"
+        }
+      }
+    },
+    {
+      "case_id": "retry_recovery_crop_statistics",
+      "description": null,
+      "source_id": "crop_statistics",
+      "fault_injection": "transient_once",
+      "passed": true,
+      "trace": {
+        "run_id": "74a3f68f-49d5-4cb3-8548-85c7e9743d61",
+        "orchestrator": "phase2_supervisor",
+        "routing_strategy": "deterministic_source_type",
+        "requested_sources": [
+          "crop_statistics"
+        ],
+        "dry_run": true,
+        "status": "completed",
+        "started_at": "2026-10-17T21:47:12.383540+00:00",
+        "events": [
+          {
+            "event": "agent_selected",
+            "timestamp": "2026-10-17T21:47:12.384074+00:00",
+            "source_id": "crop_statistics",
+            "agent_id": "crop_statistics_excel_agent",
+            "reason": "fixed mapping from source type to specialist agent"
+          },
+          {
+            "event": "tool_invoked",
+            "timestamp": "2026-10-17T21:47:12.384074+00:00",
+            "source_id": "crop_statistics",
+            "agent_id": "crop_statistics_excel_agent",
+            "tool_name": "pandas_excel_extractor",
+            "attempt": 1
+          },
+          {
+            "event": "tool_result",
+            "timestamp": "2026-10-17T21:47:12.385671+00:00",
+            "source_id": "crop_statistics",
+            "agent_id": "crop_statistics_excel_agent",
+            "tool_name": "pandas_excel_extractor",
+            "attempt": 1,
+            "status": "failed",
+            "retrying": true,
+            "error": "RuntimeError: injected transient source failure"
+          },
+          {
+            "event": "tool_invoked",
+            "timestamp": "2026-10-17T21:47:12.385671+00:00",
+            "source_id": "crop_statistics",
+            "agent_id": "crop_statistics_excel_agent",
+            "tool_name": "pandas_excel_extractor",
+            "attempt": 2
+          },
+          {
+            "event": "tool_result",
+            "timestamp": "2026-10-17T21:47:13.019288+00:00",
+            "source_id": "crop_statistics",
+            "agent_id": "crop_statistics_excel_agent",
+            "tool_name": "pandas_excel_extractor",
+            "attempt": 2,
+            "status": "success",
+            "summary": {
+              "records_processed": 4372,
+              "crop_groups": 36,
+              "period": {
+                "first": "1966-67",
+                "last": "2024-25"
+              },
+              "inserted": 0,
+              "matched": 0,
+              "modified": 0,
+              "count_before": null,
+              "count_after": null,
+              "dry_run": true,
+              "provenance": {
+                "extraction_run_id": "74a3f68f-49d5-4cb3-8548-85c7e9743d61",
+                "extracting_agent": "crop_statistics_excel_agent",
+                "source_type": "excel",
+                "extracted_at": "2026-10-17T21:47:13.003070+00:00"
+              }
+            }
+          }
+        ],
+        "langsmith": {
+          "enabled": true,
+          "project": "bihar-crop-phase2",
+          "reason": null
+        },
+        "completed_at": "2026-10-17T21:47:13.019288+00:00",
+        "results": [
+          {
+            "agent_id": "crop_statistics_excel_agent",
+            "source_id": "crop_statistics",
+            "tool_name": "pandas_excel_extractor",
+            "tool_input": {
+              "file": "D:\\BiharAgriculture\\Bits-AI-Demo\\data\\Crop wise Area Production & Yield.xlsx",
+              "dry_run": true
+            },
+            "status": "completed",
+            "summary": {
+              "records_processed": 4372,
+              "crop_groups": 36,
+              "period": {
+                "first": "1966-67",
+                "last": "2024-25"
+              },
+              "inserted": 0,
+              "matched": 0,
+              "modified": 0,
+              "count_before": null,
+              "count_after": null,
+              "dry_run": true,
+              "provenance": {
+                "extraction_run_id": "74a3f68f-49d5-4cb3-8548-85c7e9743d61",
+                "extracting_agent": "crop_statistics_excel_agent",
+                "source_type": "excel",
+                "extracted_at": "2026-10-17T21:47:13.003070+00:00"
+              }
+            },
+            "error": null,
+            "started_at": "2026-10-17T21:47:12.386210+00:00",
+            "completed_at": "2026-10-17T21:47:13.003070+00:00"
+          }
+        ],
+        "automation_metrics": {
+          "inputs_attempted": 1,
+          "inputs_without_manual_intervention": 1,
+          "automation_rate": 1.0,
+          "manual_interventions": 0,
+          "tool_calls": 2,
+          "retries": 1,
+          "unnecessary_tool_calls": 0
+        }
+      },
+      "evaluation": {
+        "case_id": "retry_recovery_crop_statistics",
+        "run_id": "74a3f68f-49d5-4cb3-8548-85c7e9743d61",
+        "framework": "AgentEvals strict trajectory + independent checks",
+        "passed": true,
+        "agents_evaluated": 1,
+        "agents_passed": 1,
+        "per_agent": [
+          {
+            "source_id": "crop_statistics",
+            "agent_id": "crop_statistics_excel_agent",
+            "checks": {
+              "trajectory_match": true,
+              "tool_selection": true,
+              "tool_input_accuracy": true,
+              "tool_call_success": true,
+              "task_completion": true,
+              "provenance_completeness": true,
+              "independent_tool_input": true,
+              "expected_records": true,
+              "retry_observed": true
+            },
+            "passed": true
+          }
+        ],
+        "automation": {
+          "rate": 1.0,
+          "manual_interventions": 0,
+          "retries": 1,
+          "unnecessary_tool_calls": 0
+        },
+        "foundry_metric_mapping": {
+          "task_completion": "code evaluator",
+          "tool_selection": "independent agent/tool reference",
+          "tool_input_accuracy": "independent exact case input",
+          "tool_call_accuracy": "AgentEvals strict trajectory match",
+          "tool_call_success": "observed tool result status",
+          "tool_output_utilization": "case-specific output assertions",
+          "groundedness": "retrieval, source, and numeric-fidelity checks"
+        }
+      }
+    }
+  ]
+}

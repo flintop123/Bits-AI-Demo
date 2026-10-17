@@ -52,10 +52,11 @@ A repeated run should process the available records but insert zero duplicates.
 
 ## Phase 2 agent orchestration
 
-The Phase 2 supervisor routes known source types to three specialist agents:
+The Phase 2 supervisor routes known source types to four specialist agents:
 Playwright for mandi data, pandas/openpyxl for Excel statistics, and
-pypdf/Tesseract for multilingual PDFs. Each run records tool events, retries,
-failure status, automation metrics, and source provenance in MongoDB.
+pypdf/Tesseract for multilingual PDFs, followed by grounded English/Hindi QA
+through MongoDB and the local Ollama model. Each run records tool events,
+retries, failure status, automation metrics, and source provenance in MongoDB.
 
 Run a fast, non-writing demonstration and evaluate the observed trajectory:
 
@@ -66,6 +67,19 @@ python evaluate_phase2_agents.py artifacts\phase2\latest_run.json --output artif
 
 See `docs/PHASE2_AGENT_EVALUATION.md` for the architecture, source-to-agent
 mapping, evaluation criteria, database fields, limitations, and LangSmith setup.
+
+Run the final manifest-driven evaluation across the live mandi source, Excel,
+English PDF text extraction, Hindi OCR, English/Hindi grounded QA, and a
+transient-failure recovery case:
+
+```powershell
+python run_phase2_evaluation_suite.py --output docs/evidence/phase2_final_suite.json
+python export_team_contributions.py
+```
+
+The suite uses independent expected inputs from
+`sources/phase2_evaluation_cases.yaml`; it does not construct its reference
+trajectory from the observed tool call.
 
 ## Ingesting the crop statistics workbook
 
@@ -124,6 +138,8 @@ Invoke-RestMethod -Method Post -Uri "http://127.0.0.1:5000/api/v1/ask" -ContentT
 The response includes the answer, interpreted intent and filters, supporting
 database records, source information, and model name. The language model never
 receives permission to create arbitrary MongoDB queries.
+
+Generated answers are checked against the requested English or Hindi script. If the local model responds in the wrong language, the service performs one grounded language-correction pass over the same retrieved records without adding new evidence. If that correction still uses the wrong script, a deterministic extractive fallback returns concise text from the ranked source records instead of accepting an unsupported model response.
 
 ## Ingesting the official Bihar agriculture PDF
 

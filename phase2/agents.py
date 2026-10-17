@@ -228,3 +228,60 @@ class AgricultureDocumentsSourceAgent:
             started_at=started_at,
             completed_at=utc_now(),
         )
+
+
+class GroundedQAAgent:
+    """Run one read-only, source-grounded agriculture question."""
+
+    agent_id = "grounded_qa_agent"
+    source_id = "grounded_qa"
+    tool_name = "ollama_grounded_qa"
+
+    def __init__(self, question, qa_service=None):
+        self.question = str(question or "").strip()
+        if not self.question:
+            raise ValueError("A QA question is required")
+        self.qa_service = qa_service
+
+    def execute(self, run_id, *, dry_run=False):
+        from services.agriculture_qa_service import AgricultureQAService
+
+        service = self.qa_service or AgricultureQAService()
+        started_at = utc_now()
+        try:
+            result = service.ask(self.question)
+        finally:
+            if self.qa_service is None:
+                service.close()
+        details = provenance(run_id, self.agent_id, "grounded_query")
+        answer = result.get("answer", "")
+        answer_language = (
+            "hi" if any("\u0900" <= char <= "\u097f" for char in answer)
+            else "en"
+        )
+        return AgentResult(
+            agent_id=self.agent_id,
+            source_id=self.source_id,
+            tool_name=self.tool_name,
+            tool_input={
+                "question": self.question,
+                "dry_run": dry_run,
+            },
+            status="completed",
+            summary={
+                "question": self.question,
+                "answer": answer,
+                "answer_language": answer_language,
+                "intent": result.get("intent"),
+                "metric": result.get("metric"),
+                "filters": result.get("filters", {}),
+                "records_retrieved": len(result.get("records", [])),
+                "records": result.get("records", []),
+                "sources": result.get("sources", []),
+                "source_count": len(result.get("sources", [])),
+                "model": result.get("model"),
+                "provenance": details,
+            },
+            started_at=started_at,
+            completed_at=utc_now(),
+        )

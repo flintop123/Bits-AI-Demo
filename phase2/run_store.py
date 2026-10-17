@@ -60,6 +60,9 @@ class MongoRunStore:
             raise KeyError(run_id)
         return result
 
+    def close(self):
+        self.client.close()
+
 
 def event(event_type, **details):
     return {"event": event_type, "timestamp": utc_now(), **details}
