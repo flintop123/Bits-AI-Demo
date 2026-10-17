@@ -1,0 +1,90 @@
+import unittest
+
+from data_api import create_app, parse_limit
+
+
+class FakeQueryService:
+    def __init__(self):
+        self.mandi_call = None
+        self.statistics_call = None
+
+    def health(self):
+        return {
+            "status": "ok",
+            "database": "bihar_agriculture",
+            "collections": {
+                "mandi_prices": 10,
+                "crop_statistics": 4372,
+            },
+        }
+
+    def find_mandi_prices(self, filters, limit):
+        self.mandi_call = (filters, limit)
+        return [{"crop": "Potato", "price": 1200.0}]
+
+    def find_crop_statistics(self, filters, limit):
+        self.statistics_call = (filters, limit)
+        return [{"crop": "Rice", "year": "2024-25"}]
+
+    def list_values(self):
+        return {
+            "mandi_crops": ["Potato"],
+            "districts": ["Arwal"],
+            "statistical_crops": ["Rice"],
+            "seasons": ["Kharif"],
+        }
+
+
+class DataApiTests(unittest.TestCase):
+    def setUp(self):
+        self.service = FakeQueryService()
+        self.client = create_app(self.service).test_client()
+
+    def test_health_reports_collection_counts(self):
+        response = self.client.get("/health")
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.json["collections"]["mandi_prices"], 10)
+        self.assertEqual(response.json["collections"]["crop_statistics"], 4372)
+
+    def test_mandi_endpoint_passes_filters_and_limit(self):
+        response = self.client.get(
+            "/api/v1/mandi-prices?district=Arwal&crop=Potato&limit=5"
+        )
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(
+            self.service.mandi_call,
+            ({"district": "Arwal", "crop": "Potato"}, 5),
+        )
+        self.assertEqual(response.json["count"], 1)
+
+    def test_statistics_endpoint_passes_filters(self):
+        response = self.client.get(
+            "/api/v1/crop-statistics?crop=Rice&year=2024-25"
+        )
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(
+            self.service.statistics_call,
+            ({"crop": "Rice", "year": "2024-25"}, 20),
+        )
+
+    def test_invalid_limit_returns_400(self):
+        response = self.client.get("/api/v1/mandi-prices?limit=500")
+        self.assertEqual(response.status_code, 400)
+        self.assertIn("between 1 and 100", response.json["error"])
+
+    def test_catalog_returns_available_values(self):
+        response = self.client.get("/api/v1/catalog")
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.json["statistical_crops"], ["Rice"])
+
+    def test_unknown_endpoint_remains_404(self):
+        response = self.client.get("/does-not-exist")
+        self.assertEqual(response.status_code, 404)
+
+    def test_parse_limit_rejects_non_integer(self):
+        with self.assertRaisesRegex(ValueError, "must be an integer"):
+            parse_limit("abc")
+
+
+if __name__ == "__main__":
+    unittest.main()
