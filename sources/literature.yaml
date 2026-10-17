@@ -1,0 +1,66 @@
+version: 1
+accessed: "2026-10-18"
+references:
+  - id: react_2022
+    title: "ReAct: Synergizing Reasoning and Acting in Language Models"
+    authors: "Yao et al."
+    year: 2022
+    kind: primary_research
+    url: "https://arxiv.org/abs/2210.03629"
+    project_use: "Compared model-directed tool selection with deterministic routing."
+  - id: pandas_excel
+    title: "IO tools: Reading Excel files"
+    authors: "pandas project"
+    year: 2026
+    kind: official_documentation
+    url: "https://pandas.pydata.org/docs/user_guide/io.html#reading-excel-files"
+    project_use: "Supports structured workbook parsing through pandas and openpyxl."
+  - id: pypdf_extract
+    title: "Extract Text from a PDF"
+    authors: "pypdf project"
+    year: 2026
+    kind: official_documentation
+    url: "https://pypdf.readthedocs.io/en/stable/user/extract-text.html"
+    project_use: "Supports direct text extraction followed by OCR for image-only pages."
+  - id: tesseract_quality
+    title: "Improving the quality of the output"
+    authors: "Tesseract OCR project"
+    year: 2026
+    kind: official_documentation
+    url: "https://tesseract-ocr.github.io/tessdoc/ImproveQuality.html"
+    project_use: "Documents OCR sensitivity to resolution, noise, skew and segmentation."
+  - id: rag_2020
+    title: "Retrieval-Augmented Generation for Knowledge-Intensive NLP Tasks"
+    authors: "Lewis et al."
+    year: 2020
+    kind: primary_research
+    url: "https://arxiv.org/abs/2005.11401"
+    project_use: "Motivates retrieval-grounded generation and returned source evidence."
+  - id: mongodb_text_search
+    title: "Text Search"
+    authors: "MongoDB"
+    year: 2026
+    kind: official_documentation
+    url: "https://www.mongodb.com/docs/manual/text-search/"
+    project_use: "Defines current lexical retrieval and motivates future semantic search."
+  - id: mongodb_compound_unique
+    title: "Create a Compound Unique Index"
+    authors: "MongoDB"
+    year: 2026
+    kind: official_documentation
+    url: "https://www.mongodb.com/docs/manual/core/index-unique/create-compound/"
+    project_use: "Supports compound identities and duplicate-safe upserts."
+  - id: agentevals
+    title: "AgentEvals: Readymade evaluators for agent trajectories"
+    authors: "LangChain"
+    year: 2026
+    kind: official_open_source
+    url: "https://github.com/langchain-ai/agentevals"
+    project_use: "Provides deterministic trajectory matching for specialist agents."
+  - id: langsmith_evaluation_types
+    title: "Evaluation types"
+    authors: "LangChain"
+    year: 2026
+    kind: official_documentation
+    url: "https://docs.langchain.com/langsmith/evaluation-types"
+    project_use: "Frames unit, regression and online evaluation evidence."

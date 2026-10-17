@@ -215,3 +215,7 @@ catalog is stored in
 To reproduce the database counts, index inventory and provenance coverage:
 
     python export_database_evidence.py --run-id 5d062f9d-6f69-42bd-bedb-f7a6b521071f
+
+## Challenge and supporting literature
+
+The project-specific design comparison, measured findings, limitations and references are documented in [Challenge and Supporting Literature](docs/CHALLENGE_AND_LITERATURE.md).
