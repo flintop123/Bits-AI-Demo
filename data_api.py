@@ -2,7 +2,7 @@
 
 import os
 
-from flask import Flask, jsonify, request
+from flask import Flask, jsonify, render_template, request
 from werkzeug.exceptions import HTTPException
 
 from services.agriculture_query_service import AgricultureQueryService
@@ -51,6 +51,10 @@ def create_app(service=None, qa_service=None):
     @app.get("/health")
     def health():
         return jsonify(query_service.health())
+
+    @app.get("/")
+    def demo():
+        return render_template("index.html")
 
     @app.get("/api/v1/mandi-prices")
     def mandi_prices():

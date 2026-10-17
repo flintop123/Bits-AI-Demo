@@ -141,3 +141,14 @@ POST /api/v1/ask
 
 Responses contain the retrieved text, source URL, document title and PDF page
 number so that generated answers can be checked against the official source.
+## Browser demo
+
+Start MongoDB and ensure the local Qwen model is available, then run:
+
+```powershell
+python data_api.py
+```
+
+Open `http://127.0.0.1:5000` in a browser. The demo displays collection counts,
+accepts natural-language questions, and presents the grounded answer together
+with its applied filters, retrieved records, and page-aware source links.
