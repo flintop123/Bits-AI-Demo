@@ -109,7 +109,7 @@ when external deployment and broader user inputs are introduced.
 The acceptance rule is: all selected agents must pass all six checks. Unit and
 integration tests cover normal routing, transient failure/retry, permanent
 failure, multilingual OCR, duplicate protection, query filters, API behavior,
-and Hindi QA. At this revision, 48 automated tests pass.
+and Hindi QA. At this revision, 49 automated tests pass.
 
 ## 7. Automation metrics
 
@@ -138,9 +138,11 @@ $env:LANGSMITH_PROJECT="bihar-crop-phase2"
 $env:LANGSMITH_API_KEY="YOUR_PRIVATE_KEY"
 ```
 
-The next orchestration run creates a parent supervisor trace and a child trace
-for each selected agent. Without a key, the same run remains fully usable and
-explicitly reports that cloud upload was skipped.
+The next orchestration run creates a parent supervisor trace and a tool-type
+child trace for each selected agent. Both levels record structured inputs and
+outputs; failed attempts retain their error and retry information. Without a
+key, the same run remains fully usable and explicitly reports that cloud upload
+was skipped.
 
 ## 9. Phase boundary
 

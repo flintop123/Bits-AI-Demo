@@ -71,6 +71,11 @@ def print_summary(trace):
     print(f"Tool calls: {metrics['tool_calls']}; retries: {metrics['retries']}")
     if not trace["langsmith"]["enabled"]:
         print("LangSmith: instrumented, upload skipped (API key not configured)")
+    else:
+        print(
+            "LangSmith: trace uploaded to project "
+            f"{trace['langsmith']['project']}"
+        )
 
 
 def main(argv=None):

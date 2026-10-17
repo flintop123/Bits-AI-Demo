@@ -14,7 +14,7 @@ def langsmith_status():
     }
 
 
-def trace_context(name, *, inputs=None, metadata=None):
+def trace_context(name, *, run_type="chain", inputs=None, metadata=None):
     """Return a LangSmith trace context when configured, otherwise a no-op."""
     status = langsmith_status()
     if not status["enabled"]:
@@ -25,7 +25,7 @@ def trace_context(name, *, inputs=None, metadata=None):
         return nullcontext()
     return trace(
         name=name,
-        run_type="chain",
+        run_type=run_type,
         inputs=inputs or {},
         metadata=metadata or {},
         project_name=status["project"],

@@ -45,7 +45,7 @@ class Phase2Supervisor:
             "phase2-supervisor-run",
             inputs={"source_ids": requested, "dry_run": dry_run},
             metadata={"run_id": run_id},
-        ):
+        ) as supervisor_trace:
             for source_id in requested:
                 agent = self.agents[source_id]
                 self.run_store.add_event(run_id, event(
@@ -67,6 +67,7 @@ class Phase2Supervisor:
                     try:
                         with trace_context(
                             f"{agent.agent_id}-execute",
+                            run_type="tool",
                             inputs={
                                 "run_id": run_id,
                                 "source_id": source_id,
@@ -77,8 +78,10 @@ class Phase2Supervisor:
                                 "agent_id": agent.agent_id,
                                 "tool_name": agent.tool_name,
                             },
-                        ):
+                        ) as agent_trace:
                             result = agent.execute(run_id, dry_run=dry_run)
+                            if agent_trace is not None:
+                                agent_trace.end(outputs=result.to_dict())
                         self.run_store.add_event(run_id, event(
                             "tool_result",
                             source_id=source_id,
@@ -117,29 +120,43 @@ class Phase2Supervisor:
                 if result.status == "failed" and not continue_on_error:
                     break
 
-        completed = sum(result["status"] == "completed" for result in results)
-        failed = sum(result["status"] == "failed" for result in results)
-        attempted = len(results)
-        if failed == 0 and attempted == len(requested):
-            status = "completed"
-        elif completed:
-            status = "partial_failure"
-        else:
-            status = "failed"
-        metrics = {
-            "inputs_attempted": attempted,
-            "inputs_without_manual_intervention": completed,
-            "automation_rate": round(completed / attempted, 4) if attempted else 0,
-            "manual_interventions": 0,
-            "tool_calls": tool_calls,
-            "retries": retries,
-            "unnecessary_tool_calls": 0,
-        }
-        updates = {
-            "status": status,
-            "completed_at": utc_now(),
-            "results": results,
-            "automation_metrics": metrics,
-        }
-        self.run_store.finish(run_id, updates)
-        return self.run_store.get(run_id)
+            completed = sum(
+                result["status"] == "completed" for result in results
+            )
+            failed = sum(result["status"] == "failed" for result in results)
+            attempted = len(results)
+            if failed == 0 and attempted == len(requested):
+                status = "completed"
+            elif completed:
+                status = "partial_failure"
+            else:
+                status = "failed"
+            metrics = {
+                "inputs_attempted": attempted,
+                "inputs_without_manual_intervention": completed,
+                "automation_rate": (
+                    round(completed / attempted, 4) if attempted else 0
+                ),
+                "manual_interventions": 0,
+                "tool_calls": tool_calls,
+                "retries": retries,
+                "unnecessary_tool_calls": 0,
+            }
+            updates = {
+                "status": status,
+                "completed_at": utc_now(),
+                "results": results,
+                "automation_metrics": metrics,
+            }
+            self.run_store.finish(run_id, updates)
+            completed_run = self.run_store.get(run_id)
+            if supervisor_trace is not None:
+                supervisor_trace.end(outputs={
+                    "run_id": run_id,
+                    "status": status,
+                    "routing_strategy": run["routing_strategy"],
+                    "results": results,
+                    "automation_metrics": metrics,
+                })
+
+        return completed_run

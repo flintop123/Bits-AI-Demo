@@ -32,3 +32,4 @@ Pillow>=10,<13
 
 # Phase 2 agent trajectory evaluation
 agentevals>=0.0.9,<1
+langsmith>=0.3,<1

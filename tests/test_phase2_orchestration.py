@@ -1,4 +1,6 @@
 import unittest
+from contextlib import contextmanager
+from unittest.mock import patch
 
 from phase2.models import AgentResult, utc_now
 from phase2.orchestrator import Phase2Supervisor
@@ -38,6 +40,42 @@ class FakeAgent:
 
 
 class Phase2OrchestrationTests(unittest.TestCase):
+    def test_langsmith_spans_capture_agent_and_supervisor_outputs(self):
+        spans = []
+
+        class RecordingSpan:
+            def __init__(self, name, options):
+                self.name = name
+                self.options = options
+                self.outputs = None
+
+            def end(self, *, outputs=None, **kwargs):
+                self.outputs = outputs
+
+        @contextmanager
+        def recording_trace(name, **options):
+            span = RecordingSpan(name, options)
+            spans.append(span)
+            yield span
+
+        with patch(
+            "phase2.orchestrator.trace_context",
+            new=recording_trace,
+        ):
+            trace = Phase2Supervisor(
+                [FakeAgent()], run_store=MemoryRunStore()
+            ).run(["fake_source"], dry_run=True)
+
+        supervisor_span, agent_span = spans
+        self.assertEqual(supervisor_span.name, "phase2-supervisor-run")
+        self.assertEqual(supervisor_span.outputs["status"], "completed")
+        self.assertEqual(supervisor_span.outputs["automation_metrics"][
+            "automation_rate"
+        ], 1)
+        self.assertEqual(agent_span.options["run_type"], "tool")
+        self.assertEqual(agent_span.outputs["status"], "completed")
+        self.assertEqual(agent_span.outputs["tool_name"], "fake_tool")
+
     def test_supervisor_records_selection_tool_result_and_metrics(self):
         store = MemoryRunStore()
         trace = Phase2Supervisor(
