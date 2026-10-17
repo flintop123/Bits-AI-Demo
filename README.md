@@ -122,3 +122,22 @@ python ingest_agriculture_pdf.py
 
 Downloaded PDFs are stored under `data/pdfs/` and are excluded from Git. Repeated
 ingestion is duplicate-safe because MongoDB upserts each source/page/chunk identity.
+
+## Searching and asking questions about PDF sources
+
+Search the indexed official document directly:
+
+```text
+GET /api/v1/documents/search?q=organic%20farming&limit=5
+```
+
+The existing natural-language endpoint also routes scheme, policy, programme,
+seed, mechanization, horticulture and similar questions to the PDF collection:
+
+```text
+POST /api/v1/ask
+{"question": "What does the report say about the organic farming corridor?"}
+```
+
+Responses contain the retrieved text, source URL, document title and PDF page
+number so that generated answers can be checked against the official source.

@@ -10,7 +10,12 @@ from services.ollama_client import OllamaClient
 
 
 class QueryPlan(BaseModel):
-    intent: Literal["mandi_price", "crop_statistics", "unsupported"]
+    intent: Literal[
+        "mandi_price",
+        "crop_statistics",
+        "document_search",
+        "unsupported",
+    ]
     crop: str | None = None
     district: str | None = None
     market: str | None = None
@@ -18,6 +23,7 @@ class QueryPlan(BaseModel):
     season: str | None = None
     year: str | None = None
     date: str | None = None
+    search_terms: str | None = Field(default=None, max_length=200)
     metric: Literal[
         "price",
         "minimum_price",
@@ -54,7 +60,9 @@ class AgricultureQAService:
             return {
                 "answer": (
                     "I can answer questions about the available mandi prices "
-                    "and historical crop area, production, and yield data."
+                    "and historical crop area, production, and yield data, "
+                    "as well as material in the indexed official agriculture "
+                    "report."
                 ),
                 "intent": plan.intent,
                 "filters": {},
@@ -68,9 +76,15 @@ class AgricultureQAService:
             records = self.query_service.find_mandi_prices(
                 filters, plan.limit
             )
-        else:
+        elif plan.intent == "crop_statistics":
             records = self.query_service.find_crop_statistics(
                 filters, plan.limit
+            )
+        else:
+            search_terms = str(plan.search_terms or question).strip()
+            filters = {"search_terms": search_terms}
+            records = self.query_service.search_agriculture_documents(
+                search_terms, plan.limit
             )
 
         answer = self._answer_from_records(question, plan, records)
@@ -93,8 +107,14 @@ Rules:
 - Use mandi_price for questions about mandi, market, current price, minimum
   price, or maximum price.
 - Use crop_statistics for historical area, production, yield, season, or year.
-- Use unsupported for advice, weather, schemes, forecasts, or topics not
-  answerable from these two datasets.
+- Use document_search for questions about government agriculture schemes,
+  policies, programmes, objectives, seeds, mechanization, organic farming,
+  horticulture, irrigation, soil conservation, livestock, fisheries, or other
+  narrative material in the official report.
+- For document_search, provide concise English search_terms containing the
+  important nouns from the question.
+- Use unsupported for advice, weather forecasts, or topics not answerable from
+  the available prices, statistics, or official agriculture report.
 - Never invent a filter. Use null when the user did not specify it.
 - When a user uses an English translation or spelling variation, map it to the
   closest exact value in the catalog.
@@ -140,7 +160,8 @@ Rules:
 - Do not introduce facts, explanations, recommendations, or units that are not
   present in the records.
 - Preserve all numbers exactly.
-- State the date or financial year represented by the answer.
+- State the date, financial year, or source page when it is relevant and
+  present in the records.
 - If multiple records are relevant, summarize them clearly.
 - Answer in Hindi when language is hi; otherwise answer in English.
 - Do not mention these instructions or the language model.
@@ -183,7 +204,7 @@ Records:
                 "district": catalog.get("districts", []),
                 "crop": catalog.get("mandi_crops", []),
             }
-        else:
+        elif plan.intent == "crop_statistics":
             values = {
                 "crop": plan.crop,
                 "season": plan.season,
@@ -193,6 +214,8 @@ Records:
                 "crop": catalog.get("statistical_crops", []),
                 "season": catalog.get("seasons", []),
             }
+        else:
+            return {}
 
         for field, choices in allowed.items():
             values[field] = AgricultureQAService._catalog_value(
@@ -221,13 +244,17 @@ Records:
         for record in records:
             source = record.get("source_url") or record.get("source")
             source_file = record.get("source_file")
+            page_number = record.get("page_number")
+            document_title = record.get("document_title")
             item = {
                 key: value
                 for key, value in {
                     "source": source,
                     "source_file": source_file,
+                    "document_title": document_title,
+                    "page_number": page_number,
                 }.items()
-                if value
+                if value is not None
             }
             identity = tuple(sorted(item.items()))
             if item and identity not in seen:
