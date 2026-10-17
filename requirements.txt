@@ -24,3 +24,4 @@ openpyxl>=3.1,<4
 
 # HTTP API
 Flask>=3.1,<4
+pypdf>=5,<7

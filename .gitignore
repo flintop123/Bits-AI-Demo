@@ -216,3 +216,6 @@ __marimo__/
 
 # Streamlit
 .streamlit/secrets.toml
+
+# Downloaded source documents (retrieved reproducibly by ingestion commands)
+data/pdfs/

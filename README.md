@@ -107,3 +107,18 @@ Invoke-RestMethod -Method Post -Uri "http://127.0.0.1:5000/api/v1/ask" -ContentT
 The response includes the answer, interpreted intent and filters, supporting
 database records, source information, and model name. The language model never
 receives permission to create arbitrary MongoDB queries.
+
+## Ingesting the official Bihar agriculture PDF
+
+The PDF ingestion command downloads the official Bihar Annual Scheme 2022-23
+document and extracts only pages 11-30, which contain the Agriculture and Allied
+Sector chapter. Each chunk retains its document title, page number, source URL,
+source filename, and content hash.
+
+```powershell
+python ingest_agriculture_pdf.py --dry-run
+python ingest_agriculture_pdf.py
+```
+
+Downloaded PDFs are stored under `data/pdfs/` and are excluded from Git. Repeated
+ingestion is duplicate-safe because MongoDB upserts each source/page/chunk identity.
