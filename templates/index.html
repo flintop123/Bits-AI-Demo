@@ -1,0 +1,164 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Grounded agriculture information for Bihar">
+  <title>Bihar Agriculture Intelligence</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='app.css') }}">
+</head>
+<body>
+  <div class="page-shell">
+    <header class="site-header">
+      <a class="brand" href="/" aria-label="Bihar Agriculture Intelligence home">
+        <span class="brand-mark" aria-hidden="true">
+          <svg viewBox="0 0 48 48" role="img">
+            <path d="M24 41V18" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round"/>
+            <path d="M23 29C14 29 9 24 8 16c9 0 14 4 15 13Z" fill="currentColor"/>
+            <path d="M25 22c8 0 13-5 14-13-9 0-14 4-14 13Z" fill="currentColor"/>
+          </svg>
+        </span>
+        <span>
+          <strong>Bihar Agriculture</strong>
+          <small>Evidence-grounded intelligence</small>
+        </span>
+      </a>
+      <div class="system-state" id="system-state" aria-live="polite">
+        <span class="status-dot"></span>
+        <span>Checking system</span>
+      </div>
+    </header>
+
+    <main>
+      <section class="hero">
+        <div class="hero-copy">
+          <p class="eyebrow">Agriculture data assistant</p>
+          <h1>Ask Bihar's agriculture data a direct question.</h1>
+          <p class="hero-text">
+            Explore live mandi prices, 59 years of crop statistics, and official
+            government reports. Every response is grounded in retrieved records.
+          </p>
+        </div>
+        <div class="metrics" aria-label="Available data">
+          <article>
+            <span class="metric-value" id="mandi-count">—</span>
+            <span class="metric-label">Mandi prices</span>
+          </article>
+          <article>
+            <span class="metric-value" id="statistics-count">—</span>
+            <span class="metric-label">Crop statistics</span>
+          </article>
+          <article>
+            <span class="metric-value" id="documents-count">—</span>
+            <span class="metric-label">Report passages</span>
+          </article>
+        </div>
+      </section>
+
+      <section class="workspace" aria-labelledby="ask-heading">
+        <div class="ask-panel">
+          <div class="panel-heading">
+            <div>
+              <p class="section-kicker">Natural-language query</p>
+              <h2 id="ask-heading">What would you like to know?</h2>
+            </div>
+            <span class="local-badge">Local Qwen3 model</span>
+          </div>
+
+          <form id="question-form">
+            <label class="sr-only" for="question">Agriculture question</label>
+            <textarea id="question" name="question" rows="3" maxlength="500"
+              placeholder="For example: What does the report say about the organic farming corridor?"
+              required></textarea>
+            <div class="form-actions">
+              <span class="character-count"><span id="character-count">0</span>/500</span>
+              <button id="ask-button" type="submit">
+                <span>Ask the data</span>
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m8 5 7 7-7 7" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              </button>
+            </div>
+          </form>
+
+          <div class="examples">
+            <span>Try a question</span>
+            <div class="example-list">
+              <button type="button" data-question="What was rice production in 2024-25?">Rice production</button>
+              <button type="button" data-question="What is the potato price in Arwal mandi?">Mandi price</button>
+              <button type="button" data-question="What does the report say about the organic farming corridor?">Organic farming policy</button>
+            </div>
+          </div>
+        </div>
+
+        <aside class="coverage-panel" aria-label="Data coverage">
+          <p class="section-kicker">Current coverage</p>
+          <h2>Three evidence layers</h2>
+          <ol class="coverage-list">
+            <li>
+              <span class="coverage-index">01</span>
+              <div><strong>Market observations</strong><small>District, market, crop, variety and daily prices</small></div>
+            </li>
+            <li>
+              <span class="coverage-index">02</span>
+              <div><strong>Historical statistics</strong><small>Area, production and yield from 1966–67 onward</small></div>
+            </li>
+            <li>
+              <span class="coverage-index">03</span>
+              <div><strong>Official documents</strong><small>Page-aware passages from Bihar government reports</small></div>
+            </li>
+          </ol>
+        </aside>
+      </section>
+
+      <section id="result-section" class="result-section" hidden aria-live="polite">
+        <div id="loading-state" class="loading-state" hidden>
+          <span class="loader"></span>
+          <div><strong>Reviewing the evidence…</strong><small>The local model is planning the query and grounding its answer.</small></div>
+        </div>
+
+        <div id="error-state" class="error-state" hidden>
+          <strong>We could not complete that question.</strong>
+          <p id="error-message"></p>
+        </div>
+
+        <div id="answer-state" hidden>
+          <div class="result-header">
+            <div>
+              <p class="section-kicker">Grounded response</p>
+              <h2>Answer</h2>
+            </div>
+            <div class="result-badges">
+              <span id="intent-badge" class="intent-badge"></span>
+              <span id="model-badge" class="model-badge"></span>
+            </div>
+          </div>
+          <p id="answer-text" class="answer-text"></p>
+
+          <div id="filter-block" class="filter-block" hidden>
+            <span>Applied query</span>
+            <div id="filter-list" class="filter-list"></div>
+          </div>
+
+          <div id="source-block" class="source-block" hidden>
+            <div class="subheading">
+              <h3>Sources</h3>
+              <span id="source-count"></span>
+            </div>
+            <div id="source-list" class="source-list"></div>
+          </div>
+
+          <details id="records-block" class="records-block">
+            <summary><span>Inspect retrieved evidence</span><span id="record-count"></span></summary>
+            <div id="record-list" class="record-list"></div>
+          </details>
+        </div>
+      </section>
+    </main>
+
+    <footer>
+      <span>Research prototype · Bihar agriculture</span>
+      <span>Answers are limited to indexed evidence</span>
+    </footer>
+  </div>
+  <script src="{{ url_for('static', filename='app.js') }}" defer></script>
+</body>
+</html>
