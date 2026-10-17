@@ -6,6 +6,8 @@ from flask import Flask, jsonify, request
 from werkzeug.exceptions import HTTPException
 
 from services.agriculture_query_service import AgricultureQueryService
+from services.agriculture_qa_service import AgricultureQAService
+from services.ollama_client import OllamaUnavailableError
 
 
 def parse_limit(raw_limit):
@@ -26,9 +28,10 @@ def selected_filters(names):
     }
 
 
-def create_app(service=None):
+def create_app(service=None, qa_service=None):
     app = Flask(__name__)
     query_service = service or AgricultureQueryService()
+    agriculture_qa = qa_service or AgricultureQAService(query_service)
 
     @app.errorhandler(ValueError)
     def handle_validation_error(error):
@@ -40,6 +43,10 @@ def create_app(service=None):
             return error
         app.logger.exception("Request failed")
         return jsonify({"error": "Internal server error"}), 500
+
+    @app.errorhandler(OllamaUnavailableError)
+    def handle_ollama_error(error):
+        return jsonify({"error": str(error)}), 503
 
     @app.get("/health")
     def health():
@@ -72,6 +79,11 @@ def create_app(service=None):
     @app.get("/api/v1/catalog")
     def catalog():
         return jsonify(query_service.list_values())
+
+    @app.post("/api/v1/ask")
+    def ask_question():
+        body = request.get_json(silent=True) or {}
+        return jsonify(agriculture_qa.ask(body.get("question")))
 
     return app
 
