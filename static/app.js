@@ -16,6 +16,92 @@ function textElement(tag, value) {
   return element;
 }
 
+const intelligenceCrop = document.querySelector("#intelligence-crop");
+const intelligenceCatalogLanguage = document.querySelector("#intelligence-catalog-language");
+const intelligenceDistrict = document.querySelector("#intelligence-district");
+const intelligenceMarket = document.querySelector("#intelligence-market");
+let intelligenceCatalog = null;
+let lastIntelligenceData = null;
+
+function localizedCatalogLabel(item, language) {
+  return item.labels?.[language] || item.label || item.value;
+}
+
+function catalogLookup(field, value) {
+  if (!value || !intelligenceCatalog) return value;
+  const language = intelligenceCatalogLanguage.value;
+  const options = intelligenceCatalog[field] || [];
+  const item = options.find((option) => option.value === value);
+  return item ? localizedCatalogLabel(item, language) : value;
+}
+
+function populateCatalogSelect(select, items, placeholders) {
+  const language = intelligenceCatalogLanguage.value;
+  const selectedValue = select.value;
+  const placeholder = textElement("option", placeholders[language]);
+  placeholder.value = "";
+  select.replaceChildren(placeholder);
+  items.forEach((item) => {
+    const option = textElement("option", localizedCatalogLabel(item, language));
+    option.value = item.value;
+    option.dataset.officialLabel = item.value;
+    option.dataset.translationMethod = item.methods?.[language] || item.method || "unknown";
+    select.append(option);
+  });
+  if ([...select.options].some((option) => option.value === selectedValue)) {
+    select.value = selectedValue;
+  }
+}
+
+function applyIntelligenceCatalogLanguage() {
+  if (!intelligenceCatalog) return;
+  populateCatalogSelect(
+    intelligenceCrop,
+    intelligenceCatalog.crops,
+    { hi: "फसल चुनें", en: "Select a crop" },
+  );
+  populateCatalogSelect(
+    intelligenceDistrict,
+    intelligenceCatalog.districts,
+    { hi: "सभी जिले", en: "All districts" },
+  );
+  populateCatalogSelect(
+    intelligenceMarket,
+    intelligenceCatalog.markets,
+    { hi: "सभी मंडियां", en: "All markets" },
+  );
+  if (lastIntelligenceData) renderIntelligence(lastIntelligenceData);
+}
+
+async function loadIntelligenceCatalog() {
+  const status = document.querySelector("#intelligence-status");
+  intelligenceCrop.disabled = true;
+  intelligenceDistrict.disabled = true;
+  intelligenceMarket.disabled = true;
+  intelligenceCatalogLanguage.disabled = true;
+  intelligenceCrop.replaceChildren(textElement("option", "Loading catalog…"));
+  try {
+    const response = await fetch("/api/v1/catalog?language=all");
+    const data = await response.json();
+    if (!response.ok) throw new Error(data.error || "Catalog failed to load.");
+    intelligenceCatalog = {
+      crops: data.mandi_crop_options || [],
+      districts: data.district_options || [],
+      markets: data.market_options || [],
+    };
+    applyIntelligenceCatalogLanguage();
+    status.textContent = `${formatNumber(intelligenceCatalog.crops.length)} crops, ${formatNumber(intelligenceCatalog.districts.length)} districts and ${formatNumber(intelligenceCatalog.markets.length)} markets loaded from MongoDB.`;
+  } catch (error) {
+    intelligenceCrop.replaceChildren(textElement("option", "Catalog unavailable"));
+    status.textContent = error.message || "Catalog failed to load.";
+  } finally {
+    intelligenceCrop.disabled = false;
+    intelligenceDistrict.disabled = false;
+    intelligenceMarket.disabled = false;
+    intelligenceCatalogLanguage.disabled = false;
+  }
+}
+
 async function loadHealth() {
   const state = document.querySelector("#system-state");
   try {
@@ -363,6 +449,162 @@ async function loadDashboard() {
   }
 }
 
+const currency = (value) => value == null ? "—" : `₹${formatNumber(Number(value).toFixed(2))}`;
+
+function renderIntelligenceChart(records) {
+  const stage = document.querySelector("#intelligence-chart");
+  stage.replaceChildren();
+  if (!records.length) {
+    stage.append(textElement("p", "No matching daily observations are available."));
+    return;
+  }
+  const width = 760;
+  const height = 260;
+  const margin = { top: 20, right: 20, bottom: 42, left: 62 };
+  const innerWidth = width - margin.left - margin.right;
+  const innerHeight = height - margin.top - margin.bottom;
+  const values = records.map((item) => Number(item.average_modal_price));
+  const minimum = Math.min(...values);
+  const maximum = Math.max(...values);
+  const range = Math.max(maximum - minimum, 1);
+  const x = (index) => margin.left + (records.length === 1 ? innerWidth / 2 : index / (records.length - 1) * innerWidth);
+  const y = (value) => margin.top + (maximum - value) / range * innerHeight;
+  const svg = svgElement("svg", { viewBox: `0 0 ${width} ${height}`, "aria-hidden": "true" });
+
+  [0, 0.5, 1].forEach((fraction) => {
+    const value = minimum + range * fraction;
+    const lineY = y(value);
+    svg.append(svgElement("line", { x1: margin.left, y1: lineY, x2: width - margin.right, y2: lineY, class: "chart-gridline" }));
+    const label = svgElement("text", { x: margin.left - 10, y: lineY + 4, class: "chart-axis-label", "text-anchor": "end" });
+    label.textContent = `₹${Math.round(value)}`;
+    svg.append(label);
+  });
+  const path = records.map((item, index) => `${index ? "L" : "M"} ${x(index)} ${y(Number(item.average_modal_price))}`).join(" ");
+  svg.append(svgElement("path", { d: path, class: "intelligence-line" }));
+  const labelEvery = Math.max(1, Math.ceil(records.length / 6));
+  records.forEach((item, index) => {
+    const point = svgElement("circle", { cx: x(index), cy: y(Number(item.average_modal_price)), r: 4, class: "intelligence-point" });
+    const title = svgElement("title");
+    title.textContent = `${item.date}: ₹${item.average_modal_price}, ${item.observation_count} observations`;
+    point.append(title);
+    svg.append(point);
+    if (index % labelEvery === 0 || index === records.length - 1) {
+      const label = svgElement("text", { x: x(index), y: height - 14, class: "chart-axis-label", "text-anchor": "middle" });
+      label.textContent = shortDate(item.date);
+      svg.append(label);
+    }
+  });
+  stage.append(svg);
+}
+
+function renderMarketComparison(markets) {
+  const body = document.querySelector("#intelligence-market-rows");
+  body.replaceChildren();
+  markets.slice(0, 12).forEach((market) => {
+    const row = document.createElement("tr");
+    [
+      market.latest_price_rank,
+      catalogLookup("markets", market.market) || market.market_label || "—",
+      catalogLookup("districts", market.district) || market.district_label || "—",
+      currency(market.latest_average_price),
+      currency(market.window_average_price),
+      market.distance_km == null ? "—" : `${market.distance_km} km`,
+      formatNumber(market.observation_count),
+    ].forEach((value) => row.append(textElement("td", value)));
+    body.append(row);
+  });
+}
+
+function renderIntelligence(data) {
+  lastIntelligenceData = data;
+  const summary = data.summary || {};
+  const freshness = data.freshness || {};
+  const locality = data.locality || {};
+  document.querySelector("#intelligence-results").hidden = false;
+  setText("#intel-latest", currency(summary.latest_average_price));
+  setText("#intel-latest-date", freshness.latest_data_date ? `As of ${freshness.latest_data_date}` : "No matching date");
+  const change = summary.change_percent == null ? "—" : `${summary.change_percent > 0 ? "+" : ""}${summary.change_percent}%`;
+  setText("#intel-change", change);
+  setText("#intel-direction", humanize(summary.direction));
+  setText("#intel-volatility", summary.daily_volatility_percent == null ? "—" : `${summary.daily_volatility_percent}%`);
+  setText("#intel-freshness", humanize(freshness.status));
+  const scope = locality.mode === "nearby_verified_markets"
+    ? `${locality.verified_markets_in_radius || 0} verified markets within ${locality.radius_km} km`
+    : `${formatNumber(summary.markets)} markets · ${formatNumber(summary.dates)} dates`;
+  setText("#intel-scope", scope);
+  setText("#intel-observations", `${formatNumber(summary.observations)} observations`);
+  renderIntelligenceChart(data.daily_series || []);
+  renderMarketComparison(data.market_comparison || []);
+  const resolutions = Object.entries(data.filter_resolution || {}).filter(
+    ([, item]) => item.requested !== item.resolved,
+  );
+  if (resolutions.length) {
+    const status = document.querySelector("#intelligence-status");
+    const details = resolutions.map(
+      ([field, item]) => `${item.requested} → ${catalogLookup(
+        field === "crop" ? "crops" : `${field}s`, item.resolved,
+      )}`,
+    ).join("; ");
+    status.textContent = `Bilingual filter resolved automatically: ${details}. Calculated from stored official observations.`;
+  }
+  const anomalyList = document.querySelector("#intelligence-anomalies");
+  anomalyList.replaceChildren();
+  const anomalies = data.anomalies || [];
+  if (!anomalies.length) {
+    anomalyList.append(textElement("p", "No days crossed the documented two-sigma threshold."));
+  } else {
+    anomalies.forEach((item) => {
+      const card = document.createElement("article");
+      card.append(textElement("strong", item.date));
+      card.append(textElement("span", `${currency(item.average_modal_price)} · z-score ${item.z_score} · ${item.direction}`));
+      anomalyList.append(card);
+    });
+  }
+}
+
+document.querySelector("#intelligence-form").addEventListener("submit", async (event) => {
+  event.preventDefault();
+  const status = document.querySelector("#intelligence-status");
+  const params = new URLSearchParams({
+    crop: document.querySelector("#intelligence-crop").value.trim(),
+    days: document.querySelector("#intelligence-days").value,
+    display_language: intelligenceCatalogLanguage.value,
+  });
+  const optional = {
+    district: "#intelligence-district",
+    market: "#intelligence-market",
+    latitude: "#intelligence-latitude",
+    longitude: "#intelligence-longitude",
+    radius_km: "#intelligence-radius",
+  };
+  Object.entries(optional).forEach(([key, selector]) => {
+    const value = document.querySelector(selector).value.trim();
+    if (value && (key !== "radius_km" || params.has("latitude"))) params.set(key, value);
+  });
+  status.textContent = "Calculating locality and time-aware metrics…";
+  document.querySelector("#intelligence-results").hidden = true;
+  try {
+    const response = await fetch(`/api/v1/mandi-intelligence?${params}`);
+    const data = await response.json();
+    if (!response.ok) throw new Error(data.error || "Market analysis failed.");
+    renderIntelligence(data);
+    const translated = Object.values(data.filter_resolution || {}).some(
+      (item) => item.requested !== item.resolved,
+    );
+    if (!translated) {
+      status.textContent = data.summary.observations
+        ? "Calculated from stored official observations."
+        : "No matching observations were found for this scope.";
+    } else if (!data.summary.observations) {
+      status.textContent += " No matching observations were found for the resolved scope.";
+    }
+  } catch (error) {
+    status.textContent = error.message || "Market analysis failed.";
+  }
+});
+
+intelligenceCatalogLanguage.addEventListener("change", applyIntelligenceCatalogLanguage);
+
 form.addEventListener("submit", async (event) => {
   event.preventDefault();
   const question = questionInput.value.trim();
@@ -401,6 +643,7 @@ document.querySelectorAll("[data-question]").forEach((button) => {
 
 loadHealth();
 loadDashboard();
+loadIntelligenceCatalog();
 document.querySelector("#refresh-dashboard").addEventListener("click", loadDashboard);
 document.querySelector("#dashboard-window").addEventListener("change", loadDashboard);
 

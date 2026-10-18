@@ -24,6 +24,8 @@ flowchart TD
     M --> Q[Grounded query service]
     L[mandi_locations] -->|market_code| M
     L --> Q
+    B[mandi_catalog_labels] --> Q
+    M -->|distinct official values| B
     C --> Q
     D --> Q
 ```
@@ -98,7 +100,25 @@ remain unresolved and are never converted into approximate district
 centroids. This preserves the difference between an observed market location
 and an inferred administrative location.
 
-### 3.3 crop_statistics
+### 3.3 mandi_catalog_labels
+
+One document caches English and Hindi display labels for a distinct crop,
+district or market value observed in `mandi_prices`. The official value remains
+the query key; translated labels are presentation metadata only. A compound
+unique index on `entity_type` and `official_value` prevents duplicates.
+
+The cache is refreshed after scheduled collection and can also be rebuilt with
+`python sync_mandi_catalog_labels.py`. The dashboard downloads both languages
+in one catalog request, so changing the selector does not load a translation
+model or call the server again. Label-generation methods are stored alongside
+the text to distinguish official labels, reviewed aliases and offline MarianMT
+translation. Market proper nouns are never sent to semantic translation:
+reviewed aliases are preferred, followed by deterministic Devanagari-to-Latin
+transliteration. A label-policy version automatically replaces labels created
+under an older unsafe rule. Reviewed Hindi display aliases are used for the
+small number of official market names supplied in Latin script.
+
+### 3.4 crop_statistics
 
 One document represents a crop-season-financial-year observation.
 
@@ -116,7 +136,7 @@ The workbook must contain Area, Production and Yield blocks with common year
 columns. Cotton production uses 170 kg bales; jute-family crops use 180 kg
 bales; other crops use tonnes.
 
-### 3.4 agriculture_documents
+### 3.5 agriculture_documents
 
 One document represents one bounded, page-aware text chunk from an allowlisted
 official PDF.
@@ -143,7 +163,7 @@ is used, preventing stale vectors from influencing retrieval after content is
 updated. Embedding fields are reproducible derived data and do not alter the
 chunk identity or source provenance.
 
-### 3.5 agent_runs
+### 3.6 agent_runs
 
 One document represents one supervisor execution.
 
@@ -161,7 +181,7 @@ Statuses are `running`, `completed`, `partial_failure` or `failed`. The
 supervisor permits one automatic retry and records both transient and permanent
 failures instead of suppressing them.
 
-### 3.6 mandi_ingestion_runs
+### 3.7 mandi_ingestion_runs
 
 One document represents one scheduled or catch-up Phase 4 collection. It stores
 the requested dates, selected API agent and deterministic tool, pagination and
@@ -183,6 +203,7 @@ The unique-index identities are:
 - Mandi: district + market + date + crop + variety + source URL.
 - Official Phase 4 mandi API: source record ID + observation date.
 - Mandi locations: official market code.
+- Mandi catalog labels: entity type + official source value.
 - Crop statistics: crop + season + financial year.
 - PDF chunks: source URL + page number + chunk index.
 - Agent runs: run ID.

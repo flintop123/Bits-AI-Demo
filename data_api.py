@@ -149,6 +149,36 @@ def create_app(service=None, qa_service=None):
             "records": records,
         })
 
+    @app.get("/api/v1/mandi-intelligence")
+    def mandi_intelligence():
+        days = parse_days(request.args.get("days", "30"))
+        display_language = request.args.get(
+            "display_language", "en"
+        ).strip().lower()
+        if display_language not in {"en", "hi"}:
+            raise ValueError("display_language must be en or hi")
+        filters = selected_filters(("district", "market", "crop", "variety"))
+        latitude_raw = request.args.get("latitude", "").strip()
+        longitude_raw = request.args.get("longitude", "").strip()
+        if bool(latitude_raw) != bool(longitude_raw):
+            raise ValueError("latitude and longitude must be supplied together")
+        latitude = longitude = None
+        radius_km = 75.0
+        if latitude_raw:
+            latitude = parse_float(latitude_raw, "latitude", -90, 90)
+            longitude = parse_float(longitude_raw, "longitude", -180, 180)
+            radius_km = parse_float(
+                request.args.get("radius_km", "75"), "radius_km", 1, 300
+            )
+        return jsonify(query_service.market_intelligence(
+            filters,
+            days,
+            latitude=latitude,
+            longitude=longitude,
+            radius_km=radius_km,
+            display_language=display_language,
+        ))
+
     @app.get("/api/v1/crop-statistics")
     def crop_statistics():
         limit = parse_limit(request.args.get("limit", "20"))
@@ -162,7 +192,12 @@ def create_app(service=None, qa_service=None):
 
     @app.get("/api/v1/catalog")
     def catalog():
-        return jsonify(query_service.list_values())
+        language = request.args.get("language", "").strip().lower() or None
+        if language not in {None, "all", "en", "hi"}:
+            raise ValueError("language must be all, en or hi")
+        return jsonify(query_service.list_values(
+            display_language=language
+        ))
 
     @app.get("/api/v1/dashboard")
     def dashboard():

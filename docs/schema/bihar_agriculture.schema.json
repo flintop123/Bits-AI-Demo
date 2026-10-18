@@ -1,7 +1,7 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "title": "Bihar Agriculture MongoDB Schema Catalog",
-  "schema_version": 5,
+  "schema_version": 6,
   "database": "bihar_agriculture",
   "shared_provenance_fields": [
     "extraction_run_id",
@@ -133,6 +133,40 @@
           "name": "mandi_location_district",
           "keys": ["district_code", "market_name"],
           "unique": false
+        }
+      ]
+    },
+    "mandi_catalog_labels": {
+      "description": "Persistent bilingual display labels derived from distinct official mandi values.",
+      "identity_fields": ["entity_type", "official_value"],
+      "required": [
+        "entity_type", "official_value", "official_language", "labels",
+        "label_languages", "methods", "source_collection",
+        "label_policy_version", "generated_at"
+      ],
+      "properties": {
+        "entity_type": {"enum": ["crop", "district", "market"]},
+        "official_value": {"bsonType": "string"},
+        "official_language": {"enum": ["en", "hi"]},
+        "labels": {
+          "bsonType": "object",
+          "required": ["en", "hi"],
+          "properties": {
+            "en": {"bsonType": "string"},
+            "hi": {"bsonType": "string"}
+          }
+        },
+        "label_languages": {"bsonType": "object"},
+        "methods": {"bsonType": "object"},
+        "source_collection": {"enum": ["mandi_prices"]},
+        "label_policy_version": {"bsonType": "int", "minimum": 1},
+        "generated_at": {"bsonType": "date"}
+      },
+      "indexes": [
+        {
+          "name": "unique_mandi_catalog_label",
+          "keys": ["entity_type", "official_value"],
+          "unique": true
         }
       ]
     },

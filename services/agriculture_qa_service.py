@@ -18,6 +18,7 @@ from services.ollama_client import OllamaClient
 class QueryPlan(BaseModel):
     intent: Literal[
         "mandi_price",
+        "mandi_intelligence",
         "crop_statistics",
         "document_search",
         "unsupported",
@@ -38,9 +39,15 @@ class QueryPlan(BaseModel):
         "production",
         "yield",
         "records",
+        "trend",
+        "change",
+        "volatility",
+        "comparison",
+        "anomaly",
     ] = "records"
     language: Literal["en", "hi"] = "en"
     limit: int = Field(default=5, ge=1, le=10)
+    days: int = Field(default=30, ge=1, le=365)
 
 
 class GroundedAnswer(BaseModel):
@@ -105,6 +112,13 @@ class AgricultureQAService:
             records = self.query_service.find_mandi_prices(
                 filters, plan.limit
             )
+        elif plan.intent == "mandi_intelligence":
+            intelligence = self.query_service.market_intelligence(
+                filters, plan.days
+            )
+            records = [intelligence] if (
+                intelligence.get("summary", {}).get("observations", 0) > 0
+            ) else []
         elif plan.intent == "crop_statistics":
             records = self.query_service.find_crop_statistics(
                 filters, plan.limit
@@ -149,6 +163,10 @@ Convert the agriculture question into a safe query plan.
 Rules:
 - Use mandi_price for questions about mandi, market, current price, minimum
   price, or maximum price.
+- Use mandi_intelligence for questions about price trend, price change,
+  volatility, unusual/anomalous movement, comparison across markets, or a
+  locality-aware summary over several days. Set days from the requested time
+  window; use 30 when no window is supplied.
 - Use crop_statistics for historical area, production, yield, season, or year.
 - Use document_search for questions about government agriculture schemes,
   policies, programmes, objectives, seeds, mechanization, organic farming,
@@ -167,6 +185,7 @@ Rules:
   closest exact value in the catalog.
 - Preserve financial years exactly, for example 2024-25.
 - Dates must use YYYY-MM-DD when a date is explicitly supplied.
+- Never describe a descriptive price ranking as a recommendation or forecast.
 - Choose language hi for a Hindi question and en otherwise.
 - Return only data conforming to this JSON schema:
 {json.dumps(schema, ensure_ascii=False)}
@@ -214,6 +233,9 @@ Rules:
 - Do not introduce facts, explanations, recommendations, or units that are not
   present in the records.
 - Preserve all numbers exactly.
+- For mandi_intelligence, the records already contain deterministic computed
+  metrics. Explain those metrics without recalculating or inventing values.
+- A market rank is descriptive, not a recommendation or prediction.
 - State the date, financial year, or source page when it is relevant and
   present in the records.
 - If multiple records are relevant, summarize them clearly.
@@ -541,7 +563,7 @@ Source material:
 
     @staticmethod
     def _filters_for(plan, catalog):
-        if plan.intent == "mandi_price":
+        if plan.intent in {"mandi_price", "mandi_intelligence"}:
             values = {
                 "district": plan.district,
                 "market": plan.market,

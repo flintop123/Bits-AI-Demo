@@ -9,6 +9,7 @@ class FakeQueryService:
     def __init__(self):
         self.mandi_call = None
         self.statistics_call = None
+        self.intelligence_call = None
 
     def list_values(self):
         return {
@@ -43,6 +44,20 @@ class FakeQueryService:
             "source": "Department of Agriculture & Farmers Welfare",
             "source_file": "crop.xlsx",
         }]
+
+    def market_intelligence(self, filters, days):
+        self.intelligence_call = (filters, days)
+        return {
+            "summary": {
+                "observations": 20,
+                "direction": "rising",
+                "change_percent": 12.5,
+            },
+            "freshness": {"latest_data_date": "2026-10-18"},
+            "daily_series": [],
+            "market_comparison": [],
+            "source_url": "https://example.test/mandi",
+        }
 
 
 class FakeLLM:
@@ -110,6 +125,28 @@ class AgricultureQAServiceTests(unittest.TestCase):
             ({"crop": "Rice", "season": "Kharif", "year": "2024-25"}, 5),
         )
         self.assertEqual(result["intent"], "crop_statistics")
+
+    def test_intelligence_question_uses_deterministic_metrics(self):
+        database = FakeQueryService()
+        llm = FakeLLM({
+            "intent": "mandi_intelligence",
+            "crop": "potato",
+            "district": "arwal",
+            "metric": "trend",
+            "language": "en",
+            "limit": 5,
+            "days": 14,
+        }, answer="The observed average price rose by 12.5%.")
+        service = AgricultureQAService(database, llm)
+
+        result = service.ask("How did potato prices change in Arwal?")
+
+        self.assertEqual(
+            database.intelligence_call,
+            ({"district": "Arwal", "crop": "Potato"}, 14),
+        )
+        self.assertEqual(result["intent"], "mandi_intelligence")
+        self.assertIn("12.5%", result["answer"])
 
     def test_unsupported_question_does_not_query_database(self):
         database = FakeQueryService()

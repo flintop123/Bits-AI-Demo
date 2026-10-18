@@ -48,6 +48,11 @@ try {
     if ($LASTEXITCODE -ne 0) {
         throw "Daily mandi collection returned exit code $LASTEXITCODE"
     }
+    & $python sync_mandi_catalog_labels.py 2>&1 |
+        Tee-Object -FilePath $logFile -Append
+    if ($LASTEXITCODE -ne 0) {
+        throw "Bilingual mandi catalog refresh returned exit code $LASTEXITCODE"
+    }
 }
 catch {
     $stamp = Get-Date -Format "yyyy-MM-dd HH:mm:ss"
