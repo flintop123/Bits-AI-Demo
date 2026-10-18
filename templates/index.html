@@ -71,7 +71,15 @@
               placeholder="For example: What does the report say about the organic farming corridor?"
               required></textarea>
             <div class="form-actions">
-              <span class="character-count"><span id="character-count">0</span>/500</span>
+              <div class="answer-controls">
+                <span class="character-count"><span id="character-count">0</span>/500</span>
+                <label for="answer-language">Answer</label>
+                <select id="answer-language" name="answer_language">
+                  <option value="auto">Automatic language</option>
+                  <option value="en">English</option>
+                  <option value="hi">हिन्दी</option>
+                </select>
+              </div>
               <button id="ask-button" type="submit">
                 <span>Ask the data</span>
                 <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m8 5 7 7-7 7" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
@@ -85,6 +93,7 @@
               <button type="button" data-question="What was rice production in 2024-25?">Rice production</button>
               <button type="button" data-question="What is the potato price in Arwal mandi?">Mandi price</button>
               <button type="button" data-question="What does the report say about the organic farming corridor?">Organic farming policy</button>
+              <button type="button" data-question="पीएमएफएमई मखाना पुस्तिका में प्रसंस्करण के बारे में क्या बताया गया है?">मखाना प्रसंस्करण</button>
             </div>
           </div>
         </div>
@@ -128,6 +137,7 @@
             </div>
             <div class="result-badges">
               <span id="intent-badge" class="intent-badge"></span>
+              <span id="retrieval-badge" class="retrieval-badge"></span>
               <span id="model-badge" class="model-badge"></span>
             </div>
           </div>

@@ -173,6 +173,33 @@ class AgricultureQAServiceTests(unittest.TestCase):
         self.assertEqual(response.status_code, 503)
         self.assertIn("Ollama unavailable", response.json["error"])
 
+    def test_answer_language_can_override_detected_question_language(self):
+        database = FakeQueryService()
+        llm = FakeLLM({
+            "intent": "crop_statistics",
+            "crop": "Rice",
+            "year": "2024-25",
+            "metric": "production",
+            "language": "hi",
+            "limit": 2,
+        }, answer="Rice production was 200 tonnes.")
+        service = AgricultureQAService(database, llm)
+
+        result = service.ask(
+            "2024-25 में चावल का उत्पादन कितना था?",
+            answer_language="en",
+        )
+
+        self.assertEqual(result["answer_language"], "en")
+        self.assertIn("Rice", result["answer"])
+
+    def test_invalid_answer_language_is_rejected(self):
+        service = AgricultureQAService(
+            FakeQueryService(), FakeLLM({"intent": "unsupported"})
+        )
+        with self.assertRaisesRegex(ValueError, "auto, en, or hi"):
+            service.ask("Rice production", answer_language="fr")
+
 
 if __name__ == "__main__":
     unittest.main()

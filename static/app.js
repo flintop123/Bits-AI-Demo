@@ -1,6 +1,7 @@
 const form = document.querySelector("#question-form");
 const questionInput = document.querySelector("#question");
 const askButton = document.querySelector("#ask-button");
+const answerLanguage = document.querySelector("#answer-language");
 const resultSection = document.querySelector("#result-section");
 const loadingState = document.querySelector("#loading-state");
 const errorState = document.querySelector("#error-state");
@@ -111,6 +112,8 @@ function showAnswer(data) {
   answerState.hidden = false;
   document.querySelector("#answer-text").textContent = data.answer;
   document.querySelector("#intent-badge").textContent = humanize(data.intent);
+  const retrieval = data.retrieval || {};
+  document.querySelector("#retrieval-badge").textContent = `${humanize(retrieval.mode || "none")} retrieval`;
   document.querySelector("#model-badge").textContent = data.model || "Local model";
   renderFilters(data.filters || {});
   renderSources(data.sources || []);
@@ -126,7 +129,10 @@ form.addEventListener("submit", async (event) => {
     const response = await fetch("/api/v1/ask", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ question }),
+      body: JSON.stringify({
+        question,
+        answer_language: answerLanguage.value,
+      }),
     });
     const data = await response.json();
     if (!response.ok) throw new Error(data.error || "The request failed.");

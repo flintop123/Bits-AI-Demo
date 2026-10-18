@@ -11,24 +11,33 @@ class OllamaUnavailableError(RuntimeError):
 
 
 class OllamaClient:
-    def __init__(self, base_url=None, model=None, timeout=180):
+    def __init__(self, base_url=None, model=None, timeout=None):
         self.base_url = (
             base_url
             or os.getenv("OLLAMA_URL", "http://127.0.0.1:11434")
         ).rstrip("/")
         self.model = model or os.getenv("OLLAMA_MODEL", "qwen3:4b")
-        self.timeout = timeout
+        self.timeout = int(
+            timeout
+            if timeout is not None
+            else os.getenv("OLLAMA_TIMEOUT_SECONDS", "600")
+        )
 
-    def chat_json(self, messages, schema):
+    def _chat(self, messages, response_format=None):
         payload = {
             "model": self.model,
             "messages": messages,
             "stream": False,
             "think": False,
-            "keep_alive": "30s",
-            "format": schema,
-            "options": {"temperature": 0},
+            "keep_alive": "10m",
+            "options": {
+                "temperature": 0,
+                "num_ctx": 4096,
+                "num_predict": 512,
+            },
         }
+        if response_format is not None:
+            payload["format"] = response_format
         request = Request(
             f"{self.base_url}/api/chat",
             data=json.dumps(payload).encode("utf-8"),
@@ -44,7 +53,15 @@ class OllamaClient:
             raise OllamaUnavailableError(
                 f"Ollama returned HTTP {exc.code}: {detail}"
             ) from exc
-        except (URLError, TimeoutError, OSError) as exc:
+        except TimeoutError as exc:
+            raise OllamaUnavailableError(
+                f"Ollama did not respond within {self.timeout} seconds."
+            ) from exc
+        except (URLError, OSError) as exc:
+            if isinstance(getattr(exc, "reason", None), TimeoutError):
+                raise OllamaUnavailableError(
+                    f"Ollama did not respond within {self.timeout} seconds."
+                ) from exc
             raise OllamaUnavailableError(
                 "Ollama is unavailable. Start Ollama and verify the configured "
                 f"model '{self.model}'."
@@ -59,6 +76,14 @@ class OllamaClient:
             raise OllamaUnavailableError(
                 "Ollama returned an empty response."
             )
+        return content.strip()
+
+    def chat_text(self, messages):
+        """Return a deterministic plain-text response from the local model."""
+        return self._chat(messages)
+
+    def chat_json(self, messages, schema):
+        content = self._chat(messages, response_format=schema)
         try:
             return json.loads(content)
         except json.JSONDecodeError as exc:

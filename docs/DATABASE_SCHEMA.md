@@ -95,11 +95,18 @@ official PDF.
 | Extraction | `extraction_method` | Distinguishes `pypdf` from `tesseract_ocr` |
 | Source | `source_id`, `source_organization`, `source_url`, `source_type` | Identifies the allowlisted official source |
 | Provenance | `extraction_run_id`, `extracting_agent`, `extracted_at` | Links the chunk to the PDF Agent run |
+| Semantic retrieval | `embedding`, `embedding_model`, `embedding_dimension`, `embedding_content_hash`, `embedded_at` | Optional Phase 3 vector representation tied to the exact chunk hash |
 
 A language-neutral MongoDB text index covers `content` and `document_title` so
 English, Hindi and mixed-language chunks share one search path. Blank pages are
 skipped transparently. Page ranges, source identifiers, filenames and required
 manifest fields are validated before extraction.
+
+Phase 3 adds an optional normalized multilingual embedding to each chunk. The
+`embedding_content_hash` must equal the current `content_hash` before a vector
+is used, preventing stale vectors from influencing retrieval after content is
+updated. Embedding fields are reproducible derived data and do not alter the
+chunk identity or source provenance.
 
 ### 3.4 agent_runs
 

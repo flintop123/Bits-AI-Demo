@@ -1,0 +1,47 @@
+version: 1
+acceptance:
+  min_hybrid_hit_rate_at_k: 0.8
+  min_cross_language_hits_at_k: 2
+
+cases:
+  - id: english_organic_corridor
+    language: en
+    cross_language: false
+    query: Which districts are covered by the organic farming corridor along the Ganga?
+    keyword_query: organic farming corridor Ganga districts
+    expected_source_ids: [bihar_annual_scheme_2022_23]
+
+  - id: hindi_makhana_processing
+    language: hi
+    cross_language: false
+    query: पीएमएफएमई मखाना पुस्तिका में मखाना प्रसंस्करण के बारे में क्या बताया गया है?
+    keyword_query: मखाना प्रसंस्करण पीएमएफएमई पुस्तिका
+    expected_source_ids: [pmfme_makhana_handbook_hindi]
+
+  - id: english_query_hindi_makhana_handbook
+    language: en
+    cross_language: true
+    query: What does the Hindi PMFME handbook explain about processing fox nuts?
+    keyword_query: PMFME handbook processing fox nuts
+    expected_source_ids: [pmfme_makhana_handbook_hindi]
+
+  - id: hindi_query_english_organic_source
+    language: hi
+    cross_language: true
+    query: गंगा नदी के दोनों किनारों पर जैविक कृषि कॉरिडोर के बारे में क्या योजना है?
+    keyword_query: गंगा जैविक कृषि कॉरिडोर योजना
+    expected_source_ids: [bihar_annual_scheme_2022_23]
+
+  - id: hindi_organic_corridor_district_count
+    language: hi
+    cross_language: true
+    query: गंगा नदी के किनारे जैविक कॉरिडोर कितने जिलों में स्थापित किया गया है?
+    keyword_query: गंगा नदी जैविक कॉरिडोर जिलों की संख्या
+    expected_source_ids: [bihar_annual_scheme_2022_23]
+
+  - id: english_query_hindi_export_strategy
+    language: en
+    cross_language: true
+    query: What strategy is proposed to promote makhana exports from India?
+    keyword_query: strategy promote makhana exports India
+    expected_source_ids: [apeda_makhana_hindi]
