@@ -4,6 +4,7 @@ from unittest.mock import Mock
 from data_api import create_app
 from services.agriculture_qa_service import AgricultureQAService
 from services.agriculture_query_service import AgricultureQueryService
+from services.multilingual_query_expansion import expand_document_query
 
 
 DOCUMENT_RECORD = {
@@ -29,8 +30,10 @@ class FakeQueryService:
             "seasons": [],
         }
 
-    def search_agriculture_documents(self, search_terms, limit):
-        self.document_call = (search_terms, limit)
+    def search_agriculture_documents(
+        self, search_terms, limit, semantic_query=None
+    ):
+        self.document_call = (search_terms, limit, semantic_query)
         return [DOCUMENT_RECORD]
 
     def find_mandi_prices(self, filters, limit):
@@ -68,10 +71,11 @@ class DocumentSearchTests(unittest.TestCase):
         service.agriculture_documents = collection
         records = service.search_agriculture_documents("organic farming", 4)
 
-        self.assertEqual(records, [DOCUMENT_RECORD])
+        self.assertEqual(records[0]["content"], DOCUMENT_RECORD["content"])
+        self.assertEqual(records[0]["retrieval"]["mode"], "keyword")
         query = collection.find.call_args.args[0]
         self.assertEqual(query, {"$text": {"$search": "organic farming"}})
-        sorted_cursor.limit.assert_called_once_with(4)
+        sorted_cursor.limit.assert_called_once_with(32)
 
     def test_blank_document_search_is_rejected(self):
         service = AgricultureQueryService.__new__(AgricultureQueryService)
@@ -89,8 +93,13 @@ class DocumentSearchTests(unittest.TestCase):
 
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.json["records"][0]["page_number"], 13)
+        expanded = expand_document_query("organic farming", max_length=200)
         service.search_agriculture_documents.assert_called_once_with(
-            "organic farming", 3
+            expanded,
+            3,
+            semantic_query=expand_document_query(
+                "organic farming", max_length=500
+            ),
         )
 
     def test_document_api_rejects_missing_query(self):
@@ -113,13 +122,35 @@ class DocumentSearchTests(unittest.TestCase):
 
         self.assertEqual(
             query_service.document_call,
-            ("organic farming corridor", 3),
+            (
+                expand_document_query(
+                    "organic farming corridor",
+                    "What does the report say about the organic farming corridor?",
+                    max_length=200,
+                ),
+                3,
+                expand_document_query(
+                    "What does the report say about the organic farming corridor?",
+                    expand_document_query(
+                        "organic farming corridor",
+                        "What does the report say about the organic farming corridor?",
+                        max_length=200,
+                    ),
+                    max_length=500,
+                ),
+            ),
         )
         self.assertEqual(result["intent"], "document_search")
         self.assertEqual(result["sources"][0]["page_number"], 13)
         self.assertEqual(
             result["filters"],
-            {"search_terms": "organic farming corridor"},
+            {
+                "search_terms": expand_document_query(
+                    "organic farming corridor",
+                    "What does the report say about the organic farming corridor?",
+                    max_length=200,
+                )
+            },
         )
 
 

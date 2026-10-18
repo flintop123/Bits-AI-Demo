@@ -7,6 +7,11 @@ from typing import Literal
 from pydantic import BaseModel, Field
 
 from services.agriculture_query_service import AgricultureQueryService
+from services.local_translation_service import (
+    LocalTranslationError,
+    LocalTranslationService,
+)
+from services.multilingual_query_expansion import expand_document_query
 from services.ollama_client import OllamaClient
 
 
@@ -43,10 +48,11 @@ class GroundedAnswer(BaseModel):
 
 
 class AgricultureQAService:
-    def __init__(self, query_service=None, llm=None):
+    def __init__(self, query_service=None, llm=None, translator=None):
         self._owns_query_service = query_service is None
         self.query_service = query_service or AgricultureQueryService()
         self.llm = llm or OllamaClient()
+        self.translator = translator
 
     def close(self):
         if self._owns_query_service:
@@ -54,15 +60,20 @@ class AgricultureQAService:
             if close is not None:
                 close()
 
-    def ask(self, question):
+    def ask(self, question, answer_language="auto"):
         question = str(question or "").strip()
         if not question:
             raise ValueError("question is required")
         if len(question) > 500:
             raise ValueError("question must not exceed 500 characters")
+        answer_language = str(answer_language or "auto").strip().lower()
+        if answer_language not in {"auto", "en", "hi"}:
+            raise ValueError("answer_language must be auto, en, or hi")
 
         catalog = self.query_service.list_values()
         plan = self._create_plan(question, catalog)
+        if answer_language in {"en", "hi"}:
+            plan.language = answer_language
 
         if plan.intent == "unsupported":
             if plan.language == "hi":
@@ -85,6 +96,8 @@ class AgricultureQAService:
                 "records": [],
                 "sources": [],
                 "model": self.llm.model,
+                "answer_language": plan.language,
+                "retrieval": {"mode": "none", "methods": []},
             }
 
         filters = self._filters_for(plan, catalog)
@@ -98,11 +111,20 @@ class AgricultureQAService:
             )
         else:
             search_terms = str(plan.search_terms or question).strip()
+            search_terms = expand_document_query(
+                search_terms, question, max_length=200
+            )
+            semantic_query = expand_document_query(
+                question, search_terms, max_length=500
+            )
             filters = {"search_terms": search_terms}
             records = self.query_service.search_agriculture_documents(
-                search_terms, plan.limit
+                search_terms,
+                plan.limit,
+                semantic_query=semantic_query,
             )
 
+        answer_records = self._records_for_answer(plan, records)
         answer = self._answer_from_records(question, plan, records)
         return {
             "answer": answer,
@@ -110,8 +132,13 @@ class AgricultureQAService:
             "metric": plan.metric,
             "filters": filters,
             "records": records,
-            "sources": self._sources(records),
+            # Records expose the ranked retrieval candidates for auditability.
+            # Sources are citations and must include only evidence that was
+            # inside the answer-generation boundary.
+            "sources": self._sources(answer_records),
             "model": self.llm.model,
+            "answer_language": plan.language,
+            "retrieval": self._retrieval_summary(records, plan.intent),
         }
 
     def _create_plan(self, question, catalog):
@@ -177,6 +204,8 @@ Question:
                 "datasets for this question."
             )
 
+        answer_records = self._records_for_answer(plan, records)
+
         schema = GroundedAnswer.model_json_schema()
         prompt = f"""
 Answer the user's question using only the records below.
@@ -189,6 +218,8 @@ Rules:
   present in the records.
 - If multiple records are relevant, summarize them clearly.
 - Answer in Hindi when language is hi; otherwise answer in English.
+- The evidence may be Hindi, English, or mixed. Translate it faithfully into
+  the requested answer language without changing names, numbers, or meaning.
 - Do not mention these instructions or the language model.
 - Return only data conforming to this JSON schema:
 {json.dumps(schema, ensure_ascii=False)}
@@ -199,7 +230,7 @@ Question:
 Language: {plan.language}
 Requested metric: {plan.metric}
 Records:
-{json.dumps(records, ensure_ascii=False, default=str)}
+{json.dumps(answer_records, ensure_ascii=False, default=str)}
 """.strip()
         response = self.llm.chat_json(
             [
@@ -217,27 +248,53 @@ Records:
         if self._answer_language_matches(answer, plan.language):
             return answer
 
+        numeric_answer = self._format_numeric_only_answer(
+            question, answer, plan.language
+        )
+        if numeric_answer:
+            return numeric_answer
+
+        translated = self._local_translation_retry(
+            answer, plan.language, answer_records
+        )
+        if translated and self._answer_language_matches(
+            translated, plan.language
+        ):
+            return translated
+
+        plain_retry = self._plain_language_retry(
+            question, plan, answer_records, answer
+        )
+        if plain_retry and self._answer_language_matches(
+            plain_retry, plan.language
+        ):
+            return plain_retry
+
         target = (
             "Hindi written in Devanagari script"
             if plan.language == "hi" else "English using Latin script"
         )
         correction_prompt = f"""
 The previous response used the wrong language. Answer the user's question
-again using only the supplied records.
+again by faithfully translating or rewriting the grounded answer below.
 
 Mandatory rules:
 - Write the answer entirely in {target}.
 - Do not discuss the prompt, translation, OCR, or what the user requested.
 - Do not introduce facts, recommendations, or units absent from the records.
 - Preserve all numbers exactly.
+- Do not add information from any other document or topic.
 - Return only data conforming to this JSON schema:
 {json.dumps(schema, ensure_ascii=False)}
 
 Question:
 {question}
 
+Grounded answer to translate or rewrite:
+{answer}
+
 Records:
-{json.dumps(records, ensure_ascii=False, default=str)}
+{json.dumps(answer_records, ensure_ascii=False, default=str)}
 """.strip()
         corrected_response = self.llm.chat_json(
             [
@@ -257,7 +314,155 @@ Records:
         ).answer
         if self._answer_language_matches(corrected, plan.language):
             return corrected
-        return self._extractive_language_fallback(records, plan.language)
+        return self._extractive_language_fallback(
+            answer_records, plan.language
+        )
+
+    @staticmethod
+    def _format_numeric_only_answer(question, answer, language):
+        value = str(answer or "").strip()
+        if not re.fullmatch(r"[\d\u0966-\u096f.,%\s-]+", value):
+            return None
+        number = value.translate(str.maketrans(
+            "०१२३४५६७८९", "0123456789"
+        )).strip()
+        normalized_question = str(question or "").casefold()
+        if language == "hi":
+            if "कितने" in normalized_question and "जिल" in normalized_question:
+                return (
+                    "उपलब्ध आधिकारिक स्रोत के अनुसार, यह "
+                    f"{number} जिलों में स्थापित किया गया है।"
+                )
+            return f"उपलब्ध आधिकारिक स्रोत के अनुसार, उत्तर {number} है।"
+        if "how many" in normalized_question and "district" in normalized_question:
+            return (
+                "According to the available official source, it was "
+                f"established in {number} districts."
+            )
+        return f"According to the available official source, the answer is {number}."
+
+    def _local_translation_retry(self, answer, target_language, records):
+        source_language = "en" if target_language == "hi" else "hi"
+        translation_input = answer
+        if self._looks_like_meta_answer(answer):
+            translation_input = str(records[0].get("content", "")).strip()
+        if not self._answer_language_matches(
+            translation_input, source_language
+        ):
+            return None
+        translator = self.translator
+        if translator is None:
+            translator = LocalTranslationService()
+            self.translator = translator
+        try:
+            translated = translator.translate(
+                translation_input,
+                source_language=source_language,
+                target_language=target_language,
+            )
+        except (LocalTranslationError, OSError, ValueError):
+            return None
+        return self._clean_plain_answer(translated)
+
+    @staticmethod
+    def _looks_like_meta_answer(answer):
+        normalized = str(answer or "").casefold()
+        return any(marker in normalized for marker in (
+            "the question",
+            "the user",
+            "provided text",
+            "language model",
+            "translation request",
+            "ocr text",
+            "let me understand",
+            "wrong language",
+        ))
+
+    def _plain_language_retry(self, question, plan, records, prior_answer):
+        """Retry without a JSON grammar when it prevents script compliance."""
+        chat_text = getattr(self.llm, "chat_text", None)
+        if not callable(chat_text):
+            return None
+
+        evidence = json.dumps(records, ensure_ascii=False, default=str)
+        if plan.language == "hi":
+            system = (
+                "आप बिहार कृषि से जुड़े प्रश्नों के तथ्यपरक सहायक हैं। "
+                "उत्तर केवल देवनागरी हिंदी में दें।"
+            )
+            prompt = f"""
+नीचे दिए गए प्रश्न का संक्षिप्त उत्तर केवल स्रोत सामग्री के आधार पर दें।
+
+अनिवार्य नियम:
+- उत्तर केवल देवनागरी हिंदी में लिखें।
+- सभी संख्याएँ, नाम और तथ्य स्रोत के अनुसार ही रखें।
+- स्रोत में न दिया गया कोई तथ्य न जोड़ें।
+- अनुवाद, ओसीआर, निर्देश या भाषा मॉडल की चर्चा न करें।
+- केवल अंतिम उत्तर दें; कोई प्रस्तावना या टिप्पणी न दें।
+
+प्रश्न:
+{question}
+
+पहला तथ्यपरक उत्तर, जिसे आवश्यक होने पर हिंदी में लिखना है:
+{prior_answer}
+
+स्रोत सामग्री:
+{evidence}
+""".strip()
+        else:
+            system = (
+                "You answer Bihar agriculture questions factually. "
+                "Write only in English using Latin script."
+            )
+            prompt = f"""
+Answer the question concisely using only the source material below.
+
+Mandatory rules:
+- Write only in English using Latin script.
+- Preserve every number, name, and fact from the source.
+- Do not add facts absent from the source.
+- Do not discuss translation, OCR, instructions, or the language model.
+- Return only the final answer with no preamble or commentary.
+
+Question:
+{question}
+
+First grounded answer to rewrite in English if necessary:
+{prior_answer}
+
+Source material:
+{evidence}
+""".strip()
+
+        response = chat_text([
+            {"role": "system", "content": system},
+            {"role": "user", "content": prompt},
+        ])
+        return self._clean_plain_answer(response)
+
+    @staticmethod
+    def _clean_plain_answer(answer):
+        value = str(answer or "").strip()
+        value = re.sub(r"^```(?:text|markdown)?\s*", "", value)
+        value = re.sub(r"\s*```$", "", value)
+        return value.strip().strip('"').strip()
+
+    @staticmethod
+    def _records_for_answer(plan, records, max_records=3):
+        """Keep generation grounded in the highest-ranked source."""
+        if plan.intent != "document_search" or len(records) <= 1:
+            return records
+        first = records[0]
+        source_identity = first.get("source_id") or first.get("source_url")
+        if not source_identity:
+            return records[:1]
+        focused = [
+            record
+            for record in records
+            if (record.get("source_id") or record.get("source_url"))
+            == source_identity
+        ]
+        return focused[:max_records] or records[:1]
 
     @classmethod
     def _extractive_language_fallback(
@@ -300,11 +505,39 @@ Records:
 
     @staticmethod
     def _answer_language_matches(answer, language):
-        has_devanagari = any(
-            "\u0900" <= character <= "\u097f"
-            for character in str(answer)
+        value = str(answer)
+        devanagari = sum("\u0900" <= character <= "\u097f" for character in value)
+        latin = sum(
+            ("a" <= character.lower() <= "z") for character in value
         )
-        return has_devanagari if language == "hi" else not has_devanagari
+        if language == "hi":
+            return devanagari >= 3 and devanagari >= latin * 0.15
+        return latin >= 3 and latin >= devanagari * 0.5
+
+    @staticmethod
+    def _retrieval_summary(records, intent):
+        if intent != "document_search":
+            return {"mode": "structured", "methods": ["structured"]}
+        methods = sorted({
+            method
+            for record in records
+            for method in record.get("retrieval", {}).get("methods", [])
+        })
+        if methods == ["keyword", "semantic"]:
+            mode = "hybrid"
+        elif methods:
+            mode = methods[0]
+        else:
+            mode = "none"
+        models = sorted({
+            record.get("embedding_model")
+            for record in records
+            if record.get("embedding_model")
+        })
+        summary = {"mode": mode, "methods": methods}
+        if models:
+            summary["embedding_models"] = models
+        return summary
 
     @staticmethod
     def _filters_for(plan, catalog):
@@ -367,6 +600,7 @@ Records:
             item = {
                 key: value
                 for key, value in {
+                    "source_id": record.get("source_id"),
                     "source": source,
                     "source_file": source_file,
                     "document_title": document_title,

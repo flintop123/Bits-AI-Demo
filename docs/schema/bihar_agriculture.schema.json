@@ -1,7 +1,7 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "title": "Bihar Agriculture MongoDB Schema Catalog",
-  "schema_version": 1,
+  "schema_version": 2,
   "database": "bihar_agriculture",
   "shared_provenance_fields": [
     "extraction_run_id",
@@ -107,6 +107,11 @@
         "source_id": {"bsonType": "string"},
         "source_organization": {"bsonType": "string"},
         "content_hash": {"bsonType": "string", "pattern": "^[a-f0-9]{64}$"},
+        "embedding": {"bsonType": "array", "items": {"bsonType": "double"}},
+        "embedding_model": {"bsonType": "string"},
+        "embedding_dimension": {"bsonType": "int", "minimum": 1},
+        "embedding_content_hash": {"bsonType": "string"},
+        "embedded_at": {"bsonType": "date"},
         "ingested_at": {"bsonType": "date"},
         "extraction_run_id": {"bsonType": "string"},
         "extracting_agent": {"bsonType": "string"},
@@ -123,6 +128,11 @@
           "keys": ["content", "document_title"],
           "type": "text",
           "default_language": "none"
+        },
+        {
+          "name": "document_embedding_model",
+          "keys": ["embedding_model"],
+          "unique": false
         }
       ]
     },

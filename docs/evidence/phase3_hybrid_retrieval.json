@@ -1,0 +1,264 @@
+{
+  "framework": "labelled bilingual retrieval evaluation",
+  "limit": 5,
+  "passed": true,
+  "checks": {
+    "minimum_hybrid_hit_rate": true,
+    "minimum_cross_language_hits": true,
+    "hybrid_not_worse_than_keyword": true,
+    "semantic_path_observed": true
+  },
+  "metrics": {
+    "cases": 6,
+    "keyword_hit_rate_at_k": 0.3333,
+    "hybrid_hit_rate_at_k": 1.0,
+    "keyword_mrr_at_k": 0.3333,
+    "hybrid_mrr_at_k": 1.0,
+    "cross_language_cases": 4,
+    "cross_language_hits_at_k": 4
+  },
+  "results": [
+    {
+      "case_id": "english_organic_corridor",
+      "language": "en",
+      "cross_language": false,
+      "query": "Which districts are covered by the organic farming corridor along the Ganga?",
+      "expected_source_ids": [
+        "bihar_annual_scheme_2022_23"
+      ],
+      "keyword": {
+        "hit": true,
+        "rank": 1,
+        "reciprocal_rank": 1.0,
+        "source_ids": [
+          "bihar_annual_scheme_2022_23",
+          "bihar_annual_scheme_2022_23",
+          "bihar_horticulture_baipp_brochure",
+          "bihar_annual_scheme_2022_23",
+          "bihar_annual_scheme_2022_23"
+        ]
+      },
+      "hybrid": {
+        "hit": true,
+        "rank": 1,
+        "reciprocal_rank": 1.0,
+        "source_ids": [
+          "bihar_annual_scheme_2022_23",
+          "bihar_annual_scheme_2022_23",
+          "bihar_annual_scheme_2022_23",
+          "apeda_makhana_hindi",
+          "bihar_annual_scheme_2022_23"
+        ],
+        "retrieval_modes": [
+          "hybrid",
+          "hybrid",
+          "hybrid",
+          "hybrid",
+          "hybrid"
+        ]
+      }
+    },
+    {
+      "case_id": "hindi_makhana_processing",
+      "language": "hi",
+      "cross_language": false,
+      "query": "पीएमएफएमई मखाना पुस्तिका में मखाना प्रसंस्करण के बारे में क्या बताया गया है?",
+      "expected_source_ids": [
+        "pmfme_makhana_handbook_hindi"
+      ],
+      "keyword": {
+        "hit": true,
+        "rank": 1,
+        "reciprocal_rank": 1.0,
+        "source_ids": [
+          "pmfme_makhana_handbook_hindi",
+          "pmfme_makhana_handbook_hindi",
+          "pmfme_makhana_handbook_hindi",
+          "pmfme_makhana_handbook_hindi",
+          "pmfme_makhana_handbook_hindi"
+        ]
+      },
+      "hybrid": {
+        "hit": true,
+        "rank": 1,
+        "reciprocal_rank": 1.0,
+        "source_ids": [
+          "pmfme_makhana_handbook_hindi",
+          "pmfme_makhana_handbook_hindi",
+          "pmfme_makhana_handbook_hindi",
+          "pmfme_makhana_handbook_hindi",
+          "pmfme_makhana_handbook_hindi"
+        ],
+        "retrieval_modes": [
+          "hybrid",
+          "hybrid",
+          "hybrid",
+          "hybrid",
+          "hybrid"
+        ]
+      }
+    },
+    {
+      "case_id": "english_query_hindi_makhana_handbook",
+      "language": "en",
+      "cross_language": true,
+      "query": "What does the Hindi PMFME handbook explain about processing fox nuts?",
+      "expected_source_ids": [
+        "pmfme_makhana_handbook_hindi"
+      ],
+      "keyword": {
+        "hit": false,
+        "rank": null,
+        "reciprocal_rank": 0,
+        "source_ids": [
+          "bihar_annual_scheme_2022_23",
+          "bihar_horticulture_baipp_brochure",
+          "bihar_horticulture_baipp_brochure",
+          "bihar_horticulture_baipp_brochure",
+          "bihar_horticulture_baipp_brochure"
+        ]
+      },
+      "hybrid": {
+        "hit": true,
+        "rank": 1,
+        "reciprocal_rank": 1.0,
+        "source_ids": [
+          "pmfme_makhana_handbook_hindi",
+          "pmfme_makhana_handbook_hindi",
+          "pmfme_makhana_handbook_hindi",
+          "pmfme_makhana_handbook_hindi",
+          "pmfme_makhana_handbook_hindi"
+        ],
+        "retrieval_modes": [
+          "hybrid",
+          "hybrid",
+          "hybrid",
+          "hybrid",
+          "hybrid"
+        ]
+      }
+    },
+    {
+      "case_id": "hindi_query_english_organic_source",
+      "language": "hi",
+      "cross_language": true,
+      "query": "गंगा नदी के दोनों किनारों पर जैविक कृषि कॉरिडोर के बारे में क्या योजना है?",
+      "expected_source_ids": [
+        "bihar_annual_scheme_2022_23"
+      ],
+      "keyword": {
+        "hit": false,
+        "rank": null,
+        "reciprocal_rank": 0,
+        "source_ids": [
+          "apeda_makhana_hindi",
+          "apeda_makhana_hindi",
+          "apeda_makhana_hindi",
+          "apeda_makhana_hindi",
+          "pmfme_makhana_handbook_hindi"
+        ]
+      },
+      "hybrid": {
+        "hit": true,
+        "rank": 1,
+        "reciprocal_rank": 1.0,
+        "source_ids": [
+          "bihar_annual_scheme_2022_23",
+          "bihar_annual_scheme_2022_23",
+          "bihar_annual_scheme_2022_23",
+          "bihar_annual_scheme_2022_23",
+          "bihar_annual_scheme_2022_23"
+        ],
+        "retrieval_modes": [
+          "hybrid",
+          "hybrid",
+          "hybrid",
+          "hybrid",
+          "hybrid"
+        ]
+      }
+    },
+    {
+      "case_id": "hindi_organic_corridor_district_count",
+      "language": "hi",
+      "cross_language": true,
+      "query": "गंगा नदी के किनारे जैविक कॉरिडोर कितने जिलों में स्थापित किया गया है?",
+      "expected_source_ids": [
+        "bihar_annual_scheme_2022_23"
+      ],
+      "keyword": {
+        "hit": false,
+        "rank": null,
+        "reciprocal_rank": 0,
+        "source_ids": [
+          "pmfme_makhana_handbook_hindi",
+          "pmfme_makhana_handbook_hindi",
+          "apeda_makhana_hindi",
+          "pmfme_makhana_handbook_hindi",
+          "pmfme_makhana_handbook_hindi"
+        ]
+      },
+      "hybrid": {
+        "hit": true,
+        "rank": 1,
+        "reciprocal_rank": 1.0,
+        "source_ids": [
+          "bihar_annual_scheme_2022_23",
+          "bihar_annual_scheme_2022_23",
+          "pmfme_makhana_handbook_hindi",
+          "apeda_makhana_hindi",
+          "bihar_annual_scheme_2022_23"
+        ],
+        "retrieval_modes": [
+          "hybrid",
+          "hybrid",
+          "hybrid",
+          "hybrid",
+          "hybrid"
+        ]
+      }
+    },
+    {
+      "case_id": "english_query_hindi_export_strategy",
+      "language": "en",
+      "cross_language": true,
+      "query": "What strategy is proposed to promote makhana exports from India?",
+      "expected_source_ids": [
+        "apeda_makhana_hindi"
+      ],
+      "keyword": {
+        "hit": false,
+        "rank": null,
+        "reciprocal_rank": 0,
+        "source_ids": [
+          "bihar_horticulture_baipp_brochure",
+          "bihar_horticulture_baipp_brochure",
+          "bihar_horticulture_baipp_brochure",
+          "pmfme_makhana_handbook_hindi",
+          "bihar_annual_scheme_2022_23"
+        ]
+      },
+      "hybrid": {
+        "hit": true,
+        "rank": 1,
+        "reciprocal_rank": 1.0,
+        "source_ids": [
+          "apeda_makhana_hindi",
+          "apeda_makhana_hindi",
+          "apeda_makhana_hindi",
+          "apeda_makhana_hindi",
+          "apeda_makhana_hindi"
+        ],
+        "retrieval_modes": [
+          "hybrid",
+          "hybrid",
+          "hybrid",
+          "hybrid",
+          "hybrid"
+        ]
+      }
+    }
+  ],
+  "generated_at": "2026-10-18T06:57:47.364434+00:00",
+  "manifest": "D:\\BiharAgriculture\\Bits-AI-Demo\\sources\\phase3_retrieval_cases.yaml"
+}

@@ -135,9 +135,11 @@ $body = @{ question = "What was Rice production in 2024-25?" } | ConvertTo-Json
 Invoke-RestMethod -Method Post -Uri "http://127.0.0.1:5000/api/v1/ask" -ContentType "application/json" -Body $body
 ```
 
-The response includes the answer, interpreted intent and filters, supporting
-database records, source information, and model name. The language model never
-receives permission to create arbitrary MongoDB queries.
+The response includes the answer, interpreted intent and filters, ranked
+retrieval candidates in `records`, answer-grounding citations in `sources`,
+and the model name. A citation is returned only when its record was inside the
+answer-generation evidence boundary. The language model never receives
+permission to create arbitrary MongoDB queries.
 
 Generated answers are checked against the requested English or Hindi script. If the local model responds in the wrong language, the service performs one grounded language-correction pass over the same retrieved records without adding new evidence. If that correction still uses the wrong script, a deterministic extractive fallback returns concise text from the ranked source records instead of accepting an unsupported model response.
 
@@ -235,3 +237,39 @@ To reproduce the database counts, index inventory and provenance coverage:
 ## Challenge and supporting literature
 
 The project-specific design comparison, measured findings, limitations and references are documented in [Challenge and Supporting Literature](docs/CHALLENGE_AND_LITERATURE.md).
+
+## Phase 3 multilingual hybrid retrieval
+
+Phase 3 combines the existing language-neutral MongoDB keyword search with
+local multilingual semantic embeddings. Reciprocal Rank Fusion merges both
+rankings, allowing Hindi questions to retrieve relevant English evidence and
+English questions to retrieve relevant Hindi evidence. Qwen3 remains the
+grounded query-planning and answer-generation model; `bge-m3` is used only for
+retrieval embeddings.
+
+Install the local embedding model and build vectors for the current document
+chunks:
+
+```powershell
+ollama pull bge-m3
+python build_document_embeddings.py
+```
+
+Repeated indexing skips chunks whose content hash and model are already
+current. Force a complete rebuild after changing the embedding model with:
+
+```powershell
+python build_document_embeddings.py --rebuild
+```
+
+Run the labelled retrieval evaluation:
+
+```powershell
+python evaluate_phase3_retrieval.py --output docs/evidence/phase3_hybrid_retrieval.json
+```
+
+The browser interface supports automatic, English, or Hindi answer output.
+The returned payload reports whether document evidence was found through
+keyword, semantic, or hybrid retrieval. See
+[docs/PHASE3_HYBRID_RETRIEVAL.md](docs/PHASE3_HYBRID_RETRIEVAL.md) for the
+architecture, ranking method, evaluation contract, and scaling boundary.
