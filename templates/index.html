@@ -23,6 +23,11 @@
           <small>Evidence-grounded intelligence</small>
         </span>
       </a>
+      <nav class="site-nav" aria-label="Primary navigation">
+        <a href="#dashboard">Dashboard</a>
+        <a href="#nearby-heading">Nearby markets</a>
+        <a href="#ask-heading">Ask the data</a>
+      </nav>
       <div class="system-state" id="system-state" aria-live="polite">
         <span class="status-dot"></span>
         <span>Checking system</span>
@@ -32,11 +37,11 @@
     <main>
       <section class="hero">
         <div class="hero-copy">
-          <p class="eyebrow">Agriculture data assistant</p>
-          <h1>Ask Bihar's agriculture data a direct question.</h1>
+          <p class="eyebrow">Agriculture intelligence platform</p>
+          <h1>See what Bihar's agriculture data is saying.</h1>
           <p class="hero-text">
-            Explore live mandi prices, 59 years of crop statistics, and official
-            government reports. Every response is grounded in retrieved records.
+            Monitor daily mandi collection, geographic coverage and market-price
+            movement, then ask grounded questions in English or Hindi.
           </p>
         </div>
         <div class="metrics" aria-label="Available data">
@@ -51,6 +56,97 @@
           <article>
             <span class="metric-value" id="documents-count">—</span>
             <span class="metric-label">Report passages</span>
+          </article>
+        </div>
+      </section>
+
+      <section id="dashboard" class="dashboard" aria-labelledby="dashboard-heading">
+        <div class="dashboard-header">
+          <div>
+            <p class="section-kicker">Live data observatory</p>
+            <h2 id="dashboard-heading">Collection progress and market intelligence</h2>
+            <p>Every chart is calculated from the current MongoDB collections.</p>
+          </div>
+          <div class="dashboard-controls">
+            <label for="dashboard-window">Recent collection window</label>
+            <select id="dashboard-window">
+              <option value="14">14 data days</option>
+              <option value="30" selected>30 data days</option>
+              <option value="60">60 data days</option>
+              <option value="90">90 data days</option>
+            </select>
+            <button id="refresh-dashboard" type="button">Refresh</button>
+          </div>
+        </div>
+
+        <p id="dashboard-status" class="dashboard-status" aria-live="polite">Loading current statistics…</p>
+
+        <div class="kpi-grid" aria-label="Collection summary">
+          <article class="kpi-card"><span class="kpi-label">Mandi observations</span><strong id="kpi-observations">—</strong><small id="kpi-date-range">Official daily records</small></article>
+          <article class="kpi-card"><span class="kpi-label">Dates covered</span><strong id="kpi-dates">—</strong><small id="kpi-latest-date">Latest date —</small></article>
+          <article class="kpi-card"><span class="kpi-label">Observed markets</span><strong id="kpi-markets">—</strong><small id="kpi-districts">Across — districts</small></article>
+          <article class="kpi-card accent"><span class="kpi-label">Verified locations</span><strong id="kpi-locations">—</strong><small id="kpi-unresolved">— unresolved, not guessed</small></article>
+          <article class="kpi-card"><span class="kpi-label">Crop statistics</span><strong id="kpi-statistics">—</strong><small>Historical structured records</small></article>
+          <article class="kpi-card"><span class="kpi-label">Report passages</span><strong id="kpi-documents">—</strong><small>English, Hindi and mixed</small></article>
+        </div>
+
+        <div class="dashboard-grid">
+          <article class="visual-card visual-wide">
+            <div class="visual-heading">
+              <div><span>Temporal coverage</span><h3>Daily observations collected</h3></div>
+              <span id="daily-chart-total" class="chart-note"></span>
+            </div>
+            <div id="daily-chart" class="chart-stage" role="img" aria-label="Daily mandi record counts"></div>
+          </article>
+
+          <article class="visual-card coverage-card">
+            <div class="visual-heading"><div><span>Geospatial readiness</span><h3>Market coverage</h3></div></div>
+            <div class="coverage-visual">
+              <div id="coverage-ring" class="coverage-ring"><strong id="coverage-percent">—</strong><span>verified</span></div>
+              <div class="coverage-legend">
+                <p><i class="legend-dot verified"></i><span>Verified</span><strong id="coverage-verified">—</strong></p>
+                <p><i class="legend-dot unresolved"></i><span>Unresolved</span><strong id="coverage-unresolved">—</strong></p>
+              </div>
+            </div>
+          </article>
+
+          <article class="visual-card">
+            <div class="visual-heading"><div><span>Commodity mix</span><h3>Top crops by records</h3></div></div>
+            <div id="crop-bars" class="rank-bars"></div>
+          </article>
+
+          <article class="visual-card">
+            <div class="visual-heading"><div><span>Administrative coverage</span><h3>Top districts by records</h3></div></div>
+            <div id="district-bars" class="rank-bars"></div>
+          </article>
+
+          <article class="visual-card visual-wide map-card">
+            <div class="visual-heading">
+              <div><span>Verified coordinate coverage</span><h3>Bihar mandi location plot</h3></div>
+              <span id="market-map-total" class="chart-note">Verified market points</span>
+            </div>
+            <div id="market-map" class="market-map" role="img" aria-label="Verified mandi locations plotted by longitude and latitude"></div>
+            <p class="map-note">Coordinate plot of verified locality centroids; it is not a road map or market-gate survey.</p>
+          </article>
+
+          <article class="visual-card operations-card">
+            <div class="visual-heading"><div><span>Automation</span><h3>Latest collection run</h3></div><span id="run-status" class="run-pill">—</span></div>
+            <dl class="run-details">
+              <div><dt>Completed dates</dt><dd id="run-dates">—</dd></div>
+              <div><dt>Records processed</dt><dd id="run-records">—</dd></div>
+              <div><dt>Inserted / matched</dt><dd id="run-writes">—</dd></div>
+              <div><dt>Recent success rate</dt><dd id="run-success">—</dd></div>
+            </dl>
+            <div class="run-history-block">
+              <span>Recent run status</span>
+              <div id="run-history" class="run-history" aria-label="Recent run history"></div>
+            </div>
+          </article>
+
+          <article class="visual-card quality-card">
+            <div class="visual-heading"><div><span>Trust and traceability</span><h3>Data quality</h3></div></div>
+            <div id="quality-meters" class="quality-meters"></div>
+            <div class="language-summary"><span>Document languages</span><div id="language-chips"></div></div>
           </article>
         </div>
       </section>

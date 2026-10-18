@@ -9,6 +9,7 @@ class FakeQueryService:
         self.statistics_call = None
         self.trends_call = None
         self.nearby_call = None
+        self.dashboard_call = None
 
     def health(self):
         return {
@@ -47,6 +48,13 @@ class FakeQueryService:
             "markets": ["Arwal"],
             "statistical_crops": ["Rice"],
             "seasons": ["Kharif"],
+        }
+
+    def dashboard_snapshot(self, days):
+        self.dashboard_call = days
+        return {
+            "window_days": days,
+            "summary": {"mandi_records": 6899},
         }
 
 
@@ -134,6 +142,17 @@ class DataApiTests(unittest.TestCase):
         response = self.client.get("/api/v1/catalog")
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.json["statistical_crops"], ["Rice"])
+
+    def test_dashboard_endpoint_passes_window(self):
+        response = self.client.get("/api/v1/dashboard?days=60")
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(self.service.dashboard_call, 60)
+        self.assertEqual(response.json["summary"]["mandi_records"], 6899)
+
+    def test_dashboard_endpoint_rejects_invalid_window(self):
+        response = self.client.get("/api/v1/dashboard?days=500")
+        self.assertEqual(response.status_code, 400)
+        self.assertIn("between 1 and 365", response.json["error"])
 
     def test_unknown_endpoint_remains_404(self):
         response = self.client.get("/does-not-exist")

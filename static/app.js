@@ -120,6 +120,249 @@ function showAnswer(data) {
   renderRecords(data.records || []);
 }
 
+const svgNamespace = "http://www.w3.org/2000/svg";
+
+function svgElement(tag, attributes = {}) {
+  const element = document.createElementNS(svgNamespace, tag);
+  Object.entries(attributes).forEach(([key, value]) => element.setAttribute(key, value));
+  return element;
+}
+
+function setText(selector, value) {
+  const element = document.querySelector(selector);
+  if (element) element.textContent = value == null ? "—" : String(value);
+}
+
+function shortDate(value) {
+  if (!value) return "—";
+  const date = new Date(`${value}T00:00:00Z`);
+  return Number.isNaN(date.valueOf())
+    ? value
+    : new Intl.DateTimeFormat("en-IN", { day: "2-digit", month: "short" }).format(date);
+}
+
+function renderDailyChart(records) {
+  const stage = document.querySelector("#daily-chart");
+  stage.replaceChildren();
+  if (!records.length) {
+    stage.append(textElement("p", "No daily collection records are available."));
+    return;
+  }
+  const width = 760;
+  const height = 260;
+  const margin = { top: 18, right: 18, bottom: 42, left: 48 };
+  const innerWidth = width - margin.left - margin.right;
+  const innerHeight = height - margin.top - margin.bottom;
+  const maximum = Math.max(...records.map((item) => item.records || 0), 1);
+  const slot = innerWidth / records.length;
+  const barWidth = Math.max(3, Math.min(22, slot * 0.68));
+  const svg = svgElement("svg", { viewBox: `0 0 ${width} ${height}`, "aria-hidden": "true" });
+
+  [0, 0.25, 0.5, 0.75, 1].forEach((fraction) => {
+    const y = margin.top + innerHeight * (1 - fraction);
+    svg.append(svgElement("line", { x1: margin.left, y1: y, x2: width - margin.right, y2: y, class: "chart-gridline" }));
+    const label = svgElement("text", { x: margin.left - 9, y: y + 4, class: "chart-axis-label", "text-anchor": "end" });
+    label.textContent = Math.round(maximum * fraction);
+    svg.append(label);
+  });
+
+  const labelEvery = Math.max(1, Math.ceil(records.length / 6));
+  records.forEach((item, index) => {
+    const value = item.records || 0;
+    const barHeight = value / maximum * innerHeight;
+    const x = margin.left + slot * index + (slot - barWidth) / 2;
+    const y = margin.top + innerHeight - barHeight;
+    const group = svgElement("g");
+    const bar = svgElement("rect", { x, y, width: barWidth, height: barHeight, rx: 3, class: "daily-bar" });
+    const title = svgElement("title");
+    title.textContent = `${item.date}: ${formatNumber(value)} records, ${item.market_count || 0} markets`;
+    bar.append(title);
+    group.append(bar);
+    if (index % labelEvery === 0 || index === records.length - 1) {
+      const label = svgElement("text", { x: x + barWidth / 2, y: height - 15, class: "chart-axis-label", "text-anchor": "middle" });
+      label.textContent = shortDate(item.date);
+      group.append(label);
+    }
+    svg.append(group);
+  });
+  stage.append(svg);
+  const total = records.reduce((sum, item) => sum + (item.records || 0), 0);
+  setText("#daily-chart-total", `${formatNumber(total)} records shown`);
+}
+
+function renderRankBars(selector, records) {
+  const container = document.querySelector(selector);
+  container.replaceChildren();
+  const visible = (records || []).slice(0, 7);
+  if (!visible.length) {
+    container.append(textElement("p", "No distribution data available."));
+    return;
+  }
+  const maximum = Math.max(...visible.map((item) => item.records || 0), 1);
+  visible.forEach((item, index) => {
+    const row = document.createElement("div");
+    row.className = "rank-row";
+    const label = document.createElement("div");
+    label.className = "rank-label";
+    label.append(textElement("span", `${index + 1}. ${item.label || "Unknown"}`));
+    label.append(textElement("strong", formatNumber(item.records)));
+    const track = document.createElement("div");
+    track.className = "rank-track";
+    const fill = document.createElement("span");
+    fill.style.width = `${Math.max(4, item.records / maximum * 100)}%`;
+    track.append(fill);
+    row.append(label, track);
+    container.append(row);
+  });
+}
+
+function renderMarketMap(geospatial) {
+  const container = document.querySelector("#market-map");
+  container.replaceChildren();
+  const locations = geospatial.locations || [];
+  const bounds = geospatial.bounds || {};
+  if (!locations.length) {
+    setText("#market-map-total", "0 verified points");
+    container.append(textElement("p", "No verified market coordinates available."));
+    return;
+  }
+  setText("#market-map-total", `${formatNumber(locations.length)} verified points`);
+  const width = 760;
+  const height = 330;
+  const margin = 35;
+  const minLon = bounds.min_longitude;
+  const maxLon = bounds.max_longitude;
+  const minLat = bounds.min_latitude;
+  const maxLat = bounds.max_latitude;
+  const project = (longitude, latitude) => ({
+    x: margin + (longitude - minLon) / (maxLon - minLon) * (width - margin * 2),
+    y: margin + (maxLat - latitude) / (maxLat - minLat) * (height - margin * 2),
+  });
+  const svg = svgElement("svg", { viewBox: `0 0 ${width} ${height}` });
+  svg.append(svgElement("rect", { x: margin, y: margin, width: width - margin * 2, height: height - margin * 2, rx: 18, class: "map-background" }));
+
+  for (let longitude = 84; longitude <= 88; longitude += 1) {
+    const point = project(longitude, minLat);
+    svg.append(svgElement("line", { x1: point.x, y1: margin, x2: point.x, y2: height - margin, class: "map-gridline" }));
+    const label = svgElement("text", { x: point.x, y: height - 12, class: "map-axis-label", "text-anchor": "middle" });
+    label.textContent = `${longitude}°E`;
+    svg.append(label);
+  }
+  for (let latitude = 25; latitude <= 27; latitude += 1) {
+    const point = project(minLon, latitude);
+    svg.append(svgElement("line", { x1: margin, y1: point.y, x2: width - margin, y2: point.y, class: "map-gridline" }));
+    const label = svgElement("text", { x: 8, y: point.y + 4, class: "map-axis-label" });
+    label.textContent = `${latitude}°N`;
+    svg.append(label);
+  }
+
+  locations.forEach((location) => {
+    const coordinates = location.location && location.location.coordinates;
+    if (!coordinates || coordinates.length !== 2) return;
+    const point = project(coordinates[0], coordinates[1]);
+    const marker = svgElement("circle", { cx: point.x, cy: point.y, r: 5.5, class: "map-marker", tabindex: "0" });
+    const title = svgElement("title");
+    title.textContent = `${location.market_name}, ${location.district_name} · confidence ${Math.round((location.confidence || 0) * 100)}%`;
+    marker.append(title);
+    svg.append(marker);
+  });
+  container.append(svg);
+}
+
+function renderCoverage(summary) {
+  const percent = summary.geospatial_coverage_percent || 0;
+  const ring = document.querySelector("#coverage-ring");
+  ring.style.setProperty("--coverage", `${percent * 3.6}deg`);
+  setText("#coverage-percent", `${percent}%`);
+  setText("#coverage-verified", formatNumber(summary.verified_locations));
+  setText("#coverage-unresolved", formatNumber(summary.unresolved_locations));
+}
+
+function renderPipeline(pipeline) {
+  const latest = pipeline.latest_run;
+  const history = pipeline.recent_runs || [];
+  const status = latest ? latest.status : "No runs";
+  const badge = document.querySelector("#run-status");
+  badge.textContent = humanize(status);
+  badge.className = `run-pill ${status === "completed" ? "complete" : status === "failed" ? "failed" : ""}`;
+  const metrics = (latest && latest.metrics) || {};
+  setText("#run-dates", latest ? `${metrics.dates_completed || 0}/${metrics.dates_requested || 0}` : "—");
+  setText("#run-records", latest ? formatNumber(metrics.records_processed) : "—");
+  setText("#run-writes", latest ? `${formatNumber(metrics.inserted)} / ${formatNumber(metrics.matched)}` : "—");
+  setText("#run-success", pipeline.recent_success_percent == null ? "—" : `${pipeline.recent_success_percent}%`);
+  const container = document.querySelector("#run-history");
+  container.replaceChildren();
+  history.slice(0, 8).reverse().forEach((run) => {
+    const dot = document.createElement("span");
+    dot.className = `history-dot ${run.status || "unknown"}`;
+    dot.title = `${run.status || "unknown"} · ${(run.collection_dates || []).join(", ") || "No date"}`;
+    container.append(dot);
+  });
+}
+
+function renderQuality(quality, languages) {
+  const meters = document.querySelector("#quality-meters");
+  meters.replaceChildren();
+  [
+    ["Price completeness", quality.price_completeness_percent],
+    ["Source provenance", quality.provenance_completeness_percent],
+    ["Verified coordinates", quality.coordinate_verification_percent],
+  ].forEach(([label, value]) => {
+    const row = document.createElement("div");
+    row.className = "quality-row";
+    const heading = document.createElement("div");
+    heading.append(textElement("span", label), textElement("strong", `${value || 0}%`));
+    const track = document.createElement("div");
+    track.className = "quality-track";
+    const fill = document.createElement("span");
+    fill.style.width = `${Math.max(0, Math.min(100, value || 0))}%`;
+    track.append(fill);
+    row.append(heading, track);
+    meters.append(row);
+  });
+  const chips = document.querySelector("#language-chips");
+  chips.replaceChildren();
+  (languages || []).forEach((item) => {
+    chips.append(textElement("span", `${String(item.label || "und").toUpperCase()} · ${formatNumber(item.records)}`));
+  });
+}
+
+function renderDashboard(data) {
+  const summary = data.summary || {};
+  setText("#kpi-observations", formatNumber(summary.mandi_records));
+  setText("#kpi-date-range", summary.earliest_date && summary.latest_date ? `${summary.earliest_date} to ${summary.latest_date}` : "Official daily records");
+  setText("#kpi-dates", formatNumber(summary.dates_covered));
+  setText("#kpi-latest-date", `Latest date ${summary.latest_date || "—"}`);
+  setText("#kpi-markets", formatNumber(summary.markets));
+  setText("#kpi-districts", `Across ${formatNumber(summary.districts)} districts · ${formatNumber(summary.crops)} crops`);
+  setText("#kpi-locations", formatNumber(summary.verified_locations));
+  setText("#kpi-unresolved", `${formatNumber(summary.unresolved_locations)} unresolved, not guessed`);
+  setText("#kpi-statistics", formatNumber(summary.crop_statistics));
+  setText("#kpi-documents", formatNumber(summary.document_chunks));
+  renderCoverage(summary);
+  renderDailyChart((data.series || {}).daily_collection || []);
+  renderRankBars("#crop-bars", (data.series || {}).top_crops || []);
+  renderRankBars("#district-bars", (data.series || {}).top_districts || []);
+  renderMarketMap(data.geospatial || {});
+  renderPipeline(data.pipeline || {});
+  renderQuality(data.quality || {}, (data.series || {}).document_languages || []);
+}
+
+async function loadDashboard() {
+  const status = document.querySelector("#dashboard-status");
+  const days = document.querySelector("#dashboard-window").value;
+  status.textContent = "Loading current MongoDB statistics…";
+  try {
+    const response = await fetch(`/api/v1/dashboard?days=${encodeURIComponent(days)}`);
+    const data = await response.json();
+    if (!response.ok) throw new Error(data.error || "Dashboard request failed.");
+    renderDashboard(data);
+    status.textContent = `Updated from live collections · ${data.window_days} most recent data days shown`;
+  } catch (error) {
+    status.textContent = error.message || "Dashboard data could not be loaded.";
+  }
+}
+
 form.addEventListener("submit", async (event) => {
   event.preventDefault();
   const question = questionInput.value.trim();
@@ -157,6 +400,9 @@ document.querySelectorAll("[data-question]").forEach((button) => {
 });
 
 loadHealth();
+loadDashboard();
+document.querySelector("#refresh-dashboard").addEventListener("click", loadDashboard);
+document.querySelector("#dashboard-window").addEventListener("change", loadDashboard);
 
 const nearbyForm = document.querySelector("#nearby-form");
 const nearbyStatus = document.querySelector("#nearby-status");

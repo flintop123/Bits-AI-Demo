@@ -164,6 +164,11 @@ def create_app(service=None, qa_service=None):
     def catalog():
         return jsonify(query_service.list_values())
 
+    @app.get("/api/v1/dashboard")
+    def dashboard():
+        days = parse_days(request.args.get("days", "30"))
+        return jsonify(query_service.dashboard_snapshot(days))
+
     @app.get("/api/v1/documents/search")
     def document_search():
         limit = parse_limit(request.args.get("limit", "5"))
