@@ -41,7 +41,9 @@ try {
 
     $stamp = Get-Date -Format "yyyy-MM-dd HH:mm:ss"
     Add-Content -Path $logFile -Value "[$stamp] Starting scheduled mandi collection"
-    & $python run_phase4_mandi_pipeline.py 2>&1 |
+    # Refresh a rolling window so late postings, corrections, and a missed
+    # workstation run are recovered without creating duplicates.
+    & $python run_phase4_mandi_pipeline.py --days 7 2>&1 |
         Tee-Object -FilePath $logFile -Append
     if ($LASTEXITCODE -ne 0) {
         throw "Daily mandi collection returned exit code $LASTEXITCODE"

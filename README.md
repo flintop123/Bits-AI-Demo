@@ -18,6 +18,10 @@ python run_phase4_mandi_pipeline.py
 python run_phase4_mandi_pipeline.py --days 7
 ```
 
+The Windows scheduled runner also refreshes this rolling seven-day window on
+each daily execution, allowing late source postings and missed runs to be
+recovered through duplicate-safe upserts.
+
 Temporal and administrative-locality queries are exposed through
 `/api/v1/mandi-prices` and `/api/v1/mandi-prices/trends`. See
 `docs/PHASE4_SPATIOTEMPORAL_MANDI.md` for the verified source contract,

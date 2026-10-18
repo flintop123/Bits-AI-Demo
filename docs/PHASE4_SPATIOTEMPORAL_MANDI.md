@@ -76,13 +76,16 @@ Backfill seven days:
 python run_phase4_mandi_pipeline.py --days 7
 ```
 
-Install the daily task at 06:30:
+Install the daily task at 08:30:
 
 ```powershell
-powershell -NoProfile -ExecutionPolicy Bypass -File scripts\install_daily_mandi_task.ps1 -DailyTime "06:30"
+powershell -NoProfile -ExecutionPolicy Bypass -File scripts\install_daily_mandi_task.ps1 -DailyTime "08:30"
 ```
 
-The scheduled runner writes operational logs under
+The scheduled runner refreshes a rolling seven-day window on every execution.
+This captures observations posted after an early-morning run, source-side
+corrections, and days missed while the workstation was unavailable. Duplicate-
+safe upserts prevent repeated records. Operational logs are written under
 `artifacts/phase4/scheduled_mandi.log`. Local runtime artifacts remain ignored
 by Git; reviewed evidence can be copied into `docs/evidence`.
 
@@ -96,7 +99,8 @@ by Git; reviewed evidence can be copied into `docs/evidence`.
   identity, protect against duplicates without collapsing different days;
 - every live run records dates, attempts, pages, counts, inserts, matches,
   modifications, failures, and automation rate;
-- catch-up execution supports missed scheduled runs.
+- the daily runner automatically refreshes seven days to recover late postings,
+  source corrections, and missed scheduled runs.
 
 ## Remaining geospatial enhancement
 
