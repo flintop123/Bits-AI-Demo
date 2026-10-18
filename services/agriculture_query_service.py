@@ -3,13 +3,16 @@
 import os
 import re
 from datetime import date, timedelta
+from math import sqrt
 
 from pymongo import MongoClient
 
+from conn.mandi_catalog_labels import MandiCatalogLabelMongo
 from services.ollama_embedding_client import (
     OllamaEmbeddingClient,
     OllamaEmbeddingUnavailableError,
 )
+from services.mandi_term_normalizer import MandiTermNormalizer
 
 
 class AgricultureQueryService:
@@ -29,7 +32,13 @@ class AgricultureQueryService:
         "extraction_method": 1,
     }
 
-    def __init__(self, database=None, uri=None, embedding_client=None):
+    def __init__(
+        self,
+        database=None,
+        uri=None,
+        embedding_client=None,
+        term_normalizer=None,
+    ):
         if database is None:
             uri = uri or os.getenv("MONGODB_URI", "mongodb://localhost:27017/")
             self.client = MongoClient(uri)
@@ -46,6 +55,10 @@ class AgricultureQueryService:
         self.crop_statistics = self.database["crop_statistics"]
         self.agriculture_documents = self.database["agriculture_documents"]
         self._embedding_client = embedding_client
+        self._term_normalizer = term_normalizer or MandiTermNormalizer()
+        self._catalog_labels = MandiCatalogLabelMongo(
+            self.database, normalizer=self._term_normalizer
+        )
 
     def health(self):
         self.client.admin.command("ping")
@@ -269,6 +282,7 @@ class AgricultureQueryService:
         }
 
     def find_mandi_prices(self, filters, limit):
+        filters, _ = self.resolve_mandi_filters(filters)
         query = {}
         for field in ("district", "market", "crop", "variety"):
             value = filters.get(field)
@@ -299,6 +313,7 @@ class AgricultureQueryService:
         return list(cursor.limit(limit))
 
     def find_mandi_trends(self, filters, days):
+        filters, _ = self.resolve_mandi_filters(filters)
         query = {}
         for field in ("district", "market", "crop", "variety"):
             value = filters.get(field)
@@ -359,6 +374,7 @@ class AgricultureQueryService:
         limit,
     ):
         """Return recent prices from verified markets within a radius."""
+        filters, _ = self.resolve_mandi_filters(filters)
         location_pipeline = [
             {"$geoNear": {
                 "near": {
@@ -431,6 +447,430 @@ class AgricultureQueryService:
             }
             records.append(enriched)
         return records
+
+    def market_intelligence(
+        self,
+        filters,
+        days,
+        latitude=None,
+        longitude=None,
+        radius_km=75,
+        display_language=None,
+    ):
+        """Calculate reproducible temporal and locality-aware price metrics."""
+        requested_filters = dict(filters)
+        filters, filter_resolution = self.resolve_mandi_filters(filters)
+        query = {"source_type": "government_mandi_api"}
+        for field in ("district", "market", "crop", "variety"):
+            value = filters.get(field)
+            if value:
+                query[field] = self._exact_text(value)
+
+        locations = []
+        if latitude is not None and longitude is not None:
+            locations = list(self.mandi_locations.aggregate([
+                {"$geoNear": {
+                    "near": {
+                        "type": "Point",
+                        "coordinates": [longitude, latitude],
+                    },
+                    "distanceField": "distance_meters",
+                    "maxDistance": radius_km * 1000,
+                    "spherical": True,
+                    "query": {"verification_status": "verified"},
+                }},
+                {"$limit": 200},
+                {"$project": {
+                    "_id": 0,
+                    "market_code": 1,
+                    "market_name": 1,
+                    "district_name": 1,
+                    "location": 1,
+                    "distance_meters": 1,
+                    "confidence": 1,
+                    "location_precision": 1,
+                    "coordinate_source": 1,
+                    "coordinate_source_url": 1,
+                }},
+            ]))
+            market_codes = [
+                location.get("market_code")
+                for location in locations
+                if location.get("market_code") is not None
+            ]
+            if not market_codes:
+                result = self._empty_market_intelligence(
+                    filters, days, latitude, longitude, radius_km
+                )
+                result["requested_filters"] = requested_filters
+                result["filter_resolution"] = filter_resolution
+                return self._localize_market_intelligence(
+                    result, display_language
+                )
+            query["market_code"] = {"$in": market_codes}
+
+        latest = self.mandi_prices.find_one(
+            query, {"_id": 0, "date": 1}, sort=[("date", -1)]
+        )
+        dataset_latest = self.mandi_prices.find_one(
+            {"source_type": "government_mandi_api"},
+            {"_id": 0, "date": 1},
+            sort=[("date", -1)],
+        )
+        if latest is None:
+            result = self._empty_market_intelligence(
+                filters, days, latitude, longitude, radius_km,
+                dataset_latest=(dataset_latest or {}).get("date"),
+            )
+            result["requested_filters"] = requested_filters
+            result["filter_resolution"] = filter_resolution
+            return self._localize_market_intelligence(
+                result, display_language
+            )
+
+        latest_date = date.fromisoformat(latest["date"])
+        cutoff = (latest_date - timedelta(days=days - 1)).isoformat()
+        query["date"] = {"$gte": cutoff, "$lte": latest["date"]}
+        projection = {
+            "_id": 0,
+            "date": 1,
+            "district": 1,
+            "district_code": 1,
+            "market": 1,
+            "market_code": 1,
+            "crop": 1,
+            "crop_code": 1,
+            "variety": 1,
+            "price": 1,
+            "minimum_price": 1,
+            "maximum_price": 1,
+            "unit": 1,
+            "source_url": 1,
+            "extracted_at": 1,
+        }
+        records = list(self.mandi_prices.find(query, projection))
+        result = self._build_market_intelligence(
+            records=records,
+            locations=locations,
+            filters=filters,
+            days=days,
+            dataset_latest=(dataset_latest or {}).get("date"),
+            latitude=latitude,
+            longitude=longitude,
+            radius_km=radius_km,
+        )
+        result["requested_filters"] = requested_filters
+        result["filter_resolution"] = filter_resolution
+        return self._localize_market_intelligence(result, display_language)
+
+    def _localize_market_intelligence(self, result, display_language):
+        """Add display labels while preserving official source values."""
+        if display_language is None:
+            return result
+        language = str(display_language).lower()
+        if language not in {"en", "hi"}:
+            raise ValueError("display_language must be en or hi")
+        fields = {
+            "crop": {
+                value for value in [result.get("filters", {}).get("crop")]
+                if value
+            },
+            "district": {
+                item.get("district")
+                for item in result.get("market_comparison", [])
+                if item.get("district")
+            },
+            "market": {
+                item.get("market")
+                for item in result.get("market_comparison", [])
+                if item.get("market")
+            },
+        }
+        for field in ("district", "market"):
+            value = result.get("filters", {}).get(field)
+            if value:
+                fields[field].add(value)
+        lookups = {}
+        for field, values in fields.items():
+            lookups[field] = {
+                item["value"]: item["label"]
+                for item in self._catalog_labels.options(
+                    field, values, language=language
+                )
+            }
+        for item in result.get("market_comparison", []):
+            item["market_label"] = lookups["market"].get(
+                item.get("market"), item.get("market")
+            )
+            item["district_label"] = lookups["district"].get(
+                item.get("district"), item.get("district")
+            )
+        result["display_language"] = language
+        result["display_filters"] = {
+            field: lookups.get(field, {}).get(value, value)
+            for field, value in result.get("filters", {}).items()
+        }
+        return result
+
+    @classmethod
+    def _build_market_intelligence(
+        cls,
+        records,
+        locations,
+        filters,
+        days,
+        dataset_latest=None,
+        latitude=None,
+        longitude=None,
+        radius_km=75,
+    ):
+        """Pure calculation boundary used by runtime code and unit tests."""
+        if not records:
+            return cls._empty_market_intelligence(
+                filters, days, latitude, longitude, radius_km, dataset_latest
+            )
+
+        valid = [
+            record for record in records
+            if record.get("date") and isinstance(record.get("price"), (int, float))
+        ]
+        if not valid:
+            return cls._empty_market_intelligence(
+                filters, days, latitude, longitude, radius_km, dataset_latest
+            )
+
+        by_date = {}
+        by_market = {}
+        sources = set()
+        for record in valid:
+            by_date.setdefault(record["date"], []).append(record)
+            market_key = record.get("market_code") or record.get("market")
+            by_market.setdefault(market_key, []).append(record)
+            if record.get("source_url"):
+                sources.add(record["source_url"])
+
+        daily_series = []
+        for day_value, day_records in sorted(by_date.items()):
+            prices = [float(item["price"]) for item in day_records]
+            daily_series.append({
+                "date": day_value,
+                "observation_count": len(day_records),
+                "market_count": len({
+                    item.get("market_code") or item.get("market")
+                    for item in day_records
+                }),
+                "average_modal_price": round(sum(prices) / len(prices), 2),
+                "minimum_modal_price": round(min(prices), 2),
+                "maximum_modal_price": round(max(prices), 2),
+            })
+
+        daily_averages = [item["average_modal_price"] for item in daily_series]
+        mean = sum(daily_averages) / len(daily_averages)
+        variance = sum((value - mean) ** 2 for value in daily_averages) / len(
+            daily_averages
+        )
+        standard_deviation = sqrt(variance)
+        volatility_percent = (
+            standard_deviation / mean * 100 if mean else None
+        )
+        anomalies = []
+        if len(daily_series) >= 5 and standard_deviation > 0:
+            for item in daily_series:
+                z_score = (
+                    item["average_modal_price"] - mean
+                ) / standard_deviation
+                if abs(z_score) >= 2:
+                    anomalies.append({
+                        "date": item["date"],
+                        "average_modal_price": item["average_modal_price"],
+                        "z_score": round(z_score, 2),
+                        "direction": "high" if z_score > 0 else "low",
+                    })
+
+        earliest = daily_series[0]["average_modal_price"]
+        latest = daily_series[-1]["average_modal_price"]
+        change_absolute = latest - earliest
+        change_percent = change_absolute / earliest * 100 if earliest else None
+        if change_percent is None:
+            direction = "unavailable"
+        elif change_percent > 0.5:
+            direction = "rising"
+        elif change_percent < -0.5:
+            direction = "falling"
+        else:
+            direction = "stable"
+
+        location_by_market = {
+            item.get("market_code"): item for item in locations
+        }
+        market_comparison = []
+        for market_key, market_records in by_market.items():
+            latest_market_date = max(item["date"] for item in market_records)
+            latest_records = [
+                item for item in market_records
+                if item["date"] == latest_market_date
+            ]
+            latest_prices = [float(item["price"]) for item in latest_records]
+            all_prices = [float(item["price"]) for item in market_records]
+            sample = latest_records[0]
+            location = location_by_market.get(sample.get("market_code"), {})
+            market_comparison.append({
+                "market": sample.get("market"),
+                "market_code": sample.get("market_code"),
+                "district": sample.get("district"),
+                "district_code": sample.get("district_code"),
+                "latest_date": latest_market_date,
+                "latest_average_price": round(
+                    sum(latest_prices) / len(latest_prices), 2
+                ),
+                "window_average_price": round(
+                    sum(all_prices) / len(all_prices), 2
+                ),
+                "minimum_modal_price": round(min(all_prices), 2),
+                "maximum_modal_price": round(max(all_prices), 2),
+                "observation_count": len(market_records),
+                "distance_km": (
+                    round(location["distance_meters"] / 1000, 3)
+                    if location.get("distance_meters") is not None else None
+                ),
+                "location_precision": location.get("location_precision"),
+            })
+        market_comparison.sort(
+            key=lambda item: (
+                -item["latest_average_price"],
+                str(item.get("market") or ""),
+            )
+        )
+        for rank, item in enumerate(market_comparison, start=1):
+            item["latest_price_rank"] = rank
+
+        latest_data_date = daily_series[-1]["date"]
+        dataset_latest = dataset_latest or latest_data_date
+        lag = (
+            date.fromisoformat(dataset_latest)
+            - date.fromisoformat(latest_data_date)
+        ).days
+        return {
+            "generated_at": date.today().isoformat(),
+            "window_days": days,
+            "filters": dict(filters),
+            "locality": {
+                "mode": (
+                    "nearby_verified_markets" if latitude is not None
+                    else ("named_locality" if any(
+                        filters.get(field) for field in ("district", "market")
+                    ) else "statewide")
+                ),
+                "origin": (
+                    {"type": "Point", "coordinates": [longitude, latitude]}
+                    if latitude is not None and longitude is not None else None
+                ),
+                "radius_km": radius_km if latitude is not None else None,
+                "verified_markets_in_radius": (
+                    len(locations) if latitude is not None else None
+                ),
+            },
+            "freshness": {
+                "latest_data_date": latest_data_date,
+                "dataset_latest_date": dataset_latest,
+                "days_behind_latest_dataset": max(lag, 0),
+                "status": "current" if lag <= 0 else "lagging",
+            },
+            "summary": {
+                "observations": len(valid),
+                "dates": len(daily_series),
+                "markets": len(by_market),
+                "districts": len({item.get("district") for item in valid}),
+                "crops": len({item.get("crop") for item in valid}),
+                "average_modal_price": round(
+                    sum(float(item["price"]) for item in valid) / len(valid), 2
+                ),
+                "earliest_average_price": round(earliest, 2),
+                "latest_average_price": round(latest, 2),
+                "change_absolute": round(change_absolute, 2),
+                "change_percent": (
+                    round(change_percent, 2) if change_percent is not None else None
+                ),
+                "direction": direction,
+                "daily_volatility_percent": (
+                    round(volatility_percent, 2)
+                    if volatility_percent is not None else None
+                ),
+                "anomaly_days": len(anomalies),
+                "unit": valid[0].get("unit") or "quintal",
+            },
+            "daily_series": daily_series,
+            "market_comparison": market_comparison,
+            "anomalies": anomalies,
+            "source_urls": sorted(sources),
+            "source_url": sorted(sources)[0] if sources else None,
+            "methodology": {
+                "window": "Trailing calendar days ending on latest matching data date",
+                "change": "Latest daily average versus earliest daily average",
+                "volatility": "Population standard deviation of daily averages divided by their mean",
+                "anomaly": "Absolute z-score of daily average is at least 2.0; minimum five dates",
+                "ranking": "Descriptive latest average price; not a recommendation or forecast",
+            },
+        }
+
+    @staticmethod
+    def _empty_market_intelligence(
+        filters,
+        days,
+        latitude=None,
+        longitude=None,
+        radius_km=75,
+        dataset_latest=None,
+    ):
+        return {
+            "generated_at": date.today().isoformat(),
+            "window_days": days,
+            "filters": dict(filters),
+            "locality": {
+                "mode": (
+                    "nearby_verified_markets" if latitude is not None
+                    else "named_locality" if any(
+                        filters.get(field) for field in ("district", "market")
+                    ) else "statewide"
+                ),
+                "origin": (
+                    {"type": "Point", "coordinates": [longitude, latitude]}
+                    if latitude is not None and longitude is not None else None
+                ),
+                "radius_km": radius_km if latitude is not None else None,
+                "verified_markets_in_radius": 0 if latitude is not None else None,
+            },
+            "freshness": {
+                "latest_data_date": None,
+                "dataset_latest_date": dataset_latest,
+                "days_behind_latest_dataset": None,
+                "status": "no_data",
+            },
+            "summary": {
+                "observations": 0,
+                "dates": 0,
+                "markets": 0,
+                "districts": 0,
+                "crops": 0,
+                "average_modal_price": None,
+                "earliest_average_price": None,
+                "latest_average_price": None,
+                "change_absolute": None,
+                "change_percent": None,
+                "direction": "unavailable",
+                "daily_volatility_percent": None,
+                "anomaly_days": 0,
+                "unit": "quintal",
+            },
+            "daily_series": [],
+            "market_comparison": [],
+            "anomalies": [],
+            "source_urls": [],
+            "source_url": None,
+            "methodology": {
+                "ranking": "No ranking was produced because no matching observations were found"
+            },
+        }
 
     def find_crop_statistics(self, filters, limit):
         query = {}
@@ -599,16 +1039,69 @@ class AgricultureQueryService:
             record.get("chunk_index"),
         )
 
-    def list_values(self):
-        return {
+    def list_values(self, display_language=None):
+        catalog = {
             "mandi_crops": sorted(self.mandi_prices.distinct("crop")),
             "districts": sorted(self.mandi_prices.distinct("district")),
             "markets": sorted(self.mandi_prices.distinct("market")),
+            "mandi_varieties": sorted(self.mandi_prices.distinct("variety")),
             "statistical_crops": sorted(
                 self.crop_statistics.distinct("crop")
             ),
             "seasons": sorted(self.crop_statistics.distinct("season")),
         }
+        if display_language:
+            language = str(display_language).lower()
+            if language not in {"all", "en", "hi"}:
+                raise ValueError("catalog language must be all, en or hi")
+            catalog["mandi_crop_options"] = self._catalog_labels.options(
+                "crop", catalog["mandi_crops"], language
+            )
+            catalog["district_options"] = self._catalog_labels.options(
+                "district", catalog["districts"], language
+            )
+            catalog["market_options"] = self._catalog_labels.options(
+                "market", catalog["markets"], language
+            )
+            catalog["display_language"] = language
+            catalog["catalog_source"] = (
+                "mongodb_distinct_with_persistent_label_cache"
+            )
+        return catalog
+
+    def sync_mandi_catalog_labels(self):
+        """Refresh labels after scheduled collection introduces new values."""
+        values = {
+            "crop": self.mandi_prices.distinct("crop"),
+            "district": self.mandi_prices.distinct("district"),
+            "market": self.mandi_prices.distinct("market"),
+        }
+        return {
+            field: self._catalog_labels.sync(field, observed)
+            for field, observed in values.items()
+        }
+
+    def resolve_mandi_filters(self, filters):
+        """Resolve bilingual terms against live values before querying."""
+        def values(field, filter_name):
+            if not filters.get(filter_name):
+                return []
+            result = self.mandi_prices.distinct(field)
+            if not isinstance(result, (list, tuple, set)):
+                return [filters[filter_name]]
+            return list(result)
+
+        catalog = {
+            "mandi_crops": values("crop", "crop"),
+            "districts": values("district", "district"),
+            "markets": values("market", "market"),
+            "mandi_varieties": values("variety", "variety"),
+        }
+        normalizer = getattr(self, "_term_normalizer", None)
+        if normalizer is None:
+            normalizer = MandiTermNormalizer()
+            self._term_normalizer = normalizer
+        return normalizer.resolve_filters(filters, catalog)
 
     def close(self):
         """Close only a Mongo client created by this service."""

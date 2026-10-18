@@ -25,6 +25,7 @@
       </a>
       <nav class="site-nav" aria-label="Primary navigation">
         <a href="#dashboard">Dashboard</a>
+        <a href="#intelligence-heading">Market intelligence</a>
         <a href="#nearby-heading">Nearby markets</a>
         <a href="#ask-heading">Ask the data</a>
       </nav>
@@ -151,6 +152,62 @@
         </div>
       </section>
 
+      <section id="market-intelligence" class="intelligence-panel" aria-labelledby="intelligence-heading">
+        <div class="panel-heading">
+          <div>
+            <p class="section-kicker">Locality × time analysis</p>
+            <h2 id="intelligence-heading">Explain observed market movement</h2>
+          </div>
+          <span class="local-badge">Deterministic metrics</span>
+        </div>
+        <p class="intelligence-intro">
+          Compare recent observations by crop and locality. Change, volatility,
+          freshness and anomaly flags are calculated from stored records—not
+          predicted by the language model.
+        </p>
+        <form id="intelligence-form" class="intelligence-form">
+          <label>Dropdown language<select id="intelligence-catalog-language"><option value="hi" selected>हिंदी</option><option value="en">English</option></select></label>
+          <label>Crop<select id="intelligence-crop" required><option value="">Loading crops…</option></select></label>
+          <label>District (optional)<select id="intelligence-district"><option value="">All districts</option></select></label>
+          <label>Market (optional)<select id="intelligence-market"><option value="">All markets</option></select></label>
+          <label>Window<select id="intelligence-days"><option value="7">7 days</option><option value="30" selected>30 days</option><option value="60">60 days</option><option value="90">90 days</option></select></label>
+          <details class="coordinate-options">
+            <summary>Restrict to verified markets near coordinates</summary>
+            <div>
+              <label>Latitude<input id="intelligence-latitude" type="number" step="any" min="-90" max="90" placeholder="25.5941"></label>
+              <label>Longitude<input id="intelligence-longitude" type="number" step="any" min="-180" max="180" placeholder="85.1376"></label>
+              <label>Radius (km)<input id="intelligence-radius" type="number" min="1" max="300" value="75"></label>
+            </div>
+          </details>
+          <button type="submit">Analyse observations</button>
+        </form>
+        <p id="intelligence-status" class="intelligence-status" aria-live="polite"></p>
+        <div id="intelligence-results" hidden>
+          <div class="intelligence-kpis">
+            <article><span>Latest average</span><strong id="intel-latest">—</strong><small id="intel-latest-date">—</small></article>
+            <article><span>Window change</span><strong id="intel-change">—</strong><small id="intel-direction">—</small></article>
+            <article><span>Daily volatility</span><strong id="intel-volatility">—</strong><small>Coefficient of variation</small></article>
+            <article><span>Data freshness</span><strong id="intel-freshness">—</strong><small id="intel-scope">—</small></article>
+          </div>
+          <div class="intelligence-grid">
+            <article class="visual-card intelligence-chart-card">
+              <div class="visual-heading"><div><span>Observed daily averages</span><h3>Price movement</h3></div><span id="intel-observations" class="chart-note"></span></div>
+              <div id="intelligence-chart" class="chart-stage" role="img" aria-label="Daily average modal-price movement"></div>
+            </article>
+            <article class="visual-card intelligence-anomaly-card">
+              <div class="visual-heading"><div><span>Explainable checks</span><h3>Unusual days</h3></div></div>
+              <div id="intelligence-anomalies" class="anomaly-list"></div>
+              <p class="method-note">Flagged only when a daily average is at least two standard deviations from the window mean and five dates are available.</p>
+            </article>
+          </div>
+          <div class="comparison-block">
+            <div class="visual-heading"><div><span>Descriptive comparison</span><h3>Markets ranked by latest observed average</h3></div></div>
+            <p class="method-note">This is observed data, not a sale recommendation or forecast.</p>
+            <div class="comparison-table-wrap"><table class="comparison-table"><thead><tr><th>Rank</th><th>Market</th><th>District</th><th>Latest avg.</th><th>Window avg.</th><th>Distance</th><th>Observations</th></tr></thead><tbody id="intelligence-market-rows"></tbody></table></div>
+          </div>
+        </div>
+      </section>
+
       <section class="workspace" aria-labelledby="ask-heading">
         <div class="ask-panel">
           <div class="panel-heading">
@@ -188,6 +245,8 @@
             <div class="example-list">
               <button type="button" data-question="What was rice production in 2024-25?">Rice production</button>
               <button type="button" data-question="What is the potato price in Arwal mandi?">Mandi price</button>
+              <button type="button" data-question="How did potato prices change in Arwal over the last 30 days?">Price trend</button>
+              <button type="button" data-question="पिछले 30 दिनों में अरवल में आलू के भाव में क्या बदलाव आया?">भाव का रुझान</button>
               <button type="button" data-question="What does the report say about the organic farming corridor?">Organic farming policy</button>
               <button type="button" data-question="पीएमएफएमई मखाना पुस्तिका में प्रसंस्करण के बारे में क्या बताया गया है?">मखाना प्रसंस्करण</button>
             </div>

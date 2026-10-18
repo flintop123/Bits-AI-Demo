@@ -10,6 +10,8 @@ class FakeQueryService:
         self.trends_call = None
         self.nearby_call = None
         self.dashboard_call = None
+        self.intelligence_call = None
+        self.catalog_language = None
 
     def health(self):
         return {
@@ -41,9 +43,23 @@ class FakeQueryService:
         )
         return [{"market": "Arwal", "distance_km": 12.5}]
 
-    def list_values(self):
+    def list_values(self, display_language=None):
+        self.catalog_language = display_language
         return {
             "mandi_crops": ["Potato"],
+            "mandi_crop_options": [{
+                "value": "Potato",
+                "label": "आलू" if display_language == "hi" else "Potato",
+                "labels": {"en": "Potato", "hi": "आलू"},
+            }] if display_language else [],
+            "district_options": [{
+                "value": "अरवल",
+                "labels": {"en": "Arwal", "hi": "अरवल"},
+            }] if display_language else [],
+            "market_options": [{
+                "value": "अरवल",
+                "labels": {"en": "Arwal", "hi": "अरवल"},
+            }] if display_language else [],
             "districts": ["Arwal"],
             "markets": ["Arwal"],
             "statistical_crops": ["Rice"],
@@ -55,6 +71,19 @@ class FakeQueryService:
         return {
             "window_days": days,
             "summary": {"mandi_records": 6899},
+        }
+
+    def market_intelligence(
+        self, filters, days, latitude=None, longitude=None, radius_km=75,
+        display_language=None,
+    ):
+        self.intelligence_call = (
+            filters, days, latitude, longitude, radius_km, display_language
+        )
+        return {
+            "summary": {"observations": 12, "direction": "rising"},
+            "daily_series": [],
+            "market_comparison": [],
         }
 
 
@@ -143,6 +172,27 @@ class DataApiTests(unittest.TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.json["statistical_crops"], ["Rice"])
 
+    def test_catalog_language_is_passed_for_dynamic_crop_labels(self):
+        response = self.client.get("/api/v1/catalog?language=hi")
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(self.service.catalog_language, "hi")
+        self.assertEqual(
+            response.json["mandi_crop_options"][0]["value"], "Potato"
+        )
+
+    def test_catalog_returns_all_cached_labels_in_one_request(self):
+        response = self.client.get("/api/v1/catalog?language=all")
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(self.service.catalog_language, "all")
+        self.assertEqual(
+            response.json["district_options"][0]["labels"]["en"], "Arwal"
+        )
+
+    def test_catalog_rejects_unknown_language(self):
+        response = self.client.get("/api/v1/catalog?language=fr")
+        self.assertEqual(response.status_code, 400)
+        self.assertIn("all, en or hi", response.json["error"])
+
     def test_dashboard_endpoint_passes_window(self):
         response = self.client.get("/api/v1/dashboard?days=60")
         self.assertEqual(response.status_code, 200)
@@ -153,6 +203,35 @@ class DataApiTests(unittest.TestCase):
         response = self.client.get("/api/v1/dashboard?days=500")
         self.assertEqual(response.status_code, 400)
         self.assertIn("between 1 and 365", response.json["error"])
+
+    def test_intelligence_endpoint_passes_locality_window_and_coordinates(self):
+        response = self.client.get(
+            "/api/v1/mandi-intelligence?crop=Potato&district=Arwal"
+            "&days=14&latitude=25.6&longitude=85.1&radius_km=80"
+        )
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(
+            self.service.intelligence_call,
+            (
+                {"crop": "Potato", "district": "Arwal"},
+                14, 25.6, 85.1, 80.0, "en",
+            ),
+        )
+        self.assertEqual(response.json["summary"]["direction"], "rising")
+
+    def test_intelligence_endpoint_passes_requested_display_language(self):
+        response = self.client.get(
+            "/api/v1/mandi-intelligence?crop=आलू&display_language=hi"
+        )
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(self.service.intelligence_call[-1], "hi")
+
+    def test_intelligence_endpoint_requires_coordinate_pair(self):
+        response = self.client.get(
+            "/api/v1/mandi-intelligence?latitude=25.6"
+        )
+        self.assertEqual(response.status_code, 400)
+        self.assertIn("supplied together", response.json["error"])
 
     def test_unknown_endpoint_remains_404(self):
         response = self.client.get("/does-not-exist")

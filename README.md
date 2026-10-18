@@ -1,5 +1,36 @@
 # Bits-AI-Demo-For-BIHAR
 
+## Phase 7: spatiotemporal market intelligence
+
+Phase 7 converts the collected mandi history into explainable locality- and
+time-aware metrics. For a crop, district, market, or verified coordinate
+radius it calculates daily averages, earliest-to-latest change, observed
+direction, coefficient-of-variation volatility, two-sigma anomaly flags,
+freshness relative to the latest dataset date, and descriptive market ranks.
+
+```text
+GET /api/v1/mandi-intelligence?crop=आलू&district=अरवल&days=30
+GET /api/v1/mandi-intelligence?crop=आलू&latitude=25.5941&longitude=85.1376&radius_km=75&days=30
+```
+
+The dashboard exposes the same calculation with a chart and comparison table.
+English and Hindi natural-language questions can route to the deterministic
+calculation; Qwen3 explains the returned metrics but does not calculate or
+forecast prices. Structured crop, district, and reviewed market filters also
+resolve between English and Hindi before querying, and the resolution is
+reported in the API response. Crop, district and market dropdowns are populated
+from live MongoDB distinct values. Both language label sets are read once from
+a persistent cache, so the Hindi/English switch is immediate and also changes
+returned comparison labels while preserving official database values. No
+filter option is hard-coded in the browser interface. Rebuild the bilingual
+cache at any time with `python sync_mandi_catalog_labels.py`. See
+`docs/PHASE7_SPATIOTEMPORAL_INTELLIGENCE.md`.
+
+Market names use reviewed aliases or deterministic transliteration; they are
+never passed through free-form semantic translation. Reviewed reverse aliases
+provide Hindi display labels for official Latin-script market names while the
+database values remain unchanged.
+
 ## Phase 6: visual analytics dashboard
 
 The browser interface now includes a live MongoDB-backed observability and

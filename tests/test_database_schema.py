@@ -6,6 +6,7 @@ from conn.agriculture_documents_mongodb import AgricultureDocumentsMongo
 from conn.crop_statistics_mongodb import CropStatisticsMongo
 from conn.mongodb import BiharCropMongo
 from conn.mandi_locations import MandiLocationMongo
+from conn.mandi_catalog_labels import MandiCatalogLabelMongo
 from export_database_evidence import COLLECTION_PROJECTIONS, PROVENANCE_FIELDS
 
 
@@ -25,6 +26,7 @@ class DatabaseSchemaTests(unittest.TestCase):
             {
                 "mandi_prices",
                 "mandi_locations",
+                "mandi_catalog_labels",
                 "crop_statistics",
                 "agriculture_documents",
                 "agent_runs",
@@ -36,6 +38,9 @@ class DatabaseSchemaTests(unittest.TestCase):
         expected = {
             "mandi_prices": list(BiharCropMongo.IDENTITY_FIELDS),
             "mandi_locations": list(MandiLocationMongo.IDENTITY_FIELDS),
+            "mandi_catalog_labels": list(
+                MandiCatalogLabelMongo.IDENTITY_FIELDS
+            ),
             "crop_statistics": list(CropStatisticsMongo.IDENTITY_FIELDS),
             "agriculture_documents": list(
                 AgricultureDocumentsMongo.IDENTITY_FIELDS
