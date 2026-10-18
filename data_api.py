@@ -22,6 +22,16 @@ def parse_limit(raw_limit):
     return limit
 
 
+def parse_days(raw_days):
+    try:
+        days = int(raw_days)
+    except (TypeError, ValueError) as exc:
+        raise ValueError("days must be an integer") from exc
+    if days < 1 or days > 365:
+        raise ValueError("days must be between 1 and 365")
+    return days
+
+
 def selected_filters(names):
     return {
         name: request.args.get(name, "").strip()
@@ -64,11 +74,31 @@ def create_app(service=None, qa_service=None):
     def mandi_prices():
         limit = parse_limit(request.args.get("limit", "20"))
         filters = selected_filters(
-            ("district", "market", "crop", "variety", "date")
+            (
+                "district", "market", "crop", "variety", "date",
+                "date_from", "date_to",
+            )
         )
         records = query_service.find_mandi_prices(filters, limit)
         return jsonify({
             "count": len(records),
+            "filters": filters,
+            "records": records,
+        })
+
+    @app.get("/api/v1/mandi-prices/trends")
+    def mandi_price_trends():
+        days = parse_days(request.args.get("days", "30"))
+        filters = selected_filters(
+            (
+                "district", "market", "crop", "variety",
+                "date_from", "date_to",
+            )
+        )
+        records = query_service.find_mandi_trends(filters, days)
+        return jsonify({
+            "count": len(records),
+            "days": days,
             "filters": filters,
             "records": records,
         })

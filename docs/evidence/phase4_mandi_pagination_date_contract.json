@@ -1,0 +1,317 @@
+{
+  "generated_at": "2026-10-18T08:26:53.755901+00:00",
+  "page_url": "https://www.biharkrishi.in/mandi",
+  "database_changed": false,
+  "project_code_changed": false,
+  "baseline": {
+    "request": {
+      "requestBody": {
+        "SearchCriteria": {
+          "locale": "hi_IN",
+          "pageNo": 1,
+          "pageSize": 10
+        }
+      },
+      "requestParams": {
+        "tenantId": "br"
+      }
+    },
+    "status": 200,
+    "returned": 0,
+    "total": 340471,
+    "first_ids": []
+  },
+  "page_two_probe": {
+    "request": {
+      "requestBody": {
+        "SearchCriteria": {
+          "locale": "hi_IN",
+          "pageNo": 2,
+          "pageSize": 10
+        }
+      },
+      "requestParams": {
+        "tenantId": "br"
+      }
+    },
+    "status": 200,
+    "returned": 0,
+    "total": 340471,
+    "first_ids": [],
+    "overlap_with_baseline": [],
+    "response_preview": []
+  },
+  "larger_page_probe": {
+    "request": {
+      "requestBody": {
+        "SearchCriteria": {
+          "locale": "hi_IN",
+          "pageNo": 1,
+          "pageSize": 100
+        }
+      },
+      "requestParams": {
+        "tenantId": "br"
+      }
+    },
+    "status": 200,
+    "returned": 0,
+    "total": 340471,
+    "first_ids": [],
+    "overlap_with_baseline": [],
+    "response_preview": []
+  },
+  "next_button_probe": {
+    "request": {
+      "requestBody": {
+        "SearchCriteria": {
+          "locale": "hi_IN",
+          "pageNo": 2,
+          "pageSize": 10
+        }
+      },
+      "requestParams": {
+        "tenantId": "br"
+      }
+    },
+    "status": 200,
+    "returned": 0,
+    "total": 340471,
+    "first_ids": [],
+    "overlap_with_baseline": []
+  },
+  "date_filter_probe": null,
+  "inputs": [
+    {
+      "index": 0,
+      "type": "text",
+      "name": "global-search",
+      "id": null,
+      "value": null,
+      "placeholder": "खोजें",
+      "role": "combobox",
+      "aria_label": null,
+      "aria_controls": "global-search-results",
+      "nearby_text": null
+    },
+    {
+      "index": 1,
+      "type": "text",
+      "name": null,
+      "id": "districtOptions",
+      "value": null,
+      "placeholder": "चुनें",
+      "role": "combobox",
+      "aria_label": null,
+      "aria_controls": null,
+      "nearby_text": "​"
+    },
+    {
+      "index": 2,
+      "type": "text",
+      "name": null,
+      "id": "marketOptions",
+      "value": null,
+      "placeholder": "चुनें",
+      "role": "combobox",
+      "aria_label": null,
+      "aria_controls": null,
+      "nearby_text": "​"
+    },
+    {
+      "index": 3,
+      "type": "text",
+      "name": null,
+      "id": "commodityOptions",
+      "value": null,
+      "placeholder": "चुनें",
+      "role": "combobox",
+      "aria_label": null,
+      "aria_controls": null,
+      "nearby_text": "​"
+    },
+    {
+      "index": 4,
+      "type": "text",
+      "name": null,
+      "id": ":rg:",
+      "value": null,
+      "placeholder": "DD/MM/YYYY",
+      "role": null,
+      "aria_label": null,
+      "aria_controls": null,
+      "nearby_text": "​"
+    },
+    {
+      "index": 5,
+      "type": "text",
+      "name": null,
+      "id": ":ri:",
+      "value": null,
+      "placeholder": "DD/MM/YYYY",
+      "role": null,
+      "aria_label": null,
+      "aria_controls": null,
+      "nearby_text": "​"
+    },
+    {
+      "index": 6,
+      "type": "text",
+      "name": null,
+      "id": null,
+      "value": "10",
+      "placeholder": null,
+      "role": null,
+      "aria_label": null,
+      "aria_controls": null,
+      "nearby_text": null
+    }
+  ],
+  "javascript_contract_hints": [
+    {
+      "source": "https://www.biharkrishi.in/static/js/mui-41b1562a.74d4a5de.js",
+      "terms": [
+        "toDate"
+      ],
+      "snippets": [
+        "a=null==(n=this.moment.defaultZone)?void 0:n.name)?a:\"system\":t;if(\"system\"===o)return e.clone().local();const r=e.clone();return r.tz(o),r},this.toJsDate=e=>e.toDate(),this.parseISO=e=>this.moment(e,!0),this.toISO=e=>e.toISOString(),this.parse=(e,t)=>\"\"===e?null:this.locale?this.moment(e,t,this.locale,!0):this.moment(e,t,!0),this.getCurrentLocaleCode=()=>this.locale||r().locale(),this.is12HourCyc"
+      ]
+    },
+    {
+      "source": "https://www.biharkrishi.in/static/js/vendors-ab957e66.62d6b216.js",
+      "terms": [
+        "toDate"
+      ],
+      "snippets": [
+        "dingMethod=function(t){return e=>{const n=(t?Math[t]:Math.trunc)(e);return 0===n?0:n}}},93300(t,e,n){e.getTimezoneOffsetInMilliseconds=function(t){const e=(0,r.toDate)(t),n=new Date(Date.UTC(e.getFullYear(),e.getMonth(),e.getDate(),e.getHours(),e.getMinutes(),e.getSeconds(),e.getMilliseconds()));return n.setUTCFullYear(e.getFullYear()),+t-+n};var r=n(75551)},98913(t,e){e.isProtectedDayOfYearToken="
+      ]
+    },
+    {
+      "source": "https://www.biharkrishi.in/static/js/vendors-beb35932.69885286.js",
+      "terms": [
+        "toDate"
+      ],
+      "snippets": [
+        "t\";(globalThis.webpackChunkdfs_frontend_web=globalThis.webpackChunkdfs_frontend_web||[]).push([[9082],{33034(e,t,n){t.closestIndexTo=function(e,t){const n=(0,r.toDate)(e);if(isNaN(Number(n)))return NaN;const o=n.getTime();let a,s;return t.forEach(function(e,t){const n=(0,r.toDate)(e);if(isNaN(Number(n)))return a=NaN,void(s=NaN);const i=Math.abs(o-n.getTime());(null==a||i<s)&&(a=t,s=i)}),a};var r=n"
+      ]
+    },
+    {
+      "source": "https://www.biharkrishi.in/static/js/vendors-1bbbe0aa.1d1b85c9.js",
+      "terms": [
+        "toDate"
+      ],
+      "snippets": [
+        "e\"!==e&&(e in t&&t[e]===Ir[e]||Object.defineProperty(t,e,{enumerable:!0,get:function(){return Ir[e]}}))})},24567(e,t,n){t.interval=function(e,t,n){const a=(0,r.toDate)(e);if(isNaN(+a))throw new TypeError(\"Start date is invalid\");const o=(0,r.toDate)(t);if(isNaN(+o))throw new TypeError(\"End date is invalid\");if(n?.assertPositive&&+a>+o)throw new TypeError(\"End date must be after start date\");return"
+      ]
+    },
+    {
+      "source": "https://www.biharkrishi.in/static/js/vendors-125a01f4.3d99b481.js",
+      "terms": [
+        "toDate"
+      ],
+      "snippets": [
+        "s?.firstWeekContainsDate??1,v=h?.weekStartsOn??h?.locale?.options?.weekStartsOn??w.weekStartsOn??w.locale?.options?.weekStartsOn??0;if(\"\"===t)return\"\"===e?(0,i.toDate)(r):(0,a.constructFrom)(r,NaN);const D={firstWeekContainsDate:y,weekStartsOn:v,locale:P},x=[new d.DateToSystemTimezoneSetter],T=t.match(m).map(e=>{const t=e[0];if(t in o.longFormatters){return(0,o.longFormatters[t])(e,P.formatLong)}r"
+      ]
+    },
+    {
+      "source": "https://www.biharkrishi.in/static/js/vendors-582c8148.b0b40ecc.js",
+      "terms": [
+        "toDate"
+      ],
+      "snippets": [
+        "\"use strict\";(globalThis.webpackChunkdfs_frontend_web=globalThis.webpackChunkdfs_frontend_web||[]).push([[4182],{3848(t,e,n){e.set=function(t,e){let n=(0,a.toDate)(t);if(isNaN(+n))return(0,s.constructFrom)(t,NaN);null!=e.year&&n.setFullYear(e.year);null!=e.month&&(n=(0,o.setMonth)(n,e.month));null!=e.date&&n.setDate(e.date);null!=e.hours&&n.setHours(e.hours);null!=e.minutes&&n.setMinutes(e.min"
+      ]
+    },
+    {
+      "source": "https://www.biharkrishi.in/static/js/vendors-6dd7f33d.0a410812.js",
+      "terms": [
+        "toDate"
+      ],
+      "snippets": [
+        "lobalThis.webpackChunkdfs_frontend_web=globalThis.webpackChunkdfs_frontend_web||[]).push([[40],{96191(t,e,r){\"use strict\";e.startOfDay=function(t){const e=(0,n.toDate)(t);return e.setHours(0,0,0,0),e};var n=r(75551)},71073(t,e,r){\"use strict\";e.startOfDecade=function(t){const e=(0,n.toDate)(t),r=e.getFullYear(),s=10*Math.floor(r/10);return e.setFullYear(s,0,1),e.setHours(0,0,0,0),e};var n=r(75551)"
+      ]
+    },
+    {
+      "source": "https://www.biharkrishi.in/static/js/vendors-d7a1d8a9.2171586c.js",
+      "terms": [
+        "toDate"
+      ],
+      "snippets": [
+        ".times)e=Math.max(i.length,e);for(const{name:i,start:s,end:n}of this.times)t.push(`${i.padEnd(e)} ${n-s}ms\\n`);return t.join(\"\")}},e.PDFDateString=class{static toDateObject(t){if(!t||\"string\"!==typeof t)return null;b||=new RegExp(\"^D:(\\\\d{4})(\\\\d{2})?(\\\\d{2})?(\\\\d{2})?(\\\\d{2})?(\\\\d{2})?([Z|+|-])?(\\\\d{2})?'?(\\\\d{2})?'?\");const e=b.exec(t);if(!e)return null;const i=parseInt(e[1],10);let s=parseInt(e"
+      ]
+    },
+    {
+      "source": "https://www.biharkrishi.in/static/js/vendors-f80d2ba7.c8104436.js",
+      "terms": [
+        "startDate",
+        "endDate"
+      ],
+      "snippets": [
+        "!0}),t.ariaLabelsShape=void 0;var n,r=(n=a(65173))&&n.__esModule?n:{default:n};t.ariaLabelsShape=r.default.shape({dateInput:r.default.objectOf(r.default.shape({startDate:r.default.string,endDate:r.default.string})),monthPicker:r.default.string,yearPicker:r.default.string,prevButton:r.default.string,nextButton:r.default.string})},61783(e,t,a){Object.defineProperty(t,\"__esModule\",{value:!0}),t.defau",
+        " 0;var n,r=(n=a(65173))&&n.__esModule?n:{default:n};t.ariaLabelsShape=r.default.shape({dateInput:r.default.objectOf(r.default.shape({startDate:r.default.string,endDate:r.default.string})),monthPicker:r.default.string,yearPicker:r.default.string,prevButton:r.default.string,nextButton:r.default.string})},61783(e,t,a){Object.defineProperty(t,\"__esModule\",{value:!0}),t.default=void 0;var n=function(e,"
+      ]
+    },
+    {
+      "source": "https://www.biharkrishi.in/static/js/vendors-adcb47af.82f5e10a.js",
+      "terms": [
+        "pageSize",
+        "startDate",
+        "endDate"
+      ],
+      "snippets": [
+        "ems.children,n=0;if(r.length){var o=this.props.axis,i=r[0],a=r[r.length-1];n=this.getOffset(a)+a[D[o]]-this.getOffset(i)}if(n>t)return e();var s=this.props,c=s.pageSize,u=s.length,l=Math.min(this.state.size+c,u);this.maybeSetState({size:l},e)}},{key:\"updateVariableFrame\",value:function(e){this.props.itemSizeGetter||this.cacheSizes();for(var t=this.getStartAndEnd(),r=t.start,n=t.end,o=this.props,i=",
+        "calcFocusDate=function(e,t){const{shownDate:r,date:n,months:o,ranges:a,focusedRange:s,displayMode:c}=t;let u;if(\"dateRange\"===c){const e=a[s[0]]||{};u={start:e.startDate,end:e.endDate}}else u={start:n,end:n};u.start=(0,i.startOfMonth)(u.start||new Date),u.end=(0,i.endOfMonth)(u.end||u.start);const l=u.start||u.end||r||new Date;if(!e)return r||l;if((0,i.differenceInCalendarMonths)(u.start,u.end)>o)",
+        "nction(e,t){const{shownDate:r,date:n,months:o,ranges:a,focusedRange:s,displayMode:c}=t;let u;if(\"dateRange\"===c){const e=a[s[0]]||{};u={start:e.startDate,end:e.endDate}}else u={start:n,end:n};u.start=(0,i.startOfMonth)(u.start||new Date),u.end=(0,i.endOfMonth)(u.end||u.start);const l=u.start||u.end||r||new Date;if(!e)return r||l;if((0,i.differenceInCalendarMonths)(u.start,u.end)>o)return e;return "
+      ]
+    },
+    {
+      "source": "https://www.biharkrishi.in/static/js/main-43dd7041.1fbf1198.js",
+      "terms": [
+        "startDate",
+        "endDate"
+      ],
+      "snippets": [
+        "r=new Date(e),a=new Date(t);return{fromEpochTime:r.getTime(),toEpochTime:a.setUTCHours(23,59,59,999)}},X=()=>{const e=new Date;return e.setHours(23,59,59,999),{startDate:new Date(16409754e5),endDate:e}},ee=(e,t)=>{let r=(new Date(t).getTime()-new Date(e).getTime())/864e5;return r>365?\"year\":r>180&&r<=365?\"quarter\":r>90&&r<=180?\"month\":r>14&&r<=90?\"week\":r<=14?\"day\":void 0},te=e=>{const t=e.split(\"",
+        "urn{fromEpochTime:r.getTime(),toEpochTime:a.setUTCHours(23,59,59,999)}},X=()=>{const e=new Date;return e.setHours(23,59,59,999),{startDate:new Date(16409754e5),endDate:e}},ee=(e,t)=>{let r=(new Date(t).getTime()-new Date(e).getTime())/864e5;return r>365?\"year\":r>180&&r<=365?\"quarter\":r>90&&r<=180?\"month\":r>14&&r<=90?\"week\":r<=14?\"day\":void 0},te=e=>{const t=e.split(\"/\");return t[t.length-1]},re=(e"
+      ]
+    },
+    {
+      "source": "https://www.biharkrishi.in/static/js/main-84781932.4735b502.js",
+      "terms": [
+        "fromDate",
+        "toDate"
+      ],
+      "snippets": [
+        "TOP:\"Important updates carousel (desktop)\",Volume_Level:\"Volume Level\",pending:\"pending\",uploading:\"uploading\",success:\"success\",error:\"error\",toDate:\"To Date\",fromDate:\"From Date\",LOGO:\"Logo\",TWEET_MEDIA:\"Tweet Media\",EXAMPLE_EMAIL:\"e.g. mukesh1234@email.com\",SearchQuestion:\"Search Question\",DSS_FEATURE_NEWS_AND_NOTIFICATIONS:\"News and Notifications\",DSS_FEATURE_KNOWLEDGE:\"Knowledge\",DSS_FEATURE_",
+        "TES_CAROUSEL_DESKTOP:\"Important updates carousel (desktop)\",Volume_Level:\"Volume Level\",pending:\"pending\",uploading:\"uploading\",success:\"success\",error:\"error\",toDate:\"To Date\",fromDate:\"From Date\",LOGO:\"Logo\",TWEET_MEDIA:\"Tweet Media\",EXAMPLE_EMAIL:\"e.g. mukesh1234@email.com\",SearchQuestion:\"Search Question\",DSS_FEATURE_NEWS_AND_NOTIFICATIONS:\"News and Notifications\",DSS_FEATURE_KNOWLEDGE:\"Knowle"
+      ]
+    },
+    {
+      "source": "https://www.biharkrishi.in/static/js/main-fce65224.c61ccda7.js",
+      "terms": [
+        "startDate",
+        "endDate"
+      ],
+      "snippets": [
+        "e]),[\"complaintdetails\",\"inbox\"].some(e=>{var t;return null===(t=B)||void 0===t?void 0:t.includes(e)})&&B.splice(-1);const T={schemeId:e.schemeId,level:e.level,startDate:e.startDate,endDate:e.endDate,active:e.active,mainId:e.mainSchemeId},W=e=>{let t=0;var r;window.contextPath||(t=(null===(r=B)||void 0===r?void 0:r.length)>2?1:0);let n=`/${B.slice(t,e+1).join(\"/\")}`;if(\"/grm\"===n&&(n=\"/grm/inbox\")",
+        "\",\"inbox\"].some(e=>{var t;return null===(t=B)||void 0===t?void 0:t.includes(e)})&&B.splice(-1);const T={schemeId:e.schemeId,level:e.level,startDate:e.startDate,endDate:e.endDate,active:e.active,mainId:e.mainSchemeId},W=e=>{let t=0;var r;window.contextPath||(t=(null===(r=B)||void 0===r?void 0:r.length)>2?1:0);let n=`/${B.slice(t,e+1).join(\"/\")}`;if(\"/grm\"===n&&(n=\"/grm/inbox\"),\"assets-section\"===B["
+      ]
+    },
+    {
+      "source": "https://www.biharkrishi.in/static/js/main-6b882012.92ba90c9.js",
+      "terms": [
+        "pageNo",
+        "pageSize",
+        "startDate",
+        "endDate"
+      ],
+      "snippets": [
+        "dbtId:a,mobileNumber:o}=t;se(!0);try{var n,i,s;const t=\"FARMER_PASSBOOK_GET\"===r?{payload:{SearchCriteria:{dbtId:a,sortBy:\"application_date desc\",tenantId:\"br\",pageNo:1,pageSize:10}}}:\"SCHEME_APPLY_PROFILE_GET\"===r?{payload:{mdmsId:O}}:{},m=await F({dbtId:a,mobileNumber:o,otp:e,categoryType:r,extra:t});var d,c,u;if(200!==(null===m||void 0===m?void 0:m.status))return ne({message:(null===m||void 0==",
+        "obileNumber:o}=t;se(!0);try{var n,i,s;const t=\"FARMER_PASSBOOK_GET\"===r?{payload:{SearchCriteria:{dbtId:a,sortBy:\"application_date desc\",tenantId:\"br\",pageNo:1,pageSize:10}}}:\"SCHEME_APPLY_PROFILE_GET\"===r?{payload:{mdmsId:O}}:{},m=await F({dbtId:a,mobileNumber:o,otp:e,categoryType:r,extra:t});var d,c,u;if(200!==(null===m||void 0===m?void 0:m.status))return ne({message:(null===m||void 0===m||null=",
+        "d)(),l=(0,f.wA)(),d=(0,o.zy)(),c=(0,a.useMemo)(N,[]),{fontSize:u,ourTheme:A}=(0,a.useContext)(I.p),R=(0,a.useMemo)(()=>(0,D.Ay)(u,A),[u,A]),{schemeId:O,level:_,startDate:z,endDate:W,active:L,mainId:q}=d.state||{},G=(0,a.useMemo)(()=>({schemeId:O,level:_,startDate:z,endDate:W,active:L,mainSchemeId:q}),[O,_,z,W,L,q]),H=(0,a.useMemo)(()=>O?(0,k.mb)(G):(0,k.Kl)({route:d.pathname}),[O,G,d.pathname]),$=",
+        "wA)(),d=(0,o.zy)(),c=(0,a.useMemo)(N,[]),{fontSize:u,ourTheme:A}=(0,a.useContext)(I.p),R=(0,a.useMemo)(()=>(0,D.Ay)(u,A),[u,A]),{schemeId:O,level:_,startDate:z,endDate:W,active:L,mainId:q}=d.state||{},G=(0,a.useMemo)(()=>({schemeId:O,level:_,startDate:z,endDate:W,active:L,mainSchemeId:q}),[O,_,z,W,L,q]),H=(0,a.useMemo)(()=>O?(0,k.mb)(G):(0,k.Kl)({route:d.pathname}),[O,G,d.pathname]),$=(0,a.useMemo"
+      ]
+    }
+  ],
+  "page_status": 200
+}

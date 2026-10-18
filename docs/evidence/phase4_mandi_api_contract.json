@@ -1,0 +1,137 @@
+{
+  "generated_at": "2026-10-18T08:23:18.602137+00:00",
+  "page_url": "https://www.biharkrishi.in/mandi",
+  "page_status": 200,
+  "calls": [
+    {
+      "classification": "district_lookup",
+      "url": "https://www.biharkrishi.in/agent/v1/staticData/_search?service=agriMarket",
+      "method": "POST",
+      "request": {
+        "requestBody": {
+          "SearchCriteria": {
+            "locale": "hi_IN"
+          },
+          "GroupbyCriteria": "DISTRICT"
+        },
+        "requestParams": {
+          "tenantId": "br"
+        }
+      },
+      "response_status": 200,
+      "response_total_count": 38,
+      "response_data_count": 38,
+      "response_first_record": {
+        "code": 188,
+        "name": "अररिया"
+      }
+    },
+    {
+      "classification": "market_lookup",
+      "url": "https://www.biharkrishi.in/agent/v1/staticData/_search?service=agriMarket",
+      "method": "POST",
+      "request": {
+        "requestBody": {
+          "SearchCriteria": {
+            "locale": "hi_IN"
+          },
+          "GroupbyCriteria": "MARKET"
+        },
+        "requestParams": {
+          "tenantId": "br"
+        }
+      },
+      "response_status": 200,
+      "response_total_count": 98,
+      "response_data_count": 98,
+      "response_first_record": {
+        "code": 10004,
+        "name": "अमरपुर"
+      }
+    },
+    {
+      "classification": "commodity_lookup",
+      "url": "https://www.biharkrishi.in/agent/v1/staticData/_search?service=agriMarket",
+      "method": "POST",
+      "request": {
+        "requestBody": {
+          "SearchCriteria": {
+            "locale": "hi_IN"
+          },
+          "GroupbyCriteria": "COMMODITY"
+        },
+        "requestParams": {
+          "tenantId": "br"
+        }
+      },
+      "response_status": 200,
+      "response_total_count": 95,
+      "response_data_count": 95,
+      "response_first_record": {
+        "code": 103,
+        "name": "अदरक(हरा)"
+      }
+    },
+    {
+      "classification": "price_records",
+      "url": "https://www.biharkrishi.in/agent/v1/staticData/_search?service=agriMarket",
+      "method": "POST",
+      "request": {
+        "requestBody": {
+          "SearchCriteria": {
+            "locale": "hi_IN",
+            "pageNo": 1,
+            "pageSize": 10
+          }
+        },
+        "requestParams": {
+          "tenantId": "br"
+        }
+      },
+      "response_status": 200,
+      "response_total_count": 340471,
+      "response_data_count": 10,
+      "response_first_record": {
+        "id": "0b3d7d9a-1968-4db0-8490-6bc0eebfb3d6",
+        "marketCenterCode": 10026,
+        "marketCenter": "हरनौत (नया)",
+        "arrivalDate": 1792281600000,
+        "arrivalTrendCode": 0,
+        "arrivalTrend": null,
+        "arrivalQuantity": 2.0,
+        "arrivalUnit": "Metric Tonnes",
+        "commodityCode": 35,
+        "commodity": "बैंगन",
+        "varietyCode": 3500001,
+        "variety": "Round",
+        "gradeCode": 5,
+        "grade": null,
+        "minPrice": 5000.0,
+        "maxPrice": 5000.0,
+        "modalPrice": 5000.0,
+        "priceTrend": 0.0,
+        "priceUnit": "Rs/Quintal",
+        "additionalFields": {
+          "districtLg": "209",
+          "district": "नालन्दा"
+        },
+        "rowVersion": 1,
+        "auditDetails": {
+          "createdBy": "1fec8102-0e02-4d0a-b283-cd80d5dab067",
+          "lastModifiedBy": "1fec8102-0e02-4d0a-b283-cd80d5dab067",
+          "createdTime": 1792305005448,
+          "lastModifiedTime": 1792306232521
+        },
+        "tenantId": "br",
+        "ttsFileStoreId": "7b7beeeb-d38e-4923-9fde-9b305459f914",
+        "ttsFileStoreIdEn": null,
+        "ttsFileStoreIdHi": null,
+        "ttsPriceFingerprint": null
+      }
+    }
+  ],
+  "pagination_probe": {
+    "attempted": false,
+    "reason": "No pagination object was found in the request"
+  }
+}

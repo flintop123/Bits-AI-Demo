@@ -1,0 +1,94 @@
+{
+  "run_id": "35958d0f-fdcf-49db-b48e-06e99e6d14dc",
+  "orchestrator": "phase4_daily_mandi_supervisor",
+  "agent_id": "daily_mandi_api_agent",
+  "tool_name": "bihar_mandi_paginated_api",
+  "routing_strategy": "one_date_per_agent_tool_invocation",
+  "collection_dates": [
+    "2026-10-17",
+    "2026-10-18"
+  ],
+  "dry_run": false,
+  "status": "completed",
+  "started_at": "2026-10-18T09:20:52.022762+00:00",
+  "events": [
+    {
+      "event": "tool_invoked",
+      "timestamp": "2026-10-18T09:20:52.030152+00:00",
+      "agent_id": "daily_mandi_api_agent",
+      "tool_name": "bihar_mandi_paginated_api",
+      "date": "2026-10-17",
+      "attempt": 1
+    },
+    {
+      "event": "tool_result",
+      "timestamp": "2026-10-18T09:20:52.411540+00:00",
+      "date": "2026-10-17",
+      "attempt": 1,
+      "status": "success",
+      "records_processed": 42
+    },
+    {
+      "event": "tool_invoked",
+      "timestamp": "2026-10-18T09:20:52.411540+00:00",
+      "agent_id": "daily_mandi_api_agent",
+      "tool_name": "bihar_mandi_paginated_api",
+      "date": "2026-10-18",
+      "attempt": 1
+    },
+    {
+      "event": "tool_result",
+      "timestamp": "2026-10-18T09:20:52.723165+00:00",
+      "date": "2026-10-18",
+      "attempt": 1,
+      "status": "success",
+      "records_processed": 16
+    }
+  ],
+  "completed_at": "2026-10-18T09:20:52.723165+00:00",
+  "results": [
+    {
+      "date": "2026-10-17",
+      "status": "completed",
+      "attempts": 1,
+      "pages_fetched": 1,
+      "records_reported": 42,
+      "records_processed": 42,
+      "districts": 8,
+      "markets": 10,
+      "commodities": 11,
+      "count_before": 7345,
+      "count_after": 7345,
+      "inserted": 0,
+      "matched": 42,
+      "modified": 42
+    },
+    {
+      "date": "2026-10-18",
+      "status": "completed",
+      "attempts": 1,
+      "pages_fetched": 1,
+      "records_reported": 16,
+      "records_processed": 16,
+      "districts": 4,
+      "markets": 4,
+      "commodities": 9,
+      "count_before": 7345,
+      "count_after": 7345,
+      "inserted": 0,
+      "matched": 16,
+      "modified": 16
+    }
+  ],
+  "metrics": {
+    "dates_requested": 2,
+    "dates_completed": 2,
+    "automation_rate": 1.0,
+    "manual_interventions": 0,
+    "retries": 0,
+    "records_processed": 58,
+    "inserted": 0,
+    "matched": 58,
+    "modified": 58
+  }
+}

@@ -1,12 +1,13 @@
 import unittest
 
-from data_api import create_app, parse_limit
+from data_api import create_app, parse_days, parse_limit
 
 
 class FakeQueryService:
     def __init__(self):
         self.mandi_call = None
         self.statistics_call = None
+        self.trends_call = None
 
     def health(self):
         return {
@@ -26,10 +27,15 @@ class FakeQueryService:
         self.statistics_call = (filters, limit)
         return [{"crop": "Rice", "year": "2024-25"}]
 
+    def find_mandi_trends(self, filters, days):
+        self.trends_call = (filters, days)
+        return [{"date": "2026-10-18", "average_modal_price": 1200.0}]
+
     def list_values(self):
         return {
             "mandi_crops": ["Potato"],
             "districts": ["Arwal"],
+            "markets": ["Arwal"],
             "statistical_crops": ["Rice"],
             "seasons": ["Kharif"],
         }
@@ -67,6 +73,30 @@ class DataApiTests(unittest.TestCase):
             ({"crop": "Rice", "year": "2024-25"}, 20),
         )
 
+    def test_mandi_endpoint_accepts_date_range(self):
+        response = self.client.get(
+            "/api/v1/mandi-prices?date_from=2026-10-01&date_to=2026-10-18"
+        )
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(
+            self.service.mandi_call,
+            ({
+                "date_from": "2026-10-01",
+                "date_to": "2026-10-18",
+            }, 20),
+        )
+
+    def test_mandi_trend_endpoint_passes_locality_and_window(self):
+        response = self.client.get(
+            "/api/v1/mandi-prices/trends?district=Arwal&crop=Potato&days=14"
+        )
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(
+            self.service.trends_call,
+            ({"district": "Arwal", "crop": "Potato"}, 14),
+        )
+        self.assertEqual(response.json["count"], 1)
+
     def test_invalid_limit_returns_400(self):
         response = self.client.get("/api/v1/mandi-prices?limit=500")
         self.assertEqual(response.status_code, 400)
@@ -84,6 +114,10 @@ class DataApiTests(unittest.TestCase):
     def test_parse_limit_rejects_non_integer(self):
         with self.assertRaisesRegex(ValueError, "must be an integer"):
             parse_limit("abc")
+
+    def test_parse_days_enforces_bounded_window(self):
+        with self.assertRaisesRegex(ValueError, "between 1 and 365"):
+            parse_days("500")
 
 
 if __name__ == "__main__":

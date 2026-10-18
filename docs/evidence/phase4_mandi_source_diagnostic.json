@@ -1,0 +1,670 @@
+{
+  "generated_at": "2026-10-18T08:19:38.102780+00:00",
+  "requested_url": "https://www.biharkrishi.in/mandi",
+  "main_status": 200,
+  "dom": {
+    "title": "Bihar Krishi",
+    "final_url": "https://www.biharkrishi.in/mandi",
+    "tables": [
+      {
+        "index": 0,
+        "id": null,
+        "class_name": "MuiTable-root MuiTable-stickyHeader css-ltd8tk",
+        "row_count": 11,
+        "visible_row_count": 11,
+        "first_rows": [
+          [
+            "ज़िला",
+            "बाज़ार",
+            "तारीख",
+            "फसल",
+            "विविधता",
+            "कीमत",
+            "न्यूनतम कीमत",
+            "अधिकतम कीमत",
+            ""
+          ],
+          [
+            "नालन्दा",
+            "हरनौत (नया)",
+            "18/10/2026",
+            "बैंगन",
+            "Round",
+            "5000.00/क्विंटल",
+            "5000.00/क्विंटल",
+            "5000.00/क्विंटल",
+            ""
+          ],
+          [
+            "औरंगाबाद",
+            "औरंगाबाद",
+            "18/10/2026",
+            "चावल",
+            "Medium",
+            "2800.00/क्विंटल",
+            "2600.00/क्विंटल",
+            "3000.00/क्विंटल",
+            ""
+          ],
+          [
+            "सुपौल",
+            "त्रिवेणीगंज (नया)",
+            "18/10/2026",
+            "प्याज",
+            "1st Sort",
+            "4200.00/क्विंटल",
+            "4200.00/क्विंटल",
+            "4200.00/क्विंटल",
+            ""
+          ],
+          [
+            "नालन्दा",
+            "हरनौत (नया)",
+            "18/10/2026",
+            "आलू",
+            "Potato",
+            "1000.00/क्विंटल",
+            "1000.00/क्विंटल",
+            "1000.00/क्विंटल",
+            ""
+          ]
+        ]
+      }
+    ],
+    "controls": [
+      {
+        "tag": "A",
+        "text": "मुख्य सामग्री पर जाएं",
+        "id": null,
+        "class_name": "MuiTypography-root MuiTypography-body1 css-10e8821",
+        "href": "https://www.biharkrishi.in/mandi#main",
+        "aria_label": null,
+        "disabled": false
+      },
+      {
+        "tag": "A",
+        "text": "स्क्रीन रीडर",
+        "id": null,
+        "class_name": "MuiTypography-root MuiTypography-body1 css-10e8821",
+        "href": "https://www.biharkrishi.in/screenreaderaccess",
+        "aria_label": null,
+        "disabled": false
+      },
+      {
+        "tag": "BUTTON",
+        "text": "EN",
+        "id": null,
+        "class_name": "MuiButtonBase-root MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton-sizeMedium MuiButton-textSizeMedium MuiButton-colorPrimary MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton-sizeMedium MuiButton-textSizeMedium MuiButton-colorPrimary css-1rlcjoa",
+        "href": null,
+        "aria_label": "EN — अंग्रेज़ी में बदलें",
+        "disabled": false
+      },
+      {
+        "tag": "BUTTON",
+        "text": "हि",
+        "id": null,
+        "class_name": "MuiButtonBase-root MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton-sizeMedium MuiButton-textSizeMedium MuiButton-colorPrimary MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton-sizeMedium MuiButton-textSizeMedium MuiButton-colorPrimary css-1mtmrl5",
+        "href": null,
+        "aria_label": "हि — हिंदी में बदलें",
+        "disabled": false
+      },
+      {
+        "tag": "BUTTON",
+        "text": "",
+        "id": null,
+        "class_name": "MuiBox-root css-15592sx",
+        "href": null,
+        "aria_label": "एक्सेसिबिलिटी विकल्प खोलें",
+        "disabled": false
+      },
+      {
+        "tag": "BUTTON",
+        "text": "होम",
+        "id": null,
+        "class_name": "MuiButtonBase-root MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton-sizeMedium MuiButton-textSizeMedium MuiButton-colorPrimary MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton-sizeMedium MuiButton-textSizeMedium MuiButton-colorPrimary css-gk6g6n",
+        "href": null,
+        "aria_label": null,
+        "disabled": false
+      },
+      {
+        "tag": "BUTTON",
+        "text": "योजनाएँ",
+        "id": null,
+        "class_name": "MuiButtonBase-root MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton-sizeMedium MuiButton-textSizeMedium MuiButton-colorPrimary MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton-sizeMedium MuiButton-textSizeMedium MuiButton-colorPrimary css-gk6g6n",
+        "href": null,
+        "aria_label": null,
+        "disabled": false
+      },
+      {
+        "tag": "BUTTON",
+        "text": "परामर्श",
+        "id": null,
+        "class_name": "MuiButtonBase-root MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton-sizeMedium MuiButton-textSizeMedium MuiButton-colorPrimary MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton-sizeMedium MuiButton-textSizeMedium MuiButton-colorPrimary css-gk6g6n",
+        "href": null,
+        "aria_label": null,
+        "disabled": false
+      },
+      {
+        "tag": "BUTTON",
+        "text": "ज्ञानकोष",
+        "id": null,
+        "class_name": "MuiButtonBase-root MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton-sizeMedium MuiButton-textSizeMedium MuiButton-colorPrimary MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton-sizeMedium MuiButton-textSizeMedium MuiButton-colorPrimary css-gk6g6n",
+        "href": null,
+        "aria_label": null,
+        "disabled": false
+      },
+      {
+        "tag": "BUTTON",
+        "text": "सहायता",
+        "id": null,
+        "class_name": "MuiButtonBase-root MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton-sizeMedium MuiButton-textSizeMedium MuiButton-colorPrimary MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton-sizeMedium MuiButton-textSizeMedium MuiButton-colorPrimary css-gk6g6n",
+        "href": null,
+        "aria_label": null,
+        "disabled": false
+      },
+      {
+        "tag": "BUTTON",
+        "text": "आवेदन की स्थिति ट्रैक करें",
+        "id": null,
+        "class_name": "MuiButtonBase-root MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton-sizeMedium MuiButton-textSizeMedium MuiButton-colorPrimary MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton-sizeMedium MuiButton-textSizeMedium MuiButton-colorPrimary css-gk6g6n",
+        "href": null,
+        "aria_label": null,
+        "disabled": false
+      },
+      {
+        "tag": "BUTTON",
+        "text": "",
+        "id": null,
+        "class_name": "MuiButtonBase-root MuiIconButton-root MuiIconButton-sizeMedium css-1530jal",
+        "href": null,
+        "aria_label": "नेविगेशन मेनू खोलें",
+        "disabled": false
+      },
+      {
+        "tag": "BUTTON",
+        "text": "लॉगिन/पंजीकरण",
+        "id": null,
+        "class_name": "MuiButtonBase-root MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton-sizeMedium MuiButton-textSizeMedium MuiButton-colorPrimary MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton-sizeMedium MuiButton-textSizeMedium MuiButton-colorPrimary css-1lc53av",
+        "href": null,
+        "aria_label": null,
+        "disabled": false
+      },
+      {
+        "tag": "A",
+        "text": "होम",
+        "id": null,
+        "class_name": "MuiTypography-root MuiTypography-inherit MuiLink-root MuiLink-underlineHover font-medium css-172kzng",
+        "href": "https://www.biharkrishi.in/",
+        "aria_label": null,
+        "disabled": false
+      },
+      {
+        "tag": "BUTTON",
+        "text": "",
+        "id": null,
+        "class_name": "MuiButtonBase-root MuiIconButton-root MuiIconButton-sizeMedium MuiAutocomplete-popupIndicator css-6nknon",
+        "href": null,
+        "aria_label": "Open",
+        "disabled": false
+      },
+      {
+        "tag": "BUTTON",
+        "text": "",
+        "id": null,
+        "class_name": "MuiButtonBase-root MuiIconButton-root MuiIconButton-sizeMedium MuiAutocomplete-popupIndicator css-6nknon",
+        "href": null,
+        "aria_label": "Open",
+        "disabled": false
+      },
+      {
+        "tag": "BUTTON",
+        "text": "",
+        "id": null,
+        "class_name": "MuiButtonBase-root MuiIconButton-root MuiIconButton-sizeMedium MuiAutocomplete-popupIndicator css-6nknon",
+        "href": null,
+        "aria_label": "Open",
+        "disabled": false
+      },
+      {
+        "tag": "BUTTON",
+        "text": "",
+        "id": null,
+        "class_name": "MuiButtonBase-root MuiIconButton-root MuiIconButton-edgeEnd MuiIconButton-sizeMedium css-nvtzff",
+        "href": null,
+        "aria_label": "Choose date",
+        "disabled": false
+      },
+      {
+        "tag": "BUTTON",
+        "text": "",
+        "id": null,
+        "class_name": "MuiButtonBase-root MuiIconButton-root MuiIconButton-edgeEnd MuiIconButton-sizeMedium css-nvtzff",
+        "href": null,
+        "aria_label": "Choose date",
+        "disabled": false
+      },
+      {
+        "tag": "BUTTON",
+        "text": "रीसेट",
+        "id": null,
+        "class_name": "MuiButtonBase-root MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton-sizeMedium MuiButton-textSizeMedium MuiButton-colorPrimary MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton-sizeMedium MuiButton-textSizeMedium MuiButton-colorPrimary custom-button medium secondary enabled css-8llylu",
+        "href": null,
+        "aria_label": "रीसेट",
+        "disabled": false
+      },
+      {
+        "tag": "BUTTON",
+        "text": "खोज करें",
+        "id": null,
+        "class_name": "MuiButtonBase-root MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton-sizeMedium MuiButton-textSizeMedium MuiButton-colorPrimary MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton-sizeMedium MuiButton-textSizeMedium MuiButton-colorPrimary custom-button medium primary enabled css-m058nu",
+        "href": null,
+        "aria_label": "खोज करें",
+        "disabled": false
+      },
+      {
+        "tag": "BUTTON",
+        "text": "",
+        "id": null,
+        "class_name": "MuiButtonBase-root Mui-disabled MuiIconButton-root Mui-disabled MuiIconButton-colorInherit MuiIconButton-sizeMedium css-1deacqj",
+        "href": null,
+        "aria_label": "पिछले पृष्ठ पर जाएँ",
+        "disabled": true
+      },
+      {
+        "tag": "BUTTON",
+        "text": "",
+        "id": null,
+        "class_name": "MuiButtonBase-root MuiIconButton-root MuiIconButton-colorInherit MuiIconButton-sizeMedium css-1deacqj",
+        "href": null,
+        "aria_label": "अगले पृष्ठ पर जाएँ",
+        "disabled": false
+      },
+      {
+        "tag": "A",
+        "text": "",
+        "id": null,
+        "class_name": "MuiTypography-root MuiTypography-inherit MuiLink-root MuiLink-underlineAlways css-las3en",
+        "href": "https://www.youtube.com/@BiharKrishiApp",
+        "aria_label": "यूट्यूब",
+        "disabled": false
+      },
+      {
+        "tag": "A",
+        "text": "",
+        "id": null,
+        "class_name": "MuiTypography-root MuiTypography-inherit MuiLink-root MuiLink-underlineAlways css-las3en",
+        "href": "https://www.facebook.com/BiharKrishiApp/",
+        "aria_label": "फेसबुक",
+        "disabled": false
+      },
+      {
+        "tag": "A",
+        "text": "",
+        "id": null,
+        "class_name": "MuiTypography-root MuiTypography-inherit MuiLink-root MuiLink-underlineAlways css-las3en",
+        "href": "https://x.com/AppKrishi",
+        "aria_label": "एक्स",
+        "disabled": false
+      },
+      {
+        "tag": "A",
+        "text": "",
+        "id": null,
+        "class_name": "MuiTypography-root MuiTypography-inherit MuiLink-root MuiLink-underlineAlways css-las3en",
+        "href": "https://www.instagram.com/biharkrishidfs/?utm_source=ig_web_button_share_sheet",
+        "aria_label": "इंस्टाग्राम",
+        "disabled": false
+      },
+      {
+        "tag": "A",
+        "text": "कृषि संसाधन",
+        "id": null,
+        "class_name": "MuiTypography-root MuiTypography-body1 MuiLink-root MuiLink-underlineNone css-1k8jl7j",
+        "href": "https://www.biharkrishi.in/#assets",
+        "aria_label": null,
+        "disabled": false
+      },
+      {
+        "tag": "A",
+        "text": "योजनाएँ",
+        "id": null,
+        "class_name": "MuiTypography-root MuiTypography-body1 MuiLink-root MuiLink-underlineNone css-1k8jl7j",
+        "href": "https://www.biharkrishi.in/#schemes",
+        "aria_label": null,
+        "disabled": false
+      },
+      {
+        "tag": "A",
+        "text": "सहायता",
+        "id": null,
+        "class_name": "MuiTypography-root MuiTypography-body1 MuiLink-root MuiLink-underlineNone css-1k8jl7j",
+        "href": "https://www.biharkrishi.in/#help-support",
+        "aria_label": null,
+        "disabled": false
+      },
+      {
+        "tag": "A",
+        "text": "गोपनीयता नीति",
+        "id": null,
+        "class_name": "MuiTypography-root MuiTypography-body1 MuiLink-root MuiLink-underlineNone css-1k8jl7j",
+        "href": "https://www.biharkrishi.in/privacypolicy",
+        "aria_label": null,
+        "disabled": false
+      },
+      {
+        "tag": "A",
+        "text": "सुगम्यता वक्तव्य",
+        "id": null,
+        "class_name": "MuiTypography-root MuiTypography-body1 MuiLink-root MuiLink-underlineNone css-1k8jl7j",
+        "href": "https://www.biharkrishi.in/accessibility-statement",
+        "aria_label": null,
+        "disabled": false
+      },
+      {
+        "tag": "A",
+        "text": "साइट मैप",
+        "id": null,
+        "class_name": "MuiTypography-root MuiTypography-body1 MuiLink-root MuiLink-underlineNone css-1k8jl7j",
+        "href": "https://www.biharkrishi.in/sitemap",
+        "aria_label": null,
+        "disabled": false
+      },
+      {
+        "tag": "A",
+        "text": "डीबीटी पोर्टल",
+        "id": null,
+        "class_name": "MuiTypography-root MuiTypography-body1 MuiLink-root MuiLink-underlineNone css-1k8jl7j",
+        "href": "https://dbtagriculture.bihar.gov.in/",
+        "aria_label": null,
+        "disabled": false
+      },
+      {
+        "tag": "A",
+        "text": "बिहार राज्य बीज एवं जैविक प्रमाणीकरण एजेंसी (बीएसएसओसीए)",
+        "id": null,
+        "class_name": "MuiTypography-root MuiTypography-body1 MuiLink-root MuiLink-underlineNone css-1k8jl7j",
+        "href": "https://bssca.co.in/",
+        "aria_label": null,
+        "disabled": false
+      },
+      {
+        "tag": "A",
+        "text": "उद्यान निदेशालय",
+        "id": null,
+        "class_name": "MuiTypography-root MuiTypography-body1 MuiLink-root MuiLink-underlineNone css-1k8jl7j",
+        "href": "https://horticulture.bihar.gov.in/",
+        "aria_label": null,
+        "disabled": false
+      },
+      {
+        "tag": "A",
+        "text": "किसान कॉल सेंटर पोर्टल",
+        "id": null,
+        "class_name": "MuiTypography-root MuiTypography-body1 MuiLink-root MuiLink-underlineNone css-1k8jl7j",
+        "href": "https://mkisan.gov.in/Alpha/aboutkcc.aspx",
+        "aria_label": null,
+        "disabled": false
+      },
+      {
+        "tag": "A",
+        "text": "बिहार कृषि उत्पाद मूल्यवर्धन प्रणाली (बवास)",
+        "id": null,
+        "class_name": "MuiTypography-root MuiTypography-body1 MuiLink-root MuiLink-underlineNone css-1k8jl7j",
+        "href": "https://bavas.bihar.gov.in/",
+        "aria_label": null,
+        "disabled": false
+      },
+      {
+        "tag": "A",
+        "text": "बिहार जलग्रहण विकास सोसायटी",
+        "id": null,
+        "class_name": "MuiTypography-root MuiTypography-body1 MuiLink-root MuiLink-underlineNone css-1k8jl7j",
+        "href": "https://bwds.bihar.gov.in/Home/Index",
+        "aria_label": null,
+        "disabled": false
+      },
+      {
+        "tag": "A",
+        "text": "राजस्व एवं भूमि सुधार विभाग",
+        "id": null,
+        "class_name": "MuiTypography-root MuiTypography-body1 MuiLink-root MuiLink-underlineNone css-1k8jl7j",
+        "href": "https://biharbhumi.bihar.gov.in/Biharbhumi/",
+        "aria_label": null,
+        "disabled": false
+      },
+      {
+        "tag": "A",
+        "text": "प्रधानमंत्री किसान सम्मान निधि",
+        "id": null,
+        "class_name": "MuiTypography-root MuiTypography-body1 MuiLink-root MuiLink-underlineNone css-1k8jl7j",
+        "href": "https://www.pmkisan.gov.in/",
+        "aria_label": null,
+        "disabled": false
+      },
+      {
+        "tag": "A",
+        "text": "बिहार राज्य बीज निगम",
+        "id": null,
+        "class_name": "MuiTypography-root MuiTypography-body1 MuiLink-root MuiLink-underlineNone css-1k8jl7j",
+        "href": "https://brbn.bihar.gov.in/",
+        "aria_label": null,
+        "disabled": false
+      },
+      {
+        "tag": "A",
+        "text": "बिहार कृषि प्रबंधन एवं प्रसार प्रशिक्षण संस्थान",
+        "id": null,
+        "class_name": "MuiTypography-root MuiTypography-body1 MuiLink-root MuiLink-underlineNone css-1k8jl7j",
+        "href": "https://www.bameti.org/",
+        "aria_label": null,
+        "disabled": false
+      },
+      {
+        "tag": "A",
+        "text": "बिहार कृषि सहायता",
+        "id": null,
+        "class_name": "MuiTypography-root MuiTypography-body1 MuiLink-root MuiLink-underlineNone css-1k8jl7j",
+        "href": "https://www.biharkrishi.in/mandi#",
+        "aria_label": null,
+        "disabled": false
+      },
+      {
+        "tag": "A",
+        "text": "support.biharkrishi@bihar.gov.in",
+        "id": null,
+        "class_name": "MuiTypography-root MuiTypography-body1 css-1nmdi3r",
+        "href": "mailto:support.biharkrishi@bihar.gov.in",
+        "aria_label": null,
+        "disabled": false
+      },
+      {
+        "tag": "A",
+        "text": "किसान हेल्पलाइन",
+        "id": null,
+        "class_name": "MuiTypography-root MuiTypography-body1 MuiLink-root MuiLink-underlineNone css-1k8jl7j",
+        "href": "https://www.biharkrishi.in/mandi#",
+        "aria_label": null,
+        "disabled": false
+      },
+      {
+        "tag": "A",
+        "text": "1800-180-1551",
+        "id": null,
+        "class_name": "MuiTypography-root MuiTypography-body1 css-1nmdi3r",
+        "href": "tel:1800-180-1551",
+        "aria_label": null,
+        "disabled": false
+      },
+      {
+        "tag": "A",
+        "text": "",
+        "id": null,
+        "class_name": "MuiTypography-root MuiTypography-inherit MuiLink-root MuiLink-underlineAlways css-1p90g9t",
+        "href": "https://www.microsave.net/",
+        "aria_label": "MSC_LOGO",
+        "disabled": false
+      }
+    ],
+    "selects": [],
+    "forms": [],
+    "page_text_preview": "मुख्य सामग्री पर जाएं स्क्रीन रीडर EN हि कृषि विभाग बिहार सरकार श्री सम्राट चौधरी माननीय मुख्यमंत्री श्री विजय कुमार सिन्हा माननीय मंत्री होम योजनाएँ परामर्श ज्ञानकोष सहायता आवेदन की स्थिति ट्रैक करें लॉगिन/पंजीकरण होम बाज़ार भाव बाज़ार भाव ज़िला ​ बाज़ार ​ फसल/वस्तु ​ की तिथि से ​ तारीख तक ​ रीसेट खोज करें बाज़ार मूल्य ज़िला बाज़ार तारीख फसल विविधता कीमत न्यूनतम कीमत अधिकतम कीमत नालन्दा हरनौत (नया) 18/10/2026 बैंगन Round 5000.00/क्विंटल 5000.00/क्विंटल 5000.00/क्विंटल औरंगाबाद औरंगाबाद 18/10/2026 चावल Medium 2800.00/क्विंटल 2600.00/क्विंटल 3000.00/क्विंटल सुपौल त्रिवेणीगंज (नया) 18/10/2026 प्याज 1st Sort 4200.00/क्विंटल 4200.00/क्विंटल 4200.00/क्विंटल नालन्दा हरनौत (नया) 18/10/2026 आलू Potato 1000.00/क्विंटल 1000.00/क्विंटल 1000.00/क्विंटल भोजपुर आरा 18/10/2026 प्याज Other 3400.00/क्विंटल 3400.00/क्विंटल 3400.00/क्विंटल भोजपुर आरा 18/10/2026 सेब Other 9800.00/क्विंटल 9800.00/क्विंटल 9800.00/क्विंटल भोजपुर आरा 18/10/2026 आलू Potato 1200.00/क्विंटल 1200.00/क्विंटल 1200.00/क्विंटल सुपौल त्रिवेणीगंज (नया) 18/10/2026 परवल Pointed gourd (Parval) 3700.00/क्विंटल 3700.00/क्विंटल 3700.00/क्विंटल सुपौल त्रिवेणीगंज (नया) 18/10/2026 भिंडी (लेडीज फिंगर) Bhindi 2700.00/क्विंटल 2700.00/क्विंटल 2700.00/क्विंटल नालन्दा हरनौत (नया) 18/10/2026 प्याज Onion 5000.00/क्विंटल 5000.00/क्विंटल 5000.00/क्विंटल पंक्तियाँ प्रति पृष्ठ: 10 1-10 कुल 340471 में बिहार कृषि डिजिटल किसान सेवाएं बिहार के सभी 38 जिलों में किसानों के लिए कृषि सेवाओं को डिजिटल और सुव्यवस्थित करने की बिहार सरकार की एक पहल। हमें फॉलो करें: महत्वपूर्ण लिंक कृषि संसाधन योजनाएँ सहायता गोपनीयता नीति सुगम्यता वक्तव्य साइट मैप अन्य महत्वपूर्ण लिंक डीबीटी पोर्टल बिहार राज्य बीज एवं जैविक प्रमाणीकरण एजेंसी (बीएसएसओसीए) उद्यान निदेशालय किसान कॉल सेंटर पोर्टल बिहार कृषि उत्पाद मूल्यवर्धन प्रणाली (बवास) बिहार जलग्रहण विकास सोसायटी राजस्व एवं भूमि सुधार विभाग प्रधानमंत्री किसान सम्मान निधि बिहार राज्य बीज निगम बिहार कृषि प्रबंधन एवं प्रसार प्रशिक्षण संस्थान संपर्क जानकारी बिहार कृषि सहायता support.biharkrishi@bihar.gov.in किसान हेल्पलाइन 1800-180-1551 © 2026 कृषि विभाग, बिहार सरकार. सर्वाधिकार सुरक्षित। अंतिम अद्यतन तिथि : April 15, 2026 | कुल विज़िट: 1,37,842 वेबसाइट का विकास एवं प्रबंधन",
+    "script_sources": [
+      "https://www.googletagmanager.com/gtag/js?id=G-71TRE2K99N",
+      "https://www.biharkrishi.in/static/js/react.45216e9a.js",
+      "https://www.biharkrishi.in/static/js/mui-15f93fc0.4044610d.js",
+      "https://www.biharkrishi.in/static/js/mui-781283e3.2dac2d50.js",
+      "https://www.biharkrishi.in/static/js/mui-23e2a055.6806ac34.js",
+      "https://www.biharkrishi.in/static/js/mui-e7d3bc8e.8353f901.js",
+      "https://www.biharkrishi.in/static/js/mui-58465378.ba2c8c5a.js",
+      "https://www.biharkrishi.in/static/js/mui-f92f78ac.e23b790a.js",
+      "https://www.biharkrishi.in/static/js/mui-adb452c7.ce5672b8.js",
+      "https://www.biharkrishi.in/static/js/mui-f8d75dad.1b463fb6.js",
+      "https://www.biharkrishi.in/static/js/mui-2b4151f8.0d8fb224.js",
+      "https://www.biharkrishi.in/static/js/mui-29cee302.ce1e66ce.js",
+      "https://www.biharkrishi.in/static/js/mui-ba3c9f4a.682f303f.js",
+      "https://www.biharkrishi.in/static/js/mui-0b342516.083bd889.js",
+      "https://www.biharkrishi.in/static/js/mui-e4e29a92.4eaed425.js",
+      "https://www.biharkrishi.in/static/js/mui-41b1562a.74d4a5de.js",
+      "https://www.biharkrishi.in/static/js/mui-0981405c.179fb9f1.js",
+      "https://www.biharkrishi.in/static/js/redux.fcefa171.js",
+      "https://www.biharkrishi.in/static/js/vendors-e5203dbc.799bbe6b.js",
+      "https://www.biharkrishi.in/static/js/vendors-974cd170.8289593b.js",
+      "https://www.biharkrishi.in/static/js/vendors-49d0a293.9c890d50.js",
+      "https://www.biharkrishi.in/static/js/vendors-ab957e66.62d6b216.js",
+      "https://www.biharkrishi.in/static/js/vendors-beb35932.69885286.js",
+      "https://www.biharkrishi.in/static/js/vendors-1bbbe0aa.1d1b85c9.js",
+      "https://www.biharkrishi.in/static/js/vendors-125a01f4.3d99b481.js",
+      "https://www.biharkrishi.in/static/js/vendors-582c8148.b0b40ecc.js",
+      "https://www.biharkrishi.in/static/js/vendors-6dd7f33d.0a410812.js",
+      "https://www.biharkrishi.in/static/js/vendors-2b4841d6.1664e500.js",
+      "https://www.biharkrishi.in/static/js/vendors-bb3d84b5.a478a2bf.js",
+      "https://www.biharkrishi.in/static/js/vendors-efdee510.88efb3db.js",
+      "https://www.biharkrishi.in/static/js/vendors-38822fa6.50ed29f6.js",
+      "https://www.biharkrishi.in/static/js/vendors-059be3de.fb7ee826.js",
+      "https://www.biharkrishi.in/static/js/vendors-c34d6604.59fd2a5e.js",
+      "https://www.biharkrishi.in/static/js/vendors-d7a1d8a9.2171586c.js",
+      "https://www.biharkrishi.in/static/js/vendors-f80d2ba7.c8104436.js",
+      "https://www.biharkrishi.in/static/js/vendors-adcb47af.82f5e10a.js",
+      "https://www.biharkrishi.in/static/js/vendors-607d9472.2e52e719.js",
+      "https://www.biharkrishi.in/static/js/vendors-b9100f55.fa242e99.js",
+      "https://www.biharkrishi.in/static/js/vendors-49ceb22a.346abebd.js",
+      "https://www.biharkrishi.in/static/js/vendors-27545368.d192147f.js",
+      "https://www.biharkrishi.in/static/js/vendors-3612fd2b.66b960dc.js",
+      "https://www.biharkrishi.in/static/js/vendors-5397d65f.2551da2a.js",
+      "https://www.biharkrishi.in/static/js/vendors-866ab763.a5b5bdd9.js",
+      "https://www.biharkrishi.in/static/js/main-43dd7041.1fbf1198.js",
+      "https://www.biharkrishi.in/static/js/main-84781932.4735b502.js",
+      "https://www.biharkrishi.in/static/js/main-fce65224.c61ccda7.js",
+      "https://www.biharkrishi.in/static/js/main-6b882012.92ba90c9.js"
+    ]
+  },
+  "network": [
+    {
+      "url": "https://www.biharkrishi.in/mandi",
+      "method": "GET",
+      "resource_type": "document",
+      "status": 200,
+      "content_type": "text/html"
+    },
+    {
+      "url": "https://www.biharkrishi.in/",
+      "method": "HEAD",
+      "resource_type": "fetch",
+      "status": 302,
+      "content_type": "text/html"
+    },
+    {
+      "url": "https://www.biharkrishi.in/digit-ui",
+      "method": "HEAD",
+      "resource_type": "fetch",
+      "status": 200,
+      "content_type": "text/html"
+    },
+    {
+      "url": "https://www.biharkrishi.in/dfs-personalization/homepage/v1/visit/_count",
+      "method": "POST",
+      "resource_type": "xhr",
+      "status": 200,
+      "content_type": "application/json",
+      "body_preview": "{\"ResponseInfo\":{\"apiId\":\"dfs\",\"ver\":\"1.0\",\"ts\":1792311573171,\"resMsgId\":\"uief87324\",\"msgId\":\"visit|en_IN\",\"status\":\"successful\"},\"totalVisits\":137842}",
+      "body_characters": 151
+    },
+    {
+      "url": "https://www.biharkrishi.in/mdms-v2/v1/_search?tenantId=br",
+      "method": "POST",
+      "resource_type": "xhr",
+      "status": 200,
+      "content_type": "application/json;charset=utf-8",
+      "body_preview": "{\"ResponseInfo\":null,\"MdmsRes\":{\"common-masters\":{\"ReleaseInfo\":[{\"code\":1,\"webApp\":{\"release-date\":\"April 15, 2026\",\"release-version\":\"v1.6.1\"}}]},\"seed-sub-schemes-en\":{\"SeedSubSchemes\":[{\"Code\":455,\"Crop\":\"WHEAT\",\"Scheme\":\"RKVY Wheat (Additional)\",\"active\":true,\"SubScheme\":\"Less Then 10 years\",\"SessionName\":\"Rabi-2024-2025\"},{\"Code\":454,\"Crop\":\"PEA\",\"Scheme\":\"RKVY (DPR Based Scheme-Hara Matar)\",\"active\":true,\"SubScheme\":\"Subsidized Seed Distribution (Hara Matar)\",\"SessionName\":\"Rabi-2024-2025\"},{\"Code\":453,\"Crop\":\"PSB Liquid-500 ML\",\"Scheme\":\"NFSM TRFA OilSeed\",\"active\":true,\"SubScheme\":\"Demonstrations.\",\"SessionName\":\"Rabi-2024-2025\"},{\"Code\":452,\"Crop\":\"Sulphar 80 % WDG-3KG\",\"Scheme\":\"NFSM TRFA OilSeed\",\"active\":true,\"SubScheme\":\"Demonstrations.\",\"SessionName\":\"Rabi-2024-2025\"},{\"Code\":451,\"Crop\":\"Trichoderma Harzianum 2.0% AS-1 L\",\"Scheme\":\"NFSM TRFA OilSeed\",\"active\":true,\"SubScheme\":\"Demonstrations.\",\"SessionName\":\"Rabi-2024-2025\"},{\"Code\":450,\"Crop\":\"PSB Liquid-500 ML\",\"Scheme\":\"NFSM-Oilseeds\",\"active\":true,\"SubScheme\":\"Demonstration Rapeseed/mustard\",\"SessionName\":\"Rabi-2024-2025\"},{\"Code\":449,\"Crop\":\"Sulphar 80 % WDG-3KG\",\"Scheme\":\"NFSM-Oilseeds\",\"active\":true,\"SubScheme\":\"Demonstration Rapeseed/mustard\",\"SessionName\":\"Rabi-2024-2025\"},{\"Code\":448,\"Crop\":\"Trichoderma Harzianum 2.0% AS-1 L\",\"Scheme\":\"NFSM-Oilseeds\",\"active\":true,\"SubScheme\":\"Demonstration Rapeseed/mustard\",\"SessionName\":\"Rabi-2024-2025\"},{\"Code\":447,\"Crop\":\"GRAM\",\"Scheme\":\"Minikit\",\"active\":true,\"SubScheme\":\"Minikit Rabi-2024-25\",\"SessionName\":\"Minikit-2024-2025\"},{\"Code\":446,\"Crop\":\"LENTIL\",\"Scheme\":\"Minikit\",\"active\":true,\"SubScheme\":\"Minikit Rabi-2024-25\",\"SessionName\":\"Minikit-2024-2025\"},{\"Code\":445,\"Crop\":\"Pheromone trap-5Pc\",\"Scheme\":\"RKVY Pulses\",\"active\":true,\"SubScheme\":\"Demonstration.\",\"SessionName\":\"Rabi-2024-2025\"},{\"Code\":444,\"Crop\":\"NPK Liquid Consortia\",\"Scheme\":\"RKVY Pulses\",\"active\":true,\"SubScheme\":\"Demonstration.\",\"SessionName\":\"Rabi-2024-2025\"},{\"Code\":443,\"Crop\":\"Trichoderma Harzianum 2.0% AS-1 L\",\"Scheme\":\"RKVY Pulses\",\"active\":true,\"SubScheme\":\"Demonstration.\",\"SessionName\":\"Rabi-2024-2025\"},{\"Code\":442,\"Crop\":\"Sulphar 80 % WDG-5KG\",\"Scheme\":\"NFSM TRFA\",\"active\":true,\"SubScheme\":\"Demonstration ..\",\"SessionName\":\"Rabi-2024-2025\"},{\"Code\":441,\"Crop\":\"NPK Liquid Consortia\",\"Scheme\":\"NFSM TRFA\",\"active\":true,\"SubScheme\":\"Demonstration ..\",\"SessionName\":\"Rabi-2024-2025\"},{\"Code\":440,\"Crop\":\"Trichoderma Harzianum 2.0% AS-1 L\",\"Scheme\":\"NFSM TRFA\",\"active\":true,\"SubScheme\":\"Demonstration ..\",\"SessionName\":\"Rabi-2024-2025\"},{\"Code\":439,\"Crop\":\"Rhizobium Culture Liquid 100 ML\",\"Scheme\":\"NFSM TRFA\",\"active\":true,\"SubScheme\":\"Demonstration ..\",\"SessionName\":\"Rabi-2024-2025\"},{\"Code\":438,\"Crop\":\"Trichoderma Harzianum 2.0% AS-100 ML\",\"Scheme\":\"NFSM TRFA\",\"active\":true,\"SubScheme\":\"Demonstration ..\",\"SessionName\":\"Rabi-2024-2025\"},{\"Code\":437,\"Crop\":\"Sulphar 80 % WDG-5KG\",\"Scheme\":\"NFSM Pulses\",\"active\":true,\"SubScheme\":\"Demonstrations\",\"SessionName\":\"Rabi-2024-2025\"},{\"Code\":436,\"Crop\":\"Trichoderma Harzianum 2.0% AS-1 L\",\"Scheme\":\"NFSM Pulses\",\"active\":true,\"SubScheme\":\"Demonstrations\",\"SessionName\":\"Rabi-2024-2025\"},{\"Code\":435,\"Crop\":\"Rhizobium Culture Liquid 100 ML\",\"Scheme\":\"NFSM Pulses\",\"active\":true,\"SubScheme\":\"Demonstrations\",\"SessionName\":\"Rabi-2024-2025\"},{\"Code\":434,\"Crop\":\"NPK Liquid Consortia\",\"Scheme\":\"NFSM Pulses\",\"active\":true,\"SubScheme\":\"Demonstrations\",\"SessionName\":\"Rabi-2024-2025\"},{\"Code\":433,\"Crop\":\"Trichoderma Harzianum 2.0% AS-100 ML\",\"Scheme\":\"NFSM Pulses\",\"active\":true,\"SubScheme\":\"Demonstrations\",\"SessionName\":\"Rabi-2024-2025\"},{\"Code\":432,\"Crop\":\"WHEAT\",\"Scheme\":\"SMSPM\",\"active\":true,\"SubScheme\":\"Sub-Mission on Seed and Planting Material\",\"SessionName\":\"Rabi-2024-2025\"},{\"Code\":431,\"Crop\":\"LINSEED\",\"Scheme\":\"NFSM TRFA\",\"active\":true,\"SubScheme\":\"Demonstration ..\",\"SessionName\":\"Rabi-2024-2025\"},{\"Code\":430,\"Crop\":\"LINSEED\",\"Scheme\":\"NFSM TRFA\",\"active\":true,\"SubScheme\":\"Subsidized Seed Distribution\",\"SessionName\":\"Rabi-2024-2025\"},{\"Code\":429,\"Crop\":\"LINSEED\",\"Scheme\":\"NFSM-Oilseeds\",\"active\":true,\"SubScheme\":\"Demonstrations1\",\"SessionName\":\"Rabi-2024-2025\"},{\"Code\":428,\"Crop\":\"LINSEED\",\"Scheme\":\"NFSM-Oilseeds\",\"active\":true,\"SubScheme\":\"Subsidized Seed Distributions\",\"SessionName\":\"Rabi-2024-2025\"},{\"Code\":427,\"Crop\":\"SARSO\",\"Scheme\":\"NFSM TRFA OilSeed\",\"active\":true,\"SubScheme\":\"Demonstrations.\",\"SessionName\":\"Rabi-2024-2025\"},{\"Code\":426,\"Crop\":\"SARSO\",\"Scheme\":\"NFSM TRFA OilSeed\",\"active\":true,\"SubScheme\":\"Seed Distributions\",\"SessionName\":\"Rabi-2024-2025\"},{\"Code\":425,\"Crop\":\"SARSO\",\"Scheme\":\"NFSM-Oilseeds\",\"active\":true,\"SubScheme\":\"Demonstration Rapeseed/mustard\",\"SessionName\":\"Rabi-2024-2025\"},{\"Code\":424,\"Crop\":\"SARSO\",\"Scheme\":\"NFSM-Oilseeds\",\"active\":true,\"SubScheme\":\"Subsidized Seed Distributions\",\"SessionName\":\"Rabi-2024-2025\"},{\"Code\":423,\"Crop\":\"WHEAT\",\"Scheme\":\"RKVY WHEAT\",\"active\":true,\"SubScheme\":\"Seed Subsidy More Than 10 Years1\",\"SessionName\":\"Rabi-2024-2025\"},{\"Code\":422,\"Crop\":\"WHEAT\",\"Scheme\":\"RKVY WHEAT\",\"active\":true,\"SubScheme\":\"Seed Subsidy Less Than 10 Years2\",\"SessionName\":\"Rabi-2024-2025\"},{\"Code\":421,\"Crop\":\"PEA\",\"Scheme\":\"RKVY Pulses\",\"active\":true,\"SubScheme\":\"Subsidized seed Distribution .\",\"SessionName\":\"Rabi-2024-2025\"},{\"Code\":420,\"Crop\":\"LENTIL\",\"Scheme\":\"NFSM TRFA\",\"active\":true,\"SubScheme\":\"Seed Subsidy Less Than 10 Year.\",\"SessionName\":\"Rabi-2024-2025\"},{\"Code\":419,\"Crop\":\"LENTIL\",\"Scheme\":\"NFSM Pulses\",\"active\":true,\"SubScheme\":\"Seed Subsidy More Than 10 Year\",\"SessionName\":\"Rabi-2024-2025\"},{\"Code\":418,\"Crop\":\"LENTIL\",\"Scheme\":\"NFSM Pulses\",\"active\":true,\"SubScheme\":\"Seed Subsidy Less Than 10 Years\",\"SessionName\":\"Rabi-2024-2025\"},{\"Code\":417,\"Crop\":\"LENTIL\",\"Scheme\":\"NFSM TRFA\",\"active\":true,\"SubScheme\":\"Demonstration ..\",\"SessionName\":\"Rabi-2024-2025\"},{\"Code\":416,\"Crop\":\"LENTIL\",\"Scheme\":\"NFSM Pulses\",\"active\":true,\"SubScheme\":\"Demonstrations\",\"SessionName\":\"Rabi-2024-2025\"},{\"Code\":415,\"Crop\":\"GRAM\",\"Scheme\":\"RKVY Pulses\",\"active\":true,\"SubScheme\":\"Demonstration.\",\"SessionName\":\"Rabi-2024-2025\"},{\"Code\":414,\"Crop\":\"GRAM\",\"Scheme\":\"RKVY Pulses\",\"active\":true,\"SubScheme\":\"Subsidized seed Distribution .\",\"SessionName\":\"Rabi-2024-2025\"},{\"Code\":413,\"Crop\":\"WHEAT\",\"Scheme\":\"State Scheme\",\"active\":true,\"SubScheme\":\"C.M Seed Crash Programe\",\"SessionName\":\"Rabi-2024-2025\"},{\"Code\":412,\"Crop\":\"ARHAR\",\"Scheme\":\"RKVY Pulses\",\"active\":true,\"SubScheme\":\"Subsidized seed Distribution (Arhar)\",\"SessionName\":\"Kharif-2024-2025\"},{\"Code\":411,\"Crop\":\"Report of Millets & Other\",\"Scheme\":\"State Scheme\",\"active\":true,\"SubScheme\":\"Seed Distribution Programe\",\"SessionName\":\"Kharif-2024-2025\"},{\"Code\":410,\"Crop\":\"Beauveria Basiana 1.5% LF\",\"Scheme\":\"Input of (Jowar + Arhar) Intercropping\",\"active\":true,\"SubScheme\":\"Demonstration Intercropping.\",\"SessionName\":\"Kharif-2024-2025\"},{\"Code\":409,\"Crop\":\"Bacillus Subtilis 1.5% AS\",\"Scheme\":\"Input of (Jowar + Arhar) Intercropping\",\"active\":true,\"SubScheme\":\"Demonstration Intercropping.\",\"SessionName\":\"Kharif-2024-2025\"},{\"Code\":408,\"Crop\":\"Pendimethalin 30% EC\",\"Scheme\":\"Input of (Jowar + Arhar) Intercropping\",\"active\":true,\"SubScheme\":\"Demonstration Intercropping.\",\"SessionName\":\"Kharif-2024-2025\"},{\"Code\":407,\"Crop\":\"NPK Liquid Consortia\",\"Scheme\":\"Input of (Jowar + Arhar) Intercropping\",\"active\":true,\"SubScheme\":\"Demonstration Intercropping.\",\"SessionName\":\"Kharif-2024-2025\"},{\"Code\":406,\"Crop\":\"Rhizobium Culture Liquid 120ML\",\"Scheme\":\"Input of (Jowar + Arhar) Intercropping\",\"active\":true,\"SubScheme\":\"Demonstration Intercropping.\",\"SessionName\":\"Kharif-2024-2025\"},{\"Code\":405,\"Crop\":\"Bacillus Subtilis 1.5% AS\",\"Scheme\":\"Input of (Arhar + Bajra) Intercropping\",\"active\":true,\"SubScheme\":\"Demonstration Intercropping\",\"SessionName\":\"Kharif-2024-2025\"},{\"Code\":404,\"Crop\":\"Metarhizium Anisopliae-01% WP\",\"Scheme\":\"Input of (Arhar + Bajra) Intercropping\",\"active\":true,\"SubScheme\":\"Demonstration Intercropping\",\"SessionName\":\"Kharif-2024-2025\"},{\"Code\":403,\"Crop\":\"Pendimethalin 30% EC\",\"Scheme\":\"Input of (Arhar + Bajra) Intercropping\",\"active\":true,\"SubScheme\":\"Demonstration Intercropping\",\"SessionName\":\"Kharif-2024-2025\"},{\"Code\":402,\"Crop\":\"NPK Liquid Consortia\",\"Scheme\":\"Input of (Arhar + Bajra) Intercropping\",\"active\":true,\"SubScheme\":\"Demonstration Intercropping\",\"SessionName\":\"Kharif-2024-2025\"},{\"Code\":401,\"Crop\":\"Rhizobium Culture Liquid 120ML\",\"Scheme\":\"Input of (Arhar + Bajra) Intercropping\",\"active\":true,\"SubScheme\":\"Demonstration Intercropping\",\"SessionName\":\"Kharif-2024-2025\"},{\"Code\":400,\"Crop\":\"Metarhizium Anisopliae-01% WP\",\"Scheme\":\"Input of Arhar (NFSM)\",\"active\":true,\"SubScheme\":\"Arhar Demonstration.\",\"SessionName\":\"Kharif-2024-2025\"},{\"Code\":399,\"Crop\":\"Bacillus Subtilis 1.5% AS\",\"Scheme\":\"Input of Arhar (NFSM)\",\"active\":true,\"SubScheme\":\"Arhar Demonstration.\",\"SessionName\":\"Kharif-2024-2025\"},{\"Code\":398,\"Crop\":\"NPK Liquid Consortia\",\"Scheme\":\"Input of Arhar (NFSM)\",\"active\":true,\"SubScheme\":\"Arhar Demonstration.\",\"SessionName\":\"Kharif-2024-2025\"},{\"Code\":397,\"Crop\":\"Rhizobium Culture Liquid\",\"Scheme\":\"Input of Arhar (NFSM)\",\"active\":true,\"SubScheme\":\"Arhar Demonstration.\",\"SessionName\":\"Kharif-2024-2025\"},{\"Code\":396,\"Crop\":\"Trichoderma Harzianum 2.0% AS\",\"Scheme\":\"Input of Arhar (NFSM)\",\"active\":true,\"SubScheme\":\"Arhar Demonstration.\",\"SessionName\":\"Kharif-2024-2025\"},{\"Code\":395,\"Crop\":\"Trichoderma Harzianum 2.0% AS\",\"Scheme\":\"Input of Millets (RKVY)\",\"active\":true,\"SubScheme\":\"Demonstration .\",\"SessionName\":\"Kharif-2024-2025\"},{\"Code\":394,\"Crop\":\"Bacillus Subtilis 1.5% AS\",\"Scheme\":\"Input of Millets (RKVY)\",\"active\":true,\"SubScheme\":\"Demonstration .\",\"SessionName\":\"Kharif-2024-2025\"},{\"Code\":393,\"Crop\":\"NPK Liquid Consortia\",\"Scheme\":\"Input of Millets (RKVY)\",\"active\":true,\"SubScheme\":\"Demonstration .\",\"SessionName\":\"Kharif-2024-2025\"},{\"Code\":392,\"Crop\":\"Pseodomonas Fluorescens 2% AS\",\"Scheme\":\"Input of Millets (RKVY)\",\"active\":true,\"SubScheme\":\"Demonstration .\",\"SessionName\":\"Kharif-2024-2025\"},{\"Code\":391,\"Cr",
+      "body_characters": 63763
+    },
+    {
+      "url": "https://www.google-analytics.com/g/collect?v=2&tid=G-71TRE2K99N&gtm=45je6ae1v9227673665za200zd9227673665xf1&_p=1792311573172&gcd=13l3l3l3l1l1&npa=0&dma=0&_eu=AEAE&ae=a&are=1&cid=1541579565.1792311573&frm=0&ngs=1&pscdl=noapi&rcb=4&sr=1280x720&uaa=x86&uab=64&uafvl=Chromium%3B136.0.7103.25%7CHeadlessChrome%3B136.0.7103.25%7CNot.A%252FBrand%3B99.0.0.0&uam=&uamb=0&uap=Windows&uapv=19.0.0&uaw=0&ul=hi-in&_s=1&tag_exp=115616986~115938466~115938469~118897920~118897930~120213116~120385422~120469145~120469153~121246026~121246034&dt=Bihar%20Krishi&dl=https%3A%2F%2Fwww.biharkrishi.in%2Fmandi&sid=1792311572&sct=1&seg=0&en=scroll&_fv=1&_nsi=1&_ss=1&epn.percent_scrolled=90&tfd=4438",
+      "method": "POST",
+      "resource_type": "fetch",
+      "status": 204,
+      "content_type": "text/plain"
+    },
+    {
+      "url": "https://filestoragedfs.blob.core.windows.net/publicresources/json/AssistedMode/contacts.json",
+      "method": "GET",
+      "resource_type": "fetch",
+      "status": 200,
+      "content_type": "application/json",
+      "body_preview": "{\n    \"contacts\": [\n        {\n            \"name\": {\n                \"en\": \"Sri Narmdeshwar Lal, I.A.S.\",\n                \"hi\": \"श्री नर्मदेश्वर लाल, आई.ए.एस.\"\n            },\n            \"position\": {\n                \"en\": \"Principal Secretary\",\n                \"hi\": \"प्रमुख सचिव\"\n            },\n            \"phone\": \"0612-2215373\",\n            \"email\": \"agridep-bih@nic.in\"\n        },\n        {\n            \"name\": {\n                \"en\": \"Dr. Birendra Prasad Yadav, I.A.S.\",\n                \"hi\": \"डॉ. बिरेंद्र प्रसाद यादव, आई.ए.एस.  \"\n            },\n            \"position\": {\n                \"en\": \"Special Secretary\",\n                \"hi\": \"विशेष सचिव\"\n            }\n        }\n    ],\n    \"CmAgriMinister\": [\n        {\n            \"name\": {\n                \"en\": \"Shri Samrat Choudhary\",\n                \"hi\": \"श्री सम्राट चौधरी\"\n            },\n            \"position\": {\n                \"en\": \"Hon. Chief Minister\",\n                \"hi\": \"माननीय मुख्यमंत्री\"\n            },\n            \"phone\": \"0612-2222079\",\n            \"email\": \"agridep-bih@nic.in\",\n            \"imageUrl\": \"https://filestoragedfs.blob.core.windows.net/publicresources/images/home/SamratChoudhry.jpg\"\n        },\n\t\t{\n            \"name\": {\n                \"en\": \"Shri Vijay Kumar Sinha\",\n                \"hi\": \"श्री विजय कुमार सिन्हा\"\n            },\n            \"position\": {\n                \"en\": \"Hon. Minister\",\n                \"hi\": \"माननीय मंत्री\"\n            },\n            \"phone\": \"0612-2231212\",\n            \"imageUrl\": \"https://filestoragedfs.blob.core.windows.net/publicresources/images/home/vijay-sinha.png\",\n            \"alignment\": \"left\"\n        }\n    ],\n    \"about\": {\n        \"name\": {\n            \"en\": \"About Bihar Krishi\",\n            \"hi\": \"बिहार कृषि (एक परिचय)\"\n        },\n        \"description\": {\n            \"en\": \"The \\\"Bihar Krishi\\\" mobile application, launched by the Agriculture Department of the Bihar Government under the 4th Agriculture Roadmap, is a one-stop digital platform designed to empower farmers with easy access to vital agricultural resources and services.\",\n            \"hi\": \"चतुर्थ कृषि रोडमैप के अंतर्गत, कृषि विभाग बिहार सरकार द्वारा राज्य के किसानों को कृषि विभाग की सभी योजनाओं और कृषि संबंधी जानकारी उपलब्ध कराने के लिए \\\"बिहार कृषि\\\" मोबाइल एप्लीकेशन की शुरुआत की गई।\"\n        },\n        \"description2\": {\n            \"en\": \"This platform will serve as a single-window platform for agricultural services, enabling farmers to apply for various agriculture-related schemes of the Bihar Government and access other services such as finance, market linkages, and advisory support. The platform integrates public, private, and non-profit service providers, allowing Bihar's farmers to benefit from all types of agricultural facilities available within the ecosystem at a single point.\",\n            \"hi\": \"यह प्लेटफॉर्म किसानों के लिए कृषि सेवाओं हेतु एक सिंगल विंडो के रूप में काम करेगा, जिससे वे बिहार सरकार की कृषि संबंधित योजनाओं के लिए आवेदन कर सकेंगे। इसके साथ ही, अन्य कृषि सेवाएं जैसे ऋण, बाजार से जुड़ाव, और सलाहकार सेवाओं की जानकारी भी उपलब्ध कराई जाएगी। इस प्लेटफॉर्म में सार्वजनिक, निजी और गैर-लाभकारी सेवा प्रदाताओं को शामिल किया जाएगा ताकि बिहार के कृषक एक ही स्थान पर कृषि पारिस्थितिकी तंत्र में उपलब्ध सभी प्रकार की सुविधाओं का लाभ उठा सकें।\"\n        },\n        \"description3\": {\n            \"en\": \"The \\\"Bihar Krishi\\\" mobile application also offers a Grievance Redressal Module (GRM), enabling farmers to register any issues related to agriculture directly through the app.\",\n            \"hi\": \"इसके अतिरिक्त, \\\"बिहार कृषि\\\" मोबाइल एप्लिकेशन में शिकायत निवारण मॉड्यूल (GRM) की सुविधा भी उपलब्ध है, जिसमें किसान कृषि संबंधी समस्याओं को दर्ज कर सकते हैं।\"\n        }\n    }\n}",
+      "body_characters": 3709
+    },
+    {
+      "url": "https://www.biharkrishi.in/localization/messages/v1/_search?module=dfsweb-common,dfs-schemes,dfs-appliedSchemes,dfs-hortiServices,dfs-helpSection&locale=hi_IN&tenantId=br",
+      "method": "POST",
+      "resource_type": "xhr",
+      "status": 200,
+      "content_type": "application/json",
+      "body_preview": "{\"messages\":[{\"code\":\"/ Day\",\"message\":\"/ दिन\",\"module\":\"dfs-hortiServices\",\"locale\":\"hi_IN\"},{\"code\":\"ACCEPTED\",\"message\":\"आवेदन स्वीकृत हो गया है\",\"module\":\"dfs-appliedSchemes\",\"locale\":\"hi_IN\"},{\"code\":\"ACTION_LOGOUT\",\"message\":\"लॉग आउट\",\"module\":\"dfsweb-common\",\"locale\":\"hi_IN\"},{\"code\":\"AD (Agronomy)\",\"message\":\"सहायक निदेशक (शष्य)\",\"module\":\"dfs-helpSection\",\"locale\":\"hi_IN\"},{\"code\":\"AD (Farm)\",\"message\":\"सहायक निदेशक (शष्य)प्रक्षेत्र\",\"module\":\"dfs-helpSection\",\"locale\":\"hi_IN\"},{\"code\":\"AD (Seed Prod. & Marketing)\",\"message\":\"सहायक निदेशक (बीज उत्पादन एवं विपणन)\",\"module\":\"dfs-helpSection\",\"locale\":\"hi_IN\"},{\"code\":\"ADC\",\"message\":\"सहायक निदेशक, रसायन\",\"module\":\"dfs-helpSection\",\"locale\":\"hi_IN\"},{\"code\":\"ADE\",\"message\":\"सहायक निदेशक इंजीनियरिंग\",\"module\":\"dfs-helpSection\",\"locale\":\"hi_IN\"},{\"code\":\"ADSC\",\"message\":\"सहायक निदेशक (मृदा संरक्षण)\",\"module\":\"dfs-helpSection\",\"locale\":\"hi_IN\"},{\"code\":\"AGRICULTURE\",\"message\":\"कृषि निदेशालय\",\"module\":\"dfs-schemes\",\"locale\":\"hi_IN\"},{\"code\":\"APPROVED\",\"message\":\"आवेदन स्वीकृत हो गया है\",\"module\":\"dfs-appliedSchemes\",\"locale\":\"hi_IN\"},{\"code\":\"Agriculture Coordinator\",\"message\":\"कृषि समन्वयक\",\"module\":\"dfs-helpSection\",\"locale\":\"hi_IN\"},{\"code\":\"Animal Husbandry\",\"message\":\"पशु एवं मत्स्य संसाधन विभाग\",\"module\":\"dfs-helpSection\",\"locale\":\"hi_IN\"},{\"code\":\"Animal Resource Department\",\"message\":\"पशु एवं मत्स्य संसाधन विभाग\",\"module\":\"dfs-helpSection\",\"locale\":\"hi_IN\"},{\"code\":\"Assistant Director (Agronomy)\",\"message\":\"सहायक निदेशक (शष्य)\",\"module\":\"dfs-helpSection\",\"locale\":\"hi_IN\"},{\"code\":\"Assistant Director of Plant Protection\",\"message\":\"पौधा संरक्षण-सहायक निदेशक\",\"module\":\"dfs-helpSection\",\"locale\":\"hi_IN\"},{\"code\":\"Assistant Technology Manager\",\"message\":\"सहायक तकनीकी प्रबंधक (ATM)\",\"module\":\"dfs-helpSection\",\"locale\":\"hi_IN\"},{\"code\":\"Assitant Director of Plant Protection\",\"message\":\"पौधा संरक्षण-सहायक निदेशक\",\"module\":\"dfs-helpSection\",\"locale\":\"hi_IN\"},{\"code\":\"BAVAS Agriculture Coordinator\",\"message\":\"मार्केट नोड्स के नामित कृषि समन्वयक\",\"module\":\"dfs-helpSection\",\"locale\":\"hi_IN\"},{\"code\":\"BROWSE_FILES\",\"message\":\"फ़ाइलों को ब्राउज़ करें\",\"module\":\"dfsweb-common\",\"locale\":\"hi_IN\"},{\"code\":\"Beekeeper\",\"message\":\"मधुमक्खी पालक\",\"module\":\"dfs-hortiServices\",\"locale\":\"hi_IN\"},{\"code\":\"Beekeeping Training\",\"message\":\"मधुमक्खी पालन प्रशिक्षण\",\"module\":\"dfs-hortiServices\",\"locale\":\"hi_IN\"},{\"code\":\"Block Technology Manager\",\"message\":\"प्रखंड तकनीकी प्रबंधक (BTM)\",\"module\":\"dfs-helpSection\",\"locale\":\"hi_IN\"},{\"code\":\"CLOSEDAFTERRESOLUTION\",\"message\":\"हल किया गया\",\"module\":\"dfs-appliedSchemes\",\"locale\":\"hi_IN\"},{\"code\":\"CLOSEDAFTERVERIFICATION\",\"message\":\"हल किया और सत्यापित\",\"module\":\"dfs-appliedSchemes\",\"locale\":\"hi_IN\"},{\"code\":\"COMMON_AADHAR_NUMBER\",\"message\":\"आधार नंबर\",\"module\":\"dfsweb-common\",\"locale\":\"hi_IN\"},{\"code\":\"COMMON_ACCEPT\",\"message\":\"स्वीकार करें\",\"module\":\"dfsweb-common\",\"locale\":\"hi_IN\"},{\"code\":\"COMMON_BACK\",\"message\":\"पीछे जाएं\",\"module\":\"dfsweb-common\",\"locale\":\"hi_IN\"},{\"code\":\"COMMON_BLOCK\",\"message\":\"ब्लॉक\",\"module\":\"dfsweb-common\",\"locale\":\"hi_IN\"},{\"code\":\"COMMON_CANCEL\",\"message\":\"रद्द करें\",\"module\":\"dfsweb-common\",\"locale\":\"hi_IN\"},{\"code\":\"COMMON_CASTE_CATEGORY\",\"message\":\"जाति वर्ग\",\"module\":\"dfsweb-common\",\"locale\":\"hi_IN\"},{\"code\":\"COMMON_CATEGORY\",\"message\":\"वर्ग\",\"module\":\"dfsweb-common\",\"locale\":\"hi_IN\"},{\"code\":\"COMMON_CHANGE_PASSWORD\",\"message\":\"पासवर्ड बदलें\",\"module\":\"dfsweb-common\",\"locale\":\"hi_IN\"},{\"code\":\"COMMON_CHOOSE\",\"message\":\"फ़ाइलें खींचें और छोड़ें या\",\"module\":\"dfsweb-common\",\"locale\":\"hi_IN\"},{\"code\":\"COMMON_CONFIRM_NEW_PASSWORD\",\"message\":\"नए पासवर्ड की पुष्टि करें\",\"module\":\"dfsweb-common\",\"locale\":\"hi_IN\"},{\"code\":\"COMMON_CURRENT_PASSWORD\",\"message\":\"वर्तमान पासवर्ड\",\"module\":\"dfsweb-common\",\"locale\":\"hi_IN\"},{\"code\":\"COMMON_DBT_ID\",\"message\":\"डीबीटी आईडी\",\"module\":\"dfsweb-common\",\"locale\":\"hi_IN\"},{\"code\":\"COMMON_DBT_NOT_LINKED\",\"message\":\"दर्ज किया गया मोबाइल नंबर डीबीटी आईडी से लिंक नहीं है। कृपया अपनी जानकारी जांचें और फिर से प्रयास करें।\",\"module\":\"dfsweb-common\",\"locale\":\"hi_IN\"},{\"code\":\"COMMON_DESCRIPTION\",\"message\":\"विवरण\",\"module\":\"dfsweb-common\",\"locale\":\"hi_IN\"},{\"code\":\"COMMON_DISTRICT\",\"message\":\"ज़िला\",\"module\":\"dfsweb-common\",\"locale\":\"hi_IN\"},{\"code\":\"COMMON_DOB\",\"message\":\"जन्म की तारीख\",\"module\":\"dfsweb-common\",\"locale\":\"hi_IN\"},{\"code\":\"COMMON_DONE\",\"message\":\"हो गया\",\"module\":\"dfsweb-common\",\"locale\":\"hi_IN\"},{\"code\":\"COMMON_DOWNLOAD\",\"message\":\"डाउनलोड करें\",\"module\":\"dfsweb-common\",\"locale\":\"hi_IN\"},{\"code\":\"COMMON_EDIT\",\"message\":\"संपादित करें\",\"module\":\"dfsweb-common\",\"locale\":\"hi_IN\"},{\"code\":\"COMMON_EMAIL\",\"message\":\"ईमेल\",\"module\":\"dfsweb-common\",\"locale\":\"hi_IN\"},{\"code\":\"COMMON_EMAIL_ID\",\"message\":\"ईमेल आईडी\",\"module\":\"dfsweb-common\",\"locale\":\"hi_IN\"},{\"code\":\"COMMON_EMAIL_VALIDATION_ERROR\",\"message\":\"ईमेल आईडी आवश्यक है\",\"module\":\"dfsweb-common\",\"locale\":\"hi_IN\"},{\"code\":\"COMMON_ENTER_FULLNAME\",\"message\":\"अपना पूरा नाम दर्ज करें\",\"module\":\"dfsweb-common\",\"locale\":\"hi_IN\"},{\"code\":\"COMMON_ENTER_MAIL_ID\",\"message\":\"अपना मेल आईडी दर्ज करें\",\"module\":\"dfsweb-common\",\"locale\":\"hi_IN\"},{\"code\":\"COMMON_ENTER_MOBILE_NUMBER\",\"message\":\"अपना मोबाइल नंबर दर्ज करें\",\"module\":\"dfsweb-common\",\"locale\":\"hi_IN\"},{\"code\":\"COMMON_ENTER_PASSWORD\",\"message\":\"पासवर्ड दर्ज करें\",\"module\":\"dfsweb-common\",\"locale\":\"hi_IN\"},{\"code\":\"COMMON_FARMER_NAME\",\"message\":\"किसान का नाम\",\"module\":\"dfsweb-common\",\"locale\":\"hi_IN\"},{\"code\":\"COMMON_FARMER_TYPE\",\"message\":\"किसान का प्रकार\",\"module\":\"dfsweb-common\",\"locale\":\"hi_IN\"},{\"code\":\"COMMON_FATHER_NAME\",\"message\":\"पिता / पति का नाम\",\"module\":\"dfsweb-common\",\"locale\":\"hi_IN\"},{\"code\":\"COMMON_FORGOT_PASSWORD\",\"message\":\"पासवर्ड भूल गए?\",\"module\":\"dfsweb-common\",\"locale\":\"hi_IN\"},{\"code\":\"COMMON_FULL_NAME\",\"message\":\"पूरा नाम\",\"module\":\"dfsweb-common\",\"locale\":\"hi_IN\"},{\"code\":\"COMMON_GENDER\",\"message\":\"लिंग\",\"module\":\"dfsweb-common\",\"locale\":\"hi_IN\"},{\"code\":\"COMMON_LOGIN\",\"message\":\"लॉग इन करें\",\"module\":\"dfsweb-common\",\"locale\":\"hi_IN\"},{\"code\":\"COMMON_LOGIN_WELCOME\",\"message\":\"बिहार कृषि में आपका स्वागत है\",\"module\":\"dfsweb-common\",\"locale\":\"hi_IN\"},{\"code\":\"COMMON_LOGOUT\",\"message\":\"लॉग आउट\",\"module\":\"dfsweb-common\",\"locale\":\"hi_IN\"},{\"code\":\"COMMON_LOGOUT_WARNING\",\"message\":\"क्या आप लॉग आउट करना चाहते हैं?\",\"module\":\"dfsweb-common\",\"locale\":\"hi_IN\"},{\"code\":\"COMMON_MOBILE_NUMBER\",\"message\":\"मोबाइल नंबर\",\"module\":\"dfsweb-common\",\"locale\":\"hi_IN\"},{\"code\":\"COMMON_MOBILE_VALIDATION_ERROR\",\"message\":\"कृपया 10 अंकीय मोबाइल नंबर दर्ज करें\",\"module\":\"dfsweb-common\",\"locale\":\"hi_IN\"},{\"code\":\"COMMON_NAME_VALIDATION_ERROR\",\"message\":\"पूरा नाम आवश्यक है\",\"module\":\"dfsweb-common\",\"locale\":\"hi_IN\"},{\"code\":\"COMMON_NEW_PASSWORD\",\"message\":\"नया पासवर्ड\",\"module\":\"dfsweb-common\",\"locale\":\"hi_IN\"},{\"code\":\"COMMON_NO\",\"message\":\"नहीं\",\"module\":\"dfsweb-common\",\"locale\":\"hi_IN\"},{\"code\":\"COMMON_NO_DBT_USER_FOUND\",\"message\":\"दर्ज किया गया डी.बी.टी अमान्य है। कृपया अपनी जानकारी जांचें और फिर से प्रयास करें।\",\"module\":\"dfsweb-common\",\"locale\":\"hi_IN\"},{\"code\":\"COMMON_OR\",\"message\":\"या\",\"module\":\"dfsweb-common\",\"locale\":\"hi_IN\"},{\"code\":\"COMMON_OTP_SENT_SUCCESSFULLY\",\"message\":\"ओटीपी सफलतापूर्वक भेजा गया\",\"module\":\"dfsweb-common\",\"locale\":\"hi_IN\"},{\"code\":\"COMMON_OTP_VALIDATION_ERROR\",\"message\":\"अमान्य ओटीपी\",\"module\":\"dfsweb-common\",\"locale\":\"hi_IN\"},{\"code\":\"COMMON_PANCHAYAT\",\"message\":\"पंचायत\",\"module\":\"dfsweb-common\",\"locale\":\"hi_IN\"},{\"code\":\"COMMON_PASSWORD\",\"message\":\"पासवर्ड\",\"module\":\"dfsweb-common\",\"locale\":\"hi_IN\"},{\"code\":\"COMMON_PASSWORDS_MISMATCH\",\"message\":\"पासवर्ड मेल नहीं खाते।\",\"module\":\"dfsweb-common\",\"locale\":\"hi_IN\"},{\"code\":\"COMMON_PASSWORD_REQUIRED\",\"message\":\"पासवर्ड की आवश्यकता है!\",\"module\":\"dfsweb-common\",\"locale\":\"hi_IN\"},{\"code\":\"COMMON_PASSWORD_UPDATE_FAILED\",\"message\":\"पासवर्ड अद्यतन विफल रहा!\",\"module\":\"dfsweb-common\",\"locale\":\"hi_IN\"},{\"code\":\"COMMON_PASSWORD_UPDATE_SUCCESS\",\"message\":\"पासवर्ड सफलतापूर्वक अपडेट किया गया\",\"module\":\"dfsweb-common\",\"locale\":\"hi_IN\"},{\"code\":\"COMMON_PASSWORD_VALIDATION_ERROR\",\"message\":\"पासवर्ड 8-15 अक्षर लंबा होना चाहिए, इसमें कम से कम एक अंक, एक अपरकेस, एक लोअरकेस, एक विशेष अक्षर होना चाहिए और कोई रिक्त स्थान नहीं होना चाहिए।\",\"module\":\"dfsweb-common\",\"locale\":\"hi_IN\"},{\"code\":\"COMMON_PDF_DOWNLOAD_FAIL\",\"message\":\"पीडीएफ डाउनलोड विफल रहा. कृपया पुन: प्रयास करें\",\"module\":\"dfsweb-common\",\"locale\":\"hi_IN\"},{\"code\":\"COMMON_PHONE_INFO_TEXT\",\"message\":\"पासवर्ड रीसेट करने के लिए कृपया अपना फ़ोन नंबर दर्ज करें।\",\"module\":\"dfsweb-common\",\"locale\":\"hi_IN\"},{\"code\":\"COMMON_PREVIEW\",\"message\":\"पूर्वावलोकन\",\"module\":\"dfsweb-common\",\"locale\":\"hi_IN\"},{\"code\":\"COMMON_REJECT\",\"message\":\"अस्वीकार करें\",\"module\":\"dfsweb-common\",\"locale\":\"hi_IN\"},{\"code\":\"COMMON_RESEND_ANOTHER_OTP\",\"message\":\"सेकंड में एक और OTP दोबारा भेजें\",\"module\":\"dfsweb-common\",\"locale\":\"hi_IN\"},{\"code\":\"COMMON_RESEND_OTP\",\"message\":\"ओटीपी पुनः भेजें\",\"module\":\"dfsweb-common\",\"locale\":\"hi_IN\"},{\"code\":\"COMMON_RESET\",\"message\":\"रीसेट\",\"module\":\"dfsweb-common\",\"locale\":\"hi_IN\"},{\"code\":\"COMMON_RESET_PASSWORD\",\"message\":\"पासवर्ड रीसेट\",\"module\":\"dfsweb-common\",\"locale\":\"hi_IN\"},{\"code\":\"COMMON_RESPOND\",\"message\":\"उत्तर दें\",\"module\":\"dfsweb-common\",\"locale\":\"hi_IN\"},{\"code\":\"COMMON_SAVE\",\"message\":\"सुरक्षित करे\",\"module\":\"dfsweb-common\",\"locale\":\"hi_IN\"},{\"code\":\"COMMON_SEARCH\",\"message\":\"खोज करें\",\"module\":\"dfsweb-common\",\"locale\":\"hi_IN\"},{\"code\":\"COMMON_SELECT\",\"message\":\"चुनें\",\"module\":\"dfsweb-common\",\"locale\":\"hi_IN\"},{\"code\":\"COMMON_SEND_OTP\",\"message\":\"OTP भेजें\",\"module\":\"dfsweb-common\",\"locale\":\"hi_IN\"},{\"code\":\"COMMON_SERVER_ERROR\",\"message\":\"सर्वर साइड पर त्रुटि, कृपया पुनः प्रयास करें!\",\"module\":\"dfsweb-common\",\"locale\":\"hi_IN\"},{\"code\":\"COMMON_SIGN_IN\",\"message\":\"साइन इन\",\"module\":\"dfsweb-common\",\"locale\":\"hi_IN\"},{\"code\":\"COMMON_SUBMIT\",\"message\":\"ज़मा करें\",\"module\":\"dfsweb-common\",\"locale\":\"hi_IN\"},{\"code\":\"COMMON_SUB_CATEGORY\",\"message\":\"उपश्रेणी\",\"module\":\"dfsweb-common\",\"locale\":\"hi_IN\"},{\"code\":\"COMMON_UNKNOWN_MOBILE_NUMBER_ERROR\",\"mess",
+      "body_characters": 40430
+    },
+    {
+      "url": "https://www.google-analytics.com/g/collect?v=2&tid=G-71TRE2K99N&gtm=45je6ae1v9227673665za208zd9227673665xf1&_p=1792311573172&gcd=13l3l3l3l1l1&npa=0&dma=0&_eu=AAAAAAQ&are=1&cid=1541579565.1792311573&frm=0&ngs=1&pscdl=noapi&rcb=4&sr=1280x720&uaa=x86&uab=64&uafvl=Chromium%3B136.0.7103.25%7CHeadlessChrome%3B136.0.7103.25%7CNot.A%252FBrand%3B99.0.0.0&uam=&uamb=0&uap=Windows&uapv=19.0.0&uaw=0&ul=hi-in&_s=2&tag_exp=115616986~115938466~115938469~118897920~118897930~120213116~120385422~120469145~120469153~121246026~121246034&dt=Bihar%20Krishi&dl=https%3A%2F%2Fwww.biharkrishi.in%2Fmandi&sid=1792311572&sct=1&seg=1&en=page_view&_ee=1&_et=4&tfd=4683",
+      "method": "POST",
+      "resource_type": "fetch",
+      "status": 204,
+      "content_type": "text/plain"
+    },
+    {
+      "url": "https://www.biharkrishi.in/agent/v1/staticData/_search?service=agriMarket",
+      "method": "POST",
+      "resource_type": "xhr",
+      "status": 200,
+      "content_type": "application/json",
+      "body_preview": "{\"ResponseInfo\":{\"apiId\":\"\",\"ver\":\"\",\"ts\":1792311573161,\"resMsgId\":\"\",\"msgId\":\"\",\"status\":\"successful\"},\"Data\":[{\"code\":188,\"name\":\"अररिया\"},{\"code\":611,\"name\":\"अरवल\"},{\"code\":189,\"name\":\"औरंगाबाद\"},{\"code\":201,\"name\":\"कटिहार\"},{\"code\":203,\"name\":\"किशनगंज\"},{\"code\":200,\"name\":\"कैमूर\"},{\"code\":202,\"name\":\"खगरिया\"},{\"code\":196,\"name\":\"गया\"},{\"code\":197,\"name\":\"गोपालगंज\"},{\"code\":198,\"name\":\"जमुई\"},{\"code\":199,\"name\":\"जहानाबाद\"},{\"code\":195,\"name\":\"दरभंगा\"},{\"code\":210,\"name\":\"नवादा\"},{\"code\":209,\"name\":\"नालन्दा\"},{\"code\":212,\"name\":\"पटना\"},{\"code\":211,\"name\":\"पश्चिम चंपारण\"},{\"code\":214,\"name\":\"पूर्णिया\"},{\"code\":213,\"name\":\"पूर्वी चंपारण\"},{\"code\":194,\"name\":\"बक्सर\"},{\"code\":190,\"name\":\"बांका\"},{\"code\":191,\"name\":\"बेगूसराय\"},{\"code\":192,\"name\":\"भागलपुर\"},{\"code\":193,\"name\":\"भोजपुर\"},{\"code\":206,\"name\":\"मधुबनी\"},{\"code\":205,\"name\":\"मधेपुरा\"},{\"code\":208,\"name\":\"मुजफ्फरपुर\"},{\"code\":207,\"name\":\"मुंगेर\"},{\"code\":215,\"name\":\"रोहतास\"},{\"code\":204,\"name\":\"लखीसराय\"},{\"code\":224,\"name\":\"वैशाली\"},{\"code\":220,\"name\":\"शिवहर\"},{\"code\":219,\"name\":\"शेखपुरा\"},{\"code\":217,\"name\":\"समस्तीपुर\"},{\"code\":216,\"name\":\"सहरसा\"},{\"code\":218,\"name\":\"सारण\"},{\"code\":222,\"name\":\"सिवान\"},{\"code\":221,\"name\":\"सीतामढ़ी\"},{\"code\":223,\"name\":\"सुपौल\"}],\"totalCounts\":38,\"totalPriceChange\":null,\"totalPriceChangePercent\":null}",
+      "body_characters": 1307
+    },
+    {
+      "url": "https://www.biharkrishi.in/agent/v1/staticData/_search?service=agriMarket",
+      "method": "POST",
+      "resource_type": "xhr",
+      "status": 200,
+      "content_type": "application/json",
+      "body_preview": "{\"ResponseInfo\":{\"apiId\":\"\",\"ver\":\"\",\"ts\":1792311573163,\"resMsgId\":\"\",\"msgId\":\"\",\"status\":\"successful\"},\"Data\":[{\"id\":\"0b3d7d9a-1968-4db0-8490-6bc0eebfb3d6\",\"marketCenterCode\":10026,\"marketCenter\":\"हरनौत (नया)\",\"arrivalDate\":1792281600000,\"arrivalTrendCode\":0,\"arrivalTrend\":null,\"arrivalQuantity\":2.0,\"arrivalUnit\":\"Metric Tonnes\",\"commodityCode\":35,\"commodity\":\"बैंगन\",\"varietyCode\":3500001,\"variety\":\"Round\",\"gradeCode\":5,\"grade\":null,\"minPrice\":5000.0,\"maxPrice\":5000.0,\"modalPrice\":5000.0,\"priceTrend\":0.0,\"priceUnit\":\"Rs/Quintal\",\"additionalFields\":{\"districtLg\":\"209\",\"district\":\"नालन्दा\"},\"rowVersion\":1,\"auditDetails\":{\"createdBy\":\"1fec8102-0e02-4d0a-b283-cd80d5dab067\",\"lastModifiedBy\":\"1fec8102-0e02-4d0a-b283-cd80d5dab067\",\"createdTime\":1792305005448,\"lastModifiedTime\":1792306232521},\"tenantId\":\"br\",\"ttsFileStoreId\":\"7b7beeeb-d38e-4923-9fde-9b305459f914\",\"ttsFileStoreIdEn\":null,\"ttsFileStoreIdHi\":null,\"ttsPriceFingerprint\":null},{\"id\":\"14332ff8-af23-4695-aa7a-dd39b9864de7\",\"marketCenterCode\":416,\"marketCenter\":\"औरंगाबाद\",\"arrivalDate\":1792281600000,\"arrivalTrendCode\":0,\"arrivalTrend\":null,\"arrivalQuantity\":4.0,\"arrivalUnit\":\"Metric Tonnes\",\"commodityCode\":3,\"commodity\":\"चावल\",\"varietyCode\":300121,\"variety\":\"Medium\",\"gradeCode\":5,\"grade\":null,\"minPrice\":2600.0,\"maxPrice\":3000.0,\"modalPrice\":2800.0,\"priceTrend\":0.0,\"priceUnit\":\"Rs/Quintal\",\"additionalFields\":{\"districtLg\":\"189\",\"district\":\"औरंगाबाद\"},\"rowVersion\":1,\"auditDetails\":{\"createdBy\":\"1fec8102-0e02-4d0a-b283-cd80d5dab067\",\"lastModifiedBy\":\"1fec8102-0e02-4d0a-b283-cd80d5dab067\",\"createdTime\":1792305005448,\"lastModifiedTime\":1792306213274},\"tenantId\":\"br\",\"ttsFileStoreId\":\"e55c3aed-4ef8-4460-88ed-1fe66e1a4328\",\"ttsFileStoreIdEn\":null,\"ttsFileStoreIdHi\":null,\"ttsPriceFingerprint\":null},{\"id\":\"1d14ffde-7de5-4f63-b47c-18b74c219c82\",\"marketCenterCode\":10037,\"marketCenter\":\"त्रिवेणीगंज (नया)\",\"arrivalDate\":1792281600000,\"arrivalTrendCode\":0,\"arrivalTrend\":null,\"arrivalQuantity\":10.0,\"arrivalUnit\":\"Metric Tonnes\",\"commodityCode\":23,\"commodity\":\"प्याज\",\"varietyCode\":2300025,\"variety\":\"1st Sort\",\"gradeCode\":10,\"grade\":null,\"minPrice\":4200.0,\"maxPrice\":4200.0,\"modalPrice\":4200.0,\"priceTrend\":0.0,\"priceUnit\":\"Rs/Quintal\",\"additionalFields\":{\"districtLg\":\"223\",\"district\":\"सुपौल\"},\"rowVersion\":1,\"auditDetails\":{\"createdBy\":\"1fec8102-0e02-4d0a-b283-cd80d5dab067\",\"lastModifiedBy\":\"1fec8102-0e02-4d0a-b283-cd80d5dab067\",\"createdTime\":1792305005448,\"lastModifiedTime\":1792306237588},\"tenantId\":\"br\",\"ttsFileStoreId\":\"0b5a31b3-213c-49e4-afbf-39a291733b94\",\"ttsFileStoreIdEn\":null,\"ttsFileStoreIdHi\":null,\"ttsPriceFingerprint\":null},{\"id\":\"3f63291e-2987-452d-8d87-96f027db78a2\",\"marketCenterCode\":10026,\"marketCenter\":\"हरनौत (नया)\",\"arrivalDate\":1792281600000,\"arrivalTrendCode\":0,\"arrivalTrend\":null,\"arrivalQuantity\":71.0,\"arrivalUnit\":\"Metric Tonnes\",\"commodityCode\":24,\"commodity\":\"आलू\",\"varietyCode\":2400015,\"variety\":\"Potato\",\"gradeCode\":5,\"grade\":null,\"minPrice\":1000.0,\"maxPrice\":1000.0,\"modalPrice\":1000.0,\"priceTrend\":0.0,\"priceUnit\":\"Rs/Quintal\",\"additionalFields\":{\"districtLg\":\"209\",\"district\":\"नालन्दा\"},\"rowVersion\":1,\"auditDetails\":{\"createdBy\":\"1fec8102-0e02-4d0a-b283-cd80d5dab067\",\"lastModifiedBy\":\"1fec8102-0e02-4d0a-b283-cd80d5dab067\",\"createdTime\":1792305005448,\"lastModifiedTime\":1792306230252},\"tenantId\":\"br\",\"ttsFileStoreId\":\"7893bef1-f514-4a7e-9485-ef8f6e72f1a4\",\"ttsFileStoreIdEn\":null,\"ttsFileStoreIdHi\":null,\"ttsPriceFingerprint\":null},{\"id\":\"55970627-378c-4306-99e8-19a279fe0397\",\"marketCenterCode\":414,\"marketCenter\":\"आरा\",\"arrivalDate\":1792281600000,\"arrivalTrendCode\":0,\"arrivalTrend\":null,\"arrivalQuantity\":40.0,\"arrivalUnit\":\"Metric Tonnes\",\"commodityCode\":23,\"commodity\":\"प्याज\",\"varietyCode\":2300999,\"variety\":\"Other\",\"gradeCode\":4,\"grade\":null,\"minPrice\":3400.0,\"maxPrice\":3400.0,\"modalPrice\":3400.0,\"priceTrend\":-5.55555555555556,\"priceUnit\":\"Rs/Quintal\",\"additionalFields\":{\"districtLg\":\"193\",\"district\":\"भोजपुर\"},\"rowVersion\":1,\"auditDetails\":{\"createdBy\":\"1fec8102-0e02-4d0a-b283-cd80d5dab067\",\"lastModifiedBy\":\"1fec8102-0e02-4d0a-b283-cd80d5dab067\",\"createdTime\":1792305005448,\"lastModifiedTime\":1792306208332},\"tenantId\":\"br\",\"ttsFileStoreId\":\"b1f3b13c-d8d3-4bf0-8420-d734f4f047aa\",\"ttsFileStoreIdEn\":null,\"ttsFileStoreIdHi\":null,\"ttsPriceFingerprint\":null},{\"id\":\"6c1e62e2-dbd6-43ae-8ad7-5af217dbc30b\",\"marketCenterCode\":414,\"marketCenter\":\"आरा\",\"arrivalDate\":1792281600000,\"arrivalTrendCode\":0,\"arrivalTrend\":null,\"arrivalQuantity\":18.0,\"arrivalUnit\":\"Metric Tonnes\",\"commodityCode\":17,\"commodity\":\"सेब\",\"varietyCode\":1700999,\"variety\":\"Other\",\"gradeCode\":11,\"grade\":null,\"minPrice\":9800.0,\"maxPrice\":9800.0,\"modalPrice\":9800.0,\"priceTrend\":-30.0,\"priceUnit\":\"Rs/Quintal\",\"additionalFields\":{\"districtLg\":\"193\",\"district\":\"भोजपुर\"},\"rowVersion\":1,\"auditDetails\":{\"createdBy\":\"1fec8102-0e02-4d0a-b283-cd80d5dab067\",\"lastModifiedBy\":\"1fec8102-0e02-4d0a-b283-cd80d5dab067\",\"createdTime\":1792305005448,\"lastModifiedTime\":1792306206512},\"tenantId\":\"br\",\"ttsFileStoreId\":\"9efc5a4d-7aae-48b6-8a90-9d935630bab5\",\"ttsFileStoreIdEn\":null,\"ttsFileStoreIdHi\":null,\"ttsPriceFingerprint\":null},{\"id\":\"71804522-1a02-47b4-bf34-dc3cd2803b03\",\"marketCenterCode\":414,\"marketCenter\":\"आरा\",\"arrivalDate\":1792281600000,\"arrivalTrendCode\":0,\"arrivalTrend\":null,\"arrivalQuantity\":80.0,\"arrivalUnit\":\"Metric Tonnes\",\"commodityCode\":24,\"commodity\":\"आलू\",\"varietyCode\":2400015,\"variety\":\"Potato\",\"gradeCode\":4,\"grade\":null,\"minPrice\":1200.0,\"maxPrice\":1200.0,\"modalPrice\":1200.0,\"priceTrend\":0.0,\"priceUnit\":\"Rs/Quintal\",\"additionalFields\":{\"districtLg\":\"193\",\"district\":\"भोजपुर\"},\"rowVersion\":1,\"auditDetails\":{\"createdBy\":\"1fec8102-0e02-4d0a-b283-cd80d5dab067\",\"lastModifiedBy\":\"1fec8102-0e02-4d0a-b283-cd80d5dab067\",\"createdTime\":1792305005448,\"lastModifiedTime\":1792306210328},\"tenantId\":\"br\",\"ttsFileStoreId\":\"5180f72a-8b2c-4bf3-98e0-c05129f3ddea\",\"ttsFileStoreIdEn\":null,\"ttsFileStoreIdHi\":null,\"ttsPriceFingerprint\":null},{\"id\":\"73fa3888-8dcf-4757-985f-c5f42754c310\",\"marketCenterCode\":10037,\"marketCenter\":\"त्रिवेणीगंज (नया)\",\"arrivalDate\":1792281600000,\"arrivalTrendCode\":0,\"arrivalTrend\":null,\"arrivalQuantity\":4.0,\"arrivalUnit\":\"Metric Tonnes\",\"commodityCode\":303,\"commodity\":\"परवल\",\"varietyCode\":30300001,\"variety\":\"Pointed gourd (Parval)\",\"gradeCode\":10,\"grade\":null,\"minPrice\":3700.0,\"maxPrice\":3700.0,\"modalPrice\":3700.0,\"priceTrend\":-1.3333333333333333,\"priceUnit\":\"Rs/Quintal\",\"additionalFields\":{\"districtLg\":\"223\",\"district\":\"सुपौल\"},\"rowVersion\":1,\"auditDetails\":{\"createdBy\":\"1fec8102-0e02-4d0a-b283-cd80d5dab067\",\"lastModifiedBy\":\"1fec8102-0e02-4d0a-b283-cd80d5dab067\",\"createdTime\":1792305005448,\"lastModifiedTime\":1792306244804},\"tenantId\":\"br\",\"ttsFileStoreId\":\"ab284bb8-4a01-4aab-8f2a-3a3df145fe5b\",\"ttsFileStoreIdEn\":null,\"ttsFileStoreIdHi\":null,\"ttsPriceFingerprint\":null},{\"id\":\"7f4a8a6b-7dec-48d2-8df6-ac1a82470971\",\"marketCenterCode\":10037,\"marketCenter\":\"त्रिवेणीगंज (नया)\",\"arrivalDate\":1792281600000,\"arrivalTrendCode\":0,\"arrivalTrend\":null,\"arrivalQuantity\":4.0,\"arrivalUnit\":\"Metric Tonnes\",\"commodityCode\":85,\"commodity\":\"भिंडी (लेडीज फिंगर)\",\"varietyCode\":8500001,\"variety\":\"Bhindi\",\"gradeCode\":10,\"grade\":null,\"minPrice\":2700.0,\"maxPrice\":2700.0,\"modalPrice\":2700.0,\"priceTrend\":0.0,\"priceUnit\":\"Rs/Quintal\",\"additionalFields\":{\"districtLg\":\"223\",\"district\":\"सुपौल\"},\"rowVersion\":1,\"auditDetails\":{\"createdBy\":\"1fec8102-0e02-4d0a-b283-cd80d5dab067\",\"lastModifiedBy\":\"1fec8102-0e02-4d0a-b283-cd80d5dab067\",\"createdTime\":1792305005448,\"lastModifiedTime\":1792306243160},\"tenantId\":\"br\",\"ttsFileStoreId\":\"f7864fb9-4475-4caf-9aa7-41752d7ad973\",\"ttsFileStoreIdEn\":null,\"ttsFileStoreIdHi\":null,\"ttsPriceFingerprint\":null},{\"id\":\"a3fc51b9-1c6b-4d0f-934f-5022647b238c\",\"marketCenterCode\":10026,\"marketCenter\":\"हरनौत (नया)\",\"arrivalDate\":1792281600000,\"arrivalTrendCode\":0,\"arrivalTrend\":null,\"arrivalQuantity\":47.0,\"arrivalUnit\":\"Metric Tonnes\",\"commodityCode\":23,\"commodity\":\"प्याज\",\"varietyCode\":2300015,\"variety\":\"Onion\",\"gradeCode\":5,\"grade\":null,\"minPrice\":5000.0,\"maxPrice\":5000.0,\"modalPrice\":5000.0,\"priceTrend\":0.0,\"priceUnit\":\"Rs/Quintal\",\"additionalFields\":{\"districtLg\":\"209\",\"district\":\"नालन्दा\"},\"rowVersion\":1,\"auditDetails\":{\"createdBy\":\"1fec8102-0e02-4d0a-b283-cd80d5dab067\",\"lastModifiedBy\":\"1fec8102-0e02-4d0a-b283-cd80d5dab067\",\"createdTime\":1792305005448,\"lastModifiedTime\":1792306228590},\"tenantId\":\"br\",\"ttsFileStoreId\":\"66004762-e64f-48b7-a63d-8bb24ec4410b\",\"ttsFileStoreIdEn\":null,\"ttsFileStoreIdHi\":null,\"ttsPriceFingerprint\":null}],\"totalCounts\":340471,\"totalPriceChange\":0,\"totalPriceChangePercent\":0.0}",
+      "body_characters": 8562
+    },
+    {
+      "url": "https://www.biharkrishi.in/agent/v1/staticData/_search?service=agriMarket",
+      "method": "POST",
+      "resource_type": "xhr",
+      "status": 200,
+      "content_type": "application/json",
+      "body_preview": "{\"ResponseInfo\":{\"apiId\":\"\",\"ver\":\"\",\"ts\":1792311573167,\"resMsgId\":\"\",\"msgId\":\"\",\"status\":\"successful\"},\"Data\":[{\"code\":10004,\"name\":\"अमरपुर\"},{\"code\":806,\"name\":\"अररिया\"},{\"code\":1635,\"name\":\"अरवल\"},{\"code\":414,\"name\":\"आरा\"},{\"code\":416,\"name\":\"औरंगाबाद\"},{\"code\":34,\"name\":\"कटिहार\"},{\"code\":1641,\"name\":\"कस्बा\"},{\"code\":1646,\"name\":\"कहलगांव\"},{\"code\":420,\"name\":\"किशनगंज\"},{\"code\":10002,\"name\":\"कुटुम्ब\"},{\"code\":10020,\"name\":\"कैमूर\"},{\"code\":10030,\"name\":\"कोचस (बलथारी) (नया)\"},{\"code\":425,\"name\":\"खगरिया\"},{\"code\":32,\"name\":\"गया\"},{\"code\":39,\"name\":\"गुलाबबाग\"},{\"code\":10016,\"name\":\"गेराबाड़ी, कोरहा ब्लॉक\"},{\"code\":1638,\"name\":\"गोपालगंज\"},{\"code\":1657,\"name\":\"चकिया\"},{\"code\":26,\"name\":\"चपरा\"},{\"code\":1651,\"name\":\"जमुई\"},{\"code\":1655,\"name\":\"जयनगर\"},{\"code\":1634,\"name\":\"जहानाबाद\"},{\"code\":10039,\"name\":\"जैतीपीर मंडी, लालगंज ब्लॉक (नया)\"},{\"code\":1656,\"name\":\"झंझारपुर\"},{\"code\":10014,\"name\":\"टेकारी\"},{\"code\":1658,\"name\":\"ठाकुरगंज\"},{\"code\":10031,\"name\":\"डेहरी (नवीन)\"},{\"code\":10032,\"name\":\"ताजपुर (नया)\"},{\"code\":1648,\"name\":\"तेघरा\"},{\"code\":10037,\"name\":\"त्रिवेणीगंज (नया)\"},{\"code\":27,\"name\":\"दरभंगा\"},{\"code\":10001,\"name\":\"दाउनगर\"},{\"code\":411,\"name\":\"दानापुर\"},{\"code\":10010,\"name\":\"दुमरांव\"},{\"code\":1637,\"name\":\"नटवार\"},{\"code\":10038,\"name\":\"नरकटियागंज(नया)\"},{\"code\":10007,\"name\":\"नवगछिया\"},{\"code\":1139,\"name\":\"नवादा\"},{\"code\":804,\"name\":\"नोखा\"},{\"code\":37,\"name\":\"पटना, मुसल्लहपुर\"},{\"code\":38,\"name\":\"पटना सिटी\"},{\"code\":10040,\"name\":\"परसोनिया मंडी,महुआ ब्लॉक (नया)\"},{\"code\":10009,\"name\":\"पिरो\"},{\"code\":1640,\"name\":\"फोर्बेस्गंज\"},{\"code\":415,\"name\":\"बक्सर\"},{\"code\":10034,\"name\":\"बरबीघा (नया)\"},{\"code\":1643,\"name\":\"बरसोई\"},{\"code\":10017,\"name\":\"बरारी\"},{\"code\":10005,\"name\":\"बलिया\"},{\"code\":1642,\"name\":\"बहादुरगंज\"},{\"code\":10013,\"name\":\"बहादुरपुर (एकमी घाट)\"},{\"code\":1650,\"name\":\"बाराहाट\"},{\"code\":1659,\"name\":\"बिरौल\"},{\"code\":413,\"name\":\"बिहटा\"},{\"code\":10006,\"name\":\"बिहपुर\"},{\"code\":412,\"name\":\"बिहारशरीफ\"},{\"code\":1771,\"name\":\"बिहारीगंज\"},{\"code\":10008,\"name\":\"बिहिया\"},{\"code\":1645,\"name\":\"बीरपुर\"},{\"code\":24,\"name\":\"बेगूसराय\"},{\"code\":805,\"name\":\"बेतिया\"},{\"code\":10024,\"name\":\"बेनीपट्टी (नया)\"},{\"code\":10012,\"name\":\"बेनीपुर\"},{\"code\":10011,\"name\":\"ब्रह्मपुर\"},{\"code\":10025,\"name\":\"भगवानपुर मंडी (नई)\"},{\"code\":10028,\"name\":\"भवानीपुर(नया)\"},{\"code\":25,\"name\":\"भागलपुर\"},{\"code\":10021,\"name\":\"मधुबन (नया)\"},{\"code\":35,\"name\":\"मधुबनी\"},{\"code\":10036,\"name\":\"महाराजगंज(नवीन)\"},{\"code\":10018,\"name\":\"मानसी मंडी (नया)\"},{\"code\":36,\"name\":\"मुजफ्फरपुर\"},{\"code\":10023,\"name\":\"मुरलीगंज (नया)\"},{\"code\":421,\"name\":\"मुंगेर\"},{\"code\":1633,\"name\":\"मोकामा\"},{\"code\":424,\"name\":\"मोतिहारी\"},{\"code\":1636,\"name\":\"मोहनिया\"},{\"code\":10022,\"name\":\"रक्सौल (नया)\"},{\"code\":10003,\"name\":\"रजौन\"},{\"code\":10027,\"name\":\"रजौली(नया)\"},{\"code\":10000,\"name\":\"रानीगंज\"},{\"code\":1647,\"name\":\"लखीसराय\"},{\"code\":10029,\"name\":\"विक्रमगंज (नवीन)\"},{\"code\":10035,\"name\":\"शिवहर (नवीन)\"},{\"code\":1649,\"name\":\"शेखपुरा\"},{\"code\":0,\"name\":\"सराय मंडी, भगवानपुर ब्लॉक (नया)\"},{\"code\":422,\"name\":\"सहरसा\"},{\"code\":41,\"name\":\"सासाराम\"},{\"code\":10015,\"name\":\"सिकन्दरा\"},{\"code\":42,\"name\":\"सिवान\"},{\"code\":1654,\"name\":\"सिंहेश्वरस्थान\"},{\"code\":419,\"name\":\"सीतामढ़ी\"},{\"code\":1652,\"name\":\"सुपौल\"},{\"code\":10019,\"name\":\"सुरज्यगढ़ा (नया)\"},{\"code\":418,\"name\":\"सैदपुरहाट\"},{\"code\":10033,\"name\":\"सोनपुर (नया)\"},{\"code\":10026,\"name\":\"हरनौत (नया)\"},{\"code\":423,\"name\":\"हाजीपुर\"}],\"totalCounts\":98,\"totalPriceChange\":null,\"totalPriceChangePercent\":null}",
+      "body_characters": 3429
+    },
+    {
+      "url": "https://www.biharkrishi.in/agent/v1/staticData/_search?service=agriMarket",
+      "method": "POST",
+      "resource_type": "xhr",
+      "status": 200,
+      "content_type": "application/json",
+      "body_preview": "{\"ResponseInfo\":{\"apiId\":\"\",\"ver\":\"\",\"ts\":1792311573253,\"resMsgId\":\"\",\"msgId\":\"\",\"status\":\"successful\"},\"Data\":[{\"code\":103,\"name\":\"अदरक(हरा)\"},{\"code\":21,\"name\":\"अनानास\"},{\"code\":190,\"name\":\"अनार\"},{\"code\":185,\"name\":\"अमरूद\"},{\"code\":355,\"name\":\"अमला(नेल्ली काई)\"},{\"code\":49,\"name\":\"अरहर (तूर, लाल चना)(साबुत)\"},{\"code\":260,\"name\":\"अरहर दाल\"},{\"code\":67,\"name\":\"अलसी\"},{\"code\":22,\"name\":\"अंगूर\"},{\"code\":20,\"name\":\"आम\"},{\"code\":24,\"name\":\"आलू\"},{\"code\":329,\"name\":\"आलूबुखारा\"},{\"code\":277,\"name\":\"ऋतु के पत्ते\"},{\"code\":200,\"name\":\"कच्चा नारियल\"},{\"code\":182,\"name\":\"कटहल\"},{\"code\":84,\"name\":\"कद्दू\"},{\"code\":305,\"name\":\"करतली (कंटोला)\"},{\"code\":187,\"name\":\"करबुजा (कस्तूरी तरबूज)\"},{\"code\":81,\"name\":\"करेला\"},{\"code\":114,\"name\":\"कुलथी (घोड़ा ग्राम)\"},{\"code\":19,\"name\":\"केला\"},{\"code\":90,\"name\":\"केला - हरा\"},{\"code\":80,\"name\":\"क्लस्टर बीन्स\"},{\"code\":356,\"name\":\"खरबूजा\"},{\"code\":159,\"name\":\"खीरा\"},{\"code\":64,\"name\":\"खेत मटर\"},{\"code\":350,\"name\":\"गलगल(नींबू)\"},{\"code\":153,\"name\":\"गाजर\"},{\"code\":1,\"name\":\"गेहूँ\"},{\"code\":235,\"name\":\"गेंदा (कलकत्ता)\"},{\"code\":249,\"name\":\"घी\"},{\"code\":3,\"name\":\"चावल\"},{\"code\":157,\"name\":\"चुकंदर\"},{\"code\":302,\"name\":\"छोटी लौकी (कुंदरू)\"},{\"code\":16,\"name\":\"जूट\"},{\"code\":78,\"name\":\"टमाटर\"},{\"code\":66,\"name\":\"टोरिया\"},{\"code\":88,\"name\":\"ठंडी शिमला मिर्च\"},{\"code\":168,\"name\":\"ढोल का छड़ी\"},{\"code\":73,\"name\":\"तरबूज\"},{\"code\":43,\"name\":\"धनिए के पत्ते)\"},{\"code\":2,\"name\":\"धान(धन)(सामान्य)\"},{\"code\":414,\"name\":\"धान (बासमती)\"},{\"code\":18,\"name\":\"नारंगी\"},{\"code\":310,\"name\":\"नींबू\"},{\"code\":154,\"name\":\"पत्ता गोभी\"},{\"code\":171,\"name\":\"पत्तेदार सब्जी\"},{\"code\":72,\"name\":\"पपीता\"},{\"code\":313,\"name\":\"पपीता (कच्चा)\"},{\"code\":303,\"name\":\"परवल\"},{\"code\":342,\"name\":\"पालक\"},{\"code\":23,\"name\":\"प्याज\"},{\"code\":358,\"name\":\"प्याज हरा\"},{\"code\":34,\"name\":\"फूलगोभी\"},{\"code\":298,\"name\":\"फ़्रेंच बीन्स (फ़्रासबीन)\"},{\"code\":35,\"name\":\"बैंगन\"},{\"code\":6,\"name\":\"बंगाल ग्राम(ग्राम)(संपूर्ण)\"},{\"code\":263,\"name\":\"बंगाल ग्राम दाल (ग्राम दाल)\"},{\"code\":299,\"name\":\"भारतीय बीन्स (सीम)\"},{\"code\":85,\"name\":\"भिंडी (लेडीज फिंगर)\"},{\"code\":4,\"name\":\"मक्का\"},{\"code\":174,\"name\":\"मटर गीले\"},{\"code\":340,\"name\":\"मशरूम\"},{\"code\":259,\"name\":\"मसूर दाल\"},{\"code\":63,\"name\":\"मसूर दाल (साबुत)\"},{\"code\":26,\"name\":\"मिर्च लाल\"},{\"code\":368,\"name\":\"मुर्गा\"},{\"code\":161,\"name\":\"मूली\"},{\"code\":46,\"name\":\"मेथी(पत्ते)\"},{\"code\":77,\"name\":\"मौसंबी (मीठा नींबू)\"},{\"code\":297,\"name\":\"रतालू (रतलू)\"},{\"code\":160,\"name\":\"रिजगार्ड(टोरी)\"},{\"code\":25,\"name\":\"लहसुन\"},{\"code\":7,\"name\":\"लाल चने\"},{\"code\":351,\"name\":\"लीची\"},{\"code\":89,\"name\":\"लोबिया (सब्जी)\"},{\"code\":82,\"name\":\"लौकी\"},{\"code\":304,\"name\":\"लंबा तरबूज (काकरी)\"},{\"code\":152,\"name\":\"शकरकंद\"},{\"code\":341,\"name\":\"शलजम\"},{\"code\":164,\"name\":\"शिमला मिर्च\"},{\"code\":158,\"name\":\"सफ़ेद कद्दू\"},{\"code\":412,\"name\":\"सफ़ेद मटर\"},{\"code\":12,\"name\":\"सरसों\"},{\"code\":324,\"name\":\"सरसों का तेल\"},{\"code\":156,\"name\":\"साँप रक्षक\"},{\"code\":345,\"name\":\"सूखा चारा\"},{\"code\":17,\"name\":\"सेब\"},{\"code\":332,\"name\":\"स्क्वैश (चप्पल कडू)\"},{\"code\":311,\"name\":\"स्पंज लौकी\"},{\"code\":87,\"name\":\"हरी मिर्च\"},{\"code\":265,\"name\":\"हरे चने की दाल (मूंग दाल)\"},{\"code\":9,\"name\":\"हरे चने (मूंग)(साबुत)\"},{\"code\":50,\"name\":\"हरे मटर\"},{\"code\":296,\"name\":\"हाथी रतालू (सूरन)\"}],\"totalCounts\":95,\"totalPriceChange\":null,\"totalPriceChangePercent\":null}",
+      "body_characters": 3268
+    }
+  ]
+}
