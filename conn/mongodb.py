@@ -4,6 +4,7 @@ from datetime import datetime
 
 from pymongo import MongoClient, UpdateOne
 
+from conn.mandi_observations import ensure_mandi_identity_indexes
 from tools.api_extractor.document import Documents
 
 
@@ -21,11 +22,7 @@ class BiharCropMongo:
         self.client = MongoClient("mongodb://localhost:27017/")
         self.db = self.client["bihar_agriculture"]
         self.collection = self.db["mandi_prices"]
-        self.collection.create_index(
-            [(field, 1) for field in self.IDENTITY_FIELDS],
-            unique=True,
-            name="unique_mandi_record",
-        )
+        ensure_mandi_identity_indexes(self.collection)
 
     def insert_records(self, records):
         if not records:
@@ -33,7 +30,13 @@ class BiharCropMongo:
 
         operations = [
             UpdateOne(
-                {field: record[field] for field in self.IDENTITY_FIELDS},
+                {
+                    **{
+                        field: record[field]
+                        for field in self.IDENTITY_FIELDS
+                    },
+                    "source_record_id": {"$exists": False},
+                },
                 {"$set": record},
                 upsert=True,
             )

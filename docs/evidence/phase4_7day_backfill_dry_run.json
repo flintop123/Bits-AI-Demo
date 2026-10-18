@@ -1,0 +1,259 @@
+{
+  "run_id": "107c09e8-c796-45b6-ad42-860140b6878a",
+  "orchestrator": "phase4_daily_mandi_supervisor",
+  "agent_id": "daily_mandi_api_agent",
+  "tool_name": "bihar_mandi_paginated_api",
+  "routing_strategy": "one_date_per_agent_tool_invocation",
+  "collection_dates": [
+    "2026-10-12",
+    "2026-10-13",
+    "2026-10-14",
+    "2026-10-15",
+    "2026-10-16",
+    "2026-10-17",
+    "2026-10-18"
+  ],
+  "dry_run": true,
+  "status": "completed",
+  "started_at": "2026-10-18T08:52:37.919926+00:00",
+  "events": [
+    {
+      "event": "tool_invoked",
+      "timestamp": "2026-10-18T08:52:37.919926+00:00",
+      "agent_id": "daily_mandi_api_agent",
+      "tool_name": "bihar_mandi_paginated_api",
+      "date": "2026-10-12",
+      "attempt": 1
+    },
+    {
+      "event": "tool_result",
+      "timestamp": "2026-10-18T08:52:38.514858+00:00",
+      "date": "2026-10-12",
+      "attempt": 1,
+      "status": "success",
+      "records_processed": 69
+    },
+    {
+      "event": "tool_invoked",
+      "timestamp": "2026-10-18T08:52:38.514858+00:00",
+      "agent_id": "daily_mandi_api_agent",
+      "tool_name": "bihar_mandi_paginated_api",
+      "date": "2026-10-13",
+      "attempt": 1
+    },
+    {
+      "event": "tool_result",
+      "timestamp": "2026-10-18T08:52:39.481558+00:00",
+      "date": "2026-10-13",
+      "attempt": 1,
+      "status": "success",
+      "records_processed": 133
+    },
+    {
+      "event": "tool_invoked",
+      "timestamp": "2026-10-18T08:52:39.481558+00:00",
+      "agent_id": "daily_mandi_api_agent",
+      "tool_name": "bihar_mandi_paginated_api",
+      "date": "2026-10-14",
+      "attempt": 1
+    },
+    {
+      "event": "tool_result",
+      "timestamp": "2026-10-18T08:52:40.546972+00:00",
+      "date": "2026-10-14",
+      "attempt": 1,
+      "status": "success",
+      "records_processed": 121
+    },
+    {
+      "event": "tool_invoked",
+      "timestamp": "2026-10-18T08:52:40.546972+00:00",
+      "agent_id": "daily_mandi_api_agent",
+      "tool_name": "bihar_mandi_paginated_api",
+      "date": "2026-10-15",
+      "attempt": 1
+    },
+    {
+      "event": "tool_result",
+      "timestamp": "2026-10-18T08:52:41.828945+00:00",
+      "date": "2026-10-15",
+      "attempt": 1,
+      "status": "success",
+      "records_processed": 101
+    },
+    {
+      "event": "tool_invoked",
+      "timestamp": "2026-10-18T08:52:41.828945+00:00",
+      "agent_id": "daily_mandi_api_agent",
+      "tool_name": "bihar_mandi_paginated_api",
+      "date": "2026-10-16",
+      "attempt": 1
+    },
+    {
+      "event": "tool_result",
+      "timestamp": "2026-10-18T08:52:42.888840+00:00",
+      "date": "2026-10-16",
+      "attempt": 1,
+      "status": "success",
+      "records_processed": 132
+    },
+    {
+      "event": "tool_invoked",
+      "timestamp": "2026-10-18T08:52:42.888840+00:00",
+      "agent_id": "daily_mandi_api_agent",
+      "tool_name": "bihar_mandi_paginated_api",
+      "date": "2026-10-17",
+      "attempt": 1
+    },
+    {
+      "event": "tool_result",
+      "timestamp": "2026-10-18T08:52:43.405712+00:00",
+      "date": "2026-10-17",
+      "attempt": 1,
+      "status": "success",
+      "records_processed": 42
+    },
+    {
+      "event": "tool_invoked",
+      "timestamp": "2026-10-18T08:52:43.405712+00:00",
+      "agent_id": "daily_mandi_api_agent",
+      "tool_name": "bihar_mandi_paginated_api",
+      "date": "2026-10-18",
+      "attempt": 1
+    },
+    {
+      "event": "tool_result",
+      "timestamp": "2026-10-18T08:52:43.662758+00:00",
+      "date": "2026-10-18",
+      "attempt": 1,
+      "status": "success",
+      "records_processed": 16
+    }
+  ],
+  "completed_at": "2026-10-18T08:52:43.662758+00:00",
+  "results": [
+    {
+      "date": "2026-10-12",
+      "status": "completed",
+      "attempts": 1,
+      "pages_fetched": 1,
+      "records_reported": 69,
+      "records_processed": 69,
+      "districts": 10,
+      "markets": 17,
+      "commodities": 12,
+      "count_before": null,
+      "count_after": null,
+      "inserted": 0,
+      "matched": 0,
+      "modified": 0
+    },
+    {
+      "date": "2026-10-13",
+      "status": "completed",
+      "attempts": 1,
+      "pages_fetched": 2,
+      "records_reported": 133,
+      "records_processed": 133,
+      "districts": 17,
+      "markets": 29,
+      "commodities": 23,
+      "count_before": null,
+      "count_after": null,
+      "inserted": 0,
+      "matched": 0,
+      "modified": 0
+    },
+    {
+      "date": "2026-10-14",
+      "status": "completed",
+      "attempts": 1,
+      "pages_fetched": 2,
+      "records_reported": 121,
+      "records_processed": 121,
+      "districts": 14,
+      "markets": 23,
+      "commodities": 23,
+      "count_before": null,
+      "count_after": null,
+      "inserted": 0,
+      "matched": 0,
+      "modified": 0
+    },
+    {
+      "date": "2026-10-15",
+      "status": "completed",
+      "attempts": 1,
+      "pages_fetched": 2,
+      "records_reported": 101,
+      "records_processed": 101,
+      "districts": 18,
+      "markets": 23,
+      "commodities": 21,
+      "count_before": null,
+      "count_after": null,
+      "inserted": 0,
+      "matched": 0,
+      "modified": 0
+    },
+    {
+      "date": "2026-10-16",
+      "status": "completed",
+      "attempts": 1,
+      "pages_fetched": 2,
+      "records_reported": 132,
+      "records_processed": 132,
+      "districts": 20,
+      "markets": 29,
+      "commodities": 21,
+      "count_before": null,
+      "count_after": null,
+      "inserted": 0,
+      "matched": 0,
+      "modified": 0
+    },
+    {
+      "date": "2026-10-17",
+      "status": "completed",
+      "attempts": 1,
+      "pages_fetched": 1,
+      "records_reported": 42,
+      "records_processed": 42,
+      "districts": 8,
+      "markets": 10,
+      "commodities": 11,
+      "count_before": null,
+      "count_after": null,
+      "inserted": 0,
+      "matched": 0,
+      "modified": 0
+    },
+    {
+      "date": "2026-10-18",
+      "status": "completed",
+      "attempts": 1,
+      "pages_fetched": 1,
+      "records_reported": 16,
+      "records_processed": 16,
+      "districts": 4,
+      "markets": 4,
+      "commodities": 9,
+      "count_before": null,
+      "count_after": null,
+      "inserted": 0,
+      "matched": 0,
+      "modified": 0
+    }
+  ],
+  "metrics": {
+    "dates_requested": 7,
+    "dates_completed": 7,
+    "automation_rate": 1.0,
+    "manual_interventions": 0,
+    "retries": 0,
+    "records_processed": 614,
+    "inserted": 0,
+    "matched": 0,
+    "modified": 0
+  }
+}

@@ -26,6 +26,7 @@ class DatabaseSchemaTests(unittest.TestCase):
                 "crop_statistics",
                 "agriculture_documents",
                 "agent_runs",
+                "mandi_ingestion_runs",
             },
         )
 
@@ -60,7 +61,10 @@ class DatabaseSchemaTests(unittest.TestCase):
                 for index in collection["indexes"]
                 if index.get("unique")
             ]
-            self.assertIn(identity, unique_keys, name)
+            self.assertTrue(
+                any(keys[:len(identity)] == identity for keys in unique_keys),
+                name,
+            )
 
 
 if __name__ == "__main__":

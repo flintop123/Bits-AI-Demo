@@ -18,6 +18,7 @@ connectors, unique indexes and automated tests.
 ```mermaid
 flowchart TD
     R[agent_runs] -->|extraction_run_id| M[mandi_prices]
+    S[mandi_ingestion_runs] -->|extraction_run_id| M
     R -->|extraction_run_id| C[crop_statistics]
     R -->|extraction_run_id| D[agriculture_documents]
     M --> Q[Grounded query service]
@@ -56,6 +57,18 @@ One document represents one crop-variety observation for a market and date.
 | Units | `unit` | Normalized as `quintal` |
 | Source | `source_language`, `source_url`, `scraped_at`, `metadata` | Retains Hindi origin, URL and scrape context |
 | Provenance | `extraction_run_id`, `extracting_agent`, `source_type`, `extracted_at` | Links the record to the Mandi Web Agent run |
+
+Phase 4 supplements these fields with the official `source_record_id`,
+`district_code`, `market_code`, `crop_code`, `variety_code`, arrival quantity,
+source epoch timestamps, and the declared market/day spatial and temporal
+granularities. The source reuses identifiers on different reporting dates, so
+the official identifier and observation date are uniquely indexed together.
+The original compound identity remains compatible with browser-ingested
+records by appending the optional official identifier to the shared unique
+index. Consequently, source-native rows that otherwise have the same visible
+market fields remain distinct, while browser rows without an official id stay
+duplicate-safe. A locality-time index supports district, market, commodity and
+date queries without scanning the full collection.
 
 Expected query dimensions are district, market, crop, variety and date.
 Application validation rejects non-object rows and rows missing any of the
@@ -126,6 +139,15 @@ Statuses are `running`, `completed`, `partial_failure` or `failed`. The
 supervisor permits one automatic retry and records both transient and permanent
 failures instead of suppressing them.
 
+### 3.5 mandi_ingestion_runs
+
+One document represents one scheduled or catch-up Phase 4 collection. It stores
+the requested dates, selected API agent and deterministic tool, pagination and
+record counts, inserts/matches/modifications, retries, failures, timestamps and
+automation rate. This collection separates recurring operational evidence from
+the broader Phase 2 evaluation traces while retaining the same auditable event
+model.
+
 ## 4. Duplicate and update behaviour
 
 All three content connectors use MongoDB upserts against their explicit
@@ -137,6 +159,7 @@ identifies the latest orchestrated extraction represented by the record.
 The unique-index identities are:
 
 - Mandi: district + market + date + crop + variety + source URL.
+- Official Phase 4 mandi API: source record ID + observation date.
 - Crop statistics: crop + season + financial year.
 - PDF chunks: source URL + page number + chunk index.
 - Agent runs: run ID.

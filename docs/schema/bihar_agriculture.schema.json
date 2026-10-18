@@ -1,7 +1,7 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "title": "Bihar Agriculture MongoDB Schema Catalog",
-  "schema_version": 2,
+  "schema_version": 4,
   "database": "bihar_agriculture",
   "shared_provenance_fields": [
     "extraction_run_id",
@@ -19,15 +19,26 @@
         "extracting_agent", "source_type", "extracted_at"
       ],
       "properties": {
+        "source_record_id": {"bsonType": "string"},
         "district": {"bsonType": "string"},
+        "district_code": {"bsonType": "string"},
         "market": {"bsonType": "string"},
+        "market_code": {"bsonType": ["int", "long", "string"]},
         "date": {"bsonType": "string", "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}$"},
+        "arrival_date_epoch_ms": {"bsonType": ["int", "long"]},
+        "arrival_quantity": {"bsonType": ["double", "int", "long", "decimal", "null"]},
+        "arrival_unit": {"bsonType": ["string", "null"]},
         "crop": {"bsonType": "string"},
+        "crop_code": {"bsonType": ["int", "long", "string"]},
         "variety": {"bsonType": "string"},
+        "variety_code": {"bsonType": ["int", "long", "string", "null"]},
         "price": {"bsonType": ["double", "int", "long", "decimal", "null"]},
         "minimum_price": {"bsonType": ["double", "int", "long", "decimal", "null"]},
         "maximum_price": {"bsonType": ["double", "int", "long", "decimal", "null"]},
+        "price_trend": {"bsonType": ["double", "int", "long", "decimal", "null"]},
         "unit": {"bsonType": "string"},
+        "temporal_granularity": {"bsonType": "string"},
+        "spatial_granularity": {"bsonType": "string"},
         "source_language": {"bsonType": "string"},
         "source_url": {"bsonType": "string"},
         "scraped_at": {"bsonType": "date"},
@@ -40,8 +51,19 @@
       "indexes": [
         {
           "name": "unique_mandi_record",
-          "keys": ["district", "market", "date", "crop", "variety", "source_url"],
+          "keys": ["district", "market", "date", "crop", "variety", "source_url", "source_record_id"],
           "unique": true
+        },
+        {
+          "name": "unique_mandi_source_record_day",
+          "keys": ["source_record_id", "date"],
+          "unique": true,
+          "partial_filter": {"source_record_id_type": "string"}
+        },
+        {
+          "name": "mandi_locality_time",
+          "keys": ["district_code", "market_code", "crop_code", "date"],
+          "unique": false
         }
       ]
     },
@@ -156,6 +178,34 @@
         "results": {"bsonType": "array"},
         "automation_metrics": {"bsonType": "object"},
         "langsmith": {"bsonType": "object"}
+      },
+      "indexes": [
+        {"name": "run_id_1", "keys": ["run_id"], "unique": true},
+        {"name": "started_at_-1", "keys": ["started_at"], "direction": -1}
+      ]
+    },
+    "mandi_ingestion_runs": {
+      "description": "One scheduled or catch-up Phase 4 mandi collection run.",
+      "identity_fields": ["run_id"],
+      "required": [
+        "run_id", "orchestrator", "agent_id", "tool_name",
+        "routing_strategy", "collection_dates", "dry_run", "status",
+        "started_at", "events"
+      ],
+      "properties": {
+        "run_id": {"bsonType": "string"},
+        "orchestrator": {"bsonType": "string"},
+        "agent_id": {"bsonType": "string"},
+        "tool_name": {"bsonType": "string"},
+        "routing_strategy": {"bsonType": "string"},
+        "collection_dates": {"bsonType": "array", "items": {"bsonType": "string"}},
+        "dry_run": {"bsonType": "bool"},
+        "status": {"bsonType": "string", "enum": ["running", "completed", "partial_failure", "failed"]},
+        "started_at": {"bsonType": "string"},
+        "completed_at": {"bsonType": "string"},
+        "events": {"bsonType": "array"},
+        "results": {"bsonType": "array"},
+        "metrics": {"bsonType": "object"}
       },
       "indexes": [
         {"name": "run_id_1", "keys": ["run_id"], "unique": true},

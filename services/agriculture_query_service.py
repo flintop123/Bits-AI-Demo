@@ -2,6 +2,7 @@
 
 import os
 import re
+from datetime import date
 
 from pymongo import MongoClient
 
@@ -70,11 +71,79 @@ class AgricultureQueryService:
             if value:
                 query[field] = self._exact_text(value)
         if filters.get("date"):
-            query["date"] = filters["date"]
+            query["date"] = self._iso_date(filters["date"], "date")
+        elif filters.get("date_from") or filters.get("date_to"):
+            date_range = {}
+            if filters.get("date_from"):
+                date_range["$gte"] = self._iso_date(
+                    filters["date_from"], "date_from"
+                )
+            if filters.get("date_to"):
+                date_range["$lte"] = self._iso_date(
+                    filters["date_to"], "date_to"
+                )
+            if (
+                "$gte" in date_range
+                and "$lte" in date_range
+                and date_range["$gte"] > date_range["$lte"]
+            ):
+                raise ValueError("date_from must not be after date_to")
+            query["date"] = date_range
 
         cursor = self.mandi_prices.find(query, {"_id": 0})
         cursor = cursor.sort([("date", -1), ("district", 1), ("crop", 1)])
         return list(cursor.limit(limit))
+
+    def find_mandi_trends(self, filters, days):
+        query = {}
+        for field in ("district", "market", "crop", "variety"):
+            value = filters.get(field)
+            if value:
+                query[field] = self._exact_text(value)
+        date_range = {}
+        if filters.get("date_from"):
+            date_range["$gte"] = self._iso_date(
+                filters["date_from"], "date_from"
+            )
+        if filters.get("date_to"):
+            date_range["$lte"] = self._iso_date(
+                filters["date_to"], "date_to"
+            )
+        if (
+            "$gte" in date_range
+            and "$lte" in date_range
+            and date_range["$gte"] > date_range["$lte"]
+        ):
+            raise ValueError("date_from must not be after date_to")
+        if date_range:
+            query["date"] = date_range
+        pipeline = [
+            {"$match": query},
+            {"$group": {
+                "_id": "$date",
+                "observation_count": {"$sum": 1},
+                "average_modal_price": {"$avg": "$price"},
+                "minimum_price": {"$min": "$minimum_price"},
+                "maximum_price": {"$max": "$maximum_price"},
+                "markets": {"$addToSet": "$market"},
+                "districts": {"$addToSet": "$district"},
+            }},
+            {"$sort": {"_id": -1}},
+            {"$limit": days},
+            {"$project": {
+                "_id": 0,
+                "date": "$_id",
+                "observation_count": 1,
+                "average_modal_price": {"$round": [
+                    "$average_modal_price", 2
+                ]},
+                "minimum_price": 1,
+                "maximum_price": 1,
+                "market_count": {"$size": "$markets"},
+                "district_count": {"$size": "$districts"},
+            }},
+        ]
+        return list(self.mandi_prices.aggregate(pipeline))
 
     def find_crop_statistics(self, filters, limit):
         query = {}
@@ -247,6 +316,7 @@ class AgricultureQueryService:
         return {
             "mandi_crops": sorted(self.mandi_prices.distinct("crop")),
             "districts": sorted(self.mandi_prices.distinct("district")),
+            "markets": sorted(self.mandi_prices.distinct("market")),
             "statistical_crops": sorted(
                 self.crop_statistics.distinct("crop")
             ),
@@ -264,3 +334,12 @@ class AgricultureQueryService:
             "$regex": f"^{re.escape(value.strip())}$",
             "$options": "i",
         }
+
+    @staticmethod
+    def _iso_date(value, field_name):
+        try:
+            return date.fromisoformat(str(value)).isoformat()
+        except ValueError as exc:
+            raise ValueError(
+                f"{field_name} must use YYYY-MM-DD format"
+            ) from exc

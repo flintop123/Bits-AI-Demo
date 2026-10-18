@@ -1,5 +1,28 @@
 # Bits-AI-Demo-For-BIHAR
 
+## Phase 4: daily and locality-aware mandi collection
+
+The Phase 4 pipeline collects official Bihar Krishi mandi observations for an
+exact date through the public paginated API, validates the requested temporal
+window, preserves official district/market/commodity codes, and performs
+duplicate-safe MongoDB upserts with run-level audit evidence.
+
+```powershell
+# Validate today's source without changing MongoDB
+python run_phase4_mandi_pipeline.py --dry-run
+
+# Collect today's data
+python run_phase4_mandi_pipeline.py
+
+# Catch up the latest seven days
+python run_phase4_mandi_pipeline.py --days 7
+```
+
+Temporal and administrative-locality queries are exposed through
+`/api/v1/mandi-prices` and `/api/v1/mandi-prices/trends`. See
+`docs/PHASE4_SPATIOTEMPORAL_MANDI.md` for the verified source contract,
+architecture, scheduling instructions, and the coordinate-enrichment boundary.
+
 # Data Collection link -
                        - https://statedata.bihar.gov.in/dataLab/
                        - https://www.biharkrishi.in/

@@ -1,0 +1,61 @@
+{
+  "run_id": "c497ae8d-16df-47ff-949c-1966331d1e3f",
+  "orchestrator": "phase4_daily_mandi_supervisor",
+  "agent_id": "daily_mandi_api_agent",
+  "tool_name": "bihar_mandi_paginated_api",
+  "routing_strategy": "one_date_per_agent_tool_invocation",
+  "collection_dates": [
+    "2026-10-18"
+  ],
+  "dry_run": false,
+  "status": "completed",
+  "started_at": "2026-10-18T08:47:25.354423+00:00",
+  "events": [
+    {
+      "event": "tool_invoked",
+      "timestamp": "2026-10-18T08:47:25.361578+00:00",
+      "agent_id": "daily_mandi_api_agent",
+      "tool_name": "bihar_mandi_paginated_api",
+      "date": "2026-10-18",
+      "attempt": 1
+    },
+    {
+      "event": "tool_result",
+      "timestamp": "2026-10-18T08:47:25.670215+00:00",
+      "date": "2026-10-18",
+      "attempt": 1,
+      "status": "success",
+      "records_processed": 16
+    }
+  ],
+  "completed_at": "2026-10-18T08:47:25.670215+00:00",
+  "results": [
+    {
+      "date": "2026-10-18",
+      "status": "completed",
+      "attempts": 1,
+      "pages_fetched": 1,
+      "records_reported": 16,
+      "records_processed": 16,
+      "districts": 4,
+      "markets": 4,
+      "commodities": 9,
+      "count_before": 26,
+      "count_after": 26,
+      "inserted": 0,
+      "matched": 16,
+      "modified": 16
+    }
+  ],
+  "metrics": {
+    "dates_requested": 1,
+    "dates_completed": 1,
+    "automation_rate": 1.0,
+    "manual_interventions": 0,
+    "retries": 0,
+    "records_processed": 16,
+    "inserted": 0,
+    "matched": 16,
+    "modified": 16
+  }
+}
