@@ -1,0 +1,61 @@
+{
+  "generated_at": "2026-10-18T11:57:56.281497+00:00",
+  "status": "passed",
+  "checks": {
+    "mongodb_connection": true,
+    "dashboard_snapshot": true,
+    "dashboard_api_http_200": true,
+    "dashboard_page_rendered": true,
+    "static_assets_available": true,
+    "all_series_nonempty": true,
+    "quality_percentages_valid": true
+  },
+  "observed": {
+    "summary": {
+      "mandi_records": 7345,
+      "dates_covered": 90,
+      "earliest_date": "2026-07-21",
+      "latest_date": "2026-10-18",
+      "districts": 25,
+      "markets": 49,
+      "crops": 37,
+      "verified_locations": 42,
+      "unresolved_locations": 7,
+      "geospatial_coverage_percent": 85.7,
+      "crop_statistics": 4372,
+      "document_chunks": 153
+    },
+    "quality": {
+      "price_complete_records": 7345,
+      "price_completeness_percent": 100.0,
+      "provenance_complete_records": 7345,
+      "provenance_completeness_percent": 100.0,
+      "verified_coordinate_records": 42,
+      "coordinate_verification_percent": 85.7
+    },
+    "latest_run": {
+      "run_id": "764a884e-43cc-4eae-9dcb-6a783a4bc83e",
+      "collection_dates": [
+        "2026-10-18"
+      ],
+      "status": "completed",
+      "started_at": "2026-10-18T09:35:06.182524+00:00",
+      "completed_at": "2026-10-18T09:35:06.376878+00:00",
+      "metrics": {
+        "dates_requested": 1,
+        "dates_completed": 1,
+        "automation_rate": 1.0,
+        "manual_interventions": 0,
+        "retries": 0,
+        "records_processed": 16,
+        "inserted": 0,
+        "matched": 16,
+        "modified": 16
+      }
+    },
+    "daily_points": 30,
+    "district_bars": 10,
+    "crop_bars": 10,
+    "map_points": 42
+  }
+}

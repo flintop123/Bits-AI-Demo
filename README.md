@@ -1,5 +1,21 @@
 # Bits-AI-Demo-For-BIHAR
 
+## Phase 6: visual analytics dashboard
+
+The browser interface now includes a live MongoDB-backed observability and
+market-intelligence dashboard. It visualizes daily collection volume,
+geospatial coverage, top crops and districts, data-quality percentages and
+recent scheduled-run status without sending analytics data to an external
+service.
+
+```powershell
+python data_api.py
+# Open http://127.0.0.1:5000/
+```
+
+The dashboard API is available at `/api/v1/dashboard?days=30`. See
+`docs/PHASE6_VISUAL_ANALYTICS.md` for the metric definitions and limitations.
+
 ## Phase 5: verified geospatial mandi retrieval
 
 Phase 5 stores conservatively verified market-reference points in a dedicated

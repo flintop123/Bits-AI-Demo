@@ -42,6 +42,7 @@ class AgricultureQueryService:
 
         self.mandi_prices = self.database["mandi_prices"]
         self.mandi_locations = self.database["mandi_locations"]
+        self.mandi_runs = self.database["mandi_ingestion_runs"]
         self.crop_statistics = self.database["crop_statistics"]
         self.agriculture_documents = self.database["agriculture_documents"]
         self._embedding_client = embedding_client
@@ -62,6 +63,207 @@ class AgricultureQueryService:
                     self.agriculture_documents.count_documents({
                         "embedding": {"$exists": True, "$ne": []},
                     })
+                ),
+            },
+        }
+
+    def dashboard_snapshot(self, days=30):
+        """Return one read-only snapshot for the visual analytics dashboard."""
+        official_query = {"source_type": "government_mandi_api"}
+        mandi_records = self.mandi_prices.count_documents(official_query)
+        dates = sorted(
+            str(value)
+            for value in self.mandi_prices.distinct("date", official_query)
+            if value
+        )
+        market_codes = {
+            str(value)
+            for value in self.mandi_prices.distinct(
+                "market_code", official_query
+            )
+            if value is not None
+        }
+        district_codes = {
+            str(value)
+            for value in self.mandi_prices.distinct(
+                "district_code", official_query
+            )
+            if value not in (None, "")
+        }
+        crop_codes = {
+            str(value)
+            for value in self.mandi_prices.distinct(
+                "crop_code", official_query
+            )
+            if value not in (None, "")
+        }
+        verified_locations = self.mandi_locations.count_documents({
+            "verification_status": "verified",
+        })
+        coverage_percent = (
+            round(verified_locations / len(market_codes) * 100, 1)
+            if market_codes else 0.0
+        )
+
+        daily_series = list(self.mandi_prices.aggregate([
+            {"$match": official_query},
+            {"$group": {
+                "_id": "$date",
+                "records": {"$sum": 1},
+                "markets": {"$addToSet": "$market_code"},
+                "districts": {"$addToSet": "$district_code"},
+                "average_modal_price": {"$avg": "$price"},
+            }},
+            {"$sort": {"_id": -1}},
+            {"$limit": days},
+            {"$sort": {"_id": 1}},
+            {"$project": {
+                "_id": 0,
+                "date": "$_id",
+                "records": 1,
+                "market_count": {"$size": "$markets"},
+                "district_count": {"$size": "$districts"},
+                "average_modal_price": {
+                    "$round": ["$average_modal_price", 2]
+                },
+            }},
+        ]))
+        district_distribution = list(self.mandi_prices.aggregate([
+            {"$match": official_query},
+            {"$group": {
+                "_id": "$district",
+                "records": {"$sum": 1},
+                "markets": {"$addToSet": "$market_code"},
+            }},
+            {"$sort": {"records": -1, "_id": 1}},
+            {"$limit": 10},
+            {"$project": {
+                "_id": 0,
+                "label": "$_id",
+                "records": 1,
+                "market_count": {"$size": "$markets"},
+            }},
+        ]))
+        crop_distribution = list(self.mandi_prices.aggregate([
+            {"$match": official_query},
+            {"$group": {
+                "_id": "$crop",
+                "records": {"$sum": 1},
+                "markets": {"$addToSet": "$market_code"},
+            }},
+            {"$sort": {"records": -1, "_id": 1}},
+            {"$limit": 10},
+            {"$project": {
+                "_id": 0,
+                "label": "$_id",
+                "records": 1,
+                "market_count": {"$size": "$markets"},
+            }},
+        ]))
+        document_languages = list(self.agriculture_documents.aggregate([
+            {"$group": {"_id": "$language", "records": {"$sum": 1}}},
+            {"$sort": {"records": -1, "_id": 1}},
+            {"$project": {"_id": 0, "label": "$_id", "records": 1}},
+        ]))
+        locations = list(self.mandi_locations.find(
+            {"verification_status": "verified"},
+            {
+                "_id": 0,
+                "market_code": 1,
+                "market_name": 1,
+                "district_name": 1,
+                "location": 1,
+                "confidence": 1,
+                "location_precision": 1,
+            },
+        ).sort([("district_name", 1), ("market_name", 1)]).limit(200))
+
+        run_history = list(self.mandi_runs.find(
+            {},
+            {
+                "_id": 0,
+                "run_id": 1,
+                "status": 1,
+                "started_at": 1,
+                "completed_at": 1,
+                "collection_dates": 1,
+                "metrics": 1,
+            },
+        ).sort("started_at", -1).limit(12))
+        completed_runs = sum(
+            item.get("status") == "completed" for item in run_history
+        )
+        run_success_percent = (
+            round(completed_runs / len(run_history) * 100, 1)
+            if run_history else None
+        )
+
+        price_complete = self.mandi_prices.count_documents({
+            **official_query,
+            "price": {"$type": "number"},
+        })
+        provenance_complete = self.mandi_prices.count_documents({
+            **official_query,
+            "extraction_run_id": {"$exists": True, "$ne": ""},
+            "extracting_agent": {"$exists": True, "$ne": ""},
+            "extracted_at": {"$exists": True, "$ne": ""},
+        })
+        percent = lambda value, total: (
+            round(value / total * 100, 1) if total else 0.0
+        )
+        return {
+            "generated_at": date.today().isoformat(),
+            "window_days": days,
+            "summary": {
+                "mandi_records": mandi_records,
+                "dates_covered": len(dates),
+                "earliest_date": dates[0] if dates else None,
+                "latest_date": dates[-1] if dates else None,
+                "districts": len(district_codes),
+                "markets": len(market_codes),
+                "crops": len(crop_codes),
+                "verified_locations": verified_locations,
+                "unresolved_locations": max(
+                    len(market_codes) - verified_locations, 0
+                ),
+                "geospatial_coverage_percent": coverage_percent,
+                "crop_statistics": self.crop_statistics.count_documents({}),
+                "document_chunks": (
+                    self.agriculture_documents.count_documents({})
+                ),
+            },
+            "series": {
+                "daily_collection": daily_series,
+                "top_districts": district_distribution,
+                "top_crops": crop_distribution,
+                "document_languages": document_languages,
+            },
+            "geospatial": {
+                "bounds": {
+                    "min_latitude": 24.25,
+                    "max_latitude": 27.60,
+                    "min_longitude": 83.25,
+                    "max_longitude": 88.35,
+                },
+                "locations": locations,
+            },
+            "pipeline": {
+                "latest_run": run_history[0] if run_history else None,
+                "recent_runs": run_history,
+                "recent_success_percent": run_success_percent,
+            },
+            "quality": {
+                "price_complete_records": price_complete,
+                "price_completeness_percent": percent(
+                    price_complete, mandi_records
+                ),
+                "provenance_complete_records": provenance_complete,
+                "provenance_completeness_percent": percent(
+                    provenance_complete, mandi_records
+                ),
+                "verified_coordinate_records": verified_locations,
+                "coordinate_verification_percent": percent(
+                    verified_locations, len(market_codes)
                 ),
             },
         }
