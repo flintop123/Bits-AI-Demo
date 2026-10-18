@@ -32,6 +32,18 @@ def parse_days(raw_days):
     return days
 
 
+def parse_float(raw_value, field_name, minimum, maximum):
+    try:
+        value = float(raw_value)
+    except (TypeError, ValueError) as exc:
+        raise ValueError(f"{field_name} must be a number") from exc
+    if value < minimum or value > maximum:
+        raise ValueError(
+            f"{field_name} must be between {minimum} and {maximum}"
+        )
+    return value
+
+
 def selected_filters(names):
     return {
         name: request.args.get(name, "").strip()
@@ -98,6 +110,40 @@ def create_app(service=None, qa_service=None):
         records = query_service.find_mandi_trends(filters, days)
         return jsonify({
             "count": len(records),
+            "days": days,
+            "filters": filters,
+            "records": records,
+        })
+
+    @app.get("/api/v1/mandi-prices/nearby")
+    def nearby_mandi_prices():
+        latitude = parse_float(
+            request.args.get("latitude"), "latitude", -90, 90
+        )
+        longitude = parse_float(
+            request.args.get("longitude"), "longitude", -180, 180
+        )
+        radius_km = parse_float(
+            request.args.get("radius_km", "50"), "radius_km", 1, 300
+        )
+        days = parse_days(request.args.get("days", "7"))
+        limit = parse_limit(request.args.get("limit", "20"))
+        filters = selected_filters(("crop", "variety"))
+        records = query_service.find_nearby_mandi_prices(
+            latitude,
+            longitude,
+            radius_km,
+            filters,
+            days,
+            limit,
+        )
+        return jsonify({
+            "count": len(records),
+            "origin": {
+                "type": "Point",
+                "coordinates": [longitude, latitude],
+            },
+            "radius_km": radius_km,
             "days": days,
             "filters": filters,
             "records": records,

@@ -2,7 +2,7 @@
 
 import os
 import re
-from datetime import date
+from datetime import date, timedelta
 
 from pymongo import MongoClient
 
@@ -41,6 +41,7 @@ class AgricultureQueryService:
             self._owns_client = False
 
         self.mandi_prices = self.database["mandi_prices"]
+        self.mandi_locations = self.database["mandi_locations"]
         self.crop_statistics = self.database["crop_statistics"]
         self.agriculture_documents = self.database["agriculture_documents"]
         self._embedding_client = embedding_client
@@ -52,6 +53,7 @@ class AgricultureQueryService:
             "database": "bihar_agriculture",
             "collections": {
                 "mandi_prices": self.mandi_prices.count_documents({}),
+                "mandi_locations": self.mandi_locations.count_documents({}),
                 "crop_statistics": self.crop_statistics.count_documents({}),
                 "agriculture_documents": (
                     self.agriculture_documents.count_documents({})
@@ -144,6 +146,89 @@ class AgricultureQueryService:
             }},
         ]
         return list(self.mandi_prices.aggregate(pipeline))
+
+    def find_nearby_mandi_prices(
+        self,
+        latitude,
+        longitude,
+        radius_km,
+        filters,
+        days,
+        limit,
+    ):
+        """Return recent prices from verified markets within a radius."""
+        location_pipeline = [
+            {"$geoNear": {
+                "near": {
+                    "type": "Point",
+                    "coordinates": [longitude, latitude],
+                },
+                "distanceField": "distance_meters",
+                "maxDistance": radius_km * 1000,
+                "spherical": True,
+                "query": {"verification_status": "verified"},
+            }},
+            {"$limit": 100},
+            {"$project": {
+                "_id": 0,
+                "market_code": 1,
+                "market_name": 1,
+                "district_code": 1,
+                "district_name": 1,
+                "location": 1,
+                "confidence": 1,
+                "location_precision": 1,
+                "coordinate_source": 1,
+                "coordinate_source_url": 1,
+                "coordinate_source_license": 1,
+                "distance_meters": 1,
+            }},
+        ]
+        locations = list(self.mandi_locations.aggregate(location_pipeline))
+        if not locations:
+            return []
+
+        by_market = {
+            location["market_code"]: location for location in locations
+        }
+        price_query = {"market_code": {"$in": list(by_market)}}
+        for field in ("crop", "variety"):
+            value = filters.get(field)
+            if value:
+                price_query[field] = self._exact_text(value)
+
+        latest = self.mandi_prices.find_one(
+            price_query, {"_id": 0, "date": 1}, sort=[("date", -1)]
+        )
+        if latest is None:
+            return []
+        latest_date = date.fromisoformat(latest["date"])
+        cutoff = (latest_date - timedelta(days=days - 1)).isoformat()
+        price_query["date"] = {
+            "$gte": cutoff,
+            "$lte": latest_date.isoformat(),
+        }
+        cursor = self.mandi_prices.find(price_query, {"_id": 0})
+        cursor = cursor.sort([("date", -1), ("market_code", 1), ("crop", 1)])
+        records = []
+        for record in cursor.limit(limit):
+            location = by_market.get(record.get("market_code"))
+            if not location:
+                continue
+            enriched = dict(record)
+            enriched["distance_km"] = round(
+                location["distance_meters"] / 1000, 3
+            )
+            enriched["market_location"] = location["location"]
+            enriched["coordinate_provenance"] = {
+                "source": location.get("coordinate_source"),
+                "source_url": location.get("coordinate_source_url"),
+                "license": location.get("coordinate_source_license"),
+                "confidence": location.get("confidence"),
+                "precision": location.get("location_precision"),
+            }
+            records.append(enriched)
+        return records
 
     def find_crop_statistics(self, filters, limit):
         query = {}

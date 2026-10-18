@@ -26,6 +26,8 @@ class DemoUiTests(unittest.TestCase):
             self.assertEqual(response.status_code, 200)
             self.assertIn(b"Bihar Agriculture Intelligence", response.data)
             self.assertIn(b'id="question-form"', response.data)
+            self.assertIn(b'id="nearby-form"', response.data)
+            self.assertIn(b'id="use-location"', response.data)
             self.assertIn(b'/static/app.js', response.data)
         finally:
             response.close()

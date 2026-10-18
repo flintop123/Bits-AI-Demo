@@ -2,7 +2,7 @@
 
 ## 1. Purpose and design
 
-The `bihar_agriculture` MongoDB database stores normalized records from three
+The `bihar_agriculture` MongoDB database stores normalized records from four
 different source families and the audit history of the supervisor that invokes
 their specialist agents. The design keeps source-specific facts in separate
 collections because their identities and intended queries differ. All
@@ -22,6 +22,8 @@ flowchart TD
     R -->|extraction_run_id| C[crop_statistics]
     R -->|extraction_run_id| D[agriculture_documents]
     M --> Q[Grounded query service]
+    L[mandi_locations] -->|market_code| M
+    L --> Q
     C --> Q
     D --> Q
 ```
@@ -76,7 +78,27 @@ eight source-table fields. Dates are normalized from `DD/MM/YYYY` to
 `YYYY-MM-DD` where possible. Numeric parsing returns null instead of inventing
 a value when the source cell has no parseable number.
 
-### 3.2 crop_statistics
+### 3.2 mandi_locations
+
+One document represents one conservatively verified geographic point for an
+official mandi `market_code`. Coordinates use GeoJSON order
+`[longitude, latitude]`. The collection is separate from daily price rows so a
+market coordinate is stored once and joined by its stable source code.
+
+| Field group | Fields | Validation and use |
+| --- | --- | --- |
+| Identity | `market_code` | Unique official market identifier |
+| Administrative locality | `market_name`, `district_code`, `district_name` | Links the point to Bihar source labels |
+| Geometry | `location`, `location_precision` | GeoJSON Point and an explicit distinction between market facility and locality centroid |
+| Verification | `verification_status`, `verification_method`, `confidence` | Only uniquely matched Bihar candidates may be stored |
+| Coordinate provenance | `coordinate_source`, `coordinate_source_url`, `coordinate_source_license`, `osm_type`, `osm_id`, `geocoded_at` | Makes the derived coordinate auditable |
+
+Ambiguous, out-of-state, district-mismatched and name-mismatched candidates
+remain unresolved and are never converted into approximate district
+centroids. This preserves the difference between an observed market location
+and an inferred administrative location.
+
+### 3.3 crop_statistics
 
 One document represents a crop-season-financial-year observation.
 
@@ -94,7 +116,7 @@ The workbook must contain Area, Production and Yield blocks with common year
 columns. Cotton production uses 170 kg bales; jute-family crops use 180 kg
 bales; other crops use tonnes.
 
-### 3.3 agriculture_documents
+### 3.4 agriculture_documents
 
 One document represents one bounded, page-aware text chunk from an allowlisted
 official PDF.
@@ -121,7 +143,7 @@ is used, preventing stale vectors from influencing retrieval after content is
 updated. Embedding fields are reproducible derived data and do not alter the
 chunk identity or source provenance.
 
-### 3.4 agent_runs
+### 3.5 agent_runs
 
 One document represents one supervisor execution.
 
@@ -139,7 +161,7 @@ Statuses are `running`, `completed`, `partial_failure` or `failed`. The
 supervisor permits one automatic retry and records both transient and permanent
 failures instead of suppressing them.
 
-### 3.5 mandi_ingestion_runs
+### 3.6 mandi_ingestion_runs
 
 One document represents one scheduled or catch-up Phase 4 collection. It stores
 the requested dates, selected API agent and deterministic tool, pagination and
@@ -160,6 +182,7 @@ The unique-index identities are:
 
 - Mandi: district + market + date + crop + variety + source URL.
 - Official Phase 4 mandi API: source record ID + observation date.
+- Mandi locations: official market code.
 - Crop statistics: crop + season + financial year.
 - PDF chunks: source URL + page number + chunk index.
 - Agent runs: run ID.

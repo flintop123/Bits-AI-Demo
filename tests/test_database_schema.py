@@ -5,6 +5,7 @@ from pathlib import Path
 from conn.agriculture_documents_mongodb import AgricultureDocumentsMongo
 from conn.crop_statistics_mongodb import CropStatisticsMongo
 from conn.mongodb import BiharCropMongo
+from conn.mandi_locations import MandiLocationMongo
 from export_database_evidence import COLLECTION_PROJECTIONS, PROVENANCE_FIELDS
 
 
@@ -23,6 +24,7 @@ class DatabaseSchemaTests(unittest.TestCase):
             set(self.collections),
             {
                 "mandi_prices",
+                "mandi_locations",
                 "crop_statistics",
                 "agriculture_documents",
                 "agent_runs",
@@ -33,6 +35,7 @@ class DatabaseSchemaTests(unittest.TestCase):
     def test_documented_identity_fields_match_connectors(self):
         expected = {
             "mandi_prices": list(BiharCropMongo.IDENTITY_FIELDS),
+            "mandi_locations": list(MandiLocationMongo.IDENTITY_FIELDS),
             "crop_statistics": list(CropStatisticsMongo.IDENTITY_FIELDS),
             "agriculture_documents": list(
                 AgricultureDocumentsMongo.IDENTITY_FIELDS

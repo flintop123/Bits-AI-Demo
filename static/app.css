@@ -137,6 +137,20 @@ textarea::placeholder { color: #8a948d; }
 .record-card dd { margin: 4px 0 0; overflow-wrap: anywhere; font-size: .83rem; line-height: 1.45; }
 .record-content { grid-column: 1 / -1; }
 
+.nearby-panel { margin-top: 18px; padding: 34px; border: 1px solid var(--line); border-radius: 24px; background: rgba(255, 253, 247, 0.9); box-shadow: var(--shadow); }
+.nearby-intro { max-width: 760px; margin: 14px 0 0; color: var(--muted); line-height: 1.55; }
+.nearby-form { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 14px; align-items: end; }
+.nearby-form label { display: grid; gap: 7px; color: var(--muted); font-size: .76rem; font-weight: 700; }
+.nearby-form input { width: 100%; padding: 11px 12px; color: var(--ink); border: 1px solid #cbd3c8; border-radius: 10px; background: #fff; }
+.nearby-actions { grid-column: 1 / -1; display: flex; gap: 10px; }
+.nearby-actions button { padding: 11px 15px; border: 1px solid var(--forest); border-radius: 10px; color: #fff; background: var(--forest); font-weight: 730; }
+.nearby-actions .secondary-button { color: var(--forest); background: transparent; }
+.nearby-status { min-height: 1.4em; margin: 18px 0 0; color: var(--muted); }
+.nearby-results { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; margin-top: 12px; }
+.nearby-card { display: grid; gap: 7px; padding: 16px; border: 1px solid var(--line); border-radius: 13px; background: #fff; }
+.nearby-card small { color: var(--muted); }
+.nearby-card a { color: var(--forest); font-size: .78rem; font-weight: 700; }
+
 footer { display: flex; justify-content: space-between; gap: 24px; padding: 30px 0 40px; color: var(--muted); font-size: .76rem; }
 .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; border: 0; }
 
@@ -160,6 +174,7 @@ footer { display: flex; justify-content: space-between; gap: 24px; padding: 30px
   .local-badge, .result-badges { margin-top: 14px; }
   .result-badges { justify-content: flex-start; }
   .source-list { grid-template-columns: 1fr; }
+  .nearby-form, .nearby-results { grid-template-columns: 1fr; }
   .record-card dl { grid-template-columns: 1fr 1fr; }
   footer { display: block; line-height: 1.8; }
   footer span { display: block; }

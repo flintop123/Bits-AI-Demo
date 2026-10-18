@@ -1,6 +1,6 @@
 import unittest
 
-from data_api import create_app, parse_days, parse_limit
+from data_api import create_app, parse_days, parse_float, parse_limit
 
 
 class FakeQueryService:
@@ -8,6 +8,7 @@ class FakeQueryService:
         self.mandi_call = None
         self.statistics_call = None
         self.trends_call = None
+        self.nearby_call = None
 
     def health(self):
         return {
@@ -30,6 +31,14 @@ class FakeQueryService:
     def find_mandi_trends(self, filters, days):
         self.trends_call = (filters, days)
         return [{"date": "2026-10-18", "average_modal_price": 1200.0}]
+
+    def find_nearby_mandi_prices(
+        self, latitude, longitude, radius_km, filters, days, limit
+    ):
+        self.nearby_call = (
+            latitude, longitude, radius_km, filters, days, limit
+        )
+        return [{"market": "Arwal", "distance_km": 12.5}]
 
     def list_values(self):
         return {
@@ -102,6 +111,25 @@ class DataApiTests(unittest.TestCase):
         self.assertEqual(response.status_code, 400)
         self.assertIn("between 1 and 100", response.json["error"])
 
+    def test_nearby_endpoint_passes_coordinates_window_and_crop(self):
+        response = self.client.get(
+            "/api/v1/mandi-prices/nearby?latitude=25.6&longitude=85.1"
+            "&radius_km=75&days=14&crop=Potato&limit=5"
+        )
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(
+            self.service.nearby_call,
+            (25.6, 85.1, 75.0, {"crop": "Potato"}, 14, 5),
+        )
+        self.assertEqual(response.json["origin"]["coordinates"], [85.1, 25.6])
+
+    def test_nearby_endpoint_requires_valid_coordinates(self):
+        response = self.client.get(
+            "/api/v1/mandi-prices/nearby?latitude=not-a-number&longitude=85"
+        )
+        self.assertEqual(response.status_code, 400)
+        self.assertIn("latitude must be a number", response.json["error"])
+
     def test_catalog_returns_available_values(self):
         response = self.client.get("/api/v1/catalog")
         self.assertEqual(response.status_code, 200)
@@ -118,6 +146,10 @@ class DataApiTests(unittest.TestCase):
     def test_parse_days_enforces_bounded_window(self):
         with self.assertRaisesRegex(ValueError, "between 1 and 365"):
             parse_days("500")
+
+    def test_parse_float_enforces_coordinate_bounds(self):
+        with self.assertRaisesRegex(ValueError, "between -90 and 90"):
+            parse_float("91", "latitude", -90, 90)
 
 
 if __name__ == "__main__":

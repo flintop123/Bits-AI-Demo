@@ -1,5 +1,32 @@
 # Bits-AI-Demo-For-BIHAR
 
+## Phase 5: verified geospatial mandi retrieval
+
+Phase 5 stores conservatively verified market-reference points in a dedicated
+`mandi_locations` collection with a MongoDB `2dsphere` index. Recent prices can
+then be retrieved by a caller's latitude, longitude and radius while preserving
+coordinate source, license, confidence and precision metadata. Each point is
+labelled as either a mapped market facility or a market-locality centroid.
+
+```powershell
+# Inspect five candidates without writing
+python enrich_mandi_locations.py --dry-run --limit 5
+
+# After reviewing the evidence, persist all verified market points
+python enrich_mandi_locations.py
+
+# Query recent potato prices near Patna within 75 km
+# GET /api/v1/mandi-prices/nearby?latitude=25.5941&longitude=85.1376&radius_km=75&days=7&crop=आलू
+```
+
+Ambiguous or mismatched geocoder results remain unresolved; no district
+centroids or guessed coordinates are inserted. See
+`docs/PHASE5_GEOSPATIAL_MANDI.md` for architecture and verification rules.
+The reviewed all-market run verified 42 of 49 observed markets (85.7%) and
+intentionally left seven uncertain markets unresolved. Run
+`python verify_phase5_geospatial.py` after persistence to verify MongoDB
+coverage, required indexes, idempotency and a live nearby-price query.
+
 ## Phase 4: daily and locality-aware mandi collection
 
 The Phase 4 pipeline collects official Bihar Krishi mandi observations for an

@@ -223,3 +223,9 @@ __marimo__/
 # Downloaded source documents (retrieved reproducibly by ingestion commands)
 data/pdfs/
 data/tessdata/
+/docs/evidence/phase5_all_markets_dry_run.json
+/docs/evidence/phase5_all_markets_dry_run_v2.json
+/docs/evidence/phase5_all_markets_dry_run_v3.json
+/docs/evidence/phase5_mandi_geocoding_sample.json
+/docs/evidence/phase5_mandi_geocoding_sample_v2.json
+/docs/evidence/phase5_mandi_geocoding_sample_v3.json

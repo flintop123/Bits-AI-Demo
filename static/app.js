@@ -157,3 +157,79 @@ document.querySelectorAll("[data-question]").forEach((button) => {
 });
 
 loadHealth();
+
+const nearbyForm = document.querySelector("#nearby-form");
+const nearbyStatus = document.querySelector("#nearby-status");
+const nearbyResults = document.querySelector("#nearby-results");
+
+function renderNearbyPrices(records) {
+  nearbyResults.replaceChildren();
+  if (!records.length) {
+    nearbyStatus.textContent = "No verified nearby market observations matched this search.";
+    return;
+  }
+  nearbyStatus.textContent = `${records.length} recent observation${records.length === 1 ? "" : "s"} found.`;
+  records.forEach((record) => {
+    const card = document.createElement("article");
+    card.className = "nearby-card";
+    const heading = textElement("strong", `${record.market || "Market"} · ${record.distance_km} km`);
+    const price = record.price == null ? "Price unavailable" : `₹${formatNumber(record.price)} / ${record.unit || "quintal"}`;
+    card.append(heading, textElement("span", `${record.crop || "Crop"} · ${price}`));
+    card.append(textElement("small", `${record.district || "Bihar"} · ${record.date || "Date unavailable"}`));
+    const coordinates = record.market_location && record.market_location.coordinates;
+    if (coordinates && coordinates.length === 2) {
+      const mapLink = document.createElement("a");
+      mapLink.href = `https://www.openstreetmap.org/?mlat=${coordinates[1]}&mlon=${coordinates[0]}#map=13/${coordinates[1]}/${coordinates[0]}`;
+      mapLink.target = "_blank";
+      mapLink.rel = "noopener noreferrer";
+      mapLink.textContent = "View verified point";
+      card.append(mapLink);
+    }
+    nearbyResults.append(card);
+  });
+}
+
+nearbyForm.addEventListener("submit", async (event) => {
+  event.preventDefault();
+  const latitude = document.querySelector("#nearby-latitude").value;
+  const longitude = document.querySelector("#nearby-longitude").value;
+  const radius = document.querySelector("#nearby-radius").value;
+  const crop = document.querySelector("#nearby-crop").value.trim();
+  const params = new URLSearchParams({
+    latitude,
+    longitude,
+    radius_km: radius,
+    days: "7",
+    limit: "30",
+  });
+  if (crop) params.set("crop", crop);
+  nearbyStatus.textContent = "Searching verified market locations…";
+  nearbyResults.replaceChildren();
+  try {
+    const response = await fetch(`/api/v1/mandi-prices/nearby?${params}`);
+    const data = await response.json();
+    if (!response.ok) throw new Error(data.error || "Nearby search failed.");
+    renderNearbyPrices(data.records || []);
+  } catch (error) {
+    nearbyStatus.textContent = error.message || "Nearby search failed.";
+  }
+});
+
+document.querySelector("#use-location").addEventListener("click", () => {
+  if (!navigator.geolocation) {
+    nearbyStatus.textContent = "This browser does not provide location access.";
+    return;
+  }
+  nearbyStatus.textContent = "Waiting for browser location permission…";
+  navigator.geolocation.getCurrentPosition(
+    (position) => {
+      document.querySelector("#nearby-latitude").value = position.coords.latitude.toFixed(6);
+      document.querySelector("#nearby-longitude").value = position.coords.longitude.toFixed(6);
+      nearbyStatus.textContent = "Location loaded. Select Find nearby prices.";
+    },
+    () => {
+      nearbyStatus.textContent = "Location was unavailable or permission was declined.";
+    },
+    { enableHighAccuracy: false, timeout: 10000, maximumAge: 300000 },
+  );
+});

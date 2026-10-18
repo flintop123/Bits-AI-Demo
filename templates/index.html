@@ -118,6 +118,32 @@
         </aside>
       </section>
 
+      <section class="nearby-panel" aria-labelledby="nearby-heading">
+        <div class="panel-heading">
+          <div>
+            <p class="section-kicker">Verified geographic retrieval</p>
+            <h2 id="nearby-heading">Find recent prices near a location</h2>
+          </div>
+          <span class="local-badge">MongoDB 2dsphere</span>
+        </div>
+        <p class="nearby-intro">
+          Search only markets with conservatively verified coordinates. Your
+          browser location is used for this request only and is not stored.
+        </p>
+        <form id="nearby-form" class="nearby-form">
+          <label>Latitude<input id="nearby-latitude" type="number" step="any" min="-90" max="90" placeholder="25.5941" required></label>
+          <label>Longitude<input id="nearby-longitude" type="number" step="any" min="-180" max="180" placeholder="85.1376" required></label>
+          <label>Radius (km)<input id="nearby-radius" type="number" min="1" max="300" value="75" required></label>
+          <label>Crop (optional)<input id="nearby-crop" type="text" placeholder="आलू"></label>
+          <div class="nearby-actions">
+            <button id="use-location" type="button" class="secondary-button">Use my location</button>
+            <button id="nearby-search" type="submit">Find nearby prices</button>
+          </div>
+        </form>
+        <p id="nearby-status" class="nearby-status" aria-live="polite"></p>
+        <div id="nearby-results" class="nearby-results"></div>
+      </section>
+
       <section id="result-section" class="result-section" hidden aria-live="polite">
         <div id="loading-state" class="loading-state" hidden>
           <span class="loader"></span>

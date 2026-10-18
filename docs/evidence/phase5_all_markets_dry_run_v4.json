@@ -1,0 +1,2980 @@
+{
+  "generated_at": "2026-10-18T11:29:15.969012+00:00",
+  "dry_run": true,
+  "markets_considered": 49,
+  "verified": 42,
+  "unresolved": 7,
+  "already_geocoded": 0,
+  "database_write": {
+    "inserted": 0,
+    "matched": 0,
+    "modified": 0
+  },
+  "verified_locations": [
+    {
+      "market_code": 1635,
+      "market_name": "अरवल",
+      "district_code": "611",
+      "district_name": "अरवल",
+      "location": {
+        "type": "Point",
+        "coordinates": [
+          84.662895,
+          25.24324
+        ]
+      },
+      "verification_status": "verified",
+      "verification_method": "conservative_nominatim_match",
+      "confidence": 0.9573,
+      "display_name": "अरवल, Arwal, अरवल, बिहार, 804401, भारत",
+      "matched_district": "अरवल",
+      "osm_type": "node",
+      "osm_id": 245731036,
+      "place_type": "village",
+      "location_precision": "market_locality_centroid",
+      "resolution_reason": "single_verified_candidate",
+      "candidate_evidence": [
+        {
+          "score": 0.9573,
+          "name": "अरवल",
+          "district": "अरवल",
+          "latitude": 25.24324,
+          "longitude": 84.662895,
+          "osm_type": "node",
+          "osm_id": 245731036,
+          "place_type": "village",
+          "display_name": "अरवल, Arwal, अरवल, बिहार, 804401, भारत"
+        }
+      ],
+      "geocoding_query": "अरवल, अरवल, Bihar, India",
+      "geocoding_query_strategy": "official_name",
+      "alias_evidence": null,
+      "geocoding_query_attempts": [
+        {
+          "query": "अरवल, अरवल, Bihar, India",
+          "query_strategy": "official_name",
+          "accept_language": "hi,en",
+          "candidate_count": 1,
+          "status": "verified",
+          "reason": null
+        }
+      ],
+      "coordinate_source": "OpenStreetMap Nominatim",
+      "coordinate_source_url": "https://nominatim.openstreetmap.org/search",
+      "coordinate_source_license": "OpenStreetMap contributors, ODbL 1.0",
+      "source_market_url": "https://www.biharkrishi.in/mandi",
+      "latest_observation_date": "2026-10-17"
+    },
+    {
+      "market_code": 416,
+      "market_name": "औरंगाबाद",
+      "district_code": "189",
+      "district_name": "औरंगाबाद",
+      "location": {
+        "type": "Point",
+        "coordinates": [
+          84.3746725,
+          24.7536696
+        ]
+      },
+      "verification_status": "verified",
+      "verification_method": "conservative_nominatim_match",
+      "confidence": 0.9593,
+      "display_name": "औरंगाबाद, Aurangabad, औरंगाबाद, बिहार, 824123, भारत",
+      "matched_district": "औरंगाबाद",
+      "osm_type": "way",
+      "osm_id": 119170136,
+      "place_type": "town",
+      "location_precision": "market_locality_centroid",
+      "resolution_reason": "single_verified_candidate",
+      "candidate_evidence": [
+        {
+          "score": 0.9593,
+          "name": "औरंगाबाद",
+          "district": "औरंगाबाद",
+          "latitude": 24.7536696,
+          "longitude": 84.3746725,
+          "osm_type": "way",
+          "osm_id": 119170136,
+          "place_type": "town",
+          "display_name": "औरंगाबाद, Aurangabad, औरंगाबाद, बिहार, 824123, भारत"
+        }
+      ],
+      "geocoding_query": "औरंगाबाद, औरंगाबाद, Bihar, India",
+      "geocoding_query_strategy": "official_name",
+      "alias_evidence": null,
+      "geocoding_query_attempts": [
+        {
+          "query": "औरंगाबाद, औरंगाबाद, Bihar, India",
+          "query_strategy": "official_name",
+          "accept_language": "hi,en",
+          "candidate_count": 2,
+          "status": "verified",
+          "reason": null
+        }
+      ],
+      "coordinate_source": "OpenStreetMap Nominatim",
+      "coordinate_source_url": "https://nominatim.openstreetmap.org/search",
+      "coordinate_source_license": "OpenStreetMap contributors, ODbL 1.0",
+      "source_market_url": "https://www.biharkrishi.in/mandi",
+      "latest_observation_date": "2026-10-18"
+    },
+    {
+      "market_code": 10001,
+      "market_name": "दाउनगर",
+      "district_code": "189",
+      "district_name": "औरंगाबाद",
+      "location": {
+        "type": "Point",
+        "coordinates": [
+          84.4044,
+          25.0335
+        ]
+      },
+      "verification_status": "verified",
+      "verification_method": "conservative_nominatim_match",
+      "confidence": 0.9573,
+      "display_name": "Daudnagar, औरंगाबाद, Bihar, 824113, India",
+      "matched_district": "औरंगाबाद",
+      "osm_type": "node",
+      "osm_id": 245728583,
+      "place_type": "village",
+      "location_precision": "market_locality_centroid",
+      "resolution_reason": "single_verified_candidate",
+      "candidate_evidence": [
+        {
+          "score": 0.9573,
+          "name": "Daudnagar",
+          "district": "औरंगाबाद",
+          "latitude": 25.0335,
+          "longitude": 84.4044,
+          "osm_type": "node",
+          "osm_id": 245728583,
+          "place_type": "village",
+          "display_name": "Daudnagar, औरंगाबाद, Bihar, 824113, India"
+        }
+      ],
+      "geocoding_query": "Daudnagar, Aurangabad, Bihar, India",
+      "geocoding_query_strategy": "reviewed_alias",
+      "alias_evidence": "https://tourism.bihar.gov.in/en/destinations/aurangabad/daud-khan-fort",
+      "geocoding_query_attempts": [
+        {
+          "query": "दाउनगर, औरंगाबाद, Bihar, India",
+          "query_strategy": "official_name",
+          "accept_language": "hi,en",
+          "candidate_count": 0,
+          "status": "unresolved",
+          "reason": "no_candidate_passed_bihar_name_and_district_checks"
+        },
+        {
+          "query": "दाऊदनगर, Aurangabad, Bihar, India",
+          "query_strategy": "reviewed_alias",
+          "accept_language": "hi,en",
+          "candidate_count": 0,
+          "status": "unresolved",
+          "reason": "no_candidate_passed_bihar_name_and_district_checks"
+        },
+        {
+          "query": "दाउदनगर, Aurangabad, Bihar, India",
+          "query_strategy": "reviewed_alias",
+          "accept_language": "hi,en",
+          "candidate_count": 0,
+          "status": "unresolved",
+          "reason": "no_candidate_passed_bihar_name_and_district_checks"
+        },
+        {
+          "query": "Daudnagar, Aurangabad, Bihar, India",
+          "query_strategy": "reviewed_alias",
+          "accept_language": "en,hi",
+          "candidate_count": 2,
+          "status": "verified",
+          "reason": null
+        }
+      ],
+      "coordinate_source": "OpenStreetMap Nominatim",
+      "coordinate_source_url": "https://nominatim.openstreetmap.org/search",
+      "coordinate_source_license": "OpenStreetMap contributors, ODbL 1.0",
+      "source_market_url": "https://www.biharkrishi.in/mandi",
+      "latest_observation_date": "2026-10-17"
+    },
+    {
+      "market_code": 420,
+      "market_name": "किशनगंज",
+      "district_code": "203",
+      "district_name": "किशनगंज",
+      "location": {
+        "type": "Point",
+        "coordinates": [
+          87.9507791,
+          26.1014194
+        ]
+      },
+      "verification_status": "verified",
+      "verification_method": "conservative_nominatim_match",
+      "confidence": 0.9705,
+      "display_name": "किशनगंज, Kishanganj, किशनगंज, बिहार, 855107, भारत",
+      "matched_district": "किशनगंज",
+      "osm_type": "node",
+      "osm_id": 1313338378,
+      "place_type": "city",
+      "location_precision": "market_locality_centroid",
+      "resolution_reason": "single_verified_candidate",
+      "candidate_evidence": [
+        {
+          "score": 0.9705,
+          "name": "किशनगंज",
+          "district": "किशनगंज",
+          "latitude": 26.1014194,
+          "longitude": 87.9507791,
+          "osm_type": "node",
+          "osm_id": 1313338378,
+          "place_type": "city",
+          "display_name": "किशनगंज, Kishanganj, किशनगंज, बिहार, 855107, भारत"
+        }
+      ],
+      "geocoding_query": "किशनगंज, किशनगंज, Bihar, India",
+      "geocoding_query_strategy": "official_name",
+      "alias_evidence": null,
+      "geocoding_query_attempts": [
+        {
+          "query": "किशनगंज, किशनगंज, Bihar, India",
+          "query_strategy": "official_name",
+          "accept_language": "hi,en",
+          "candidate_count": 2,
+          "status": "verified",
+          "reason": null
+        }
+      ],
+      "coordinate_source": "OpenStreetMap Nominatim",
+      "coordinate_source_url": "https://nominatim.openstreetmap.org/search",
+      "coordinate_source_license": "OpenStreetMap contributors, ODbL 1.0",
+      "source_market_url": "https://www.biharkrishi.in/mandi",
+      "latest_observation_date": "2026-09-18"
+    },
+    {
+      "market_code": 1642,
+      "market_name": "बहादुरगंज",
+      "district_code": "203",
+      "district_name": "किशनगंज",
+      "location": {
+        "type": "Point",
+        "coordinates": [
+          87.8236798,
+          26.2618157
+        ]
+      },
+      "verification_status": "verified",
+      "verification_method": "conservative_nominatim_match",
+      "confidence": 0.958,
+      "display_name": "बहादुरगंज, Bahadurganj, किशनगंज, बिहार, 855115, भारत",
+      "matched_district": "किशनगंज",
+      "osm_type": "node",
+      "osm_id": 4932365968,
+      "place_type": "town",
+      "location_precision": "market_locality_centroid",
+      "resolution_reason": "single_verified_candidate",
+      "candidate_evidence": [
+        {
+          "score": 0.958,
+          "name": "बहादुरगंज",
+          "district": "किशनगंज",
+          "latitude": 26.2618157,
+          "longitude": 87.8236798,
+          "osm_type": "node",
+          "osm_id": 4932365968,
+          "place_type": "town",
+          "display_name": "बहादुरगंज, Bahadurganj, किशनगंज, बिहार, 855115, भारत"
+        }
+      ],
+      "geocoding_query": "बहादुरगंज, किशनगंज, Bihar, India",
+      "geocoding_query_strategy": "official_name",
+      "alias_evidence": null,
+      "geocoding_query_attempts": [
+        {
+          "query": "बहादुरगंज, किशनगंज, Bihar, India",
+          "query_strategy": "official_name",
+          "accept_language": "hi,en",
+          "candidate_count": 1,
+          "status": "verified",
+          "reason": null
+        }
+      ],
+      "coordinate_source": "OpenStreetMap Nominatim",
+      "coordinate_source_url": "https://nominatim.openstreetmap.org/search",
+      "coordinate_source_license": "OpenStreetMap contributors, ODbL 1.0",
+      "source_market_url": "https://www.biharkrishi.in/mandi",
+      "latest_observation_date": "2026-10-16"
+    },
+    {
+      "market_code": 425,
+      "market_name": "खगरिया",
+      "district_code": "202",
+      "district_name": "खगरिया",
+      "location": {
+        "type": "Point",
+        "coordinates": [
+          86.4756555,
+          25.5112455
+        ]
+      },
+      "verification_status": "verified",
+      "verification_method": "conservative_nominatim_match",
+      "confidence": 0.958,
+      "display_name": "खगड़िया, Khagaria, खगड़िया, बिहार, 851204, भारत",
+      "matched_district": "Khagaria",
+      "osm_type": "node",
+      "osm_id": 568480417,
+      "place_type": "town",
+      "location_precision": "market_locality_centroid",
+      "resolution_reason": "single_verified_candidate",
+      "candidate_evidence": [
+        {
+          "score": 0.958,
+          "name": "खगड़िया",
+          "district": "Khagaria",
+          "latitude": 25.5112455,
+          "longitude": 86.4756555,
+          "osm_type": "node",
+          "osm_id": 568480417,
+          "place_type": "town",
+          "display_name": "खगड़िया, Khagaria, खगड़िया, बिहार, 851204, भारत"
+        }
+      ],
+      "geocoding_query": "खगड़िया, Khagaria, Bihar, India",
+      "geocoding_query_strategy": "reviewed_alias",
+      "alias_evidence": "https://wiki.openstreetmap.org/wiki/Subdistricts_in_Bihar",
+      "geocoding_query_attempts": [
+        {
+          "query": "खगरिया, खगरिया, Bihar, India",
+          "query_strategy": "official_name",
+          "accept_language": "hi,en",
+          "candidate_count": 0,
+          "status": "unresolved",
+          "reason": "no_candidate_passed_bihar_name_and_district_checks"
+        },
+        {
+          "query": "खगड़िया, Khagaria, Bihar, India",
+          "query_strategy": "reviewed_alias",
+          "accept_language": "hi,en",
+          "candidate_count": 1,
+          "status": "verified",
+          "reason": null
+        }
+      ],
+      "coordinate_source": "OpenStreetMap Nominatim",
+      "coordinate_source_url": "https://nominatim.openstreetmap.org/search",
+      "coordinate_source_license": "OpenStreetMap contributors, ODbL 1.0",
+      "source_market_url": "https://www.biharkrishi.in/mandi",
+      "latest_observation_date": "2026-10-16"
+    },
+    {
+      "market_code": 10018,
+      "market_name": "मानसी मंडी (नया)",
+      "district_code": "202",
+      "district_name": "खगरिया",
+      "location": {
+        "type": "Point",
+        "coordinates": [
+          86.5530737,
+          25.511937
+        ]
+      },
+      "verification_status": "verified",
+      "verification_method": "conservative_nominatim_match",
+      "confidence": 0.958,
+      "display_name": "Mansi, खगड़िया, Bihar, 851214, India",
+      "matched_district": "खगड़िया",
+      "osm_type": "node",
+      "osm_id": 2088321493,
+      "place_type": "town",
+      "location_precision": "market_locality_centroid",
+      "resolution_reason": "single_verified_candidate",
+      "candidate_evidence": [
+        {
+          "score": 0.958,
+          "name": "Mansi",
+          "district": "खगड़िया",
+          "latitude": 25.511937,
+          "longitude": 86.5530737,
+          "osm_type": "node",
+          "osm_id": 2088321493,
+          "place_type": "town",
+          "display_name": "Mansi, खगड़िया, Bihar, 851214, India"
+        }
+      ],
+      "geocoding_query": "Mansi, Khagaria, Bihar, India",
+      "geocoding_query_strategy": "reviewed_alias",
+      "alias_evidence": "https://wiki.openstreetmap.org/wiki/Subdistricts_in_Bihar",
+      "geocoding_query_attempts": [
+        {
+          "query": "मानसी मंडी (नया), खगरिया, Bihar, India",
+          "query_strategy": "official_name",
+          "accept_language": "hi,en",
+          "candidate_count": 0,
+          "status": "unresolved",
+          "reason": "no_candidate_passed_bihar_name_and_district_checks"
+        },
+        {
+          "query": "मानसी, खगरिया, Bihar, India",
+          "query_strategy": "generic_suffix_removed",
+          "accept_language": "hi,en",
+          "candidate_count": 0,
+          "status": "unresolved",
+          "reason": "no_candidate_passed_bihar_name_and_district_checks"
+        },
+        {
+          "query": "Mansi, Khagaria, Bihar, India",
+          "query_strategy": "reviewed_alias",
+          "accept_language": "en,hi",
+          "candidate_count": 2,
+          "status": "verified",
+          "reason": null
+        }
+      ],
+      "coordinate_source": "OpenStreetMap Nominatim",
+      "coordinate_source_url": "https://nominatim.openstreetmap.org/search",
+      "coordinate_source_license": "OpenStreetMap contributors, ODbL 1.0",
+      "source_market_url": "https://www.biharkrishi.in/mandi",
+      "latest_observation_date": "2026-10-15"
+    },
+    {
+      "market_code": 32,
+      "market_name": "गया",
+      "district_code": "196",
+      "district_name": "गया",
+      "location": {
+        "type": "Point",
+        "coordinates": [
+          85.0079563,
+          24.7964355
+        ]
+      },
+      "verification_status": "verified",
+      "verification_method": "conservative_nominatim_match",
+      "confidence": 0.9798,
+      "display_name": "गया, Gaya Town C.D.Block, गया, बिहार, 823001, भारत",
+      "matched_district": "गया",
+      "osm_type": "node",
+      "osm_id": 245726282,
+      "place_type": "city",
+      "location_precision": "market_locality_centroid",
+      "resolution_reason": "single_verified_candidate",
+      "candidate_evidence": [
+        {
+          "score": 0.9798,
+          "name": "गया",
+          "district": "गया",
+          "latitude": 24.7964355,
+          "longitude": 85.0079563,
+          "osm_type": "node",
+          "osm_id": 245726282,
+          "place_type": "city",
+          "display_name": "गया, Gaya Town C.D.Block, गया, बिहार, 823001, भारत"
+        }
+      ],
+      "geocoding_query": "गया, गया, Bihar, India",
+      "geocoding_query_strategy": "official_name",
+      "alias_evidence": null,
+      "geocoding_query_attempts": [
+        {
+          "query": "गया, गया, Bihar, India",
+          "query_strategy": "official_name",
+          "accept_language": "hi,en",
+          "candidate_count": 1,
+          "status": "verified",
+          "reason": null
+        }
+      ],
+      "coordinate_source": "OpenStreetMap Nominatim",
+      "coordinate_source_url": "https://nominatim.openstreetmap.org/search",
+      "coordinate_source_license": "OpenStreetMap contributors, ODbL 1.0",
+      "source_market_url": "https://www.biharkrishi.in/mandi",
+      "latest_observation_date": "2026-10-14"
+    },
+    {
+      "market_code": 1638,
+      "market_name": "गोपालगंज",
+      "district_code": "197",
+      "district_name": "गोपालगंज",
+      "location": {
+        "type": "Point",
+        "coordinates": [
+          84.4398292,
+          26.4609692
+        ]
+      },
+      "verification_status": "verified",
+      "verification_method": "conservative_nominatim_match",
+      "confidence": 0.958,
+      "display_name": "गोपालगंज, Gopalganj, गोपालगंज, बिहार, 841428, भारत",
+      "matched_district": "गोपालगंज",
+      "osm_type": "node",
+      "osm_id": 1349713130,
+      "place_type": "town",
+      "location_precision": "market_locality_centroid",
+      "resolution_reason": "single_verified_candidate",
+      "candidate_evidence": [
+        {
+          "score": 0.958,
+          "name": "गोपालगंज",
+          "district": "गोपालगंज",
+          "latitude": 26.4609692,
+          "longitude": 84.4398292,
+          "osm_type": "node",
+          "osm_id": 1349713130,
+          "place_type": "town",
+          "display_name": "गोपालगंज, Gopalganj, गोपालगंज, बिहार, 841428, भारत"
+        }
+      ],
+      "geocoding_query": "गोपालगंज, गोपालगंज, Bihar, India",
+      "geocoding_query_strategy": "official_name",
+      "alias_evidence": null,
+      "geocoding_query_attempts": [
+        {
+          "query": "गोपालगंज, गोपालगंज, Bihar, India",
+          "query_strategy": "official_name",
+          "accept_language": "hi,en",
+          "candidate_count": 2,
+          "status": "verified",
+          "reason": null
+        }
+      ],
+      "coordinate_source": "OpenStreetMap Nominatim",
+      "coordinate_source_url": "https://nominatim.openstreetmap.org/search",
+      "coordinate_source_license": "OpenStreetMap contributors, ODbL 1.0",
+      "source_market_url": "https://www.biharkrishi.in/mandi",
+      "latest_observation_date": "2026-10-16"
+    },
+    {
+      "market_code": 1651,
+      "market_name": "जमुई",
+      "district_code": "198",
+      "district_name": "जमुई",
+      "location": {
+        "type": "Point",
+        "coordinates": [
+          86.2254945,
+          24.9275595
+        ]
+      },
+      "verification_status": "verified",
+      "verification_method": "conservative_nominatim_match",
+      "confidence": 0.958,
+      "display_name": "जमुई, Jamui, जमुई, बिहार, 811307, भारत",
+      "matched_district": "जमुई",
+      "osm_type": "node",
+      "osm_id": 245727468,
+      "place_type": "town",
+      "location_precision": "market_locality_centroid",
+      "resolution_reason": "single_verified_candidate",
+      "candidate_evidence": [
+        {
+          "score": 0.958,
+          "name": "जमुई",
+          "district": "जमुई",
+          "latitude": 24.9275595,
+          "longitude": 86.2254945,
+          "osm_type": "node",
+          "osm_id": 245727468,
+          "place_type": "town",
+          "display_name": "जमुई, Jamui, जमुई, बिहार, 811307, भारत"
+        }
+      ],
+      "geocoding_query": "जमुई, जमुई, Bihar, India",
+      "geocoding_query_strategy": "official_name",
+      "alias_evidence": null,
+      "geocoding_query_attempts": [
+        {
+          "query": "जमुई, जमुई, Bihar, India",
+          "query_strategy": "official_name",
+          "accept_language": "hi,en",
+          "candidate_count": 1,
+          "status": "verified",
+          "reason": null
+        }
+      ],
+      "coordinate_source": "OpenStreetMap Nominatim",
+      "coordinate_source_url": "https://nominatim.openstreetmap.org/search",
+      "coordinate_source_license": "OpenStreetMap contributors, ODbL 1.0",
+      "source_market_url": "https://www.biharkrishi.in/mandi",
+      "latest_observation_date": "2026-10-10"
+    },
+    {
+      "market_code": 27,
+      "market_name": "दरभंगा",
+      "district_code": "195",
+      "district_name": "दरभंगा",
+      "location": {
+        "type": "Point",
+        "coordinates": [
+          85.8995065,
+          26.156999
+        ]
+      },
+      "verification_status": "verified",
+      "verification_method": "conservative_nominatim_match",
+      "confidence": 0.9752,
+      "display_name": "दरभंगा, बिहार, 846004, भारत",
+      "matched_district": "दरभंगा",
+      "osm_type": "node",
+      "osm_id": 760197793,
+      "place_type": "city",
+      "location_precision": "market_locality_centroid",
+      "resolution_reason": "single_verified_candidate",
+      "candidate_evidence": [
+        {
+          "score": 0.9752,
+          "name": "दरभंगा",
+          "district": "दरभंगा",
+          "latitude": 26.156999,
+          "longitude": 85.8995065,
+          "osm_type": "node",
+          "osm_id": 760197793,
+          "place_type": "city",
+          "display_name": "दरभंगा, बिहार, 846004, भारत"
+        }
+      ],
+      "geocoding_query": "दरभंगा, दरभंगा, Bihar, India",
+      "geocoding_query_strategy": "official_name",
+      "alias_evidence": null,
+      "geocoding_query_attempts": [
+        {
+          "query": "दरभंगा, दरभंगा, Bihar, India",
+          "query_strategy": "official_name",
+          "accept_language": "hi,en",
+          "candidate_count": 2,
+          "status": "verified",
+          "reason": null
+        }
+      ],
+      "coordinate_source": "OpenStreetMap Nominatim",
+      "coordinate_source_url": "https://nominatim.openstreetmap.org/search",
+      "coordinate_source_license": "OpenStreetMap contributors, ODbL 1.0",
+      "source_market_url": "https://www.biharkrishi.in/mandi",
+      "latest_observation_date": "2026-10-16"
+    },
+    {
+      "market_code": 412,
+      "market_name": "बिहारशरीफ",
+      "district_code": "209",
+      "district_name": "नालन्दा",
+      "location": {
+        "type": "Point",
+        "coordinates": [
+          85.5208617,
+          25.193859
+        ]
+      },
+      "verification_status": "verified",
+      "verification_method": "conservative_nominatim_match",
+      "confidence": 0.8093,
+      "display_name": "बिहारशरीफ़, बिहार तहसील, नालंदा जिला, बिहार, 903101, भारत",
+      "matched_district": "नालंदा जिला",
+      "osm_type": "node",
+      "osm_id": 245730395,
+      "place_type": "city",
+      "location_precision": "market_locality_centroid",
+      "resolution_reason": "single_verified_candidate",
+      "candidate_evidence": [
+        {
+          "score": 0.8093,
+          "name": "बिहारशरीफ़",
+          "district": "नालंदा जिला",
+          "latitude": 25.193859,
+          "longitude": 85.5208617,
+          "osm_type": "node",
+          "osm_id": 245730395,
+          "place_type": "city",
+          "display_name": "बिहारशरीफ़, बिहार तहसील, नालंदा जिला, बिहार, 903101, भारत"
+        }
+      ],
+      "geocoding_query": "बिहारशरीफ, Bihar, India",
+      "geocoding_query_strategy": "official_name_without_district",
+      "alias_evidence": null,
+      "geocoding_query_attempts": [
+        {
+          "query": "बिहारशरीफ, नालन्दा, Bihar, India",
+          "query_strategy": "official_name",
+          "accept_language": "hi,en",
+          "candidate_count": 0,
+          "status": "unresolved",
+          "reason": "no_candidate_passed_bihar_name_and_district_checks"
+        },
+        {
+          "query": "बिहारशरीफ, Bihar, India",
+          "query_strategy": "official_name_without_district",
+          "accept_language": "hi,en",
+          "candidate_count": 1,
+          "status": "verified",
+          "reason": null
+        }
+      ],
+      "coordinate_source": "OpenStreetMap Nominatim",
+      "coordinate_source_url": "https://nominatim.openstreetmap.org/search",
+      "coordinate_source_license": "OpenStreetMap contributors, ODbL 1.0",
+      "source_market_url": "https://www.biharkrishi.in/mandi",
+      "latest_observation_date": "2026-10-15"
+    },
+    {
+      "market_code": 10026,
+      "market_name": "हरनौत (नया)",
+      "district_code": "209",
+      "district_name": "नालन्दा",
+      "location": {
+        "type": "Point",
+        "coordinates": [
+          85.5343783,
+          25.3720664
+        ]
+      },
+      "verification_status": "verified",
+      "verification_method": "conservative_nominatim_match",
+      "confidence": 0.9573,
+      "display_name": "Harnaut, नालंदा जिला, Bihar, 803110, India",
+      "matched_district": "नालंदा जिला",
+      "osm_type": "node",
+      "osm_id": 245733197,
+      "place_type": "village",
+      "location_precision": "market_locality_centroid",
+      "resolution_reason": "single_verified_candidate",
+      "candidate_evidence": [
+        {
+          "score": 0.9573,
+          "name": "Harnaut",
+          "district": "नालंदा जिला",
+          "latitude": 25.3720664,
+          "longitude": 85.5343783,
+          "osm_type": "node",
+          "osm_id": 245733197,
+          "place_type": "village",
+          "display_name": "Harnaut, नालंदा जिला, Bihar, 803110, India"
+        }
+      ],
+      "geocoding_query": "Harnaut, Nalanda, Bihar, India",
+      "geocoding_query_strategy": "reviewed_alias",
+      "alias_evidence": "https://wiki.openstreetmap.org/wiki/Subdistricts_in_Bihar",
+      "geocoding_query_attempts": [
+        {
+          "query": "हरनौत (नया), नालन्दा, Bihar, India",
+          "query_strategy": "official_name",
+          "accept_language": "hi,en",
+          "candidate_count": 0,
+          "status": "unresolved",
+          "reason": "no_candidate_passed_bihar_name_and_district_checks"
+        },
+        {
+          "query": "हरनौत, नालन्दा, Bihar, India",
+          "query_strategy": "generic_suffix_removed",
+          "accept_language": "hi,en",
+          "candidate_count": 0,
+          "status": "unresolved",
+          "reason": "no_candidate_passed_bihar_name_and_district_checks"
+        },
+        {
+          "query": "Harnaut, Nalanda, Bihar, India",
+          "query_strategy": "reviewed_alias",
+          "accept_language": "en,hi",
+          "candidate_count": 3,
+          "status": "verified",
+          "reason": null
+        }
+      ],
+      "coordinate_source": "OpenStreetMap Nominatim",
+      "coordinate_source_url": "https://nominatim.openstreetmap.org/search",
+      "coordinate_source_license": "OpenStreetMap contributors, ODbL 1.0",
+      "source_market_url": "https://www.biharkrishi.in/mandi",
+      "latest_observation_date": "2026-10-18"
+    },
+    {
+      "market_code": 1657,
+      "market_name": "चकिया",
+      "district_code": "213",
+      "district_name": "पूर्वी चंपारण",
+      "location": {
+        "type": "Point",
+        "coordinates": [
+          85.0411636,
+          26.4234072
+        ]
+      },
+      "verification_status": "verified",
+      "verification_method": "conservative_nominatim_match",
+      "confidence": 0.958,
+      "display_name": "CHAKIA, पूर्वी चम्पारण, Bihar, India",
+      "matched_district": "पूर्वी चम्पारण",
+      "osm_type": "way",
+      "osm_id": 1553134590,
+      "place_type": "town",
+      "location_precision": "market_locality_centroid",
+      "resolution_reason": "single_verified_candidate",
+      "candidate_evidence": [
+        {
+          "score": 0.958,
+          "name": "CHAKIA",
+          "district": "पूर्वी चम्पारण",
+          "latitude": 26.4234072,
+          "longitude": 85.0411636,
+          "osm_type": "way",
+          "osm_id": 1553134590,
+          "place_type": "town",
+          "display_name": "CHAKIA, पूर्वी चम्पारण, Bihar, India"
+        }
+      ],
+      "geocoding_query": "Chakia, East Champaran, Bihar, India",
+      "geocoding_query_strategy": "reviewed_alias",
+      "alias_evidence": "https://wiki.openstreetmap.org/wiki/Subdistricts_in_Bihar",
+      "geocoding_query_attempts": [
+        {
+          "query": "चकिया, पूर्वी चंपारण, Bihar, India",
+          "query_strategy": "official_name",
+          "accept_language": "hi,en",
+          "candidate_count": 0,
+          "status": "unresolved",
+          "reason": "no_candidate_passed_bihar_name_and_district_checks"
+        },
+        {
+          "query": "Chakia, East Champaran, Bihar, India",
+          "query_strategy": "reviewed_alias",
+          "accept_language": "en,hi",
+          "candidate_count": 1,
+          "status": "verified",
+          "reason": null
+        }
+      ],
+      "coordinate_source": "OpenStreetMap Nominatim",
+      "coordinate_source_url": "https://nominatim.openstreetmap.org/search",
+      "coordinate_source_license": "OpenStreetMap contributors, ODbL 1.0",
+      "source_market_url": "https://www.biharkrishi.in/mandi",
+      "latest_observation_date": "2026-09-08"
+    },
+    {
+      "market_code": 424,
+      "market_name": "मोतिहारी",
+      "district_code": "213",
+      "district_name": "पूर्वी चंपारण",
+      "location": {
+        "type": "Point",
+        "coordinates": [
+          84.9114654,
+          26.6506888
+        ]
+      },
+      "verification_status": "verified",
+      "verification_method": "conservative_nominatim_match",
+      "confidence": 0.9693,
+      "display_name": "मोतिहारी, Motihari, पूर्वी चम्पारण, बिहार, भारत",
+      "matched_district": "पूर्वी चम्पारण",
+      "osm_type": "way",
+      "osm_id": 22826540,
+      "place_type": "city",
+      "location_precision": "market_locality_centroid",
+      "resolution_reason": "single_verified_candidate",
+      "candidate_evidence": [
+        {
+          "score": 0.9693,
+          "name": "मोतिहारी",
+          "district": "पूर्वी चम्पारण",
+          "latitude": 26.6506888,
+          "longitude": 84.9114654,
+          "osm_type": "way",
+          "osm_id": 22826540,
+          "place_type": "city",
+          "display_name": "मोतिहारी, Motihari, पूर्वी चम्पारण, बिहार, भारत"
+        }
+      ],
+      "geocoding_query": "मोतिहारी, Bihar, India",
+      "geocoding_query_strategy": "official_name_without_district",
+      "alias_evidence": null,
+      "geocoding_query_attempts": [
+        {
+          "query": "मोतिहारी, पूर्वी चंपारण, Bihar, India",
+          "query_strategy": "official_name",
+          "accept_language": "hi,en",
+          "candidate_count": 0,
+          "status": "unresolved",
+          "reason": "no_candidate_passed_bihar_name_and_district_checks"
+        },
+        {
+          "query": "मोतिहारी, Bihar, India",
+          "query_strategy": "official_name_without_district",
+          "accept_language": "hi,en",
+          "candidate_count": 1,
+          "status": "verified",
+          "reason": null
+        }
+      ],
+      "coordinate_source": "OpenStreetMap Nominatim",
+      "coordinate_source_url": "https://nominatim.openstreetmap.org/search",
+      "coordinate_source_license": "OpenStreetMap contributors, ODbL 1.0",
+      "source_market_url": "https://www.biharkrishi.in/mandi",
+      "latest_observation_date": "2026-10-17"
+    },
+    {
+      "market_code": 10022,
+      "market_name": "रक्सौल (नया)",
+      "district_code": "213",
+      "district_name": "पूर्वी चंपारण",
+      "location": {
+        "type": "Point",
+        "coordinates": [
+          84.8523069,
+          26.9833256
+        ]
+      },
+      "verification_status": "verified",
+      "verification_method": "conservative_nominatim_match",
+      "confidence": 0.9684,
+      "display_name": "रक्सौल, Raxaul, पूर्वी चम्पारण, बिहार, 845305, भारत",
+      "matched_district": "पूर्वी चम्पारण",
+      "osm_type": "node",
+      "osm_id": 245754714,
+      "place_type": "town",
+      "location_precision": "market_locality_centroid",
+      "resolution_reason": "single_verified_candidate",
+      "candidate_evidence": [
+        {
+          "score": 0.9684,
+          "name": "रक्सौल",
+          "district": "पूर्वी चम्पारण",
+          "latitude": 26.9833256,
+          "longitude": 84.8523069,
+          "osm_type": "node",
+          "osm_id": 245754714,
+          "place_type": "town",
+          "display_name": "रक्सौल, Raxaul, पूर्वी चम्पारण, बिहार, 845305, भारत"
+        }
+      ],
+      "geocoding_query": "रक्सौल, Bihar, India",
+      "geocoding_query_strategy": "generic_suffix_removed_without_district",
+      "alias_evidence": null,
+      "geocoding_query_attempts": [
+        {
+          "query": "रक्सौल (नया), पूर्वी चंपारण, Bihar, India",
+          "query_strategy": "official_name",
+          "accept_language": "hi,en",
+          "candidate_count": 0,
+          "status": "unresolved",
+          "reason": "no_candidate_passed_bihar_name_and_district_checks"
+        },
+        {
+          "query": "रक्सौल, पूर्वी चंपारण, Bihar, India",
+          "query_strategy": "generic_suffix_removed",
+          "accept_language": "hi,en",
+          "candidate_count": 0,
+          "status": "unresolved",
+          "reason": "no_candidate_passed_bihar_name_and_district_checks"
+        },
+        {
+          "query": "रक्सौल (नया), Bihar, India",
+          "query_strategy": "official_name_without_district",
+          "accept_language": "hi,en",
+          "candidate_count": 0,
+          "status": "unresolved",
+          "reason": "no_candidate_passed_bihar_name_and_district_checks"
+        },
+        {
+          "query": "रक्सौल, Bihar, India",
+          "query_strategy": "generic_suffix_removed_without_district",
+          "accept_language": "hi,en",
+          "candidate_count": 1,
+          "status": "verified",
+          "reason": null
+        }
+      ],
+      "coordinate_source": "OpenStreetMap Nominatim",
+      "coordinate_source_url": "https://nominatim.openstreetmap.org/search",
+      "coordinate_source_license": "OpenStreetMap contributors, ODbL 1.0",
+      "source_market_url": "https://www.biharkrishi.in/mandi",
+      "latest_observation_date": "2026-10-17"
+    },
+    {
+      "market_code": 10010,
+      "market_name": "दुमरांव",
+      "district_code": "194",
+      "district_name": "बक्सर",
+      "location": {
+        "type": "Point",
+        "coordinates": [
+          84.1490887,
+          25.5544754
+        ]
+      },
+      "verification_status": "verified",
+      "verification_method": "conservative_nominatim_match",
+      "confidence": 0.958,
+      "display_name": "Dumraon, बक्सर, Bihar, 802136, India",
+      "matched_district": "बक्सर",
+      "osm_type": "node",
+      "osm_id": 3960588507,
+      "place_type": "town",
+      "location_precision": "market_locality_centroid",
+      "resolution_reason": "single_verified_candidate",
+      "candidate_evidence": [
+        {
+          "score": 0.958,
+          "name": "Dumraon",
+          "district": "बक्सर",
+          "latitude": 25.5544754,
+          "longitude": 84.1490887,
+          "osm_type": "node",
+          "osm_id": 3960588507,
+          "place_type": "town",
+          "display_name": "Dumraon, बक्सर, Bihar, 802136, India"
+        }
+      ],
+      "geocoding_query": "Dumraon, Buxar, Bihar, India",
+      "geocoding_query_strategy": "reviewed_alias",
+      "alias_evidence": "https://wiki.openstreetmap.org/wiki/Subdistricts_in_Bihar",
+      "geocoding_query_attempts": [
+        {
+          "query": "दुमरांव, बक्सर, Bihar, India",
+          "query_strategy": "official_name",
+          "accept_language": "hi,en",
+          "candidate_count": 0,
+          "status": "unresolved",
+          "reason": "no_candidate_passed_bihar_name_and_district_checks"
+        },
+        {
+          "query": "डुमरॉंव, Buxar, Bihar, India",
+          "query_strategy": "reviewed_alias",
+          "accept_language": "hi,en",
+          "candidate_count": 0,
+          "status": "unresolved",
+          "reason": "no_candidate_passed_bihar_name_and_district_checks"
+        },
+        {
+          "query": "Dumraon, Buxar, Bihar, India",
+          "query_strategy": "reviewed_alias",
+          "accept_language": "en,hi",
+          "candidate_count": 2,
+          "status": "verified",
+          "reason": null
+        }
+      ],
+      "coordinate_source": "OpenStreetMap Nominatim",
+      "coordinate_source_url": "https://nominatim.openstreetmap.org/search",
+      "coordinate_source_license": "OpenStreetMap contributors, ODbL 1.0",
+      "source_market_url": "https://www.biharkrishi.in/mandi",
+      "latest_observation_date": "2026-10-13"
+    },
+    {
+      "market_code": 415,
+      "market_name": "बक्सर",
+      "district_code": "194",
+      "district_name": "बक्सर",
+      "location": {
+        "type": "Point",
+        "coordinates": [
+          83.9729568,
+          25.5716195
+        ]
+      },
+      "verification_status": "verified",
+      "verification_method": "conservative_nominatim_match",
+      "confidence": 0.9593,
+      "display_name": "बक्सर, Buxar, बक्सर, बिहार, 802101, भारत",
+      "matched_district": "बक्सर",
+      "osm_type": "node",
+      "osm_id": 245735697,
+      "place_type": "city",
+      "location_precision": "market_locality_centroid",
+      "resolution_reason": "single_verified_candidate",
+      "candidate_evidence": [
+        {
+          "score": 0.9593,
+          "name": "बक्सर",
+          "district": "बक्सर",
+          "latitude": 25.5716195,
+          "longitude": 83.9729568,
+          "osm_type": "node",
+          "osm_id": 245735697,
+          "place_type": "city",
+          "display_name": "बक्सर, Buxar, बक्सर, बिहार, 802101, भारत"
+        }
+      ],
+      "geocoding_query": "बक्सर, बक्सर, Bihar, India",
+      "geocoding_query_strategy": "official_name",
+      "alias_evidence": null,
+      "geocoding_query_attempts": [
+        {
+          "query": "बक्सर, बक्सर, Bihar, India",
+          "query_strategy": "official_name",
+          "accept_language": "hi,en",
+          "candidate_count": 2,
+          "status": "verified",
+          "reason": null
+        }
+      ],
+      "coordinate_source": "OpenStreetMap Nominatim",
+      "coordinate_source_url": "https://nominatim.openstreetmap.org/search",
+      "coordinate_source_license": "OpenStreetMap contributors, ODbL 1.0",
+      "source_market_url": "https://www.biharkrishi.in/mandi",
+      "latest_observation_date": "2026-10-17"
+    },
+    {
+      "market_code": 10004,
+      "market_name": "अमरपुर",
+      "district_code": "190",
+      "district_name": "बांका",
+      "location": {
+        "type": "Point",
+        "coordinates": [
+          86.9028384,
+          25.0399854
+        ]
+      },
+      "verification_status": "verified",
+      "verification_method": "conservative_nominatim_match",
+      "confidence": 0.958,
+      "display_name": "Amarpur, बाँका, Bihar, 813101, India",
+      "matched_district": "बाँका",
+      "osm_type": "node",
+      "osm_id": 245728606,
+      "place_type": "town",
+      "location_precision": "market_locality_centroid",
+      "resolution_reason": "single_verified_candidate",
+      "candidate_evidence": [
+        {
+          "score": 0.958,
+          "name": "Amarpur",
+          "district": "बाँका",
+          "latitude": 25.0399854,
+          "longitude": 86.9028384,
+          "osm_type": "node",
+          "osm_id": 245728606,
+          "place_type": "town",
+          "display_name": "Amarpur, बाँका, Bihar, 813101, India"
+        }
+      ],
+      "geocoding_query": "Amarpur, Banka, Bihar, India",
+      "geocoding_query_strategy": "reviewed_alias",
+      "alias_evidence": "https://wiki.openstreetmap.org/wiki/Subdistricts_in_Bihar",
+      "geocoding_query_attempts": [
+        {
+          "query": "अमरपुर, बांका, Bihar, India",
+          "query_strategy": "official_name",
+          "accept_language": "hi,en",
+          "candidate_count": 0,
+          "status": "unresolved",
+          "reason": "no_candidate_passed_bihar_name_and_district_checks"
+        },
+        {
+          "query": "Amarpur, Banka, Bihar, India",
+          "query_strategy": "reviewed_alias",
+          "accept_language": "en,hi",
+          "candidate_count": 2,
+          "status": "verified",
+          "reason": null
+        }
+      ],
+      "coordinate_source": "OpenStreetMap Nominatim",
+      "coordinate_source_url": "https://nominatim.openstreetmap.org/search",
+      "coordinate_source_license": "OpenStreetMap contributors, ODbL 1.0",
+      "source_market_url": "https://www.biharkrishi.in/mandi",
+      "latest_observation_date": "2026-10-16"
+    },
+    {
+      "market_code": 1650,
+      "market_name": "बाराहाट",
+      "district_code": "190",
+      "district_name": "बांका",
+      "location": {
+        "type": "Point",
+        "coordinates": [
+          87.0000886,
+          24.9146189
+        ]
+      },
+      "verification_status": "verified",
+      "verification_method": "conservative_nominatim_match",
+      "confidence": 0.9573,
+      "display_name": "Barahat, बाँका, Bihar, 813109, India",
+      "matched_district": "बाँका",
+      "osm_type": "node",
+      "osm_id": 6974887461,
+      "place_type": "village",
+      "location_precision": "market_locality_centroid",
+      "resolution_reason": "single_verified_candidate",
+      "candidate_evidence": [
+        {
+          "score": 0.9573,
+          "name": "Barahat",
+          "district": "बाँका",
+          "latitude": 24.9146189,
+          "longitude": 87.0000886,
+          "osm_type": "node",
+          "osm_id": 6974887461,
+          "place_type": "village",
+          "display_name": "Barahat, बाँका, Bihar, 813109, India"
+        }
+      ],
+      "geocoding_query": "Barahat, Banka, Bihar, India",
+      "geocoding_query_strategy": "reviewed_alias",
+      "alias_evidence": "https://wiki.openstreetmap.org/wiki/Subdistricts_in_Bihar",
+      "geocoding_query_attempts": [
+        {
+          "query": "बाराहाट, बांका, Bihar, India",
+          "query_strategy": "official_name",
+          "accept_language": "hi,en",
+          "candidate_count": 0,
+          "status": "unresolved",
+          "reason": "no_candidate_passed_bihar_name_and_district_checks"
+        },
+        {
+          "query": "Barahat, Banka, Bihar, India",
+          "query_strategy": "reviewed_alias",
+          "accept_language": "en,hi",
+          "candidate_count": 2,
+          "status": "verified",
+          "reason": null
+        }
+      ],
+      "coordinate_source": "OpenStreetMap Nominatim",
+      "coordinate_source_url": "https://nominatim.openstreetmap.org/search",
+      "coordinate_source_license": "OpenStreetMap contributors, ODbL 1.0",
+      "source_market_url": "https://www.biharkrishi.in/mandi",
+      "latest_observation_date": "2026-10-16"
+    },
+    {
+      "market_code": 1648,
+      "market_name": "तेघरा",
+      "district_code": "191",
+      "district_name": "बेगूसराय",
+      "location": {
+        "type": "Point",
+        "coordinates": [
+          85.9425973,
+          25.4920069
+        ]
+      },
+      "verification_status": "verified",
+      "verification_method": "conservative_nominatim_match",
+      "confidence": 0.958,
+      "display_name": "Teghra, बेगूसराय, Bihar, 851133, India",
+      "matched_district": "बेगूसराय",
+      "osm_type": "node",
+      "osm_id": 894091385,
+      "place_type": "town",
+      "location_precision": "market_locality_centroid",
+      "resolution_reason": "single_verified_candidate",
+      "candidate_evidence": [
+        {
+          "score": 0.958,
+          "name": "Teghra",
+          "district": "बेगूसराय",
+          "latitude": 25.4920069,
+          "longitude": 85.9425973,
+          "osm_type": "node",
+          "osm_id": 894091385,
+          "place_type": "town",
+          "display_name": "Teghra, बेगूसराय, Bihar, 851133, India"
+        }
+      ],
+      "geocoding_query": "Teghra, Begusarai, Bihar, India",
+      "geocoding_query_strategy": "reviewed_alias",
+      "alias_evidence": "https://wiki.openstreetmap.org/wiki/Subdistricts_in_Bihar",
+      "geocoding_query_attempts": [
+        {
+          "query": "तेघरा, बेगूसराय, Bihar, India",
+          "query_strategy": "official_name",
+          "accept_language": "hi,en",
+          "candidate_count": 0,
+          "status": "unresolved",
+          "reason": "no_candidate_passed_bihar_name_and_district_checks"
+        },
+        {
+          "query": "तेघड़ा, Begusarai, Bihar, India",
+          "query_strategy": "reviewed_alias",
+          "accept_language": "hi,en",
+          "candidate_count": 0,
+          "status": "unresolved",
+          "reason": "no_candidate_passed_bihar_name_and_district_checks"
+        },
+        {
+          "query": "Teghra, Begusarai, Bihar, India",
+          "query_strategy": "reviewed_alias",
+          "accept_language": "en,hi",
+          "candidate_count": 2,
+          "status": "verified",
+          "reason": null
+        }
+      ],
+      "coordinate_source": "OpenStreetMap Nominatim",
+      "coordinate_source_url": "https://nominatim.openstreetmap.org/search",
+      "coordinate_source_license": "OpenStreetMap contributors, ODbL 1.0",
+      "source_market_url": "https://www.biharkrishi.in/mandi",
+      "latest_observation_date": "2026-10-16"
+    },
+    {
+      "market_code": 10005,
+      "market_name": "बलिया",
+      "district_code": "191",
+      "district_name": "बेगूसराय",
+      "location": {
+        "type": "Point",
+        "coordinates": [
+          86.313751,
+          25.4234048
+        ]
+      },
+      "verification_status": "verified",
+      "verification_method": "conservative_nominatim_match",
+      "confidence": 0.958,
+      "display_name": "Balia, बेगूसराय, Bihar, 851211, India",
+      "matched_district": "बेगूसराय",
+      "osm_type": "node",
+      "osm_id": 245733382,
+      "place_type": "town",
+      "location_precision": "market_locality_centroid",
+      "resolution_reason": "single_verified_candidate",
+      "candidate_evidence": [
+        {
+          "score": 0.958,
+          "name": "Balia",
+          "district": "बेगूसराय",
+          "latitude": 25.4234048,
+          "longitude": 86.313751,
+          "osm_type": "node",
+          "osm_id": 245733382,
+          "place_type": "town",
+          "display_name": "Balia, बेगूसराय, Bihar, 851211, India"
+        }
+      ],
+      "geocoding_query": "Balia, Begusarai, Bihar, India",
+      "geocoding_query_strategy": "reviewed_alias",
+      "alias_evidence": "https://igod.gov.in/district/tjg3tXQBW7DqAzx4Vrqs/blocks",
+      "geocoding_query_attempts": [
+        {
+          "query": "बलिया, बेगूसराय, Bihar, India",
+          "query_strategy": "official_name",
+          "accept_language": "hi,en",
+          "candidate_count": 0,
+          "status": "unresolved",
+          "reason": "no_candidate_passed_bihar_name_and_district_checks"
+        },
+        {
+          "query": "Balia, Begusarai, Bihar, India",
+          "query_strategy": "reviewed_alias",
+          "accept_language": "en,hi",
+          "candidate_count": 2,
+          "status": "verified",
+          "reason": null
+        }
+      ],
+      "coordinate_source": "OpenStreetMap Nominatim",
+      "coordinate_source_url": "https://nominatim.openstreetmap.org/search",
+      "coordinate_source_license": "OpenStreetMap contributors, ODbL 1.0",
+      "source_market_url": "https://www.biharkrishi.in/mandi",
+      "latest_observation_date": "2026-10-17"
+    },
+    {
+      "market_code": 24,
+      "market_name": "बेगूसराय",
+      "district_code": "191",
+      "district_name": "बेगूसराय",
+      "location": {
+        "type": "Point",
+        "coordinates": [
+          86.1348804,
+          25.4139122
+        ]
+      },
+      "verification_status": "verified",
+      "verification_method": "conservative_nominatim_match",
+      "confidence": 0.9726,
+      "display_name": "बेगूसराय, Begusarai, बेगूसराय, बिहार, 851117, भारत",
+      "matched_district": "बेगूसराय",
+      "osm_type": "node",
+      "osm_id": 245733431,
+      "place_type": "city",
+      "location_precision": "market_locality_centroid",
+      "resolution_reason": "single_verified_candidate",
+      "candidate_evidence": [
+        {
+          "score": 0.9726,
+          "name": "बेगूसराय",
+          "district": "बेगूसराय",
+          "latitude": 25.4139122,
+          "longitude": 86.1348804,
+          "osm_type": "node",
+          "osm_id": 245733431,
+          "place_type": "city",
+          "display_name": "बेगूसराय, Begusarai, बेगूसराय, बिहार, 851117, भारत"
+        }
+      ],
+      "geocoding_query": "बेगूसराय, बेगूसराय, Bihar, India",
+      "geocoding_query_strategy": "official_name",
+      "alias_evidence": null,
+      "geocoding_query_attempts": [
+        {
+          "query": "बेगूसराय, बेगूसराय, Bihar, India",
+          "query_strategy": "official_name",
+          "accept_language": "hi,en",
+          "candidate_count": 2,
+          "status": "verified",
+          "reason": null
+        }
+      ],
+      "coordinate_source": "OpenStreetMap Nominatim",
+      "coordinate_source_url": "https://nominatim.openstreetmap.org/search",
+      "coordinate_source_license": "OpenStreetMap contributors, ODbL 1.0",
+      "source_market_url": "https://www.biharkrishi.in/mandi",
+      "latest_observation_date": "2026-10-15"
+    },
+    {
+      "market_code": 10006,
+      "market_name": "बिहपुर",
+      "district_code": "192",
+      "district_name": "भागलपुर",
+      "location": {
+        "type": "Point",
+        "coordinates": [
+          86.9341073,
+          25.3876685
+        ]
+      },
+      "verification_status": "verified",
+      "verification_method": "conservative_nominatim_match",
+      "confidence": 0.958,
+      "display_name": "बिहपुर, Bihpur, भागलपुर, बिहार, 853201, भारत",
+      "matched_district": "भागलपुर",
+      "osm_type": "node",
+      "osm_id": 568498647,
+      "place_type": "town",
+      "location_precision": "market_locality_centroid",
+      "resolution_reason": "single_verified_candidate",
+      "candidate_evidence": [
+        {
+          "score": 0.958,
+          "name": "बिहपुर",
+          "district": "भागलपुर",
+          "latitude": 25.3876685,
+          "longitude": 86.9341073,
+          "osm_type": "node",
+          "osm_id": 568498647,
+          "place_type": "town",
+          "display_name": "बिहपुर, Bihpur, भागलपुर, बिहार, 853201, भारत"
+        }
+      ],
+      "geocoding_query": "बिहपुर, भागलपुर, Bihar, India",
+      "geocoding_query_strategy": "official_name",
+      "alias_evidence": null,
+      "geocoding_query_attempts": [
+        {
+          "query": "बिहपुर, भागलपुर, Bihar, India",
+          "query_strategy": "official_name",
+          "accept_language": "hi,en",
+          "candidate_count": 1,
+          "status": "verified",
+          "reason": null
+        }
+      ],
+      "coordinate_source": "OpenStreetMap Nominatim",
+      "coordinate_source_url": "https://nominatim.openstreetmap.org/search",
+      "coordinate_source_license": "OpenStreetMap contributors, ODbL 1.0",
+      "source_market_url": "https://www.biharkrishi.in/mandi",
+      "latest_observation_date": "2026-10-17"
+    },
+    {
+      "market_code": 25,
+      "market_name": "भागलपुर",
+      "district_code": "192",
+      "district_name": "भागलपुर",
+      "location": {
+        "type": "Point",
+        "coordinates": [
+          86.9828131,
+          25.2494829
+        ]
+      },
+      "verification_status": "verified",
+      "verification_method": "conservative_nominatim_match",
+      "confidence": 0.9744,
+      "display_name": "भागलपुर, Jagdishpur, भागलपुर, बिहार, 812002, भारत",
+      "matched_district": "भागलपुर",
+      "osm_type": "node",
+      "osm_id": 245731197,
+      "place_type": "city",
+      "location_precision": "market_locality_centroid",
+      "resolution_reason": "single_verified_candidate",
+      "candidate_evidence": [
+        {
+          "score": 0.9744,
+          "name": "भागलपुर",
+          "district": "भागलपुर",
+          "latitude": 25.2494829,
+          "longitude": 86.9828131,
+          "osm_type": "node",
+          "osm_id": 245731197,
+          "place_type": "city",
+          "display_name": "भागलपुर, Jagdishpur, भागलपुर, बिहार, 812002, भारत"
+        }
+      ],
+      "geocoding_query": "भागलपुर, भागलपुर, Bihar, India",
+      "geocoding_query_strategy": "official_name",
+      "alias_evidence": null,
+      "geocoding_query_attempts": [
+        {
+          "query": "भागलपुर, भागलपुर, Bihar, India",
+          "query_strategy": "official_name",
+          "accept_language": "hi,en",
+          "candidate_count": 1,
+          "status": "verified",
+          "reason": null
+        }
+      ],
+      "coordinate_source": "OpenStreetMap Nominatim",
+      "coordinate_source_url": "https://nominatim.openstreetmap.org/search",
+      "coordinate_source_license": "OpenStreetMap contributors, ODbL 1.0",
+      "source_market_url": "https://www.biharkrishi.in/mandi",
+      "latest_observation_date": "2026-10-16"
+    },
+    {
+      "market_code": 414,
+      "market_name": "आरा",
+      "district_code": "193",
+      "district_name": "भोजपुर",
+      "location": {
+        "type": "Point",
+        "coordinates": [
+          84.6632139,
+          25.560317
+        ]
+      },
+      "verification_status": "verified",
+      "verification_method": "conservative_nominatim_match",
+      "confidence": 0.9714,
+      "display_name": "आरा, Arrah, भोजपुर, बिहार, 802300, भारत",
+      "matched_district": "भोजपुर",
+      "osm_type": "node",
+      "osm_id": 245735560,
+      "place_type": "city",
+      "location_precision": "market_locality_centroid",
+      "resolution_reason": "single_verified_candidate",
+      "candidate_evidence": [
+        {
+          "score": 0.9714,
+          "name": "आरा",
+          "district": "भोजपुर",
+          "latitude": 25.560317,
+          "longitude": 84.6632139,
+          "osm_type": "node",
+          "osm_id": 245735560,
+          "place_type": "city",
+          "display_name": "आरा, Arrah, भोजपुर, बिहार, 802300, भारत"
+        }
+      ],
+      "geocoding_query": "आरा, भोजपुर, Bihar, India",
+      "geocoding_query_strategy": "official_name",
+      "alias_evidence": null,
+      "geocoding_query_attempts": [
+        {
+          "query": "आरा, भोजपुर, Bihar, India",
+          "query_strategy": "official_name",
+          "accept_language": "hi,en",
+          "candidate_count": 1,
+          "status": "verified",
+          "reason": null
+        }
+      ],
+      "coordinate_source": "OpenStreetMap Nominatim",
+      "coordinate_source_url": "https://nominatim.openstreetmap.org/search",
+      "coordinate_source_license": "OpenStreetMap contributors, ODbL 1.0",
+      "source_market_url": "https://www.biharkrishi.in/mandi",
+      "latest_observation_date": "2026-10-18"
+    },
+    {
+      "market_code": 10009,
+      "market_name": "पिरो",
+      "district_code": "193",
+      "district_name": "भोजपुर",
+      "location": {
+        "type": "Point",
+        "coordinates": [
+          84.4031976,
+          25.3319049
+        ]
+      },
+      "verification_status": "verified",
+      "verification_method": "conservative_nominatim_match",
+      "confidence": 0.9573,
+      "display_name": "Piro, भोजपुर, Bihar, 802207, India",
+      "matched_district": "भोजपुर",
+      "osm_type": "node",
+      "osm_id": 245732417,
+      "place_type": "village",
+      "location_precision": "market_locality_centroid",
+      "resolution_reason": "single_verified_candidate",
+      "candidate_evidence": [
+        {
+          "score": 0.9573,
+          "name": "Piro",
+          "district": "भोजपुर",
+          "latitude": 25.3319049,
+          "longitude": 84.4031976,
+          "osm_type": "node",
+          "osm_id": 245732417,
+          "place_type": "village",
+          "display_name": "Piro, भोजपुर, Bihar, 802207, India"
+        }
+      ],
+      "geocoding_query": "Piro, Bhojpur, Bihar, India",
+      "geocoding_query_strategy": "reviewed_alias",
+      "alias_evidence": "https://wiki.openstreetmap.org/wiki/Subdistricts_in_Bihar",
+      "geocoding_query_attempts": [
+        {
+          "query": "पिरो, भोजपुर, Bihar, India",
+          "query_strategy": "official_name",
+          "accept_language": "hi,en",
+          "candidate_count": 2,
+          "status": "unresolved",
+          "reason": "no_candidate_passed_bihar_name_and_district_checks"
+        },
+        {
+          "query": "Piro, Bhojpur, Bihar, India",
+          "query_strategy": "reviewed_alias",
+          "accept_language": "en,hi",
+          "candidate_count": 2,
+          "status": "verified",
+          "reason": null
+        }
+      ],
+      "coordinate_source": "OpenStreetMap Nominatim",
+      "coordinate_source_url": "https://nominatim.openstreetmap.org/search",
+      "coordinate_source_license": "OpenStreetMap contributors, ODbL 1.0",
+      "source_market_url": "https://www.biharkrishi.in/mandi",
+      "latest_observation_date": "2026-10-17"
+    },
+    {
+      "market_code": 1655,
+      "market_name": "जयनगर",
+      "district_code": "206",
+      "district_name": "मधुबनी",
+      "location": {
+        "type": "Point",
+        "coordinates": [
+          86.1402809,
+          26.5882487
+        ]
+      },
+      "verification_status": "verified",
+      "verification_method": "conservative_nominatim_match",
+      "confidence": 0.9638,
+      "display_name": "जयनगर, Jainagar, मधुबनी, बिहार, 847226, भारत",
+      "matched_district": "मधुबनी",
+      "osm_type": "node",
+      "osm_id": 245750151,
+      "place_type": "town",
+      "location_precision": "market_locality_centroid",
+      "resolution_reason": "single_verified_candidate",
+      "candidate_evidence": [
+        {
+          "score": 0.9638,
+          "name": "जयनगर",
+          "district": "मधुबनी",
+          "latitude": 26.5882487,
+          "longitude": 86.1402809,
+          "osm_type": "node",
+          "osm_id": 245750151,
+          "place_type": "town",
+          "display_name": "जयनगर, Jainagar, मधुबनी, बिहार, 847226, भारत"
+        }
+      ],
+      "geocoding_query": "जयनगर, मधुबनी, Bihar, India",
+      "geocoding_query_strategy": "official_name",
+      "alias_evidence": null,
+      "geocoding_query_attempts": [
+        {
+          "query": "जयनगर, मधुबनी, Bihar, India",
+          "query_strategy": "official_name",
+          "accept_language": "hi,en",
+          "candidate_count": 2,
+          "status": "verified",
+          "reason": null
+        }
+      ],
+      "coordinate_source": "OpenStreetMap Nominatim",
+      "coordinate_source_url": "https://nominatim.openstreetmap.org/search",
+      "coordinate_source_license": "OpenStreetMap contributors, ODbL 1.0",
+      "source_market_url": "https://www.biharkrishi.in/mandi",
+      "latest_observation_date": "2026-10-15"
+    },
+    {
+      "market_code": 1656,
+      "market_name": "झंझारपुर",
+      "district_code": "206",
+      "district_name": "मधुबनी",
+      "location": {
+        "type": "Point",
+        "coordinates": [
+          86.2789821,
+          26.2678839
+        ]
+      },
+      "verification_status": "verified",
+      "verification_method": "conservative_nominatim_match",
+      "confidence": 0.958,
+      "display_name": "झंझारपुर, Jhanjharpur, मधुबनी, बिहार, भारत",
+      "matched_district": "मधुबनी",
+      "osm_type": "node",
+      "osm_id": 6969738086,
+      "place_type": "town",
+      "location_precision": "market_locality_centroid",
+      "resolution_reason": "single_verified_candidate",
+      "candidate_evidence": [
+        {
+          "score": 0.958,
+          "name": "झंझारपुर",
+          "district": "मधुबनी",
+          "latitude": 26.2678839,
+          "longitude": 86.2789821,
+          "osm_type": "node",
+          "osm_id": 6969738086,
+          "place_type": "town",
+          "display_name": "झंझारपुर, Jhanjharpur, मधुबनी, बिहार, भारत"
+        }
+      ],
+      "geocoding_query": "झंझारपुर, मधुबनी, Bihar, India",
+      "geocoding_query_strategy": "official_name",
+      "alias_evidence": null,
+      "geocoding_query_attempts": [
+        {
+          "query": "झंझारपुर, मधुबनी, Bihar, India",
+          "query_strategy": "official_name",
+          "accept_language": "hi,en",
+          "candidate_count": 2,
+          "status": "verified",
+          "reason": null
+        }
+      ],
+      "coordinate_source": "OpenStreetMap Nominatim",
+      "coordinate_source_url": "https://nominatim.openstreetmap.org/search",
+      "coordinate_source_license": "OpenStreetMap contributors, ODbL 1.0",
+      "source_market_url": "https://www.biharkrishi.in/mandi",
+      "latest_observation_date": "2026-09-21"
+    },
+    {
+      "market_code": 10024,
+      "market_name": "बेनीपट्टी (नया)",
+      "district_code": "206",
+      "district_name": "मधुबनी",
+      "location": {
+        "type": "Point",
+        "coordinates": [
+          85.9027054,
+          26.4433519
+        ]
+      },
+      "verification_status": "verified",
+      "verification_method": "conservative_nominatim_match",
+      "confidence": 0.958,
+      "display_name": "बेनीपट्टी, Benipatti, मधुबनी, बिहार, 847223, भारत",
+      "matched_district": "मधुबनी",
+      "osm_type": "node",
+      "osm_id": 4027415289,
+      "place_type": "town",
+      "location_precision": "market_locality_centroid",
+      "resolution_reason": "single_verified_candidate",
+      "candidate_evidence": [
+        {
+          "score": 0.958,
+          "name": "बेनीपट्टी",
+          "district": "मधुबनी",
+          "latitude": 26.4433519,
+          "longitude": 85.9027054,
+          "osm_type": "node",
+          "osm_id": 4027415289,
+          "place_type": "town",
+          "display_name": "बेनीपट्टी, Benipatti, मधुबनी, बिहार, 847223, भारत"
+        }
+      ],
+      "geocoding_query": "बेनीपट्टी, मधुबनी, Bihar, India",
+      "geocoding_query_strategy": "generic_suffix_removed",
+      "alias_evidence": null,
+      "geocoding_query_attempts": [
+        {
+          "query": "बेनीपट्टी (नया), मधुबनी, Bihar, India",
+          "query_strategy": "official_name",
+          "accept_language": "hi,en",
+          "candidate_count": 0,
+          "status": "unresolved",
+          "reason": "no_candidate_passed_bihar_name_and_district_checks"
+        },
+        {
+          "query": "बेनीपट्टी, मधुबनी, Bihar, India",
+          "query_strategy": "generic_suffix_removed",
+          "accept_language": "hi,en",
+          "candidate_count": 1,
+          "status": "verified",
+          "reason": null
+        }
+      ],
+      "coordinate_source": "OpenStreetMap Nominatim",
+      "coordinate_source_url": "https://nominatim.openstreetmap.org/search",
+      "coordinate_source_license": "OpenStreetMap contributors, ODbL 1.0",
+      "source_market_url": "https://www.biharkrishi.in/mandi",
+      "latest_observation_date": "2026-10-16"
+    },
+    {
+      "market_code": 35,
+      "market_name": "मधुबनी",
+      "district_code": "206",
+      "district_name": "मधुबनी",
+      "location": {
+        "type": "Point",
+        "coordinates": [
+          86.069304,
+          26.357794
+        ]
+      },
+      "verification_status": "verified",
+      "verification_method": "conservative_nominatim_match",
+      "confidence": 0.958,
+      "display_name": "मधुबनी, Madhubani, मधुबनी, बिहार, 847200, भारत",
+      "matched_district": "मधुबनी",
+      "osm_type": "node",
+      "osm_id": 1266047148,
+      "place_type": "town",
+      "location_precision": "market_locality_centroid",
+      "resolution_reason": "single_verified_candidate",
+      "candidate_evidence": [
+        {
+          "score": 0.958,
+          "name": "मधुबनी",
+          "district": "मधुबनी",
+          "latitude": 26.357794,
+          "longitude": 86.069304,
+          "osm_type": "node",
+          "osm_id": 1266047148,
+          "place_type": "town",
+          "display_name": "मधुबनी, Madhubani, मधुबनी, बिहार, 847200, भारत"
+        }
+      ],
+      "geocoding_query": "मधुबनी, मधुबनी, Bihar, India",
+      "geocoding_query_strategy": "official_name",
+      "alias_evidence": null,
+      "geocoding_query_attempts": [
+        {
+          "query": "मधुबनी, मधुबनी, Bihar, India",
+          "query_strategy": "official_name",
+          "accept_language": "hi,en",
+          "candidate_count": 1,
+          "status": "verified",
+          "reason": null
+        }
+      ],
+      "coordinate_source": "OpenStreetMap Nominatim",
+      "coordinate_source_url": "https://nominatim.openstreetmap.org/search",
+      "coordinate_source_license": "OpenStreetMap contributors, ODbL 1.0",
+      "source_market_url": "https://www.biharkrishi.in/mandi",
+      "latest_observation_date": "2026-10-16"
+    },
+    {
+      "market_code": 10035,
+      "market_name": "शिवहर (नवीन)",
+      "district_code": "220",
+      "district_name": "शिवहर",
+      "location": {
+        "type": "Point",
+        "coordinates": [
+          85.2929878,
+          26.5139825
+        ]
+      },
+      "verification_status": "verified",
+      "verification_method": "conservative_nominatim_match",
+      "confidence": 0.958,
+      "display_name": "शिवहर, Sheohar, शिवहर, बिहार, भारत",
+      "matched_district": "शिवहर",
+      "osm_type": "node",
+      "osm_id": 1075276175,
+      "place_type": "town",
+      "location_precision": "market_locality_centroid",
+      "resolution_reason": "single_verified_candidate",
+      "candidate_evidence": [
+        {
+          "score": 0.958,
+          "name": "शिवहर",
+          "district": "शिवहर",
+          "latitude": 26.5139825,
+          "longitude": 85.2929878,
+          "osm_type": "node",
+          "osm_id": 1075276175,
+          "place_type": "town",
+          "display_name": "शिवहर, Sheohar, शिवहर, बिहार, भारत"
+        }
+      ],
+      "geocoding_query": "शिवहर, शिवहर, Bihar, India",
+      "geocoding_query_strategy": "generic_suffix_removed",
+      "alias_evidence": null,
+      "geocoding_query_attempts": [
+        {
+          "query": "शिवहर (नवीन), शिवहर, Bihar, India",
+          "query_strategy": "official_name",
+          "accept_language": "hi,en",
+          "candidate_count": 0,
+          "status": "unresolved",
+          "reason": "no_candidate_passed_bihar_name_and_district_checks"
+        },
+        {
+          "query": "शिवहर, शिवहर, Bihar, India",
+          "query_strategy": "generic_suffix_removed",
+          "accept_language": "hi,en",
+          "candidate_count": 1,
+          "status": "verified",
+          "reason": null
+        }
+      ],
+      "coordinate_source": "OpenStreetMap Nominatim",
+      "coordinate_source_url": "https://nominatim.openstreetmap.org/search",
+      "coordinate_source_license": "OpenStreetMap contributors, ODbL 1.0",
+      "source_market_url": "https://www.biharkrishi.in/mandi",
+      "latest_observation_date": "2026-10-10"
+    },
+    {
+      "market_code": 10034,
+      "market_name": "बरबीघा (नया)",
+      "district_code": "219",
+      "district_name": "शेखपुरा",
+      "location": {
+        "type": "Point",
+        "coordinates": [
+          85.7365083,
+          25.2183873
+        ]
+      },
+      "verification_status": "verified",
+      "verification_method": "conservative_nominatim_match",
+      "confidence": 0.958,
+      "display_name": "Barbigha, शेखपुरा, Bihar, 811101, India",
+      "matched_district": "शेखपुरा",
+      "osm_type": "node",
+      "osm_id": 568472825,
+      "place_type": "town",
+      "location_precision": "market_locality_centroid",
+      "resolution_reason": "single_verified_candidate",
+      "candidate_evidence": [
+        {
+          "score": 0.958,
+          "name": "Barbigha",
+          "district": "शेखपुरा",
+          "latitude": 25.2183873,
+          "longitude": 85.7365083,
+          "osm_type": "node",
+          "osm_id": 568472825,
+          "place_type": "town",
+          "display_name": "Barbigha, शेखपुरा, Bihar, 811101, India"
+        }
+      ],
+      "geocoding_query": "Barbigha, Sheikhpura, Bihar, India",
+      "geocoding_query_strategy": "reviewed_alias",
+      "alias_evidence": "https://wiki.openstreetmap.org/wiki/Subdistricts_in_Bihar",
+      "geocoding_query_attempts": [
+        {
+          "query": "बरबीघा (नया), शेखपुरा, Bihar, India",
+          "query_strategy": "official_name",
+          "accept_language": "hi,en",
+          "candidate_count": 0,
+          "status": "unresolved",
+          "reason": "no_candidate_passed_bihar_name_and_district_checks"
+        },
+        {
+          "query": "बरबीघा, शेखपुरा, Bihar, India",
+          "query_strategy": "generic_suffix_removed",
+          "accept_language": "hi,en",
+          "candidate_count": 0,
+          "status": "unresolved",
+          "reason": "no_candidate_passed_bihar_name_and_district_checks"
+        },
+        {
+          "query": "Barbigha, Sheikhpura, Bihar, India",
+          "query_strategy": "reviewed_alias",
+          "accept_language": "en,hi",
+          "candidate_count": 2,
+          "status": "verified",
+          "reason": null
+        }
+      ],
+      "coordinate_source": "OpenStreetMap Nominatim",
+      "coordinate_source_url": "https://nominatim.openstreetmap.org/search",
+      "coordinate_source_license": "OpenStreetMap contributors, ODbL 1.0",
+      "source_market_url": "https://www.biharkrishi.in/mandi",
+      "latest_observation_date": "2026-10-15"
+    },
+    {
+      "market_code": 1649,
+      "market_name": "शेखपुरा",
+      "district_code": "219",
+      "district_name": "शेखपुरा",
+      "location": {
+        "type": "Point",
+        "coordinates": [
+          85.8381996,
+          25.139584
+        ]
+      },
+      "verification_status": "verified",
+      "verification_method": "conservative_nominatim_match",
+      "confidence": 0.958,
+      "display_name": "Sheikhpura, शेखपुरा, Bihar, 803109, India",
+      "matched_district": "Sheikhpura",
+      "osm_type": "node",
+      "osm_id": 1312143689,
+      "place_type": "town",
+      "location_precision": "market_locality_centroid",
+      "resolution_reason": "single_verified_candidate",
+      "candidate_evidence": [
+        {
+          "score": 0.958,
+          "name": "Sheikhpura",
+          "district": "Sheikhpura",
+          "latitude": 25.139584,
+          "longitude": 85.8381996,
+          "osm_type": "node",
+          "osm_id": 1312143689,
+          "place_type": "town",
+          "display_name": "Sheikhpura, शेखपुरा, Bihar, 803109, India"
+        }
+      ],
+      "geocoding_query": "Sheikhpura, Sheikhpura, Bihar, India",
+      "geocoding_query_strategy": "reviewed_alias",
+      "alias_evidence": "https://wiki.openstreetmap.org/wiki/Subdistricts_in_Bihar",
+      "geocoding_query_attempts": [
+        {
+          "query": "शेखपुरा, शेखपुरा, Bihar, India",
+          "query_strategy": "official_name",
+          "accept_language": "hi,en",
+          "candidate_count": 0,
+          "status": "unresolved",
+          "reason": "no_candidate_passed_bihar_name_and_district_checks"
+        },
+        {
+          "query": "Sheikhpura, Sheikhpura, Bihar, India",
+          "query_strategy": "reviewed_alias",
+          "accept_language": "en,hi",
+          "candidate_count": 2,
+          "status": "verified",
+          "reason": null
+        }
+      ],
+      "coordinate_source": "OpenStreetMap Nominatim",
+      "coordinate_source_url": "https://nominatim.openstreetmap.org/search",
+      "coordinate_source_license": "OpenStreetMap contributors, ODbL 1.0",
+      "source_market_url": "https://www.biharkrishi.in/mandi",
+      "latest_observation_date": "2026-10-15"
+    },
+    {
+      "market_code": 10032,
+      "market_name": "ताजपुर (नया)",
+      "district_code": "217",
+      "district_name": "समस्तीपुर",
+      "location": {
+        "type": "Point",
+        "coordinates": [
+          85.672853,
+          25.8553586
+        ]
+      },
+      "verification_status": "verified",
+      "verification_method": "conservative_nominatim_match",
+      "confidence": 0.9573,
+      "display_name": "Tajpur, समस्तीपुर, Bihar, 848130, India",
+      "matched_district": "समस्तीपुर",
+      "osm_type": "node",
+      "osm_id": 245739256,
+      "place_type": "village",
+      "location_precision": "market_locality_centroid",
+      "resolution_reason": "single_verified_candidate",
+      "candidate_evidence": [
+        {
+          "score": 0.9573,
+          "name": "Tajpur",
+          "district": "समस्तीपुर",
+          "latitude": 25.8553586,
+          "longitude": 85.672853,
+          "osm_type": "node",
+          "osm_id": 245739256,
+          "place_type": "village",
+          "display_name": "Tajpur, समस्तीपुर, Bihar, 848130, India"
+        }
+      ],
+      "geocoding_query": "Tajpur, Samastipur, Bihar, India",
+      "geocoding_query_strategy": "reviewed_alias",
+      "alias_evidence": "https://wiki.openstreetmap.org/wiki/Subdistricts_in_Bihar",
+      "geocoding_query_attempts": [
+        {
+          "query": "ताजपुर (नया), समस्तीपुर, Bihar, India",
+          "query_strategy": "official_name",
+          "accept_language": "hi,en",
+          "candidate_count": 0,
+          "status": "unresolved",
+          "reason": "no_candidate_passed_bihar_name_and_district_checks"
+        },
+        {
+          "query": "ताजपुर, समस्तीपुर, Bihar, India",
+          "query_strategy": "generic_suffix_removed",
+          "accept_language": "hi,en",
+          "candidate_count": 3,
+          "status": "unresolved",
+          "reason": "no_candidate_passed_bihar_name_and_district_checks"
+        },
+        {
+          "query": "Tajpur, Samastipur, Bihar, India",
+          "query_strategy": "reviewed_alias",
+          "accept_language": "en,hi",
+          "candidate_count": 2,
+          "status": "verified",
+          "reason": null
+        }
+      ],
+      "coordinate_source": "OpenStreetMap Nominatim",
+      "coordinate_source_url": "https://nominatim.openstreetmap.org/search",
+      "coordinate_source_license": "OpenStreetMap contributors, ODbL 1.0",
+      "source_market_url": "https://www.biharkrishi.in/mandi",
+      "latest_observation_date": "2026-10-16"
+    },
+    {
+      "market_code": 422,
+      "market_name": "सहरसा",
+      "district_code": "216",
+      "district_name": "सहरसा",
+      "location": {
+        "type": "Point",
+        "coordinates": [
+          86.5926702,
+          25.8758962
+        ]
+      },
+      "verification_status": "verified",
+      "verification_method": "conservative_nominatim_match",
+      "confidence": 0.9721,
+      "display_name": "सहरसा, Kahara, सहरसा, बिहार, 852200, भारत",
+      "matched_district": "सहरसा",
+      "osm_type": "node",
+      "osm_id": 245739393,
+      "place_type": "city",
+      "location_precision": "market_locality_centroid",
+      "resolution_reason": "single_verified_candidate",
+      "candidate_evidence": [
+        {
+          "score": 0.9721,
+          "name": "सहरसा",
+          "district": "सहरसा",
+          "latitude": 25.8758962,
+          "longitude": 86.5926702,
+          "osm_type": "node",
+          "osm_id": 245739393,
+          "place_type": "city",
+          "display_name": "सहरसा, Kahara, सहरसा, बिहार, 852200, भारत"
+        }
+      ],
+      "geocoding_query": "सहरसा, सहरसा, Bihar, India",
+      "geocoding_query_strategy": "official_name",
+      "alias_evidence": null,
+      "geocoding_query_attempts": [
+        {
+          "query": "सहरसा, सहरसा, Bihar, India",
+          "query_strategy": "official_name",
+          "accept_language": "hi,en",
+          "candidate_count": 1,
+          "status": "verified",
+          "reason": null
+        }
+      ],
+      "coordinate_source": "OpenStreetMap Nominatim",
+      "coordinate_source_url": "https://nominatim.openstreetmap.org/search",
+      "coordinate_source_license": "OpenStreetMap contributors, ODbL 1.0",
+      "source_market_url": "https://www.biharkrishi.in/mandi",
+      "latest_observation_date": "2026-10-13"
+    },
+    {
+      "market_code": 26,
+      "market_name": "चपरा",
+      "district_code": "218",
+      "district_name": "सारण",
+      "location": {
+        "type": "Point",
+        "coordinates": [
+          84.7514507,
+          25.7784105
+        ]
+      },
+      "verification_status": "verified",
+      "verification_method": "conservative_nominatim_match",
+      "confidence": 0.9593,
+      "display_name": "छपरा, सारण, बिहार, 841300, भारत",
+      "matched_district": "सारण",
+      "osm_type": "node",
+      "osm_id": 245738416,
+      "place_type": "city",
+      "location_precision": "market_locality_centroid",
+      "resolution_reason": "single_verified_candidate",
+      "candidate_evidence": [
+        {
+          "score": 0.9593,
+          "name": "छपरा",
+          "district": "सारण",
+          "latitude": 25.7784105,
+          "longitude": 84.7514507,
+          "osm_type": "node",
+          "osm_id": 245738416,
+          "place_type": "city",
+          "display_name": "छपरा, सारण, बिहार, 841300, भारत"
+        }
+      ],
+      "geocoding_query": "छपरा, Saran, Bihar, India",
+      "geocoding_query_strategy": "reviewed_alias",
+      "alias_evidence": "https://wiki.openstreetmap.org/wiki/Subdistricts_in_Bihar",
+      "geocoding_query_attempts": [
+        {
+          "query": "चपरा, सारण, Bihar, India",
+          "query_strategy": "official_name",
+          "accept_language": "hi,en",
+          "candidate_count": 0,
+          "status": "unresolved",
+          "reason": "no_candidate_passed_bihar_name_and_district_checks"
+        },
+        {
+          "query": "छपरा, Saran, Bihar, India",
+          "query_strategy": "reviewed_alias",
+          "accept_language": "hi,en",
+          "candidate_count": 2,
+          "status": "verified",
+          "reason": null
+        }
+      ],
+      "coordinate_source": "OpenStreetMap Nominatim",
+      "coordinate_source_url": "https://nominatim.openstreetmap.org/search",
+      "coordinate_source_license": "OpenStreetMap contributors, ODbL 1.0",
+      "source_market_url": "https://www.biharkrishi.in/mandi",
+      "latest_observation_date": "2026-10-15"
+    },
+    {
+      "market_code": 10033,
+      "market_name": "सोनपुर (नया)",
+      "district_code": "218",
+      "district_name": "सारण",
+      "location": {
+        "type": "Point",
+        "coordinates": [
+          85.1569507,
+          25.6977651
+        ]
+      },
+      "verification_status": "verified",
+      "verification_method": "conservative_nominatim_match",
+      "confidence": 0.958,
+      "display_name": "Sonepur, सारण, बिहार, भारत",
+      "matched_district": "सारण",
+      "osm_type": "node",
+      "osm_id": 567133588,
+      "place_type": "town",
+      "location_precision": "market_locality_centroid",
+      "resolution_reason": "single_verified_candidate",
+      "candidate_evidence": [
+        {
+          "score": 0.958,
+          "name": "Sonepur",
+          "district": "सारण",
+          "latitude": 25.6977651,
+          "longitude": 85.1569507,
+          "osm_type": "node",
+          "osm_id": 567133588,
+          "place_type": "town",
+          "display_name": "Sonepur, सारण, बिहार, भारत"
+        }
+      ],
+      "geocoding_query": "सोनपुर, सारण, Bihar, India",
+      "geocoding_query_strategy": "generic_suffix_removed",
+      "alias_evidence": "https://wiki.openstreetmap.org/wiki/Subdistricts_in_Bihar",
+      "geocoding_query_attempts": [
+        {
+          "query": "सोनपुर (नया), सारण, Bihar, India",
+          "query_strategy": "official_name",
+          "accept_language": "hi,en",
+          "candidate_count": 0,
+          "status": "unresolved",
+          "reason": "no_candidate_passed_bihar_name_and_district_checks"
+        },
+        {
+          "query": "सोनपुर, सारण, Bihar, India",
+          "query_strategy": "generic_suffix_removed",
+          "accept_language": "hi,en",
+          "candidate_count": 1,
+          "status": "verified",
+          "reason": null
+        }
+      ],
+      "coordinate_source": "OpenStreetMap Nominatim",
+      "coordinate_source_url": "https://nominatim.openstreetmap.org/search",
+      "coordinate_source_license": "OpenStreetMap contributors, ODbL 1.0",
+      "source_market_url": "https://www.biharkrishi.in/mandi",
+      "latest_observation_date": "2026-10-15"
+    },
+    {
+      "market_code": 10036,
+      "market_name": "महाराजगंज(नवीन)",
+      "district_code": "222",
+      "district_name": "सिवान",
+      "location": {
+        "type": "Point",
+        "coordinates": [
+          84.5028865,
+          26.108443
+        ]
+      },
+      "verification_status": "verified",
+      "verification_method": "conservative_nominatim_match",
+      "confidence": 0.958,
+      "display_name": "महाराजगंज, Maharajganj, सिवान, बिहार, 841238, भारत",
+      "matched_district": "सिवान",
+      "osm_type": "node",
+      "osm_id": 1351836911,
+      "place_type": "town",
+      "location_precision": "market_locality_centroid",
+      "resolution_reason": "single_verified_candidate",
+      "candidate_evidence": [
+        {
+          "score": 0.958,
+          "name": "महाराजगंज",
+          "district": "सिवान",
+          "latitude": 26.108443,
+          "longitude": 84.5028865,
+          "osm_type": "node",
+          "osm_id": 1351836911,
+          "place_type": "town",
+          "display_name": "महाराजगंज, Maharajganj, सिवान, बिहार, 841238, भारत"
+        }
+      ],
+      "geocoding_query": "महाराजगंज, सिवान, Bihar, India",
+      "geocoding_query_strategy": "generic_suffix_removed",
+      "alias_evidence": null,
+      "geocoding_query_attempts": [
+        {
+          "query": "महाराजगंज(नवीन), सिवान, Bihar, India",
+          "query_strategy": "official_name",
+          "accept_language": "hi,en",
+          "candidate_count": 0,
+          "status": "unresolved",
+          "reason": "no_candidate_passed_bihar_name_and_district_checks"
+        },
+        {
+          "query": "महाराजगंज, सिवान, Bihar, India",
+          "query_strategy": "generic_suffix_removed",
+          "accept_language": "hi,en",
+          "candidate_count": 1,
+          "status": "verified",
+          "reason": null
+        }
+      ],
+      "coordinate_source": "OpenStreetMap Nominatim",
+      "coordinate_source_url": "https://nominatim.openstreetmap.org/search",
+      "coordinate_source_license": "OpenStreetMap contributors, ODbL 1.0",
+      "source_market_url": "https://www.biharkrishi.in/mandi",
+      "latest_observation_date": "2026-10-16"
+    },
+    {
+      "market_code": 10037,
+      "market_name": "त्रिवेणीगंज (नया)",
+      "district_code": "223",
+      "district_name": "सुपौल",
+      "location": {
+        "type": "Point",
+        "coordinates": [
+          86.8872792,
+          26.1270382
+        ]
+      },
+      "verification_status": "verified",
+      "verification_method": "conservative_nominatim_match",
+      "confidence": 0.958,
+      "display_name": "त्रिवेणीगंज, Tribeniganj, सुपौल, बिहार, 852139, भारत",
+      "matched_district": "सुपौल",
+      "osm_type": "node",
+      "osm_id": 245744268,
+      "place_type": "town",
+      "location_precision": "market_locality_centroid",
+      "resolution_reason": "single_verified_candidate",
+      "candidate_evidence": [
+        {
+          "score": 0.958,
+          "name": "त्रिवेणीगंज",
+          "district": "सुपौल",
+          "latitude": 26.1270382,
+          "longitude": 86.8872792,
+          "osm_type": "node",
+          "osm_id": 245744268,
+          "place_type": "town",
+          "display_name": "त्रिवेणीगंज, Tribeniganj, सुपौल, बिहार, 852139, भारत"
+        }
+      ],
+      "geocoding_query": "त्रिवेणीगंज, सुपौल, Bihar, India",
+      "geocoding_query_strategy": "generic_suffix_removed",
+      "alias_evidence": null,
+      "geocoding_query_attempts": [
+        {
+          "query": "त्रिवेणीगंज (नया), सुपौल, Bihar, India",
+          "query_strategy": "official_name",
+          "accept_language": "hi,en",
+          "candidate_count": 0,
+          "status": "unresolved",
+          "reason": "no_candidate_passed_bihar_name_and_district_checks"
+        },
+        {
+          "query": "त्रिवेणीगंज, सुपौल, Bihar, India",
+          "query_strategy": "generic_suffix_removed",
+          "accept_language": "hi,en",
+          "candidate_count": 1,
+          "status": "verified",
+          "reason": null
+        }
+      ],
+      "coordinate_source": "OpenStreetMap Nominatim",
+      "coordinate_source_url": "https://nominatim.openstreetmap.org/search",
+      "coordinate_source_license": "OpenStreetMap contributors, ODbL 1.0",
+      "source_market_url": "https://www.biharkrishi.in/mandi",
+      "latest_observation_date": "2026-10-18"
+    },
+    {
+      "market_code": 1645,
+      "market_name": "बीरपुर",
+      "district_code": "223",
+      "district_name": "सुपौल",
+      "location": {
+        "type": "Point",
+        "coordinates": [
+          87.0084605,
+          26.5151843
+        ]
+      },
+      "verification_status": "verified",
+      "verification_method": "conservative_nominatim_match",
+      "confidence": 0.958,
+      "display_name": "बीरपुर, Basantpur, सुपौल, बिहार, भारत",
+      "matched_district": "सुपौल",
+      "osm_type": "node",
+      "osm_id": 1437729453,
+      "place_type": "town",
+      "location_precision": "market_locality_centroid",
+      "resolution_reason": "single_verified_candidate",
+      "candidate_evidence": [
+        {
+          "score": 0.958,
+          "name": "बीरपुर",
+          "district": "सुपौल",
+          "latitude": 26.5151843,
+          "longitude": 87.0084605,
+          "osm_type": "node",
+          "osm_id": 1437729453,
+          "place_type": "town",
+          "display_name": "बीरपुर, Basantpur, सुपौल, बिहार, भारत"
+        }
+      ],
+      "geocoding_query": "बीरपुर, सुपौल, Bihar, India",
+      "geocoding_query_strategy": "official_name",
+      "alias_evidence": null,
+      "geocoding_query_attempts": [
+        {
+          "query": "बीरपुर, सुपौल, Bihar, India",
+          "query_strategy": "official_name",
+          "accept_language": "hi,en",
+          "candidate_count": 1,
+          "status": "verified",
+          "reason": null
+        }
+      ],
+      "coordinate_source": "OpenStreetMap Nominatim",
+      "coordinate_source_url": "https://nominatim.openstreetmap.org/search",
+      "coordinate_source_license": "OpenStreetMap contributors, ODbL 1.0",
+      "source_market_url": "https://www.biharkrishi.in/mandi",
+      "latest_observation_date": "2026-10-16"
+    },
+    {
+      "market_code": 1652,
+      "market_name": "सुपौल",
+      "district_code": "223",
+      "district_name": "सुपौल",
+      "location": {
+        "type": "Point",
+        "coordinates": [
+          86.6008021,
+          26.1186598
+        ]
+      },
+      "verification_status": "verified",
+      "verification_method": "conservative_nominatim_match",
+      "confidence": 0.958,
+      "display_name": "सुपौल, Supaul, सुपौल, बिहार, 852131, भारत",
+      "matched_district": "सुपौल",
+      "osm_type": "node",
+      "osm_id": 1772769991,
+      "place_type": "town",
+      "location_precision": "market_locality_centroid",
+      "resolution_reason": "single_verified_candidate",
+      "candidate_evidence": [
+        {
+          "score": 0.958,
+          "name": "सुपौल",
+          "district": "सुपौल",
+          "latitude": 26.1186598,
+          "longitude": 86.6008021,
+          "osm_type": "node",
+          "osm_id": 1772769991,
+          "place_type": "town",
+          "display_name": "सुपौल, Supaul, सुपौल, बिहार, 852131, भारत"
+        }
+      ],
+      "geocoding_query": "सुपौल, सुपौल, Bihar, India",
+      "geocoding_query_strategy": "official_name",
+      "alias_evidence": null,
+      "geocoding_query_attempts": [
+        {
+          "query": "सुपौल, सुपौल, Bihar, India",
+          "query_strategy": "official_name",
+          "accept_language": "hi,en",
+          "candidate_count": 1,
+          "status": "verified",
+          "reason": null
+        }
+      ],
+      "coordinate_source": "OpenStreetMap Nominatim",
+      "coordinate_source_url": "https://nominatim.openstreetmap.org/search",
+      "coordinate_source_license": "OpenStreetMap contributors, ODbL 1.0",
+      "source_market_url": "https://www.biharkrishi.in/mandi",
+      "latest_observation_date": "2026-10-16"
+    }
+  ],
+  "unresolved_markets": [
+    {
+      "market_code": 417,
+      "market": "Samastipur APMC",
+      "district": "Samastipur",
+      "district_code": "217",
+      "latest_observation_date": "2026-10-16",
+      "status": "unresolved",
+      "reason": "no_candidate_passed_bihar_name_and_district_checks",
+      "query": "Samastipur, Bihar, India",
+      "query_strategy": "generic_suffix_removed_without_district",
+      "accept_language": "en,hi",
+      "candidate_count": 3,
+      "query_attempts": [
+        {
+          "query": "Samastipur APMC, Samastipur, Bihar, India",
+          "query_strategy": "official_name",
+          "accept_language": "en,hi",
+          "candidate_count": 0,
+          "status": "unresolved",
+          "reason": "no_candidate_passed_bihar_name_and_district_checks"
+        },
+        {
+          "query": "Samastipur, Samastipur, Bihar, India",
+          "query_strategy": "generic_suffix_removed",
+          "accept_language": "en,hi",
+          "candidate_count": 3,
+          "status": "unresolved",
+          "reason": "no_candidate_passed_bihar_name_and_district_checks"
+        },
+        {
+          "query": "Samastipur APMC, Bihar, India",
+          "query_strategy": "official_name_without_district",
+          "accept_language": "en,hi",
+          "candidate_count": 0,
+          "status": "unresolved",
+          "reason": "no_candidate_passed_bihar_name_and_district_checks"
+        },
+        {
+          "query": "Samastipur, Bihar, India",
+          "query_strategy": "generic_suffix_removed_without_district",
+          "accept_language": "en,hi",
+          "candidate_count": 3,
+          "status": "unresolved",
+          "reason": "no_candidate_passed_bihar_name_and_district_checks"
+        }
+      ]
+    },
+    {
+      "market_code": 10020,
+      "market": "कैमूर",
+      "district": "कैमूर",
+      "district_code": "200",
+      "latest_observation_date": "2026-10-17",
+      "status": "unresolved",
+      "reason": "no_candidate_passed_bihar_name_and_district_checks",
+      "query": "कैमूर, Bihar, India",
+      "query_strategy": "official_name_without_district",
+      "accept_language": "hi,en",
+      "candidate_count": 1,
+      "query_attempts": [
+        {
+          "query": "कैमूर, कैमूर, Bihar, India",
+          "query_strategy": "official_name",
+          "accept_language": "hi,en",
+          "candidate_count": 0,
+          "status": "unresolved",
+          "reason": "no_candidate_passed_bihar_name_and_district_checks"
+        },
+        {
+          "query": "कैमूर, Bihar, India",
+          "query_strategy": "official_name_without_district",
+          "accept_language": "hi,en",
+          "candidate_count": 1,
+          "status": "unresolved",
+          "reason": "no_candidate_passed_bihar_name_and_district_checks"
+        }
+      ]
+    },
+    {
+      "market_code": 10014,
+      "market": "टेकारी",
+      "district": "गया",
+      "district_code": "196",
+      "latest_observation_date": "2026-10-16",
+      "geocoding_aliases": [
+        "टिकारी",
+        "Tikari"
+      ],
+      "geocoding_query_district": "Gaya",
+      "geocoding_district_aliases": [
+        "Gaya"
+      ],
+      "alias_evidence": "https://wiki.openstreetmap.org/wiki/Subdistricts_in_Bihar",
+      "status": "unresolved",
+      "reason": "no_candidate_passed_bihar_name_and_district_checks",
+      "query": "Tikari, Bihar, India",
+      "query_strategy": "reviewed_alias_without_district",
+      "accept_language": "en,hi",
+      "candidate_count": 1,
+      "query_attempts": [
+        {
+          "query": "टेकारी, गया, Bihar, India",
+          "query_strategy": "official_name",
+          "accept_language": "hi,en",
+          "candidate_count": 0,
+          "status": "unresolved",
+          "reason": "no_candidate_passed_bihar_name_and_district_checks"
+        },
+        {
+          "query": "टिकारी, Gaya, Bihar, India",
+          "query_strategy": "reviewed_alias",
+          "accept_language": "hi,en",
+          "candidate_count": 1,
+          "status": "unresolved",
+          "reason": "no_candidate_passed_bihar_name_and_district_checks"
+        },
+        {
+          "query": "Tikari, Gaya, Bihar, India",
+          "query_strategy": "reviewed_alias",
+          "accept_language": "en,hi",
+          "candidate_count": 1,
+          "status": "unresolved",
+          "reason": "no_candidate_passed_bihar_name_and_district_checks"
+        },
+        {
+          "query": "टेकारी, Bihar, India",
+          "query_strategy": "official_name_without_district",
+          "accept_language": "hi,en",
+          "candidate_count": 0,
+          "status": "unresolved",
+          "reason": "no_candidate_passed_bihar_name_and_district_checks"
+        },
+        {
+          "query": "टिकारी, Bihar, India",
+          "query_strategy": "reviewed_alias_without_district",
+          "accept_language": "hi,en",
+          "candidate_count": 1,
+          "status": "unresolved",
+          "reason": "no_candidate_passed_bihar_name_and_district_checks"
+        },
+        {
+          "query": "Tikari, Bihar, India",
+          "query_strategy": "reviewed_alias_without_district",
+          "accept_language": "en,hi",
+          "candidate_count": 1,
+          "status": "unresolved",
+          "reason": "no_candidate_passed_bihar_name_and_district_checks"
+        }
+      ]
+    },
+    {
+      "market_code": 10013,
+      "market": "बहादुरपुर (एकमी घाट)",
+      "district": "दरभंगा",
+      "district_code": "195",
+      "latest_observation_date": "2026-10-10",
+      "geocoding_aliases": [
+        "एकमी",
+        "Ekmi"
+      ],
+      "geocoding_query_district": "Darbhanga",
+      "geocoding_district_aliases": [
+        "Darbhanga"
+      ],
+      "alias_evidence": "https://censusindia.gov.in/nada/index.php/catalog/23533",
+      "status": "unresolved",
+      "reason": "no_candidate_passed_bihar_name_and_district_checks",
+      "query": "Ekmi, Bihar, India",
+      "query_strategy": "reviewed_alias_without_district",
+      "accept_language": "en,hi",
+      "candidate_count": 0,
+      "query_attempts": [
+        {
+          "query": "बहादुरपुर (एकमी घाट), दरभंगा, Bihar, India",
+          "query_strategy": "official_name",
+          "accept_language": "hi,en",
+          "candidate_count": 0,
+          "status": "unresolved",
+          "reason": "no_candidate_passed_bihar_name_and_district_checks"
+        },
+        {
+          "query": "बहादुरपुर, दरभंगा, Bihar, India",
+          "query_strategy": "generic_suffix_removed",
+          "accept_language": "hi,en",
+          "candidate_count": 0,
+          "status": "unresolved",
+          "reason": "no_candidate_passed_bihar_name_and_district_checks"
+        },
+        {
+          "query": "एकमी, Darbhanga, Bihar, India",
+          "query_strategy": "reviewed_alias",
+          "accept_language": "hi,en",
+          "candidate_count": 0,
+          "status": "unresolved",
+          "reason": "no_candidate_passed_bihar_name_and_district_checks"
+        },
+        {
+          "query": "Ekmi, Darbhanga, Bihar, India",
+          "query_strategy": "reviewed_alias",
+          "accept_language": "en,hi",
+          "candidate_count": 0,
+          "status": "unresolved",
+          "reason": "no_candidate_passed_bihar_name_and_district_checks"
+        },
+        {
+          "query": "बहादुरपुर (एकमी घाट), Bihar, India",
+          "query_strategy": "official_name_without_district",
+          "accept_language": "hi,en",
+          "candidate_count": 0,
+          "status": "unresolved",
+          "reason": "no_candidate_passed_bihar_name_and_district_checks"
+        },
+        {
+          "query": "बहादुरपुर, Bihar, India",
+          "query_strategy": "generic_suffix_removed_without_district",
+          "accept_language": "hi,en",
+          "candidate_count": 0,
+          "status": "unresolved",
+          "reason": "no_candidate_passed_bihar_name_and_district_checks"
+        },
+        {
+          "query": "एकमी, Bihar, India",
+          "query_strategy": "reviewed_alias_without_district",
+          "accept_language": "hi,en",
+          "candidate_count": 0,
+          "status": "unresolved",
+          "reason": "no_candidate_passed_bihar_name_and_district_checks"
+        },
+        {
+          "query": "Ekmi, Bihar, India",
+          "query_strategy": "reviewed_alias_without_district",
+          "accept_language": "en,hi",
+          "candidate_count": 0,
+          "status": "unresolved",
+          "reason": "no_candidate_passed_bihar_name_and_district_checks"
+        }
+      ]
+    },
+    {
+      "market_code": 10021,
+      "market": "मधुबन (नया)",
+      "district": "पूर्वी चंपारण",
+      "district_code": "213",
+      "latest_observation_date": "2026-10-16",
+      "geocoding_aliases": [
+        "मधुबन",
+        "Madhuban"
+      ],
+      "geocoding_query_district": "East Champaran",
+      "geocoding_district_aliases": [
+        "East Champaran",
+        "Purbi Champaran"
+      ],
+      "alias_evidence": "https://wiki.openstreetmap.org/wiki/Subdistricts_in_Bihar",
+      "status": "unresolved",
+      "reason": "no_candidate_passed_bihar_name_and_district_checks",
+      "query": "Madhuban, Bihar, India",
+      "query_strategy": "reviewed_alias_without_district",
+      "accept_language": "en,hi",
+      "candidate_count": 2,
+      "query_attempts": [
+        {
+          "query": "मधुबन (नया), पूर्वी चंपारण, Bihar, India",
+          "query_strategy": "official_name",
+          "accept_language": "hi,en",
+          "candidate_count": 0,
+          "status": "unresolved",
+          "reason": "no_candidate_passed_bihar_name_and_district_checks"
+        },
+        {
+          "query": "मधुबन, पूर्वी चंपारण, Bihar, India",
+          "query_strategy": "generic_suffix_removed",
+          "accept_language": "hi,en",
+          "candidate_count": 0,
+          "status": "unresolved",
+          "reason": "no_candidate_passed_bihar_name_and_district_checks"
+        },
+        {
+          "query": "Madhuban, East Champaran, Bihar, India",
+          "query_strategy": "reviewed_alias",
+          "accept_language": "en,hi",
+          "candidate_count": 2,
+          "status": "unresolved",
+          "reason": "no_candidate_passed_bihar_name_and_district_checks"
+        },
+        {
+          "query": "मधुबन (नया), Bihar, India",
+          "query_strategy": "official_name_without_district",
+          "accept_language": "hi,en",
+          "candidate_count": 0,
+          "status": "unresolved",
+          "reason": "no_candidate_passed_bihar_name_and_district_checks"
+        },
+        {
+          "query": "मधुबन, Bihar, India",
+          "query_strategy": "generic_suffix_removed_without_district",
+          "accept_language": "hi,en",
+          "candidate_count": 0,
+          "status": "unresolved",
+          "reason": "no_candidate_passed_bihar_name_and_district_checks"
+        },
+        {
+          "query": "Madhuban, Bihar, India",
+          "query_strategy": "reviewed_alias_without_district",
+          "accept_language": "en,hi",
+          "candidate_count": 2,
+          "status": "unresolved",
+          "reason": "no_candidate_passed_bihar_name_and_district_checks"
+        }
+      ]
+    },
+    {
+      "market_code": 10025,
+      "market": "भगवानपुर मंडी (नई)",
+      "district": "मुजफ्फरपुर",
+      "district_code": "208",
+      "latest_observation_date": "2026-10-16",
+      "geocoding_aliases": [
+        "भगवानपुर",
+        "Bhagwanpur",
+        "Bhagwanpur Chowk"
+      ],
+      "geocoding_query_district": "Muzaffarpur",
+      "geocoding_district_aliases": [
+        "Muzaffarpur"
+      ],
+      "alias_evidence": "https://rera.bihar.gov.in/QRCODE.aspx?id=RERAP08052020113107-1",
+      "status": "unresolved",
+      "reason": "no_candidate_passed_bihar_name_and_district_checks",
+      "query": "Bhagwanpur Chowk, Bihar, India",
+      "query_strategy": "reviewed_alias_without_district",
+      "accept_language": "en,hi",
+      "candidate_count": 0,
+      "query_attempts": [
+        {
+          "query": "भगवानपुर मंडी (नई), मुजफ्फरपुर, Bihar, India",
+          "query_strategy": "official_name",
+          "accept_language": "hi,en",
+          "candidate_count": 0,
+          "status": "unresolved",
+          "reason": "no_candidate_passed_bihar_name_and_district_checks"
+        },
+        {
+          "query": "भगवानपुर, मुजफ्फरपुर, Bihar, India",
+          "query_strategy": "generic_suffix_removed",
+          "accept_language": "hi,en",
+          "candidate_count": 0,
+          "status": "unresolved",
+          "reason": "no_candidate_passed_bihar_name_and_district_checks"
+        },
+        {
+          "query": "Bhagwanpur, Muzaffarpur, Bihar, India",
+          "query_strategy": "reviewed_alias",
+          "accept_language": "en,hi",
+          "candidate_count": 1,
+          "status": "unresolved",
+          "reason": "no_candidate_passed_bihar_name_and_district_checks"
+        },
+        {
+          "query": "Bhagwanpur Chowk, Muzaffarpur, Bihar, India",
+          "query_strategy": "reviewed_alias",
+          "accept_language": "en,hi",
+          "candidate_count": 0,
+          "status": "unresolved",
+          "reason": "no_candidate_passed_bihar_name_and_district_checks"
+        },
+        {
+          "query": "भगवानपुर मंडी (नई), Bihar, India",
+          "query_strategy": "official_name_without_district",
+          "accept_language": "hi,en",
+          "candidate_count": 0,
+          "status": "unresolved",
+          "reason": "no_candidate_passed_bihar_name_and_district_checks"
+        },
+        {
+          "query": "भगवानपुर, Bihar, India",
+          "query_strategy": "generic_suffix_removed_without_district",
+          "accept_language": "hi,en",
+          "candidate_count": 1,
+          "status": "unresolved",
+          "reason": "no_candidate_passed_bihar_name_and_district_checks"
+        },
+        {
+          "query": "Bhagwanpur, Bihar, India",
+          "query_strategy": "reviewed_alias_without_district",
+          "accept_language": "en,hi",
+          "candidate_count": 5,
+          "status": "unresolved",
+          "reason": "no_candidate_passed_bihar_name_and_district_checks"
+        },
+        {
+          "query": "Bhagwanpur Chowk, Bihar, India",
+          "query_strategy": "reviewed_alias_without_district",
+          "accept_language": "en,hi",
+          "candidate_count": 0,
+          "status": "unresolved",
+          "reason": "no_candidate_passed_bihar_name_and_district_checks"
+        }
+      ]
+    },
+    {
+      "market_code": 418,
+      "market": "सैदपुरहाट",
+      "district": "समस्तीपुर",
+      "district_code": "217",
+      "latest_observation_date": "2026-10-13",
+      "status": "unresolved",
+      "reason": "no_candidate_passed_bihar_name_and_district_checks",
+      "query": "सैदपुरहाट, Bihar, India",
+      "query_strategy": "official_name_without_district",
+      "accept_language": "hi,en",
+      "candidate_count": 0,
+      "query_attempts": [
+        {
+          "query": "सैदपुरहाट, समस्तीपुर, Bihar, India",
+          "query_strategy": "official_name",
+          "accept_language": "hi,en",
+          "candidate_count": 0,
+          "status": "unresolved",
+          "reason": "no_candidate_passed_bihar_name_and_district_checks"
+        },
+        {
+          "query": "सैदपुरहाट, Bihar, India",
+          "query_strategy": "official_name_without_district",
+          "accept_language": "hi,en",
+          "candidate_count": 0,
+          "status": "unresolved",
+          "reason": "no_candidate_passed_bihar_name_and_district_checks"
+        }
+      ]
+    }
+  ]
+}

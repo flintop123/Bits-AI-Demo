@@ -1,7 +1,7 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "title": "Bihar Agriculture MongoDB Schema Catalog",
-  "schema_version": 4,
+  "schema_version": 5,
   "database": "bihar_agriculture",
   "shared_provenance_fields": [
     "extraction_run_id",
@@ -63,6 +63,75 @@
         {
           "name": "mandi_locality_time",
           "keys": ["district_code", "market_code", "crop_code", "date"],
+          "unique": false
+        }
+      ]
+    },
+    "mandi_locations": {
+      "description": "One conservatively verified GeoJSON point per official mandi market code.",
+      "identity_fields": ["market_code"],
+      "required": [
+        "market_code", "market_name", "district_name", "location",
+        "verification_status", "verification_method", "confidence",
+        "location_precision", "resolution_reason",
+        "coordinate_source", "coordinate_source_url",
+        "coordinate_source_license", "geocoded_at"
+      ],
+      "properties": {
+        "market_code": {"bsonType": ["int", "long", "string"]},
+        "market_name": {"bsonType": "string"},
+        "district_code": {"bsonType": ["string", "int", "long", "null"]},
+        "district_name": {"bsonType": "string"},
+        "location": {
+          "bsonType": "object",
+          "required": ["type", "coordinates"],
+          "properties": {
+            "type": {"enum": ["Point"]},
+            "coordinates": {
+              "bsonType": "array",
+              "minItems": 2,
+              "maxItems": 2,
+              "items": {"bsonType": ["double", "int", "long", "decimal"]}
+            }
+          }
+        },
+        "verification_status": {"enum": ["verified"]},
+        "verification_method": {"bsonType": "string"},
+        "confidence": {"bsonType": ["double", "int", "decimal"]},
+        "display_name": {"bsonType": ["string", "null"]},
+        "matched_district": {"bsonType": ["string", "null"]},
+        "osm_type": {"bsonType": ["string", "null"]},
+        "osm_id": {"bsonType": ["int", "long", "string", "null"]},
+        "place_type": {"bsonType": ["string", "null"]},
+        "location_precision": {"enum": ["market_facility", "market_locality_centroid"]},
+        "resolution_reason": {"bsonType": "string"},
+        "candidate_evidence": {"bsonType": "array", "items": {"bsonType": "object"}},
+        "geocoding_query": {"bsonType": "string"},
+        "geocoding_query_strategy": {"bsonType": "string"},
+        "alias_evidence": {"bsonType": ["string", "null"]},
+        "coordinate_source": {"bsonType": "string"},
+        "coordinate_source_url": {"bsonType": "string"},
+        "coordinate_source_license": {"bsonType": "string"},
+        "source_market_url": {"bsonType": "string"},
+        "latest_observation_date": {"bsonType": ["string", "null"]},
+        "created_at": {"bsonType": "date"},
+        "geocoded_at": {"bsonType": "date"}
+      },
+      "indexes": [
+        {
+          "name": "unique_mandi_market_code",
+          "keys": ["market_code"],
+          "unique": true
+        },
+        {
+          "name": "mandi_location_2dsphere",
+          "keys": ["location"],
+          "type": "2dsphere",
+          "unique": false
+        },
+        {
+          "name": "mandi_location_district",
+          "keys": ["district_code", "market_name"],
           "unique": false
         }
       ]
