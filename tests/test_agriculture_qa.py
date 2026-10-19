@@ -126,6 +126,67 @@ class AgricultureQAServiceTests(unittest.TestCase):
         )
         self.assertEqual(result["intent"], "crop_statistics")
 
+    def test_hindi_wheat_alias_resolves_to_statistical_catalog_value(self):
+        database = FakeQueryService()
+        llm = FakeLLM({
+            "intent": "crop_statistics",
+            "crop": "गेहूँ",
+            "year": "2024-25",
+            "metric": "production",
+            "language": "hi",
+            "limit": 5,
+        }, answer="गेहूँ का कुल उत्पादन 7119804.74 टन था।")
+        service = AgricultureQAService(database, llm)
+
+        result = service.ask(
+            "2024-25 में गेहूं का कुल उत्पादन कितना था?",
+            answer_language="hi",
+        )
+
+        self.assertEqual(
+            database.statistics_call,
+            ({"crop": "Wheat", "year": "2024-25"}, 5),
+        )
+        self.assertEqual(result["answer_language"], "hi")
+
+    def test_explicit_process_list_preserves_source_terminology(self):
+        class DocumentQueryService(FakeQueryService):
+            def search_agriculture_documents(
+                self, search_terms, limit, semantic_query=None
+            ):
+                return [{
+                    "content": (
+                        "सामान्य तौर पर, कटाई के बाद की तकनीक में धूप में "
+                        "सुखाने की क्रिया, साइज ग्रेडिंग, प्री-हीटिंग, "
+                        "पॉपिंग, पॉलिशिंग, ग्रेडिंग और पैकेजिंग शामिल हैं।"
+                    ),
+                    "source_id": "pmfme_makhana_handbook_hindi",
+                    "source_url": "https://example.test/makhana.pdf",
+                    "source_file": "makhana.pdf",
+                    "page_number": 11,
+                    "language": "hi",
+                }]
+
+        llm = FakeLLM({
+            "intent": "document_search",
+            "search_terms": "मखाना प्रसंस्करण",
+            "metric": "records",
+            "language": "hi",
+            "limit": 5,
+        }, answer="प्रक्रिया में सुखाना, छंटाई और पैकिंग होती है।")
+        service = AgricultureQAService(DocumentQueryService(), llm)
+
+        result = service.ask(
+            "कटाई के बाद की प्रसंस्करण प्रक्रियाएं कौन सी हैं?",
+            answer_language="hi",
+        )
+
+        for term in (
+            "सुखाने", "ग्रेडिंग", "प्री-हीटिंग",
+            "पॉपिंग", "पॉलिशिंग", "पैकेजिंग",
+        ):
+            self.assertIn(term, result["answer"])
+
     def test_intelligence_question_uses_deterministic_metrics(self):
         database = FakeQueryService()
         llm = FakeLLM({

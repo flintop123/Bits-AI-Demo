@@ -1,0 +1,60 @@
+metric_id,scope,numerator,denominator,value,n_cases,evaluator_or_script,notes
+M1,all_sources,10,10,1.0,10,docs/source_agent_map.csv,Phase I inventory rows mapped to an agent
+M2,all_sources,6,10,0.6,10,docs/source_agent_map.csv,Sources marked done or partial
+M3,crop_statistics_excel_agent,160,160,1.0,10,eval/run_eval.py,"Field-level F1; numerator is 2TP, denominator is 2TP+FP+FN; decimals ±1%, integers/codes/units exact"
+M4,crop_statistics_excel_agent,10,10,1.0,10,eval/run_eval.py,Page/row/URL/record ID resolves to source
+M6,crop_statistics_excel_agent,10,10,1.0,10,deterministic reference trajectory,Correct selected tool
+M7,crop_statistics_excel_agent,10,10,1.0,10,deterministic reference trajectory,Correct file/date/page/language arguments
+M8,crop_statistics_excel_agent,10,10,1.0,10,AgentEvals-compatible strict trajectory,Match mode: strict source→agent→tool→result→output
+M9,crop_statistics_excel_agent,10,10,1.0,10,eval/run_eval.py,Schema-valid completed outputs
+M10,crop_statistics_excel_agent,80,80,1.0,10,deterministic field/source check,No LLM judge; direct checked-reference comparison
+M3,daily_mandi_api_agent,20,20,1.0,10,eval/run_eval.py,"Field-level F1; numerator is 2TP, denominator is 2TP+FP+FN; decimals ±1%, integers/codes/units exact"
+M4,daily_mandi_api_agent,1052,1052,1.0,10,eval/run_eval.py,Page/row/URL/record ID resolves to source
+M6,daily_mandi_api_agent,10,10,1.0,10,deterministic reference trajectory,Correct selected tool
+M7,daily_mandi_api_agent,10,10,1.0,10,deterministic reference trajectory,Correct file/date/page/language arguments
+M8,daily_mandi_api_agent,10,10,1.0,10,AgentEvals-compatible strict trajectory,Match mode: strict source→agent→tool→result→output
+M9,daily_mandi_api_agent,10,10,1.0,10,eval/run_eval.py,Schema-valid completed outputs
+M10,daily_mandi_api_agent,10,10,1.0,10,deterministic field/source check,No LLM judge; direct checked-reference comparison
+M3,grounded_qa_agent,114,114,1.0,10,eval/run_eval.py,"Field-level F1; numerator is 2TP, denominator is 2TP+FP+FN; decimals ±1%, integers/codes/units exact"
+M4,grounded_qa_agent,10,10,1.0,10,eval/run_eval.py,Page/row/URL/record ID resolves to source
+M6,grounded_qa_agent,10,10,1.0,10,deterministic reference trajectory,Correct selected tool
+M7,grounded_qa_agent,10,10,1.0,10,deterministic reference trajectory,Correct file/date/page/language arguments
+M8,grounded_qa_agent,10,10,1.0,10,AgentEvals-compatible strict trajectory,Match mode: strict source→agent→tool→result→output
+M9,grounded_qa_agent,10,10,1.0,10,eval/run_eval.py,Schema-valid completed outputs
+M10,grounded_qa_agent,27,27,1.0,10,deterministic field/source check,No LLM judge; direct checked-reference comparison
+M3,multilingual_pdf_agent,90,90,1.0,10,eval/run_eval.py,"Field-level F1; numerator is 2TP, denominator is 2TP+FP+FN; decimals ±1%, integers/codes/units exact"
+M4,multilingual_pdf_agent,10,10,1.0,10,eval/run_eval.py,Page/row/URL/record ID resolves to source
+M6,multilingual_pdf_agent,10,10,1.0,10,deterministic reference trajectory,Correct selected tool
+M7,multilingual_pdf_agent,10,10,1.0,10,deterministic reference trajectory,Correct file/date/page/language arguments
+M8,multilingual_pdf_agent,10,10,1.0,10,AgentEvals-compatible strict trajectory,Match mode: strict source→agent→tool→result→output
+M9,multilingual_pdf_agent,10,10,1.0,10,eval/run_eval.py,Schema-valid completed outputs
+M10,multilingual_pdf_agent,25,25,1.0,10,deterministic field/source check,No LLM judge; direct checked-reference comparison
+M3,source_group:Database,230,230,1.0,25,eval/run_eval.py,"Field-level F1; numerator is 2TP, denominator is 2TP+FP+FN; decimals ±1%, integers/codes/units exact"
+M4,source_group:Database,1067,1067,1.0,25,eval/run_eval.py,Page/row/URL/record ID resolves to source
+M6,source_group:Database,25,25,1.0,25,deterministic reference trajectory,Correct selected tool
+M7,source_group:Database,25,25,1.0,25,deterministic reference trajectory,Correct file/date/page/language arguments
+M8,source_group:Database,25,25,1.0,25,AgentEvals-compatible strict trajectory,Match mode: strict source→agent→tool→result→output
+M9,source_group:Database,25,25,1.0,25,eval/run_eval.py,Schema-valid completed outputs
+M10,source_group:Database,100,100,1.0,25,deterministic field/source check,No LLM judge; direct checked-reference comparison
+M3,source_group:Document,154,154,1.0,15,eval/run_eval.py,"Field-level F1; numerator is 2TP, denominator is 2TP+FP+FN; decimals ±1%, integers/codes/units exact"
+M4,source_group:Document,15,15,1.0,15,eval/run_eval.py,Page/row/URL/record ID resolves to source
+M6,source_group:Document,15,15,1.0,15,deterministic reference trajectory,Correct selected tool
+M7,source_group:Document,15,15,1.0,15,deterministic reference trajectory,Correct file/date/page/language arguments
+M8,source_group:Document,15,15,1.0,15,AgentEvals-compatible strict trajectory,Match mode: strict source→agent→tool→result→output
+M9,source_group:Document,15,15,1.0,15,eval/run_eval.py,Schema-valid completed outputs
+M10,source_group:Document,42,42,1.0,15,deterministic field/source check,No LLM judge; direct checked-reference comparison
+M11,end_to_end,8,8,1.0,8,run_phase2_evaluation_suite.py,Includes one handled fault-injection run
+M12,end_to_end,7,7,1.0,7,logs/automation_log.csv,Inputs completed without manual intervention
+M13,end_to_end,0,40,0.0,40,evaluation run stats,Retries reported separately: 0
+M14,database:mandi_prices,7345,7345,1.0,7345,declared collection rules,Collection-specific mandatory fields; non-applicable fields are not invented
+M15,database:mandi_prices,7345,7345,1.0,7345,declared collection rules,"Units, dates, ranges and enumerations"
+M16,database:mandi_prices,0,7345,0.0,7345,natural-key duplicate check,Lower is better
+M14,database:crop_statistics,4372,4372,1.0,4372,declared collection rules,Collection-specific mandatory fields; non-applicable fields are not invented
+M15,database:crop_statistics,4372,4372,1.0,4372,declared collection rules,"Units, dates, ranges and enumerations"
+M16,database:crop_statistics,0,4372,0.0,4372,natural-key duplicate check,Lower is better
+M14,database:agriculture_documents,153,153,1.0,153,declared collection rules,Collection-specific mandatory fields; non-applicable fields are not invented
+M15,database:agriculture_documents,153,153,1.0,153,declared collection rules,"Units, dates, ranges and enumerations"
+M16,database:agriculture_documents,0,153,0.0,153,natural-key duplicate check,Lower is better
+M17,database,,3,,3,live evaluator trace-back,Evaluator randomly selects and verifies three rows during the demonstration
+M5,surprise,,,,3,instructor answer key,Reserved for three unseen items at minute 0
+M18,grounded_qa_agent,2.0,10,0.2,10,eval/adapter_comparison.csv,Same held-out cases; zero training overlap=True
