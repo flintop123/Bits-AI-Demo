@@ -17,6 +17,7 @@ playwright==1.52.0
 PyYAML==6.0.2
 deep_translator
 transformers>=4.45,<5
+peft>=0.13,<1
 sentencepiece
 sacremoses>=0.1.1,<1
 torch

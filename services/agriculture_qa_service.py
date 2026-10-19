@@ -12,6 +12,7 @@ from services.local_translation_service import (
     LocalTranslationService,
 )
 from services.multilingual_query_expansion import expand_document_query
+from services.mandi_term_normalizer import CROP_GROUPS
 from services.ollama_client import OllamaClient
 
 
@@ -267,6 +268,18 @@ Records:
             schema,
         )
         answer = GroundedAnswer.model_validate(response).answer
+
+        # For explicit list questions, prefer a source sentence that already
+        # enumerates the requested items.  This prevents a generative
+        # paraphrase from silently dropping a step or replacing an official
+        # technical term while keeping the model-generated plan and retrieval
+        # path intact.
+        enumeration = self._explicit_source_enumeration(
+            question, plan, answer_records
+        )
+        if enumeration:
+            return enumeration
+
         if self._answer_language_matches(answer, plan.language):
             return answer
 
@@ -487,6 +500,53 @@ Source material:
         return focused[:max_records] or records[:1]
 
     @classmethod
+    def _explicit_source_enumeration(cls, question, plan, records):
+        """Return an explicit source list for an enumeration question.
+
+        The safeguard is deliberately narrow: it applies only to document
+        questions asking which/what items are included, and only when a
+        same-language source sentence contains an explicit enumeration.
+        """
+        if plan.intent != "document_search" or not records:
+            return None
+        normalized_question = re.sub(
+            r"\s+", " ", str(question or "")
+        ).strip().casefold()
+        markers = (
+            "कौन सी", "कौन-सी", "कौन से", "कौन-से",
+            "which processes", "which steps", "which items",
+            "what are", "list the",
+        )
+        if not any(marker in normalized_question for marker in markers):
+            return None
+
+        candidates = []
+        for record_index, record in enumerate(records):
+            content = re.sub(
+                r"\s+", " ", str(record.get("content", ""))
+            ).strip()
+            for sentence in re.split(r"(?<=[.!?\u0964])\s+", content):
+                sentence = sentence.strip()
+                normalized_sentence = sentence.casefold()
+                if not cls._answer_language_matches(sentence, plan.language):
+                    continue
+                if not any(marker in normalized_sentence for marker in (
+                    "शामिल", "निम्नलिखित", "include", "comprise",
+                    "consist of",
+                )):
+                    continue
+                separators = sentence.count(",") + sentence.count(";")
+                if separators < 2:
+                    continue
+                if "सामान्य तौर पर" in sentence:
+                    sentence = sentence[sentence.index("सामान्य तौर पर"):]
+                candidates.append((separators, -record_index, sentence))
+
+        if not candidates:
+            return None
+        return max(candidates, key=lambda item: (item[0], item[1]))[2]
+
+    @classmethod
     def _extractive_language_fallback(
         cls, records, language, max_characters=800
     ):
@@ -589,9 +649,14 @@ Source material:
             return {}
 
         for field, choices in allowed.items():
-            values[field] = AgricultureQAService._catalog_value(
-                values.get(field), choices
-            )
+            if plan.intent == "crop_statistics" and field == "crop":
+                values[field] = AgricultureQAService._catalog_crop_value(
+                    values.get(field), choices
+                )
+            else:
+                values[field] = AgricultureQAService._catalog_value(
+                    values.get(field), choices
+                )
         return {
             field: value
             for field, value in values.items()
@@ -607,6 +672,28 @@ Source material:
             if str(choice).strip().casefold() == normalized:
                 return choice
         return str(value).strip()
+
+    @staticmethod
+    def _catalog_crop_value(value, choices):
+        """Resolve a reviewed bilingual crop alias to a catalog value."""
+        direct = AgricultureQAService._catalog_value(value, choices)
+        if value is None or direct in choices:
+            return direct
+        requested = str(value).strip().casefold()
+        lookup = {
+            str(choice).strip().casefold(): choice for choice in choices
+        }
+        for group in CROP_GROUPS:
+            aliases = {
+                str(alias).strip().casefold() for alias in group
+            }
+            if requested not in aliases:
+                continue
+            for alias in group:
+                match = lookup.get(str(alias).strip().casefold())
+                if match is not None:
+                    return match
+        return direct
 
     @staticmethod
     def _sources(records):

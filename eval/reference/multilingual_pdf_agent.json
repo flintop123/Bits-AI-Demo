@@ -1,0 +1,12 @@
+[
+  {"case_id":"pdf_hi_drying_hours","expected_terms":["3 घंटे","तेज धूप"],"expected_language":"hi","expected_method":"tesseract_ocr","evidence":"docs/evidence/phase2_final_suite.json","checked_against_source":true},
+  {"case_id":"pdf_hi_target_moisture","expected_terms":["नमी","3%"],"expected_language":"hi","expected_method":"tesseract_ocr","evidence":"docs/evidence/phase2_final_suite.json","checked_against_source":true},
+  {"case_id":"pdf_hi_storage_days","expected_terms":["20-25 दिनों","भंडारित"],"expected_language":"hi","expected_method":"tesseract_ocr","evidence":"docs/evidence/phase2_final_suite.json","checked_against_source":true},
+  {"case_id":"pdf_hi_size_grades","expected_terms":["5 से 7 ग्रेड","साइज ग्रेडिंग"],"expected_language":"hi","expected_method":"tesseract_ocr","evidence":"docs/evidence/phase2_final_suite.json","checked_against_source":true},
+  {"case_id":"pdf_hi_tempering_hours","expected_terms":["48 से 72 घंटे","टेम्परिंग"],"expected_language":"hi","expected_method":"tesseract_ocr","evidence":"docs/evidence/phase2_final_suite.json","checked_against_source":true},
+  {"case_id":"pdf_hi_post_harvest_steps","expected_terms":["धूप में सुखाने","साइज ग्रेडिंग","प्री-हीटिंग","पॉपिंग","पॉलिशिंग","पैकेजिंग"],"expected_language":"hi","expected_method":"tesseract_ocr","evidence":"docs/evidence/phase2_final_suite.json","checked_against_source":true},
+  {"case_id":"pdf_hi_bamboo_tool","expected_terms":["खोनघी","बांस"],"expected_language":"hi","expected_method":"tesseract_ocr","evidence":"docs/evidence/phase2_final_suite.json","checked_against_source":true},
+  {"case_id":"pdf_hi_sieve","expected_terms":["छन्नी","लोहे"],"expected_language":"hi","expected_method":"tesseract_ocr","evidence":"docs/evidence/phase2_final_suite.json","checked_against_source":true},
+  {"case_id":"pdf_hi_producing_district","expected_terms":["बिहार","दरभंगा"],"expected_language":"hi","expected_method":"tesseract_ocr","evidence":"docs/evidence/phase2_final_suite.json","checked_against_source":true},
+  {"case_id":"pdf_hi_food_description","expected_terms":["मखाना","पौष्टिक","स्वस्थ भोजन"],"expected_language":"hi","expected_method":"tesseract_ocr","evidence":"docs/evidence/phase2_final_suite.json","checked_against_source":true}
+]

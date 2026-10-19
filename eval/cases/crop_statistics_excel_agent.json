@@ -1,0 +1,12 @@
+[
+  {"case_id":"crop_rice_total_2024_25","agent_id":"crop_statistics_excel_agent","source_group":"Database","input":{"crop":"Rice","season":"Total","year":"2024-25"}},
+  {"case_id":"crop_wheat_rabi_2024_25","agent_id":"crop_statistics_excel_agent","source_group":"Database","input":{"crop":"Wheat","season":"Rabi","year":"2024-25"}},
+  {"case_id":"crop_maize_kharif_2023_24","agent_id":"crop_statistics_excel_agent","source_group":"Database","input":{"crop":"Maize","season":"Kharif","year":"2023-24"}},
+  {"case_id":"crop_barley_rabi_1991_92","agent_id":"crop_statistics_excel_agent","source_group":"Database","input":{"crop":"Barley","season":"Rabi","year":"1991-92"}},
+  {"case_id":"crop_small_millets_kharif_2018_19","agent_id":"crop_statistics_excel_agent","source_group":"Database","input":{"crop":"Small Millets","season":"Kharif","year":"2018-19"}},
+  {"case_id":"crop_cereals_total_1980_81","agent_id":"crop_statistics_excel_agent","source_group":"Database","input":{"crop":"Cereals","season":"Total","year":"1980-81"}},
+  {"case_id":"crop_moong_total_1998_99","agent_id":"crop_statistics_excel_agent","source_group":"Database","input":{"crop":"Moong","season":"Total","year":"1998-99"}},
+  {"case_id":"crop_food_grains_kharif_1994_95","agent_id":"crop_statistics_excel_agent","source_group":"Database","input":{"crop":"Total Food Grains","season":"Kharif","year":"1994-95"}},
+  {"case_id":"crop_cotton_total_1994_95","agent_id":"crop_statistics_excel_agent","source_group":"Database","input":{"crop":"Cotton","season":"Total","year":"1994-95"}},
+  {"case_id":"crop_sannhemp_total_2023_24","agent_id":"crop_statistics_excel_agent","source_group":"Database","input":{"crop":"Sannhemp","season":"Total","year":"2023-24"}}
+]

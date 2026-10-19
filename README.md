@@ -1,4 +1,48 @@
-# Bits-AI-Demo-For-BIHAR
+# AgriAgent — CS F407 Artificial Intelligence, Group 17
+
+## Academic Phase II evaluation submission
+
+This section maps the repository to the faculty's Phase II demonstration protocol. Older headings such as “Phase 4” or “Phase 7” below are internal engineering workstream names; they are not claims about the course evaluation stage. The current academic stage is **Phase II evaluation**.
+
+Repository: <https://github.com/flintop123/Bits-AI-Demo>
+
+### One-command unseen-file demonstration
+
+```powershell
+python run.py --input <file>
+```
+
+The command accepts PDF, Excel, CSV and JSON inputs, selects a bounded extractor, writes an auditable JSON trace under `artifacts/phase2/`, and does not write to MongoDB. Use `--force-ocr` only when an unseen scanned PDF requires it.
+
+```mermaid
+flowchart TD
+    A[Unseen input] --> B{Supervisor routing}
+    B -->|Official API JSON| C[Daily mandi API agent]
+    B -->|Excel or CSV| D[Statistics extraction agent]
+    B -->|PDF| E[Multilingual PDF agent]
+    C --> F[Validated records + provenance]
+    D --> F
+    E --> F
+    F --> G[MongoDB and hybrid retrieval]
+    G --> H[Grounded bilingual QA]
+    G --> I[Spatial-temporal dashboard]
+```
+
+### Evaluation evidence
+
+- Source inventory and routing: `docs/source_agent_map.csv`
+- Per-agent cards: `docs/agents/`
+- Challenge and measured experiments: `docs/challenge.md`
+- Forty held-out checked cases: `eval/cases/` and `eval/reference/`
+- Reproducible evaluator: `python eval/run_eval.py`
+- Faculty-format metric sheet: `eval/phase2_metrics.csv`
+- Automation log: `logs/automation_log.csv`
+- Runtime schema, dictionary and reproducible dump: `db/`
+- Honest base/adapter comparison: `eval/adapter_comparison.csv`
+
+M18 is intentionally left pending until the same held-out set has been run against both the base model and a genuine LoRA/QLoRA adapter. The protocol rewards the documented comparison, not an invented positive gain.
+
+Run the CPU-compatible LoRA experiment with `python eval/run_adapter_experiment.py`. It adapts only the QA intent-routing decision using a separate training set and compares the same base checkpoint before and after PEFT LoRA on all ten held-out QA cases. It does **not** claim that the deployed Qwen answer model was fine-tuned.
 
 ## Phase 7: spatiotemporal market intelligence
 
