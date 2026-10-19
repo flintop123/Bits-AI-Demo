@@ -6,6 +6,78 @@ This section maps the repository to the faculty's Phase II demonstration protoco
 
 Repository: <https://github.com/flintop123/Bits-AI-Demo>
 
+## Clean-clone prerequisites (Windows)
+
+The submitted repository is designed to run locally without a paid model API. A
+fresh Windows machine requires Python 3.11, Git, Docker Desktop, Ollama,
+Tesseract OCR 5.x, and the Chromium browser used by Playwright.
+
+Create the virtual environment and install the Python and browser dependencies:
+
+```powershell
+python -m venv .venv
+.venv\Scripts\Activate.ps1
+python -m pip install --upgrade pip
+python -m pip install -r requirements.txt
+python -m playwright install chromium
+python -m pip check
+```
+
+Install Tesseract OCR in its standard Windows location. The extractor
+automatically checks `C:\Program Files\Tesseract-OCR\tesseract.exe`; a different
+location can be supplied through `TESSERACT_CMD`. Both English and Hindi trained
+data are required because scanned documents are processed with `hin+eng`. The
+official Hindi model is available from
+[`tesseract-ocr/tessdata`](https://github.com/tesseract-ocr/tessdata/raw/main/hin.traineddata)
+and should be placed in `C:\Program Files\Tesseract-OCR\tessdata\`.
+
+```powershell
+& "C:\Program Files\Tesseract-OCR\tesseract.exe" --version
+& "C:\Program Files\Tesseract-OCR\tesseract.exe" --list-langs
+python -c "import pytesseract; pytesseract.pytesseract.tesseract_cmd=r'C:\Program Files\Tesseract-OCR\tesseract.exe'; print(pytesseract.get_languages(config=''))"
+```
+
+The language checks must include `eng`, `hin`, and `osd`.
+
+Start the submitted MongoDB service. If the named container already exists, use
+the first command. If it does not exist, create it once with the second command:
+
+```powershell
+docker start bihar-mongodb
+# First-time alternative:
+docker run -d --name bihar-mongodb -p 127.0.0.1:27017:27017 mongo:7
+docker ps --filter "name=bihar-mongodb"
+```
+
+Validate the portable database dump and load it into MongoDB when the database
+is empty:
+
+```powershell
+python db\load_dump.py --validate-only
+python db\load_dump.py
+```
+
+Install and start Ollama, then make both submitted local-model dependencies
+available. `qwen3:4b` performs grounded planning and answer generation;
+`bge-m3` supplies multilingual document embeddings.
+
+```powershell
+ollama pull qwen3:4b
+ollama pull bge-m3
+ollama list
+curl.exe -sS http://127.0.0.1:11434/api/tags
+```
+
+If `ollama` is not on `PATH`, its usual per-user executable can be invoked as
+`& "$env:LOCALAPPDATA\Programs\Ollama\ollama.exe"`.
+
+Finally, verify the clean clone before running a demonstration:
+
+```powershell
+python -m unittest discover -s tests
+python db\load_dump.py --validate-only
+git status --short
+```
 ### One-command unseen-file demonstration
 
 ```powershell
