@@ -297,6 +297,27 @@ python evaluate_phase2_agents.py artifacts\phase2\latest_run.json --output artif
 See `docs/PHASE2_AGENT_EVALUATION.md` for the architecture, source-to-agent
 mapping, evaluation criteria, database fields, limitations, and LangSmith setup.
 
+### Constrained ReAct supervisor (second orchestration path)
+
+The supervisor above is deterministic: the source type is already known
+before the run starts. `run_extractor.py` covers the opposite case — a
+free-text request where the matching capability isn't known in advance. A
+LangChain ReAct agent (Ollama `qwen3:4b`) decides which of four
+already-tested capabilities to call, in a Thought/Action/Observation loop,
+never gaining any capability beyond those four fixed tools:
+
+```powershell
+python run_extractor.py "load last seven days of mandi data via api"
+python run_extractor.py "what was total rice production in 2024-25?"
+```
+
+Configure the Ollama model and MongoDB connection for this agent in one
+place via `.env` (copy `.env.example`); see `agent_config.py`. Run
+`python -m unittest tests.test_react_agent` to verify the agent's plumbing
+against a scripted fake model, without needing Ollama or MongoDB running.
+See `docs/REACT_AGENT.md` for the full design, including which decisions
+are made by the model and which by fixed code.
+
 Run the final manifest-driven evaluation across the live mandi source, Excel,
 English PDF text extraction, Hindi OCR, English/Hindi grounded QA, and a
 transient-failure recovery case:
