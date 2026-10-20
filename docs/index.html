@@ -1,0 +1,261 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="AgriAgent Group 17 Phase II evidence dashboard for Bihar agriculture intelligence.">
+  <meta name="theme-color" content="#12372a">
+  <title>AgriAgent · Bihar Agriculture Intelligence</title>
+  <link rel="stylesheet" href="./assets/dashboard.css">
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to dashboard</a>
+
+  <header class="site-header">
+    <a class="brand" href="#top" aria-label="AgriAgent home">
+      <span class="brand-mark" aria-hidden="true">अ</span>
+      <span><strong>AgriAgent</strong><small>Group 17 · CS F407</small></span>
+    </a>
+    <nav aria-label="Primary navigation">
+      <a href="#coverage" data-en="Coverage" data-hi="कवरेज">Coverage</a>
+      <a href="#intelligence" data-en="Intelligence" data-hi="विश्लेषण">Intelligence</a>
+      <a href="#evaluation" data-en="Evaluation" data-hi="मूल्यांकन">Evaluation</a>
+    </nav>
+    <div class="header-actions">
+      <div class="language-switch" role="group" aria-label="Display language">
+        <button type="button" class="language-option is-active" data-language="en" aria-pressed="true">EN</button>
+        <button type="button" class="language-option" data-language="hi" aria-pressed="false">हिं</button>
+      </div>
+      <a class="repo-link" href="https://github.com/flintop123/Bits-AI-Demo" target="_blank" rel="noreferrer">
+        <span data-en="View repository" data-hi="रिपॉजिटरी देखें">View repository</span>
+        <span aria-hidden="true">↗</span>
+      </a>
+    </div>
+  </header>
+
+  <main id="main">
+    <section class="hero" id="top">
+      <div class="hero-copy">
+        <p class="eyebrow"><span class="status-dot"></span><span data-en="Validated Phase II evidence snapshot" data-hi="सत्यापित चरण II साक्ष्य स्नैपशॉट">Validated Phase II evidence snapshot</span></p>
+        <h1 data-en="Local agriculture data, made useful." data-hi="स्थानीय कृषि डेटा, अब उपयोगी जानकारी में।">Local agriculture data,<br>made useful.</h1>
+        <p class="hero-deck" data-en="A bilingual, agent-based intelligence system that collects Bihar mandi prices, integrates official crop statistics and agriculture documents, and turns them into grounded local insights." data-hi="एक द्विभाषी एजेंट-आधारित प्रणाली जो बिहार मंडी भाव, आधिकारिक फसल सांख्यिकी और कृषि दस्तावेजों को एकत्र कर स्थानीय, स्रोत-आधारित जानकारी देती है।">A bilingual, agent-based intelligence system that collects Bihar mandi prices, integrates official crop statistics and agriculture documents, and turns them into grounded local insights.</p>
+        <div class="hero-actions">
+          <a class="primary-action" href="#coverage" data-en="Explore the evidence" data-hi="साक्ष्य देखें">Explore the evidence</a>
+          <a class="secondary-action" href="#architecture" data-en="See how it works" data-hi="प्रणाली समझें">See how it works</a>
+        </div>
+        <p class="snapshot-note"><strong data-en="Hosted demo:" data-hi="होस्टेड डेमो:">Hosted demo:</strong> <span data-en="this page reads committed validation evidence. Live ingestion, MongoDB queries and Qwen-based QA run in the local deployment." data-hi="यह पृष्ठ प्रतिबद्ध सत्यापन साक्ष्य दिखाता है। लाइव संग्रह, MongoDB क्वेरी और Qwen-आधारित प्रश्नोत्तर स्थानीय प्रणाली में चलते हैं।">this page reads committed validation evidence. Live ingestion, MongoDB queries and Qwen-based QA run in the local deployment.</span></p>
+      </div>
+      <div class="hero-visual" aria-label="System data overview">
+        <div class="orbit orbit-one"></div>
+        <div class="orbit orbit-two"></div>
+        <div class="hero-core">
+          <span data-en="AGRICULTURE" data-hi="कृषि">AGRICULTURE</span>
+          <strong>11,912</strong>
+          <small data-en="validated records" data-hi="सत्यापित रिकॉर्ड">validated records</small>
+        </div>
+        <div class="signal-card signal-one"><span>₹</span><strong>90</strong><small data-en="market dates" data-hi="मंडी तिथियां">market dates</small></div>
+        <div class="signal-card signal-two"><span>⌖</span><strong>42</strong><small data-en="verified locations" data-hi="सत्यापित स्थान">verified locations</small></div>
+        <div class="signal-card signal-three"><span>अ</span><strong>2</strong><small data-en="answer languages" data-hi="उत्तर भाषाएं">answer languages</small></div>
+      </div>
+    </section>
+
+    <section class="metric-ribbon" aria-label="Key metrics">
+      <article><span class="metric-number" data-metric="mandi_records">—</span><p data-en="Mandi observations" data-hi="मंडी अवलोकन">Mandi observations</p></article>
+      <article><span class="metric-number" data-metric="crop_statistics">—</span><p data-en="Crop-statistic records" data-hi="फसल-सांख्यिकी रिकॉर्ड">Crop-statistic records</p></article>
+      <article><span class="metric-number" data-metric="document_chunks">—</span><p data-en="Document chunks" data-hi="दस्तावेज खंड">Document chunks</p></article>
+      <article><span class="metric-number" data-metric="crops">—</span><p data-en="Observed crops" data-hi="देखी गई फसलें">Observed crops</p></article>
+    </section>
+
+    <section class="section coverage-section" id="coverage">
+      <div class="section-heading">
+        <div>
+          <p class="section-kicker" data-en="COLLECTION & COVERAGE" data-hi="संग्रह और कवरेज">COLLECTION &amp; COVERAGE</p>
+          <h2 data-en="Ninety days of market activity, preserved with provenance." data-hi="नब्बे दिनों की मंडी गतिविधि, पूर्ण स्रोत-सूचना के साथ।">Ninety days of market activity,<br>preserved with provenance.</h2>
+        </div>
+        <div class="window-control" role="group" aria-label="Chart window">
+          <button type="button" data-days="30">30D</button>
+          <button type="button" data-days="60">60D</button>
+          <button type="button" class="is-active" data-days="90">90D</button>
+        </div>
+      </div>
+
+      <div class="dashboard-grid">
+        <article class="panel trend-panel">
+          <div class="panel-header">
+            <div><span class="panel-label" data-en="DAILY INGESTION" data-hi="दैनिक संग्रह">DAILY INGESTION</span><h3 data-en="Official mandi observations" data-hi="आधिकारिक मंडी अवलोकन">Official mandi observations</h3></div>
+            <div class="panel-stat"><strong id="window-total">—</strong><span data-en="records in view" data-hi="दिख रहे रिकॉर्ड">records in view</span></div>
+          </div>
+          <div id="ingestion-chart" class="chart" role="img" aria-label="Daily mandi records collected"></div>
+          <div class="chart-legend"><span><i class="legend-swatch"></i><span data-en="Records collected" data-hi="संग्रहित रिकॉर्ड">Records collected</span></span><span id="date-range">—</span></div>
+        </article>
+
+        <article class="panel quality-panel">
+          <span class="panel-label" data-en="DATA TRUST" data-hi="डेटा विश्वसनीयता">DATA TRUST</span>
+          <h3 data-en="Quality is measured, not assumed." data-hi="गुणवत्ता मापी गई है, मानी नहीं गई।">Quality is measured,<br>not assumed.</h3>
+          <div class="quality-list">
+            <div class="quality-row"><div><strong data-en="Price completeness" data-hi="मूल्य पूर्णता">Price completeness</strong><span data-en="Modal, minimum and maximum values" data-hi="मोडल, न्यूनतम और अधिकतम मूल्य">Modal, minimum and maximum values</span></div><b id="price-quality">—</b></div>
+            <div class="progress"><i id="price-bar"></i></div>
+            <div class="quality-row"><div><strong data-en="Provenance completeness" data-hi="स्रोत-सूचना पूर्णता">Provenance completeness</strong><span data-en="Source, agent, run and extraction time" data-hi="स्रोत, एजेंट, रन और निष्कर्षण समय">Source, agent, run and extraction time</span></div><b id="provenance-quality">—</b></div>
+            <div class="progress"><i id="provenance-bar"></i></div>
+            <div class="quality-row"><div><strong data-en="Verified coordinates" data-hi="सत्यापित निर्देशांक">Verified coordinates</strong><span data-en="Conservative district-aware geocoding" data-hi="सावधान जिला-सत्यापित जियोकोडिंग">Conservative district-aware geocoding</span></div><b id="coordinate-quality">—</b></div>
+            <div class="progress"><i id="coordinate-bar"></i></div>
+          </div>
+          <p class="quality-note" data-en="Seven ambiguous markets remain unresolved by design; the system does not guess their coordinates." data-hi="सात अस्पष्ट मंडियों को जानबूझकर अनसुलझा रखा गया है; प्रणाली उनके निर्देशांक का अनुमान नहीं लगाती।">Seven ambiguous markets remain unresolved by design; the system does not guess their coordinates.</p>
+        </article>
+      </div>
+    </section>
+
+    <section class="section map-section" id="locality">
+      <div class="section-heading compact">
+        <div>
+          <p class="section-kicker" data-en="GEOSPATIAL LOCALITY" data-hi="भौगोलिक स्थानीयता">GEOSPATIAL LOCALITY</p>
+          <h2 data-en="Market intelligence anchored to place." data-hi="मंडी जानकारी, सत्यापित स्थान से जुड़ी।">Market intelligence<br>anchored to place.</h2>
+        </div>
+        <p class="section-summary" data-en="Each plotted point is a verified market-locality centroid. Hover or focus a point to inspect its official market, district and confidence." data-hi="हर बिंदु सत्यापित मंडी-स्थानीयता केंद्र है। आधिकारिक मंडी, जिला और विश्वास स्तर देखने के लिए बिंदु पर जाएं।">Each plotted point is a verified market-locality centroid. Hover or focus a point to inspect its official market, district and confidence.</p>
+      </div>
+      <div class="map-layout">
+        <article class="map-card">
+          <div id="market-map" class="market-map" role="img" aria-label="Verified Bihar mandi coordinate plot"></div>
+          <div id="map-tooltip" class="map-tooltip" hidden></div>
+          <div class="map-caption"><span data-en="Coordinate plot · longitude × latitude" data-hi="निर्देशांक प्लॉट · देशांतर × अक्षांश">Coordinate plot · longitude × latitude</span><span data-en="Not for navigation" data-hi="नेविगेशन हेतु नहीं">Not for navigation</span></div>
+        </article>
+        <aside class="location-stats">
+          <article><span data-en="Verified" data-hi="सत्यापित">Verified</span><strong id="verified-count">—</strong><small data-en="market localities" data-hi="मंडी स्थान">market localities</small></article>
+          <article><span data-en="Coverage" data-hi="कवरेज">Coverage</span><strong id="coverage-percent">—</strong><small data-en="of observed markets" data-hi="देखी गई मंडियों का">of observed markets</small></article>
+          <article><span data-en="Safety rule" data-hi="सुरक्षा नियम">Safety rule</span><strong data-en="No guessing" data-hi="कोई अनुमान नहीं">No guessing</strong><small data-en="ambiguous matches stay unresolved" data-hi="अस्पष्ट मिलान अनसुलझे रहते हैं">ambiguous matches stay unresolved</small></article>
+          <div class="source-note"><span data-en="Coordinate source" data-hi="निर्देशांक स्रोत">Coordinate source</span><strong>OpenStreetMap Nominatim</strong><small>© OpenStreetMap contributors · ODbL 1.0</small></div>
+        </aside>
+      </div>
+    </section>
+
+    <section class="section intelligence-section" id="intelligence">
+      <div class="section-heading compact">
+        <div>
+          <p class="section-kicker" data-en="SPATIOTEMPORAL INTELLIGENCE" data-hi="स्थान-काल विश्लेषण">SPATIOTEMPORAL INTELLIGENCE</p>
+          <h2 data-en="From raw prices to explainable signals." data-hi="कच्चे मूल्यों से व्याख्यायित संकेत तक।">From raw prices to<br>explainable signals.</h2>
+        </div>
+        <p class="section-summary" data-en="A validated potato example demonstrates time-window change, volatility, freshness, anomaly detection and market comparison. These are descriptive metrics—not forecasts or trading advice." data-hi="आलू का सत्यापित उदाहरण समय-अवधि परिवर्तन, अस्थिरता, ताजगी, विसंगति और मंडी तुलना दिखाता है। ये वर्णनात्मक माप हैं—पूर्वानुमान या व्यापार सलाह नहीं।">A validated potato example demonstrates time-window change, volatility, freshness, anomaly detection and market comparison. These are descriptive metrics—not forecasts or trading advice.</p>
+      </div>
+
+      <div class="intelligence-grid">
+        <article class="insight-card feature-insight">
+          <div class="crop-title"><span class="crop-glyph" aria-hidden="true">●</span><div><span data-en="VALIDATED CROP VIEW" data-hi="सत्यापित फसल दृश्य">VALIDATED CROP VIEW</span><h3><span data-en="Potato" data-hi="आलू">Potato</span> <small>आलू</small></h3></div></div>
+          <div class="price-change"><strong id="potato-latest">—</strong><span data-en="latest average / quintal" data-hi="नवीनतम औसत / क्विंटल">latest average / quintal</span><b id="potato-change">—</b></div>
+          <div class="mini-trajectory" aria-hidden="true"><svg viewBox="0 0 560 130" preserveAspectRatio="none"><defs><linearGradient id="area" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#e29a42" stop-opacity=".38"/><stop offset="1" stop-color="#e29a42" stop-opacity="0"/></linearGradient></defs><path d="M0 98 C62 87,104 105,154 88 S254 68,310 79 S407 42,465 54 S520 24,560 20 L560 130 L0 130Z" fill="url(#area)"/><path d="M0 98 C62 87,104 105,154 88 S254 68,310 79 S407 42,465 54 S520 24,560 20" fill="none" stroke="#d77822" stroke-width="4" stroke-linecap="round"/></svg></div>
+          <div class="insight-metrics">
+            <div><span data-en="Observations" data-hi="अवलोकन">Observations</span><strong id="potato-observations">—</strong></div>
+            <div><span data-en="Markets" data-hi="मंडियां">Markets</span><strong id="potato-markets">—</strong></div>
+            <div><span data-en="Volatility" data-hi="अस्थिरता">Volatility</span><strong id="potato-volatility">—</strong></div>
+            <div><span data-en="Anomaly days" data-hi="विसंगति दिवस">Anomaly days</span><strong id="potato-anomalies">—</strong></div>
+          </div>
+        </article>
+
+        <article class="insight-card market-ranking">
+          <div class="panel-header"><div><span class="panel-label" data-en="MARKET COMPARISON" data-hi="मंडी तुलना">MARKET COMPARISON</span><h3 data-en="Latest observed averages" data-hi="नवीनतम देखे गए औसत">Latest observed averages</h3></div><span class="unit-tag">₹ / qtl</span></div>
+          <div id="market-ranking-list" class="ranking-list"></div>
+          <p class="ranking-note" data-en="Ranks describe the committed sample and are not recommendations." data-hi="रैंक प्रतिबद्ध नमूने का वर्णन करते हैं; वे अनुशंसा नहीं हैं।">Ranks describe the committed sample and are not recommendations.</p>
+        </article>
+      </div>
+    </section>
+
+    <section class="section architecture-section" id="architecture">
+      <div class="section-heading compact">
+        <div><p class="section-kicker" data-en="AGENT ARCHITECTURE" data-hi="एजेंट संरचना">AGENT ARCHITECTURE</p><h2 data-en="Specialists collect. A supervisor coordinates." data-hi="विशेषज्ञ संग्रह करते हैं। पर्यवेक्षक समन्वय करता है।">Specialists collect.<br>A supervisor coordinates.</h2></div>
+        <p class="section-summary" data-en="Deterministic routing sends each source to a purpose-built tool. Every output retains its source URL, extracting agent, run identifier and timestamp." data-hi="निर्धारित रूटिंग हर स्रोत को उद्देश्य-विशिष्ट टूल तक भेजती है। हर आउटपुट में स्रोत URL, निष्कर्षण एजेंट, रन पहचान और समय सुरक्षित रहते हैं।">Deterministic routing sends each source to a purpose-built tool. Every output retains its source URL, extracting agent, run identifier and timestamp.</p>
+      </div>
+      <div class="architecture-flow" aria-label="Agent workflow">
+        <div class="flow-source"><span data-en="OFFICIAL SOURCES" data-hi="आधिकारिक स्रोत">OFFICIAL SOURCES</span><strong data-en="Web · Excel · PDF" data-hi="वेब · एक्सेल · पीडीएफ">Web · Excel · PDF</strong></div>
+        <span class="flow-arrow" aria-hidden="true">→</span>
+        <div class="flow-supervisor"><span data-en="SUPERVISOR" data-hi="पर्यवेक्षक">SUPERVISOR</span><strong data-en="Route · retry · trace" data-hi="रूट · पुनःप्रयास · ट्रेस">Route · retry · trace</strong></div>
+        <span class="flow-arrow" aria-hidden="true">→</span>
+        <div class="flow-output"><span data-en="GROUNDED OUTPUT" data-hi="स्रोत-आधारित आउटपुट">GROUNDED OUTPUT</span><strong data-en="Data · APIs · QA" data-hi="डेटा · एपीआई · प्रश्नोत्तर">Data · APIs · QA</strong></div>
+      </div>
+      <div id="agent-grid" class="agent-grid"></div>
+    </section>
+
+    <section class="section qa-section" id="qa">
+      <div class="section-heading compact">
+        <div><p class="section-kicker" data-en="BILINGUAL GROUNDED QA" data-hi="द्विभाषी स्रोत-आधारित प्रश्नोत्तर">BILINGUAL GROUNDED QA</p><h2 data-en="Answers stay tied to evidence." data-hi="उत्तर साक्ष्य से जुड़े रहते हैं।">Answers stay tied<br>to evidence.</h2></div>
+        <p class="section-summary" data-en="Ask freely when the local API is running, or explore verified questions in the hosted evidence snapshot. Qwen3 writes live answers while database retrieval and deterministic calculations supply the facts." data-hi="स्थानीय API चलने पर स्वतंत्र रूप से प्रश्न पूछें, या होस्टेड साक्ष्य स्नैपशॉट में सत्यापित प्रश्न देखें। लाइव उत्तर Qwen3 लिखता है, जबकि डेटाबेस पुनर्प्राप्ति और निर्धारित गणना तथ्य देती है।">Ask freely when the local API is running, or explore verified questions in the hosted evidence snapshot. Qwen3 writes live answers while database retrieval and deterministic calculations supply the facts.</p>
+      </div>
+      <div class="ask-workbench">
+        <div class="ask-form-column">
+          <div class="qa-mode-line">
+            <span class="qa-mode-indicator" id="qa-mode-indicator"></span>
+            <strong id="qa-mode-label" data-en="Checking local QA service…" data-hi="स्थानीय प्रश्नोत्तर सेवा की जांच…">Checking local QA service…</strong>
+          </div>
+          <form id="ask-form">
+            <label for="question-input" data-en="Your agriculture question" data-hi="आपका कृषि प्रश्न">Your agriculture question</label>
+            <textarea id="question-input" maxlength="500" rows="5" required placeholder="Ask about mandi prices, crop statistics or agriculture documents…" data-placeholder-en="Ask about mandi prices, crop statistics or agriculture documents…" data-placeholder-hi="मंडी भाव, फसल सांख्यिकी या कृषि दस्तावेजों के बारे में पूछें…"></textarea>
+            <div class="question-meta"><span><b id="question-count">0</b>/500</span><span id="qa-privacy-note" data-en="Questions stay on your machine in local mode." data-hi="स्थानीय मोड में प्रश्न आपके कंप्यूटर पर रहते हैं।">Questions stay on your machine in local mode.</span></div>
+            <div class="ask-controls">
+              <label for="answer-language"><span data-en="Answer language" data-hi="उत्तर भाषा">Answer language</span>
+                <select id="answer-language">
+                  <option value="auto" data-en="Automatic" data-hi="स्वचालित">Automatic</option>
+                  <option value="en">English</option>
+                  <option value="hi">हिंदी</option>
+                </select>
+              </label>
+              <button id="ask-button" type="submit"><span data-en="Ask AgriAgent" data-hi="AgriAgent से पूछें">Ask AgriAgent</span><span aria-hidden="true">→</span></button>
+            </div>
+          </form>
+          <div class="prompt-shelf"><span data-en="Try a verified question" data-hi="सत्यापित प्रश्न आजमाएं">Try a verified question</span><div id="verified-prompts"></div></div>
+        </div>
+        <div class="answer-workspace" id="answer-workspace" aria-live="polite">
+          <div class="answer-placeholder" id="answer-placeholder">
+            <span aria-hidden="true">अ</span>
+            <h3 data-en="Your grounded answer will appear here." data-hi="आपका स्रोत-आधारित उत्तर यहां दिखाई देगा।">Your grounded answer will appear here.</h3>
+            <p data-en="Live mode returns the answer, resolved intent, filters and sources. Snapshot mode answers only the verified demonstration questions." data-hi="लाइव मोड उत्तर, निर्धारित आशय, फ़िल्टर और स्रोत देता है। स्नैपशॉट मोड केवल सत्यापित प्रदर्शन प्रश्नों का उत्तर देता है।">Live mode returns the answer, resolved intent, filters and sources. Snapshot mode answers only the verified demonstration questions.</p>
+          </div>
+          <div class="answer-loading" id="answer-loading" hidden><i></i><strong data-en="Retrieving evidence and preparing an answer…" data-hi="साक्ष्य खोजकर उत्तर तैयार किया जा रहा है…">Retrieving evidence and preparing an answer…</strong></div>
+          <div class="answer-result" id="answer-result" hidden>
+            <div class="answer-badges"><span id="answer-mode-badge">—</span><span id="answer-intent-badge">—</span></div>
+            <h3 data-en="Grounded answer" data-hi="स्रोत-आधारित उत्तर">Grounded answer</h3>
+            <p id="answer-copy"></p>
+            <div id="answer-sources" class="answer-sources"></div>
+          </div>
+          <div class="answer-error" id="answer-error" hidden><strong data-en="This question needs the live local system." data-hi="इस प्रश्न के लिए लाइव स्थानीय प्रणाली आवश्यक है।">This question needs the live local system.</strong><p id="answer-error-copy"></p></div>
+        </div>
+      </div>
+      <div id="qa-examples" class="qa-examples"></div>
+      <div class="retrieval-comparison">
+        <div><span data-en="Keyword retrieval hit rate" data-hi="कीवर्ड पुनर्प्राप्ति हिट दर">Keyword retrieval hit rate</span><strong id="keyword-hit">—</strong><div class="comparison-track"><i id="keyword-track"></i></div></div>
+        <div><span data-en="Hybrid multilingual hit rate" data-hi="हाइब्रिड बहुभाषी हिट दर">Hybrid multilingual hit rate</span><strong id="hybrid-hit">—</strong><div class="comparison-track"><i id="hybrid-track"></i></div></div>
+        <p data-en="Evaluation set: six retrieval cases, including four cross-language questions; all four cross-language cases were retrieved in the top five by the hybrid method." data-hi="मूल्यांकन सेट: छह पुनर्प्राप्ति मामले, जिनमें चार अंतर-भाषा प्रश्न हैं; हाइब्रिड विधि ने चारों को शीर्ष पांच में पाया।">Evaluation set: six retrieval cases, including four cross-language questions; all four cross-language cases were retrieved in the top five by the hybrid method.</p>
+      </div>
+    </section>
+
+    <section class="section evaluation-section" id="evaluation">
+      <div class="evaluation-copy">
+        <p class="section-kicker light" data-en="PHASE II READINESS" data-hi="चरण II तैयारी">PHASE II READINESS</p>
+        <h2 data-en="Built to be demonstrated, inspected and reproduced." data-hi="प्रदर्शन, निरीक्षण और पुनरुत्पादन के लिए निर्मित।">Built to be demonstrated,<br>inspected and reproduced.</h2>
+        <p data-en="The repository includes source-agent mapping, data manifests and hashes, database schema and portable dump, agent cards, reference trajectories, metrics, fault traces and a clean-clone runbook." data-hi="रिपॉजिटरी में स्रोत-एजेंट मैपिंग, डेटा मैनिफेस्ट और हैश, डेटाबेस स्कीमा और पोर्टेबल डंप, एजेंट कार्ड, संदर्भ ट्रेजेक्टरी, मेट्रिक्स, त्रुटि ट्रेस और क्लीन-क्लोन रनबुक शामिल हैं।">The repository includes source-agent mapping, data manifests and hashes, database schema and portable dump, agent cards, reference trajectories, metrics, fault traces and a clean-clone runbook.</p>
+        <a href="https://github.com/flintop123/Bits-AI-Demo" target="_blank" rel="noreferrer" class="light-link"><span data-en="Inspect the repository" data-hi="रिपॉजिटरी देखें">Inspect the repository</span> ↗</a>
+      </div>
+      <div id="evaluation-grid" class="evaluation-grid"></div>
+    </section>
+
+    <section class="section team-section">
+      <div>
+        <p class="section-kicker" data-en="PROJECT TEAM" data-hi="परियोजना दल">PROJECT TEAM</p>
+        <h2>Group 17</h2>
+        <p>CS F407 – Artificial Intelligence<br><span data-en="Faculty: Prof. Gopal Singh Phartiyal" data-hi="संकाय: प्रो. गोपाल सिंह फर्त्याल">Faculty: Prof. Gopal Singh Phartiyal</span></p>
+      </div>
+      <div id="team-list" class="team-list"></div>
+    </section>
+  </main>
+
+  <footer>
+    <a class="brand footer-brand" href="#top"><span class="brand-mark">अ</span><span><strong>AgriAgent</strong><small>Bihar agriculture intelligence</small></span></a>
+    <p><span data-en="Evidence snapshot dated" data-hi="साक्ष्य स्नैपशॉट दिनांक">Evidence snapshot dated</span> <time id="snapshot-date">—</time>. <span data-en="No paid model API is required for the local system." data-hi="स्थानीय प्रणाली के लिए भुगतान मॉडल API आवश्यक नहीं है।">No paid model API is required for the local system.</span></p>
+    <a href="https://github.com/flintop123/Bits-AI-Demo" target="_blank" rel="noreferrer">GitHub ↗</a>
+  </footer>
+
+  <div id="load-error" class="load-error" hidden>
+    <strong>Dashboard data could not be loaded.</strong>
+    <span>Serve the <code>docs</code> directory through a local web server or open the deployed GitHub Pages URL.</span>
+  </div>
+
+  <script src="./assets/dashboard.js" defer></script>
+</body>
+</html>

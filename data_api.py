@@ -2,6 +2,7 @@
 
 import atexit
 import os
+from urllib.parse import urlsplit
 
 from flask import Flask, jsonify, render_template, request
 from werkzeug.exceptions import HTTPException
@@ -52,12 +53,38 @@ def selected_filters(names):
     }
 
 
+def is_local_dashboard_origin(origin):
+    """Allow the static preview to call this loopback-only API safely."""
+    if not origin:
+        return False
+    try:
+        parsed = urlsplit(origin)
+    except ValueError:
+        return False
+    return (
+        parsed.scheme == "http"
+        and parsed.hostname in {"127.0.0.1", "localhost", "::1"}
+    )
+
+
 def create_app(service=None, qa_service=None):
     app = Flask(__name__)
     query_service = service or AgricultureQueryService()
     if service is None:
         atexit.register(query_service.close)
     agriculture_qa = qa_service or AgricultureQAService(query_service)
+
+    @app.after_request
+    def allow_local_static_dashboard(response):
+        origin = request.headers.get("Origin", "")
+        if is_local_dashboard_origin(origin):
+            response.headers["Access-Control-Allow-Origin"] = origin
+            response.headers["Access-Control-Allow-Headers"] = "Content-Type"
+            response.headers["Access-Control-Allow-Methods"] = (
+                "GET, POST, OPTIONS"
+            )
+            response.headers.add("Vary", "Origin")
+        return response
 
     @app.errorhandler(ValueError)
     def handle_validation_error(error):

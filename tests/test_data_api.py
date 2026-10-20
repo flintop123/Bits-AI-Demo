@@ -98,6 +98,22 @@ class DataApiTests(unittest.TestCase):
         self.assertEqual(response.json["collections"]["mandi_prices"], 10)
         self.assertEqual(response.json["collections"]["crop_statistics"], 4372)
 
+    def test_local_dashboard_origin_receives_cors_headers(self):
+        response = self.client.get(
+            "/health", headers={"Origin": "http://127.0.0.1:8000"}
+        )
+        self.assertEqual(
+            response.headers["Access-Control-Allow-Origin"],
+            "http://127.0.0.1:8000",
+        )
+        self.assertIn("POST", response.headers["Access-Control-Allow-Methods"])
+
+    def test_nonlocal_origin_does_not_receive_cors_headers(self):
+        response = self.client.get(
+            "/health", headers={"Origin": "https://example.invalid"}
+        )
+        self.assertNotIn("Access-Control-Allow-Origin", response.headers)
+
     def test_mandi_endpoint_passes_filters_and_limit(self):
         response = self.client.get(
             "/api/v1/mandi-prices?district=Arwal&crop=Potato&limit=5"
