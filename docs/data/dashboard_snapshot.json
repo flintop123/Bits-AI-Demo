@@ -1,0 +1,1048 @@
+{
+  "meta": {
+    "title": "AgriAgent Phase II Evidence Dashboard",
+    "group": "17",
+    "course": "CS F407 – Artificial Intelligence",
+    "faculty": "Prof. Gopal Singh Phartiyal",
+    "generated_at": "2026-10-18T11:57:56.281497+00:00",
+    "latest_data_date": "2026-10-18",
+    "repository": "https://github.com/flintop123/Bits-AI-Demo",
+    "snapshot_notice": "Committed validation evidence; the local deployment provides live APIs and grounded QA."
+  },
+  "team": [
+    {
+      "name": "Jitendra Kumar",
+      "roll": "2026PHXP0104P"
+    },
+    {
+      "name": "Rishi Raj Sahu",
+      "roll": "2026PHXP0106P"
+    },
+    {
+      "name": "Anuj Tomar",
+      "roll": "2026PHXP0108P"
+    }
+  ],
+  "totals": {
+    "mandi_records": 7345,
+    "dates_covered": 90,
+    "earliest_date": "2026-07-21",
+    "latest_date": "2026-10-18",
+    "districts": 25,
+    "markets": 49,
+    "crops": 37,
+    "verified_locations": 42,
+    "unresolved_locations": 7,
+    "geospatial_coverage_percent": 85.7,
+    "crop_statistics": 4372,
+    "document_chunks": 153
+  },
+  "quality": {
+    "price_complete_records": 7345,
+    "price_completeness_percent": 100.0,
+    "provenance_complete_records": 7345,
+    "provenance_completeness_percent": 100.0,
+    "verified_coordinate_records": 42,
+    "coordinate_verification_percent": 85.7
+  },
+  "daily_records": [
+    {
+      "date": "2026-07-21",
+      "records": 99
+    },
+    {
+      "date": "2026-07-22",
+      "records": 113
+    },
+    {
+      "date": "2026-07-23",
+      "records": 107
+    },
+    {
+      "date": "2026-07-24",
+      "records": 95
+    },
+    {
+      "date": "2026-07-25",
+      "records": 102
+    },
+    {
+      "date": "2026-07-26",
+      "records": 82
+    },
+    {
+      "date": "2026-07-27",
+      "records": 115
+    },
+    {
+      "date": "2026-07-28",
+      "records": 111
+    },
+    {
+      "date": "2026-07-29",
+      "records": 116
+    },
+    {
+      "date": "2026-07-30",
+      "records": 112
+    },
+    {
+      "date": "2026-07-31",
+      "records": 110
+    },
+    {
+      "date": "2026-08-01",
+      "records": 115
+    },
+    {
+      "date": "2026-08-02",
+      "records": 89
+    },
+    {
+      "date": "2026-08-03",
+      "records": 94
+    },
+    {
+      "date": "2026-08-04",
+      "records": 85
+    },
+    {
+      "date": "2026-08-05",
+      "records": 119
+    },
+    {
+      "date": "2026-08-06",
+      "records": 120
+    },
+    {
+      "date": "2026-08-07",
+      "records": 101
+    },
+    {
+      "date": "2026-08-08",
+      "records": 125
+    },
+    {
+      "date": "2026-08-09",
+      "records": 67
+    },
+    {
+      "date": "2026-08-10",
+      "records": 107
+    },
+    {
+      "date": "2026-08-11",
+      "records": 107
+    },
+    {
+      "date": "2026-08-12",
+      "records": 123
+    },
+    {
+      "date": "2026-08-13",
+      "records": 95
+    },
+    {
+      "date": "2026-08-14",
+      "records": 62
+    },
+    {
+      "date": "2026-08-15",
+      "records": 65
+    },
+    {
+      "date": "2026-08-16",
+      "records": 58
+    },
+    {
+      "date": "2026-08-17",
+      "records": 102
+    },
+    {
+      "date": "2026-08-18",
+      "records": 104
+    },
+    {
+      "date": "2026-08-19",
+      "records": 82
+    },
+    {
+      "date": "2026-08-20",
+      "records": 102
+    },
+    {
+      "date": "2026-08-21",
+      "records": 85
+    },
+    {
+      "date": "2026-08-22",
+      "records": 97
+    },
+    {
+      "date": "2026-08-23",
+      "records": 77
+    },
+    {
+      "date": "2026-08-24",
+      "records": 89
+    },
+    {
+      "date": "2026-08-25",
+      "records": 75
+    },
+    {
+      "date": "2026-08-26",
+      "records": 69
+    },
+    {
+      "date": "2026-08-27",
+      "records": 89
+    },
+    {
+      "date": "2026-08-28",
+      "records": 83
+    },
+    {
+      "date": "2026-08-29",
+      "records": 84
+    },
+    {
+      "date": "2026-08-30",
+      "records": 53
+    },
+    {
+      "date": "2026-08-31",
+      "records": 88
+    },
+    {
+      "date": "2026-09-01",
+      "records": 102
+    },
+    {
+      "date": "2026-09-02",
+      "records": 71
+    },
+    {
+      "date": "2026-09-03",
+      "records": 70
+    },
+    {
+      "date": "2026-09-04",
+      "records": 57
+    },
+    {
+      "date": "2026-09-05",
+      "records": 66
+    },
+    {
+      "date": "2026-09-06",
+      "records": 89
+    },
+    {
+      "date": "2026-09-07",
+      "records": 98
+    },
+    {
+      "date": "2026-09-08",
+      "records": 71
+    },
+    {
+      "date": "2026-09-09",
+      "records": 74
+    },
+    {
+      "date": "2026-09-10",
+      "records": 84
+    },
+    {
+      "date": "2026-09-11",
+      "records": 88
+    },
+    {
+      "date": "2026-09-12",
+      "records": 86
+    },
+    {
+      "date": "2026-09-13",
+      "records": 55
+    },
+    {
+      "date": "2026-09-14",
+      "records": 92
+    },
+    {
+      "date": "2026-09-15",
+      "records": 100
+    },
+    {
+      "date": "2026-09-16",
+      "records": 96
+    },
+    {
+      "date": "2026-09-17",
+      "records": 88
+    },
+    {
+      "date": "2026-09-18",
+      "records": 96
+    },
+    {
+      "date": "2026-09-19",
+      "records": 58
+    },
+    {
+      "date": "2026-09-20",
+      "records": 67
+    },
+    {
+      "date": "2026-09-21",
+      "records": 91
+    },
+    {
+      "date": "2026-09-22",
+      "records": 81
+    },
+    {
+      "date": "2026-09-23",
+      "records": 77
+    },
+    {
+      "date": "2026-09-24",
+      "records": 75
+    },
+    {
+      "date": "2026-09-25",
+      "records": 79
+    },
+    {
+      "date": "2026-09-26",
+      "records": 75
+    },
+    {
+      "date": "2026-09-27",
+      "records": 67
+    },
+    {
+      "date": "2026-09-28",
+      "records": 68
+    },
+    {
+      "date": "2026-09-29",
+      "records": 56
+    },
+    {
+      "date": "2026-09-30",
+      "records": 63
+    },
+    {
+      "date": "2026-10-01",
+      "records": 28
+    },
+    {
+      "date": "2026-10-02",
+      "records": 13
+    },
+    {
+      "date": "2026-10-03",
+      "records": 14
+    },
+    {
+      "date": "2026-10-04",
+      "records": 16
+    },
+    {
+      "date": "2026-10-05",
+      "records": 60
+    },
+    {
+      "date": "2026-10-06",
+      "records": 51
+    },
+    {
+      "date": "2026-10-07",
+      "records": 42
+    },
+    {
+      "date": "2026-10-08",
+      "records": 49
+    },
+    {
+      "date": "2026-10-09",
+      "records": 49
+    },
+    {
+      "date": "2026-10-10",
+      "records": 74
+    },
+    {
+      "date": "2026-10-11",
+      "records": 22
+    },
+    {
+      "date": "2026-10-12",
+      "records": 69
+    },
+    {
+      "date": "2026-10-13",
+      "records": 133
+    },
+    {
+      "date": "2026-10-14",
+      "records": 121
+    },
+    {
+      "date": "2026-10-15",
+      "records": 101
+    },
+    {
+      "date": "2026-10-16",
+      "records": 132
+    },
+    {
+      "date": "2026-10-17",
+      "records": 42
+    },
+    {
+      "date": "2026-10-18",
+      "records": 16
+    }
+  ],
+  "locations": [
+    {
+      "market_code": 1635,
+      "market": "अरवल",
+      "district": "अरवल",
+      "longitude": 84.662895,
+      "latitude": 25.24324,
+      "confidence": 0.9573,
+      "latest_date": "2026-10-17",
+      "precision": "market_locality_centroid"
+    },
+    {
+      "market_code": 416,
+      "market": "औरंगाबाद",
+      "district": "औरंगाबाद",
+      "longitude": 84.3746725,
+      "latitude": 24.7536696,
+      "confidence": 0.9593,
+      "latest_date": "2026-10-18",
+      "precision": "market_locality_centroid"
+    },
+    {
+      "market_code": 10001,
+      "market": "दाउनगर",
+      "district": "औरंगाबाद",
+      "longitude": 84.4044,
+      "latitude": 25.0335,
+      "confidence": 0.9573,
+      "latest_date": "2026-10-17",
+      "precision": "market_locality_centroid"
+    },
+    {
+      "market_code": 420,
+      "market": "किशनगंज",
+      "district": "किशनगंज",
+      "longitude": 87.9507791,
+      "latitude": 26.1014194,
+      "confidence": 0.9705,
+      "latest_date": "2026-09-18",
+      "precision": "market_locality_centroid"
+    },
+    {
+      "market_code": 1642,
+      "market": "बहादुरगंज",
+      "district": "किशनगंज",
+      "longitude": 87.8236798,
+      "latitude": 26.2618157,
+      "confidence": 0.958,
+      "latest_date": "2026-10-16",
+      "precision": "market_locality_centroid"
+    },
+    {
+      "market_code": 425,
+      "market": "खगरिया",
+      "district": "खगरिया",
+      "longitude": 86.4756555,
+      "latitude": 25.5112455,
+      "confidence": 0.958,
+      "latest_date": "2026-10-16",
+      "precision": "market_locality_centroid"
+    },
+    {
+      "market_code": 10018,
+      "market": "मानसी मंडी (नया)",
+      "district": "खगरिया",
+      "longitude": 86.5530737,
+      "latitude": 25.511937,
+      "confidence": 0.958,
+      "latest_date": "2026-10-15",
+      "precision": "market_locality_centroid"
+    },
+    {
+      "market_code": 32,
+      "market": "गया",
+      "district": "गया",
+      "longitude": 85.0079563,
+      "latitude": 24.7964355,
+      "confidence": 0.9798,
+      "latest_date": "2026-10-14",
+      "precision": "market_locality_centroid"
+    },
+    {
+      "market_code": 1638,
+      "market": "गोपालगंज",
+      "district": "गोपालगंज",
+      "longitude": 84.4398292,
+      "latitude": 26.4609692,
+      "confidence": 0.958,
+      "latest_date": "2026-10-16",
+      "precision": "market_locality_centroid"
+    },
+    {
+      "market_code": 1651,
+      "market": "जमुई",
+      "district": "जमुई",
+      "longitude": 86.2254945,
+      "latitude": 24.9275595,
+      "confidence": 0.958,
+      "latest_date": "2026-10-10",
+      "precision": "market_locality_centroid"
+    },
+    {
+      "market_code": 27,
+      "market": "दरभंगा",
+      "district": "दरभंगा",
+      "longitude": 85.8995065,
+      "latitude": 26.156999,
+      "confidence": 0.9752,
+      "latest_date": "2026-10-16",
+      "precision": "market_locality_centroid"
+    },
+    {
+      "market_code": 412,
+      "market": "बिहारशरीफ",
+      "district": "नालन्दा",
+      "longitude": 85.5208617,
+      "latitude": 25.193859,
+      "confidence": 0.8093,
+      "latest_date": "2026-10-15",
+      "precision": "market_locality_centroid"
+    },
+    {
+      "market_code": 10026,
+      "market": "हरनौत (नया)",
+      "district": "नालन्दा",
+      "longitude": 85.5343783,
+      "latitude": 25.3720664,
+      "confidence": 0.9573,
+      "latest_date": "2026-10-18",
+      "precision": "market_locality_centroid"
+    },
+    {
+      "market_code": 1657,
+      "market": "चकिया",
+      "district": "पूर्वी चंपारण",
+      "longitude": 85.0411636,
+      "latitude": 26.4234072,
+      "confidence": 0.958,
+      "latest_date": "2026-09-08",
+      "precision": "market_locality_centroid"
+    },
+    {
+      "market_code": 424,
+      "market": "मोतिहारी",
+      "district": "पूर्वी चंपारण",
+      "longitude": 84.9114654,
+      "latitude": 26.6506888,
+      "confidence": 0.9693,
+      "latest_date": "2026-10-17",
+      "precision": "market_locality_centroid"
+    },
+    {
+      "market_code": 10022,
+      "market": "रक्सौल (नया)",
+      "district": "पूर्वी चंपारण",
+      "longitude": 84.8523069,
+      "latitude": 26.9833256,
+      "confidence": 0.9684,
+      "latest_date": "2026-10-17",
+      "precision": "market_locality_centroid"
+    },
+    {
+      "market_code": 10010,
+      "market": "दुमरांव",
+      "district": "बक्सर",
+      "longitude": 84.1490887,
+      "latitude": 25.5544754,
+      "confidence": 0.958,
+      "latest_date": "2026-10-13",
+      "precision": "market_locality_centroid"
+    },
+    {
+      "market_code": 415,
+      "market": "बक्सर",
+      "district": "बक्सर",
+      "longitude": 83.9729568,
+      "latitude": 25.5716195,
+      "confidence": 0.9593,
+      "latest_date": "2026-10-17",
+      "precision": "market_locality_centroid"
+    },
+    {
+      "market_code": 10004,
+      "market": "अमरपुर",
+      "district": "बांका",
+      "longitude": 86.9028384,
+      "latitude": 25.0399854,
+      "confidence": 0.958,
+      "latest_date": "2026-10-16",
+      "precision": "market_locality_centroid"
+    },
+    {
+      "market_code": 1650,
+      "market": "बाराहाट",
+      "district": "बांका",
+      "longitude": 87.0000886,
+      "latitude": 24.9146189,
+      "confidence": 0.9573,
+      "latest_date": "2026-10-16",
+      "precision": "market_locality_centroid"
+    },
+    {
+      "market_code": 1648,
+      "market": "तेघरा",
+      "district": "बेगूसराय",
+      "longitude": 85.9425973,
+      "latitude": 25.4920069,
+      "confidence": 0.958,
+      "latest_date": "2026-10-16",
+      "precision": "market_locality_centroid"
+    },
+    {
+      "market_code": 10005,
+      "market": "बलिया",
+      "district": "बेगूसराय",
+      "longitude": 86.313751,
+      "latitude": 25.4234048,
+      "confidence": 0.958,
+      "latest_date": "2026-10-17",
+      "precision": "market_locality_centroid"
+    },
+    {
+      "market_code": 24,
+      "market": "बेगूसराय",
+      "district": "बेगूसराय",
+      "longitude": 86.1348804,
+      "latitude": 25.4139122,
+      "confidence": 0.9726,
+      "latest_date": "2026-10-15",
+      "precision": "market_locality_centroid"
+    },
+    {
+      "market_code": 10006,
+      "market": "बिहपुर",
+      "district": "भागलपुर",
+      "longitude": 86.9341073,
+      "latitude": 25.3876685,
+      "confidence": 0.958,
+      "latest_date": "2026-10-17",
+      "precision": "market_locality_centroid"
+    },
+    {
+      "market_code": 25,
+      "market": "भागलपुर",
+      "district": "भागलपुर",
+      "longitude": 86.9828131,
+      "latitude": 25.2494829,
+      "confidence": 0.9744,
+      "latest_date": "2026-10-16",
+      "precision": "market_locality_centroid"
+    },
+    {
+      "market_code": 414,
+      "market": "आरा",
+      "district": "भोजपुर",
+      "longitude": 84.6632139,
+      "latitude": 25.560317,
+      "confidence": 0.9714,
+      "latest_date": "2026-10-18",
+      "precision": "market_locality_centroid"
+    },
+    {
+      "market_code": 10009,
+      "market": "पिरो",
+      "district": "भोजपुर",
+      "longitude": 84.4031976,
+      "latitude": 25.3319049,
+      "confidence": 0.9573,
+      "latest_date": "2026-10-17",
+      "precision": "market_locality_centroid"
+    },
+    {
+      "market_code": 1655,
+      "market": "जयनगर",
+      "district": "मधुबनी",
+      "longitude": 86.1402809,
+      "latitude": 26.5882487,
+      "confidence": 0.9638,
+      "latest_date": "2026-10-15",
+      "precision": "market_locality_centroid"
+    },
+    {
+      "market_code": 1656,
+      "market": "झंझारपुर",
+      "district": "मधुबनी",
+      "longitude": 86.2789821,
+      "latitude": 26.2678839,
+      "confidence": 0.958,
+      "latest_date": "2026-09-21",
+      "precision": "market_locality_centroid"
+    },
+    {
+      "market_code": 10024,
+      "market": "बेनीपट्टी (नया)",
+      "district": "मधुबनी",
+      "longitude": 85.9027054,
+      "latitude": 26.4433519,
+      "confidence": 0.958,
+      "latest_date": "2026-10-16",
+      "precision": "market_locality_centroid"
+    },
+    {
+      "market_code": 35,
+      "market": "मधुबनी",
+      "district": "मधुबनी",
+      "longitude": 86.069304,
+      "latitude": 26.357794,
+      "confidence": 0.958,
+      "latest_date": "2026-10-16",
+      "precision": "market_locality_centroid"
+    },
+    {
+      "market_code": 10035,
+      "market": "शिवहर (नवीन)",
+      "district": "शिवहर",
+      "longitude": 85.2929878,
+      "latitude": 26.5139825,
+      "confidence": 0.958,
+      "latest_date": "2026-10-10",
+      "precision": "market_locality_centroid"
+    },
+    {
+      "market_code": 10034,
+      "market": "बरबीघा (नया)",
+      "district": "शेखपुरा",
+      "longitude": 85.7365083,
+      "latitude": 25.2183873,
+      "confidence": 0.958,
+      "latest_date": "2026-10-15",
+      "precision": "market_locality_centroid"
+    },
+    {
+      "market_code": 1649,
+      "market": "शेखपुरा",
+      "district": "शेखपुरा",
+      "longitude": 85.8381996,
+      "latitude": 25.139584,
+      "confidence": 0.958,
+      "latest_date": "2026-10-15",
+      "precision": "market_locality_centroid"
+    },
+    {
+      "market_code": 10032,
+      "market": "ताजपुर (नया)",
+      "district": "समस्तीपुर",
+      "longitude": 85.672853,
+      "latitude": 25.8553586,
+      "confidence": 0.9573,
+      "latest_date": "2026-10-16",
+      "precision": "market_locality_centroid"
+    },
+    {
+      "market_code": 422,
+      "market": "सहरसा",
+      "district": "सहरसा",
+      "longitude": 86.5926702,
+      "latitude": 25.8758962,
+      "confidence": 0.9721,
+      "latest_date": "2026-10-13",
+      "precision": "market_locality_centroid"
+    },
+    {
+      "market_code": 26,
+      "market": "चपरा",
+      "district": "सारण",
+      "longitude": 84.7514507,
+      "latitude": 25.7784105,
+      "confidence": 0.9593,
+      "latest_date": "2026-10-15",
+      "precision": "market_locality_centroid"
+    },
+    {
+      "market_code": 10033,
+      "market": "सोनपुर (नया)",
+      "district": "सारण",
+      "longitude": 85.1569507,
+      "latitude": 25.6977651,
+      "confidence": 0.958,
+      "latest_date": "2026-10-15",
+      "precision": "market_locality_centroid"
+    },
+    {
+      "market_code": 10036,
+      "market": "महाराजगंज(नवीन)",
+      "district": "सिवान",
+      "longitude": 84.5028865,
+      "latitude": 26.108443,
+      "confidence": 0.958,
+      "latest_date": "2026-10-16",
+      "precision": "market_locality_centroid"
+    },
+    {
+      "market_code": 10037,
+      "market": "त्रिवेणीगंज (नया)",
+      "district": "सुपौल",
+      "longitude": 86.8872792,
+      "latitude": 26.1270382,
+      "confidence": 0.958,
+      "latest_date": "2026-10-18",
+      "precision": "market_locality_centroid"
+    },
+    {
+      "market_code": 1645,
+      "market": "बीरपुर",
+      "district": "सुपौल",
+      "longitude": 87.0084605,
+      "latitude": 26.5151843,
+      "confidence": 0.958,
+      "latest_date": "2026-10-16",
+      "precision": "market_locality_centroid"
+    },
+    {
+      "market_code": 1652,
+      "market": "सुपौल",
+      "district": "सुपौल",
+      "longitude": 86.6008021,
+      "latitude": 26.1186598,
+      "confidence": 0.958,
+      "latest_date": "2026-10-16",
+      "precision": "market_locality_centroid"
+    }
+  ],
+  "geospatial": {
+    "verified": 42,
+    "unresolved": 7,
+    "method": "Conservative locality match with district validation",
+    "source": "OpenStreetMap Nominatim / ODbL 1.0",
+    "precision": "market locality centroid"
+  },
+  "potato_intelligence": {
+    "crop_hi": "आलू",
+    "crop_en": "Potato",
+    "summary": {
+      "observations": 329,
+      "dates": 30,
+      "markets": 35,
+      "districts": 21,
+      "crops": 1,
+      "average_modal_price": 1240.31,
+      "earliest_average_price": 1300.91,
+      "latest_average_price": 1450.0,
+      "change_absolute": 149.09,
+      "change_percent": 11.46,
+      "direction": "rising",
+      "daily_volatility_percent": 5.3,
+      "anomaly_days": 1,
+      "unit": "quintal"
+    },
+    "anomalies": [
+      {
+        "date": "2026-10-18",
+        "average_modal_price": 1450.0,
+        "z_score": 2.92,
+        "direction": "high"
+      }
+    ],
+    "market_sample": [
+      {
+        "market": "औरंगाबाद",
+        "market_code": 416,
+        "district": "औरंगाबाद",
+        "district_code": "189",
+        "latest_date": "2026-10-18",
+        "latest_average_price": 2000.0,
+        "window_average_price": 2000.0,
+        "minimum_modal_price": 2000.0,
+        "maximum_modal_price": 2000.0,
+        "observation_count": 2,
+        "distance_km": null,
+        "location_precision": null,
+        "latest_price_rank": 1,
+        "market_label": "Aurangabad",
+        "district_label": "Aurangabad"
+      },
+      {
+        "market": "बीरपुर",
+        "market_code": 1645,
+        "district": "सुपौल",
+        "district_code": "223",
+        "latest_date": "2026-10-16",
+        "latest_average_price": 1800.0,
+        "window_average_price": 2000.0,
+        "minimum_modal_price": 1800.0,
+        "maximum_modal_price": 2200.0,
+        "observation_count": 7,
+        "distance_km": null,
+        "location_precision": null,
+        "latest_price_rank": 2,
+        "market_label": "Birapur",
+        "district_label": "Supaul"
+      },
+      {
+        "market": "शिवहर (नवीन)",
+        "market_code": 10035,
+        "district": "शिवहर",
+        "district_code": "220",
+        "latest_date": "2026-09-26",
+        "latest_average_price": 1800.0,
+        "window_average_price": 1800.0,
+        "minimum_modal_price": 1800.0,
+        "maximum_modal_price": 1800.0,
+        "observation_count": 1,
+        "distance_km": null,
+        "location_precision": null,
+        "latest_price_rank": 3,
+        "market_label": "Shivahar (navin)",
+        "district_label": "Sheohar"
+      },
+      {
+        "market": "त्रिवेणीगंज (नया)",
+        "market_code": 10037,
+        "district": "सुपौल",
+        "district_code": "223",
+        "latest_date": "2026-10-18",
+        "latest_average_price": 1600.0,
+        "window_average_price": 1597.53,
+        "minimum_modal_price": 1578.0,
+        "maximum_modal_price": 1600.0,
+        "observation_count": 15,
+        "distance_km": null,
+        "location_precision": null,
+        "latest_price_rank": 4,
+        "market_label": "Triveniganj",
+        "district_label": "Supaul"
+      },
+      {
+        "market": "महाराजगंज(नवीन)",
+        "market_code": 10036,
+        "district": "सिवान",
+        "district_code": "222",
+        "latest_date": "2026-10-16",
+        "latest_average_price": 1600.0,
+        "window_average_price": 1580.0,
+        "minimum_modal_price": 1500.0,
+        "maximum_modal_price": 1600.0,
+        "observation_count": 5,
+        "distance_km": null,
+        "location_precision": null,
+        "latest_price_rank": 5,
+        "market_label": "Maharajaganja(navin)",
+        "district_label": "Sivan"
+      }
+    ],
+    "freshness": {
+      "latest_data_date": "2026-10-18",
+      "dataset_latest_date": "2026-10-18",
+      "days_behind_latest_dataset": 0,
+      "status": "current"
+    },
+    "methodology": {
+      "window": "Trailing calendar days ending on latest matching data date",
+      "change": "Latest daily average versus earliest daily average",
+      "volatility": "Population standard deviation of daily averages divided by their mean",
+      "anomaly": "Absolute z-score of daily average is at least 2.0; minimum five dates",
+      "ranking": "Descriptive latest average price; not a recommendation or forecast"
+    }
+  },
+  "retrieval": {
+    "cases": 6,
+    "keyword_hit_rate_at_k": 0.3333,
+    "hybrid_hit_rate_at_k": 1.0,
+    "keyword_mrr_at_k": 0.3333,
+    "hybrid_mrr_at_k": 1.0,
+    "cross_language_cases": 4,
+    "cross_language_hits_at_k": 4
+  },
+  "evaluation": {
+    "protocol_cases": {
+      "passed": 40,
+      "total": 40
+    },
+    "automated_tests": {
+      "passed": 177,
+      "total": 177
+    },
+    "rehearsal_checks": {
+      "passed": 21,
+      "total": 21
+    },
+    "agent_trajectories": {
+      "passed": 3,
+      "total": 3
+    },
+    "database_records_validated": 11912
+  },
+  "agents": [
+    {
+      "name": "Daily mandi API agent",
+      "name_hi": "दैनिक मंडी एपीआई एजेंट",
+      "role": "Collects paginated official market-price observations with date and locality provenance.",
+      "role_hi": "तिथि और स्थानीय स्रोत-सूचना सहित पृष्ठांकित आधिकारिक मंडी मूल्य एकत्र करता है।",
+      "tool": "Bihar mandi API"
+    },
+    {
+      "name": "Crop statistics agent",
+      "name_hi": "फसल सांख्यिकी एजेंट",
+      "role": "Normalizes multi-sheet Excel data while preserving crop, season, year, unit and source.",
+      "role_hi": "फसल, मौसम, वर्ष, इकाई और स्रोत सुरक्षित रखते हुए बहु-शीट एक्सेल डेटा को सामान्यीकृत करता है।",
+      "tool": "pandas / openpyxl"
+    },
+    {
+      "name": "Multilingual document agent",
+      "name_hi": "बहुभाषी दस्तावेज एजेंट",
+      "role": "Extracts English and Hindi PDFs, using OCR only when direct text is insufficient.",
+      "role_hi": "अंग्रेजी और हिंदी पीडीएफ से पाठ निकालता है और प्रत्यक्ष पाठ अपर्याप्त होने पर ही ओसीआर उपयोग करता है।",
+      "tool": "pypdf / Tesseract"
+    },
+    {
+      "name": "Grounded QA agent",
+      "name_hi": "स्रोत-आधारित प्रश्नोत्तर एजेंट",
+      "role": "Routes bilingual questions, retrieves evidence and returns source-linked answers.",
+      "role_hi": "द्विभाषी प्रश्नों को रूट करता है, साक्ष्य खोजता है और स्रोत से जुड़े उत्तर देता है।",
+      "tool": "Qwen3 / bge-m3"
+    }
+  ],
+  "verified_examples": [
+    {
+      "question_en": "How many Bihar districts are covered by the organic corridor along the Ganga?",
+      "question_hi": "गंगा के किनारे जैविक कॉरिडोर कितने जिलों में है?",
+      "answer_en": "The committed source states that the organic corridor covers 13 districts.",
+      "answer_hi": "प्रतिबद्ध स्रोत के अनुसार जैविक कॉरिडोर १३ जिलों में है।",
+      "source": "Bihar Annual Scheme 2022–23"
+    },
+    {
+      "question_en": "What was Bihar's wheat production in 2024–25?",
+      "question_hi": "२०२४–२५ में बिहार में गेहूं का कुल उत्पादन कितना था?",
+      "answer_en": "The crop-statistics workbook reports 7,119,804.74 tonnes.",
+      "answer_hi": "फसल सांख्यिकी कार्यपुस्तिका में ७१,१९,८०४.७४ टन दर्ज है।",
+      "source": "Bihar crop-statistics workbook"
+    },
+    {
+      "question_en": "Which post-harvest steps are listed for makhana?",
+      "question_hi": "मखाना की कटाई के बाद कौन-सी प्रक्रियाएं दी गई हैं?",
+      "answer_en": "Sun drying, size grading, pre-heating, popping, polishing, grading and packaging.",
+      "answer_hi": "धूप में सुखाना, आकार वर्गीकरण, पूर्व-तापन, पॉपिंग, पॉलिशिंग, ग्रेडिंग और पैकेजिंग।",
+      "source": "PMFME Makhana handbook"
+    }
+  ]
+}
