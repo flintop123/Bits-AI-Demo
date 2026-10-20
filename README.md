@@ -6,6 +6,18 @@ This section maps the repository to the faculty's Phase II demonstration protoco
 
 Repository: <https://github.com/flintop123/Bits-AI-Demo>
 
+## Live demonstration
+
+- Public dashboard: <https://p20260108git.github.io/Bits-AI-Demo/>
+- Source repository: <https://github.com/flintop123/Bits-AI-Demo>
+- Phase II protocol evaluation: **40/40 cases passed**
+- Automated regression suite: **184 tests passed**
+- Validated database snapshot: **11,912 records**
+- Evaluator-style rehearsal: **21/21 checks passed**
+
+The hosted dashboard presents the committed Phase II evidence snapshot. Arbitrary live bilingual questions require the local API, MongoDB, Ollama, and models documented under the clean-clone prerequisites.
+
+
 ## Clean-clone prerequisites (Windows)
 
 The submitted repository is designed to run locally without a paid model API. A
