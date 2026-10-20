@@ -1,0 +1,12 @@
+[
+  {"case_id":"qa_en_rice_production","expected_intent":"crop_statistics","expected_language":"en","expected_numbers":["8440825.31"],"expected_source_files":["Crop wise Area Production & Yield.xlsx"],"checked_against_source":true},
+  {"case_id":"qa_hi_wheat_production","expected_intent":"crop_statistics","expected_language":"hi","expected_numbers":["7119804.74"],"expected_source_files":["Crop wise Area Production & Yield.xlsx"],"checked_against_source":true},
+  {"case_id":"qa_en_rice_yield","expected_intent":"crop_statistics","expected_language":"en","expected_numbers":["2625"],"expected_source_files":["Crop wise Area Production & Yield.xlsx"],"checked_against_source":true},
+  {"case_id":"qa_hi_organic_corridor","expected_intent":"document_search","expected_language":"hi","expected_numbers":["13"],"expected_source_ids":["bihar_annual_scheme_2022_23"],"checked_against_source":true},
+  {"case_id":"qa_en_organic_corridor","expected_intent":"document_search","expected_language":"en","expected_numbers":["13"],"expected_source_ids":["bihar_annual_scheme_2022_23"],"checked_against_source":true},
+  {"case_id":"qa_hi_makhana_storage","expected_intent":"document_search","expected_language":"hi","expected_numbers":["20","25"],"expected_source_ids":["pmfme_makhana_handbook_hindi"],"checked_against_source":true},
+  {"case_id":"qa_en_makhana_grades","expected_intent":"document_search","expected_language":"en","expected_numbers":["5","7"],"expected_source_ids":["pmfme_makhana_handbook_hindi"],"checked_against_source":true},
+  {"case_id":"qa_en_cotton_unit","expected_intent":"crop_statistics","expected_language":"en","expected_terms":["bale","170"],"expected_source_files":["Crop wise Area Production & Yield.xlsx"],"checked_against_source":true},
+  {"case_id":"qa_hi_makhana_processing","expected_intent":"document_search","expected_language":"hi","expected_terms":["सुखाने","ग्रेडिंग","प्री-हीटिंग","पॉपिंग","पॉलिशिंग","पैकेजिंग"],"expected_source_ids":["pmfme_makhana_handbook_hindi"],"checked_against_source":true},
+  {"case_id":"qa_en_unsupported_weather","expected_intent":"unsupported","expected_language":"en","expected_source_count":0,"checked_against_source":true}
+]

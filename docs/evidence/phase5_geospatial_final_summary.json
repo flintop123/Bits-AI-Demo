@@ -1,0 +1,114 @@
+{
+  "generated_at": "2026-10-18T11:35:31.215984+00:00",
+  "status": "passed",
+  "reviewed_dry_run_evidence": "docs\\evidence\\phase5_all_markets_dry_run_v4.json",
+  "live_write_evidence": "docs\\evidence\\phase5_all_markets_live_write.json",
+  "duplicate_check_evidence": "docs\\evidence\\phase5_all_markets_duplicate_check.json",
+  "coverage": {
+    "markets_observed": 49,
+    "verified_locations": 42,
+    "unresolved_not_guessed": 7,
+    "coverage_percent": 85.7,
+    "precision_counts": {
+      "market_locality_centroid": 42
+    }
+  },
+  "database": {
+    "collection": "mandi_locations",
+    "record_count": 42,
+    "unique_market_codes": 42,
+    "required_indexes": [
+      "mandi_location_2dsphere",
+      "unique_mandi_market_code"
+    ],
+    "rejected_cross_district_market_absent": true
+  },
+  "idempotency": {
+    "already_geocoded": 42,
+    "database_write": {
+      "inserted": 0,
+      "matched": 0,
+      "modified": 0
+    }
+  },
+  "nearby_query_smoke_test": {
+    "origin_market_code": 1635,
+    "origin_market_name": "अरवल",
+    "origin": {
+      "type": "Point",
+      "coordinates": [
+        84.662895,
+        25.24324
+      ]
+    },
+    "radius_km": 5,
+    "days": 365,
+    "records_returned": 6,
+    "sample": {
+      "district": "अरवल",
+      "market": "अरवल",
+      "date": "2026-10-17",
+      "crop": "आलू",
+      "variety": "Local",
+      "price": 1200.0,
+      "minimum_price": 1100.0,
+      "maximum_price": 1250.0,
+      "unit": "quintal",
+      "source_language": "hi",
+      "source_url": "https://www.biharkrishi.in/mandi",
+      "scraped_at": "2026-10-18 09:20:52.312000",
+      "metadata": {
+        "tenant_id": "br",
+        "row_version": 2,
+        "official_district_code": "611",
+        "official_market_code": 1635,
+        "official_commodity_code": 24
+      },
+      "extracted_at": "2026-10-18T09:20:52.312862+00:00",
+      "extracting_agent": "daily_mandi_api_agent",
+      "extraction_run_id": "35958d0f-fdcf-49db-b48e-06e99e6d14dc",
+      "source_type": "government_mandi_api",
+      "arrival_date_epoch_ms": 1792195200000,
+      "arrival_quantity": 8.0,
+      "arrival_unit": "Metric Tonnes",
+      "crop_code": 24,
+      "district_code": "611",
+      "grade": null,
+      "grade_code": 2,
+      "market_code": 1635,
+      "price_trend": 9.09090909090909,
+      "source_api": "Bihar Krishi agriMarket staticData API",
+      "source_created_at_epoch_ms": 1792218605761,
+      "source_modified_at_epoch_ms": 1792233005865,
+      "source_price_unit": "Rs/Quintal",
+      "source_record_id": "08b070d1-1de3-4da5-b01e-b3f666530eca",
+      "spatial_granularity": "market",
+      "temporal_granularity": "day",
+      "variety_code": 2400014,
+      "distance_km": 0.0,
+      "market_location": {
+        "type": "Point",
+        "coordinates": [
+          84.662895,
+          25.24324
+        ]
+      },
+      "coordinate_provenance": {
+        "source": "OpenStreetMap Nominatim",
+        "source_url": "https://nominatim.openstreetmap.org/search",
+        "license": "OpenStreetMap contributors, ODbL 1.0",
+        "confidence": 0.9573,
+        "precision": "market_locality_centroid"
+      }
+    }
+  },
+  "unresolved_market_codes": [
+    "10013",
+    "10014",
+    "10020",
+    "10021",
+    "10025",
+    "417",
+    "418"
+  ]
+}

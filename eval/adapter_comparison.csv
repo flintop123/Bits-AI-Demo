@@ -1,0 +1,11 @@
+case_id,split,case_sha256,base_model,adapter_model,base_correct,adapter_correct,base_f1,adapter_f1,delta_f1,training_overlap,notes
+qa_en_rice_production,held_out,107918fe7e4a82190872bd5f3448a1b3a9c6a035ed257ccc12eda5fa98f8b1f1,google/flan-t5-small,intent-router-lora,0,1,0,1,1,0,expected=crop_statistics; base=unsupported; adapter=crop_statistics
+qa_hi_wheat_production,held_out,98d0296b46809890375864951aa928e512bc7022ace6b7ef649c657c8b4af605,google/flan-t5-small,intent-router-lora,0,0,0,0,0,0,expected=crop_statistics; base=mandi_price; adapter=document_search
+qa_en_rice_yield,held_out,d8201d269c734d7ab92eff18421e4fe02b8fcd1340703f9b454938cd2544781c,google/flan-t5-small,intent-router-lora,0,1,0,1,1,0,expected=crop_statistics; base=unsupported; adapter=crop_statistics
+qa_hi_organic_corridor,held_out,a9d2ceabf0db79b637cb9442c5cfa63b75efe14ae0e0037acea2ec69baf07cd6,google/flan-t5-small,intent-router-lora,0,0,0,0,0,0,expected=document_search; base=mandi_price; adapter=mandi_intelligence
+qa_en_organic_corridor,held_out,cfab52050f7a7e74e990c23726ecbfba815b1b7a74068c2d9f131d603a2cd9f1,google/flan-t5-small,intent-router-lora,0,0,0,0,0,0,expected=document_search; base=unsupported; adapter=unsupported
+qa_hi_makhana_storage,held_out,fa65c836c12413c6bf00a78c973288cb012c46fa156731d5b03179607376357f,google/flan-t5-small,intent-router-lora,0,0,0,0,0,0,expected=document_search; base=mandi_price; adapter=mandi_intelligence
+qa_en_makhana_grades,held_out,06aeaca2951bea2648e59c336e915a0e4ab5b0f0895f6953d83721e2e805b345,google/flan-t5-small,intent-router-lora,0,0,0,0,0,0,expected=document_search; base=unsupported; adapter=unsupported
+qa_en_cotton_unit,held_out,7a183d1082ea41397e1c26e34264d6782d9ac9c447dcfec12dd49ea4517b04f2,google/flan-t5-small,intent-router-lora,1,1,1,1,0,0,expected=crop_statistics; base=crop_statistics; adapter=crop_statistics
+qa_hi_makhana_processing,held_out,13a2cc906cd8c698a9a2c962ef2c02f84d985d592121ee200a833a85a1916375,google/flan-t5-small,intent-router-lora,0,0,0,0,0,0,expected=document_search; base=mandi_price; adapter=mandi_intelligence
+qa_en_unsupported_weather,held_out,39cd5b57ed0d138fc3c47318ca808e39632680af6bc4af4875ed4ae027f570f3,google/flan-t5-small,intent-router-lora,1,1,1,1,0,0,expected=unsupported; base=unsupported; adapter=unsupported

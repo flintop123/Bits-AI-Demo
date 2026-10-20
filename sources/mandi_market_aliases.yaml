@@ -1,0 +1,181 @@
+schema_version: 1
+aliases:
+  - market_code: 10001
+    observed_name: दाउनगर
+    query_names: [दाऊदनगर, दाउदनगर, Daudnagar]
+    district: औरंगाबाद
+    query_district: Aurangabad
+    district_aliases: [Aurangabad]
+    evidence_url: https://tourism.bihar.gov.in/en/destinations/aurangabad/daud-khan-fort
+    evidence_note: Bihar Tourism identifies Daudnagar in Aurangabad district.
+
+  - market_code: 425
+    observed_name: खगरिया
+    query_names: [खगड़िया, Khagaria]
+    district: खगरिया
+    query_district: Khagaria
+    district_aliases: [Khagaria]
+    evidence_url: https://wiki.openstreetmap.org/wiki/Subdistricts_in_Bihar
+    evidence_note: The bilingual Bihar subdistrict index maps Khagaria to Khagaria district.
+
+  - market_code: 10018
+    observed_name: मानसी मंडी (नया)
+    query_names: [मानसी, Mansi]
+    district: खगरिया
+    query_district: Khagaria
+    district_aliases: [Khagaria]
+    evidence_url: https://wiki.openstreetmap.org/wiki/Subdistricts_in_Bihar
+    evidence_note: The bilingual Bihar subdistrict index maps Mansi to Khagaria district.
+
+  - market_code: 10014
+    observed_name: टेकारी
+    query_names: [टिकारी, Tikari]
+    district: गया
+    query_district: Gaya
+    district_aliases: [Gaya]
+    evidence_url: https://wiki.openstreetmap.org/wiki/Subdistricts_in_Bihar
+    evidence_note: The bilingual Bihar subdistrict index maps Tikari to Gaya district.
+
+  - market_code: 10013
+    observed_name: बहादुरपुर (एकमी घाट)
+    query_names: [एकमी, Ekmi]
+    district: दरभंगा
+    query_district: Darbhanga
+    district_aliases: [Darbhanga]
+    evidence_url: https://censusindia.gov.in/nada/index.php/catalog/23533
+    evidence_note: The Census of India village directory lists Ekmi in Darbhanga district.
+
+  - market_code: 10026
+    observed_name: हरनौत (नया)
+    query_names: [हरनौत, Harnaut]
+    district: नालन्दा
+    query_district: Nalanda
+    district_aliases: [Nalanda, नालंदा]
+    evidence_url: https://wiki.openstreetmap.org/wiki/Subdistricts_in_Bihar
+    evidence_note: The bilingual Bihar subdistrict index maps Harnaut to Nalanda district.
+
+  - market_code: 1657
+    observed_name: चकिया
+    query_names: [चकिया, Chakia, Chakia Pipra]
+    district: पूर्वी चंपारण
+    query_district: East Champaran
+    district_aliases: [East Champaran, Purbi Champaran]
+    evidence_url: https://wiki.openstreetmap.org/wiki/Subdistricts_in_Bihar
+    evidence_note: The bilingual Bihar subdistrict index maps Chakia (Pipra) to Purbi Champaran district.
+
+  - market_code: 10021
+    observed_name: मधुबन (नया)
+    query_names: [मधुबन, Madhuban]
+    district: पूर्वी चंपारण
+    query_district: East Champaran
+    district_aliases: [East Champaran, Purbi Champaran]
+    evidence_url: https://wiki.openstreetmap.org/wiki/Subdistricts_in_Bihar
+    evidence_note: The bilingual Bihar subdistrict index maps Madhuban to Purbi Champaran district.
+
+  - market_code: 10010
+    observed_name: दुमरांव
+    query_names: [डुमरॉंव, Dumraon]
+    district: बक्सर
+    query_district: Buxar
+    district_aliases: [Buxar]
+    evidence_url: https://wiki.openstreetmap.org/wiki/Subdistricts_in_Bihar
+    evidence_note: The bilingual Bihar subdistrict index maps Dumraon to Buxar district.
+
+  - market_code: 10004
+    observed_name: अमरपुर
+    query_names: [अमरपुर, Amarpur]
+    district: बांका
+    query_district: Banka
+    district_aliases: [Banka]
+    evidence_url: https://wiki.openstreetmap.org/wiki/Subdistricts_in_Bihar
+    evidence_note: The bilingual Bihar subdistrict index maps Amarpur to Banka district.
+
+  - market_code: 1650
+    observed_name: बाराहाट
+    query_names: [बाराहाट, Barahat]
+    district: बांका
+    query_district: Banka
+    district_aliases: [Banka]
+    evidence_url: https://wiki.openstreetmap.org/wiki/Subdistricts_in_Bihar
+    evidence_note: The bilingual Bihar subdistrict index maps Barahat to Banka district.
+
+  - market_code: 1648
+    observed_name: तेघरा
+    query_names: [तेघड़ा, Teghra]
+    district: बेगूसराय
+    query_district: Begusarai
+    district_aliases: [Begusarai]
+    evidence_url: https://wiki.openstreetmap.org/wiki/Subdistricts_in_Bihar
+    evidence_note: The bilingual Bihar subdistrict index maps Teghra to Begusarai district.
+
+  - market_code: 10005
+    observed_name: बलिया
+    query_names: [बलिया, Balia, Ballia]
+    district: बेगूसराय
+    query_district: Begusarai
+    district_aliases: [Begusarai]
+    evidence_url: https://igod.gov.in/district/tjg3tXQBW7DqAzx4Vrqs/blocks
+    evidence_note: The Government of India directory lists Ballia as a block in Begusarai district.
+
+  - market_code: 10009
+    observed_name: पिरो
+    query_names: [पिरो, Piro]
+    district: भोजपुर
+    query_district: Bhojpur
+    district_aliases: [Bhojpur]
+    evidence_url: https://wiki.openstreetmap.org/wiki/Subdistricts_in_Bihar
+    evidence_note: The bilingual Bihar subdistrict index maps Piro to Bhojpur district.
+
+  - market_code: 10025
+    observed_name: भगवानपुर मंडी (नई)
+    query_names: [भगवानपुर, Bhagwanpur, Bhagwanpur Chowk]
+    district: मुजफ्फरपुर
+    query_district: Muzaffarpur
+    district_aliases: [Muzaffarpur]
+    evidence_url: https://rera.bihar.gov.in/QRCODE.aspx?id=RERAP08052020113107-1
+    evidence_note: A Bihar government record identifies Bhagwanpur Chowk in Muzaffarpur district.
+
+  - market_code: 10034
+    observed_name: बरबीघा (नया)
+    query_names: [बरबीघा, Barbigha]
+    district: शेखपुरा
+    query_district: Sheikhpura
+    district_aliases: [Sheikhpura]
+    evidence_url: https://wiki.openstreetmap.org/wiki/Subdistricts_in_Bihar
+    evidence_note: The bilingual Bihar subdistrict index maps Barbigha to Sheikhpura district.
+
+  - market_code: 1649
+    observed_name: शेखपुरा
+    query_names: [शेखपुरा, Sheikhpura]
+    district: शेखपुरा
+    query_district: Sheikhpura
+    district_aliases: [Sheikhpura]
+    evidence_url: https://wiki.openstreetmap.org/wiki/Subdistricts_in_Bihar
+    evidence_note: The bilingual Bihar subdistrict index maps Sheikhpura to Sheikhpura district.
+
+  - market_code: 10032
+    observed_name: ताजपुर (नया)
+    query_names: [ताजपुर, Tajpur]
+    district: समस्तीपुर
+    query_district: Samastipur
+    district_aliases: [Samastipur]
+    evidence_url: https://wiki.openstreetmap.org/wiki/Subdistricts_in_Bihar
+    evidence_note: The bilingual Bihar subdistrict index maps Tajpur to Samastipur district.
+
+  - market_code: 26
+    observed_name: चपरा
+    query_names: [छपरा, Chapra, Chhapra]
+    district: सारण
+    query_district: Saran
+    district_aliases: [Saran, सारन]
+    evidence_url: https://wiki.openstreetmap.org/wiki/Subdistricts_in_Bihar
+    evidence_note: The Bihar subdistrict index maps Chapra to Saran district.
+
+  - market_code: 10033
+    observed_name: सोनपुर (नया)
+    query_names: [सोनपुर, Sonepur, Sonpur]
+    district: सारण
+    query_district: Saran
+    district_aliases: [Saran, सारन]
+    evidence_url: https://wiki.openstreetmap.org/wiki/Subdistricts_in_Bihar
+    evidence_note: The bilingual Bihar subdistrict index maps Sonepur to Saran district.

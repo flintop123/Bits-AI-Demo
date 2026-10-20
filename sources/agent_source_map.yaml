@@ -1,0 +1,64 @@
+version: 1
+routing_strategy: deterministic_source_type
+orchestrator: phase2_supervisor
+
+agents:
+  - agent_id: mandi_web_agent
+    responsibility: Collect and normalize Bihar mandi price rows.
+    sources:
+      - https://www.biharkrishi.in/mandi
+    tools: [Playwright, Python, MongoDB]
+    model: none
+    status: implemented
+    limitations:
+      - Depends on the live HTML table structure and source availability.
+      - The website currently exposes only a small current snapshot.
+
+  - agent_id: crop_statistics_excel_agent
+    responsibility: Normalize crop area, production, and yield time series.
+    sources:
+      - data/Crop wise Area Production & Yield.xlsx
+    tools: [pandas, openpyxl, MongoDB]
+    model: none
+    status: implemented
+    limitations:
+      - Workbook layout is validated against known header and measure rows.
+      - 2024-25 values are marked as advance estimates.
+
+  - agent_id: multilingual_pdf_agent
+    responsibility: Extract page-aware English and Hindi agriculture evidence.
+    sources:
+      - sources/agriculture_sources.yaml
+    tools: [pypdf, Tesseract OCR, PyMuPDF, MongoDB]
+    model: none
+    status: implemented
+    limitations:
+      - OCR quality depends on scan quality and installed Hindi language data.
+      - Three APEDA pages were skipped because usable text was not recovered.
+
+  - agent_id: grounded_qa_agent
+    responsibility: Plan safe queries and answer only from retrieved records.
+    sources:
+      - mandi_prices
+      - crop_statistics
+      - agriculture_documents
+    tools: [MongoDB text search, allowlisted filters, Ollama]
+    model: qwen3:4b
+    status: implemented
+    limitations:
+      - Answers are limited to indexed sources and retrieved context.
+      - Local model quality is lower than larger hosted models.
+
+pending_sources:
+  - source: Bihar State Data Lab
+    intended_agent: structured_data_agent
+    status: pending source-specific access and schema study
+  - source: Bihar Horticulture portal dynamic datasets
+    intended_agent: horticulture_web_agent
+    status: pending endpoint mapping
+  - source: Bihar State Seed Certification reports
+    intended_agent: seed_report_agent
+    status: pending report inventory and parsing tests
+  - source: NASA AppEEARS and MODIS land-cover products
+    intended_agent: satellite_data_agent
+    status: Phase 3 geospatial integration

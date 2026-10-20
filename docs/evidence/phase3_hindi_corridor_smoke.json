@@ -1,0 +1,50 @@
+{
+  "generated_at": "2026-10-18T07:46:35.151255+00:00",
+  "question": "गंगा नदी के किनारे जैविक कॉरिडोर कितने जिलों में स्थापित किया गया है?",
+  "answer": "उपलब्ध आधिकारिक स्रोत के अनुसार, यह 13 जिलों में स्थापित किया गया है।",
+  "answer_language": "hi",
+  "intent": "document_search",
+  "filters": {
+    "search_terms": "गंगा नदी के किनारे जैविक कॉरिडोर, जिलों की संख्या organic ऑर्गेनिक corridor गलियारा Ganga district districts जिला जिले ज़िला"
+  },
+  "retrieval": {
+    "mode": "hybrid",
+    "methods": [
+      "keyword",
+      "semantic"
+    ],
+    "embedding_models": [
+      "bge-m3"
+    ]
+  },
+  "retrieved_source_ids": [
+    "apeda_makhana_hindi",
+    "bihar_annual_scheme_2022_23",
+    "pmfme_makhana_handbook_hindi"
+  ],
+  "cited_source_ids": [
+    "bihar_annual_scheme_2022_23"
+  ],
+  "sources": [
+    {
+      "source_id": "bihar_annual_scheme_2022_23",
+      "source": "https://betastate.bihar.gov.in/file_2/FileUpload/2024/Apr/18-Apr-2024/16/DyPage/f8cbff28-9f30-4b42-8557-75d10965d4b5.pdf",
+      "source_file": "bihar_annual_scheme_2022_23.pdf",
+      "document_title": "Bihar Annual Scheme 2022-23 - Agriculture and Allied Sector",
+      "page_number": 14,
+      "organization": "Government of Bihar",
+      "language": "en"
+    }
+  ],
+  "checks": {
+    "document_intent": true,
+    "hindi_answer": true,
+    "expected_source_retrieved": true,
+    "expected_source_cited": true,
+    "citations_match_answer_evidence": true,
+    "district_count_answered": true,
+    "citations_returned": true,
+    "hybrid_retrieval": true
+  },
+  "passed": true
+}

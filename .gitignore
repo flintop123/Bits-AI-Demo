@@ -151,6 +151,9 @@ activemq-data/
 .env
 .envrc
 .venv
+
+# Local Phase 2 execution traces and evaluation reports
+artifacts/
 env/
 venv/
 ENV/
@@ -216,3 +219,13 @@ __marimo__/
 
 # Streamlit
 .streamlit/secrets.toml
+
+# Downloaded source documents (retrieved reproducibly by ingestion commands)
+data/pdfs/
+data/tessdata/
+/docs/evidence/phase5_all_markets_dry_run.json
+/docs/evidence/phase5_all_markets_dry_run_v2.json
+/docs/evidence/phase5_all_markets_dry_run_v3.json
+/docs/evidence/phase5_mandi_geocoding_sample.json
+/docs/evidence/phase5_mandi_geocoding_sample_v2.json
+/docs/evidence/phase5_mandi_geocoding_sample_v3.json

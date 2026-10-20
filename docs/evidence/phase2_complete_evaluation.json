@@ -1,0 +1,63 @@
+{
+  "run_id": "8e0aace2-7c8a-4220-be7b-9b4d64389e0b",
+  "framework": "AgentEvals deterministic trajectory match",
+  "passed": true,
+  "agents_evaluated": 3,
+  "agents_passed": 3,
+  "per_agent": [
+    {
+      "source_id": "mandi",
+      "agent_id": "mandi_web_agent",
+      "checks": {
+        "trajectory_match": true,
+        "tool_selection": true,
+        "tool_input_accuracy": true,
+        "tool_call_success": true,
+        "task_completion": true,
+        "provenance_completeness": true
+      },
+      "passed": true
+    },
+    {
+      "source_id": "crop_statistics",
+      "agent_id": "crop_statistics_excel_agent",
+      "checks": {
+        "trajectory_match": true,
+        "tool_selection": true,
+        "tool_input_accuracy": true,
+        "tool_call_success": true,
+        "task_completion": true,
+        "provenance_completeness": true
+      },
+      "passed": true
+    },
+    {
+      "source_id": "agriculture_documents",
+      "agent_id": "multilingual_pdf_agent",
+      "checks": {
+        "trajectory_match": true,
+        "tool_selection": true,
+        "tool_input_accuracy": true,
+        "tool_call_success": true,
+        "task_completion": true,
+        "provenance_completeness": true
+      },
+      "passed": true
+    }
+  ],
+  "automation": {
+    "rate": 1.0,
+    "manual_interventions": 0,
+    "retries": 0,
+    "unnecessary_tool_calls": 0
+  },
+  "foundry_metric_mapping": {
+    "task_completion": "implemented as code evaluator",
+    "tool_selection": "implemented as reference mapping check",
+    "tool_input_accuracy": "implemented as required-field check",
+    "tool_call_accuracy": "implemented by AgentEvals strict trajectory match",
+    "tool_call_success": "implemented from observed tool result status",
+    "tool_output_utilization": "covered by trace result and downstream persistence",
+    "groundedness": "evaluated separately for the QA agent"
+  }
+}

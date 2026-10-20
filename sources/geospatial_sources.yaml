@@ -1,0 +1,25 @@
+schema_version: 1
+sources:
+  - id: bihar_krishi_mandi_api
+    role: market_identity_and_price_observations
+    url: https://www.biharkrishi.in/agent/v1/staticData/_search?service=agriMarket
+    authority: Bihar Krishi
+    coordinate_fields_present: false
+    notes: Official market and district codes are retained as the join key.
+  - id: openstreetmap_nominatim
+    role: secondary_coordinate_enrichment
+    url: https://nominatim.openstreetmap.org/search
+    authority: OpenStreetMap contributors
+    license: ODbL 1.0
+    usage_policy: https://operations.osmfoundation.org/policies/nominatim/
+    validation:
+      - candidate must be inside the Bihar bounding box
+      - candidate state must be Bihar
+      - explicit district mismatch is rejected
+      - market-name similarity must meet the threshold
+      - ambiguous top candidates remain unresolved
+      - coincident same-name candidates may resolve only as a locality centroid
+  - id: mongodb_2dsphere
+    role: proximity_query_engine
+    url: https://www.mongodb.com/docs/manual/core/indexes/index-types/geospatial/2dsphere/
+    authority: MongoDB

@@ -17,6 +17,22 @@ playwright==1.52.0
 PyYAML==6.0.2
 deep_translator
 transformers>=4.45,<5
+peft>=0.13,<1
 sentencepiece
+sacremoses>=0.1.1,<1
 torch
-IndicTransToolkit
+pandas>=2.2,<3
+openpyxl>=3.1,<4
+
+# HTTP API
+Flask>=3.1,<4
+pypdf>=5,<7
+PyMuPDF>=1.24,<2
+pytesseract>=0.3.13,<0.4
+Pillow>=10,<13
+fonttools>=4.58,<5
+numpy>=1.26,<3
+
+# Phase 2 agent trajectory evaluation
+agentevals>=0.0.9,<1
+langsmith<1

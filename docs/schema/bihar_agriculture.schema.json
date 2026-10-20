@@ -1,0 +1,319 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Bihar Agriculture MongoDB Schema Catalog",
+  "schema_version": 6,
+  "database": "bihar_agriculture",
+  "shared_provenance_fields": [
+    "extraction_run_id",
+    "extracting_agent",
+    "source_type",
+    "extracted_at"
+  ],
+  "collections": {
+    "mandi_prices": {
+      "description": "One market price observation per crop, variety, market and date.",
+      "identity_fields": ["district", "market", "date", "crop", "variety", "source_url"],
+      "required": [
+        "district", "market", "date", "crop", "variety", "unit",
+        "source_language", "source_url", "scraped_at", "extraction_run_id",
+        "extracting_agent", "source_type", "extracted_at"
+      ],
+      "properties": {
+        "source_record_id": {"bsonType": "string"},
+        "district": {"bsonType": "string"},
+        "district_code": {"bsonType": "string"},
+        "market": {"bsonType": "string"},
+        "market_code": {"bsonType": ["int", "long", "string"]},
+        "date": {"bsonType": "string", "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}$"},
+        "arrival_date_epoch_ms": {"bsonType": ["int", "long"]},
+        "arrival_quantity": {"bsonType": ["double", "int", "long", "decimal", "null"]},
+        "arrival_unit": {"bsonType": ["string", "null"]},
+        "crop": {"bsonType": "string"},
+        "crop_code": {"bsonType": ["int", "long", "string"]},
+        "variety": {"bsonType": "string"},
+        "variety_code": {"bsonType": ["int", "long", "string", "null"]},
+        "price": {"bsonType": ["double", "int", "long", "decimal", "null"]},
+        "minimum_price": {"bsonType": ["double", "int", "long", "decimal", "null"]},
+        "maximum_price": {"bsonType": ["double", "int", "long", "decimal", "null"]},
+        "price_trend": {"bsonType": ["double", "int", "long", "decimal", "null"]},
+        "unit": {"bsonType": "string"},
+        "temporal_granularity": {"bsonType": "string"},
+        "spatial_granularity": {"bsonType": "string"},
+        "source_language": {"bsonType": "string"},
+        "source_url": {"bsonType": "string"},
+        "scraped_at": {"bsonType": "date"},
+        "metadata": {"bsonType": "object"},
+        "extraction_run_id": {"bsonType": "string"},
+        "extracting_agent": {"bsonType": "string"},
+        "source_type": {"bsonType": "string"},
+        "extracted_at": {"bsonType": "string"}
+      },
+      "indexes": [
+        {
+          "name": "unique_mandi_record",
+          "keys": ["district", "market", "date", "crop", "variety", "source_url", "source_record_id"],
+          "unique": true
+        },
+        {
+          "name": "unique_mandi_source_record_day",
+          "keys": ["source_record_id", "date"],
+          "unique": true,
+          "partial_filter": {"source_record_id_type": "string"}
+        },
+        {
+          "name": "mandi_locality_time",
+          "keys": ["district_code", "market_code", "crop_code", "date"],
+          "unique": false
+        }
+      ]
+    },
+    "mandi_locations": {
+      "description": "One conservatively verified GeoJSON point per official mandi market code.",
+      "identity_fields": ["market_code"],
+      "required": [
+        "market_code", "market_name", "district_name", "location",
+        "verification_status", "verification_method", "confidence",
+        "location_precision", "resolution_reason",
+        "coordinate_source", "coordinate_source_url",
+        "coordinate_source_license", "geocoded_at"
+      ],
+      "properties": {
+        "market_code": {"bsonType": ["int", "long", "string"]},
+        "market_name": {"bsonType": "string"},
+        "district_code": {"bsonType": ["string", "int", "long", "null"]},
+        "district_name": {"bsonType": "string"},
+        "location": {
+          "bsonType": "object",
+          "required": ["type", "coordinates"],
+          "properties": {
+            "type": {"enum": ["Point"]},
+            "coordinates": {
+              "bsonType": "array",
+              "minItems": 2,
+              "maxItems": 2,
+              "items": {"bsonType": ["double", "int", "long", "decimal"]}
+            }
+          }
+        },
+        "verification_status": {"enum": ["verified"]},
+        "verification_method": {"bsonType": "string"},
+        "confidence": {"bsonType": ["double", "int", "decimal"]},
+        "display_name": {"bsonType": ["string", "null"]},
+        "matched_district": {"bsonType": ["string", "null"]},
+        "osm_type": {"bsonType": ["string", "null"]},
+        "osm_id": {"bsonType": ["int", "long", "string", "null"]},
+        "place_type": {"bsonType": ["string", "null"]},
+        "location_precision": {"enum": ["market_facility", "market_locality_centroid"]},
+        "resolution_reason": {"bsonType": "string"},
+        "candidate_evidence": {"bsonType": "array", "items": {"bsonType": "object"}},
+        "geocoding_query": {"bsonType": "string"},
+        "geocoding_query_strategy": {"bsonType": "string"},
+        "alias_evidence": {"bsonType": ["string", "null"]},
+        "coordinate_source": {"bsonType": "string"},
+        "coordinate_source_url": {"bsonType": "string"},
+        "coordinate_source_license": {"bsonType": "string"},
+        "source_market_url": {"bsonType": "string"},
+        "latest_observation_date": {"bsonType": ["string", "null"]},
+        "created_at": {"bsonType": "date"},
+        "geocoded_at": {"bsonType": "date"}
+      },
+      "indexes": [
+        {
+          "name": "unique_mandi_market_code",
+          "keys": ["market_code"],
+          "unique": true
+        },
+        {
+          "name": "mandi_location_2dsphere",
+          "keys": ["location"],
+          "type": "2dsphere",
+          "unique": false
+        },
+        {
+          "name": "mandi_location_district",
+          "keys": ["district_code", "market_name"],
+          "unique": false
+        }
+      ]
+    },
+    "mandi_catalog_labels": {
+      "description": "Persistent bilingual display labels derived from distinct official mandi values.",
+      "identity_fields": ["entity_type", "official_value"],
+      "required": [
+        "entity_type", "official_value", "official_language", "labels",
+        "label_languages", "methods", "source_collection",
+        "label_policy_version", "generated_at"
+      ],
+      "properties": {
+        "entity_type": {"enum": ["crop", "district", "market"]},
+        "official_value": {"bsonType": "string"},
+        "official_language": {"enum": ["en", "hi"]},
+        "labels": {
+          "bsonType": "object",
+          "required": ["en", "hi"],
+          "properties": {
+            "en": {"bsonType": "string"},
+            "hi": {"bsonType": "string"}
+          }
+        },
+        "label_languages": {"bsonType": "object"},
+        "methods": {"bsonType": "object"},
+        "source_collection": {"enum": ["mandi_prices"]},
+        "label_policy_version": {"bsonType": "int", "minimum": 1},
+        "generated_at": {"bsonType": "date"}
+      },
+      "indexes": [
+        {
+          "name": "unique_mandi_catalog_label",
+          "keys": ["entity_type", "official_value"],
+          "unique": true
+        }
+      ]
+    },
+    "crop_statistics": {
+      "description": "One crop, season and financial-year statistics observation.",
+      "identity_fields": ["crop", "season", "year"],
+      "required": [
+        "crop", "season", "year", "area_unit", "production_unit",
+        "yield_unit", "is_advance_estimate", "source", "source_file",
+        "source_row", "extraction_run_id", "extracting_agent", "source_type",
+        "extracted_at"
+      ],
+      "properties": {
+        "crop": {"bsonType": "string"},
+        "season": {"bsonType": "string", "enum": ["Kharif", "Rabi", "Summer", "Total"]},
+        "year": {"bsonType": "string", "pattern": "^[0-9]{4}-[0-9]{2}$"},
+        "area_hectares": {"bsonType": ["double", "int", "long", "decimal", "null"]},
+        "production": {"bsonType": ["double", "int", "long", "decimal", "null"]},
+        "yield_kg_per_hectare": {"bsonType": ["double", "int", "long", "decimal", "null"]},
+        "area_unit": {"bsonType": "string"},
+        "production_unit": {"bsonType": "string"},
+        "yield_unit": {"bsonType": "string"},
+        "is_advance_estimate": {"bsonType": "bool"},
+        "source": {"bsonType": "string"},
+        "source_file": {"bsonType": "string"},
+        "source_row": {"bsonType": "int"},
+        "ingested_at": {"bsonType": "date"},
+        "extraction_run_id": {"bsonType": "string"},
+        "extracting_agent": {"bsonType": "string"},
+        "source_type": {"bsonType": "string"},
+        "extracted_at": {"bsonType": "string"}
+      },
+      "indexes": [
+        {
+          "name": "unique_crop_season_year",
+          "keys": ["crop", "season", "year"],
+          "unique": true
+        }
+      ]
+    },
+    "agriculture_documents": {
+      "description": "One page-aware searchable chunk from an allowlisted official PDF.",
+      "identity_fields": ["source_url", "page_number", "chunk_index"],
+      "required": [
+        "document_title", "page_number", "chunk_index", "content",
+        "character_count", "language", "extraction_method", "source_type",
+        "source_url", "source_file", "content_hash", "source_id",
+        "source_organization", "declared_language", "extraction_run_id",
+        "extracting_agent", "extracted_at"
+      ],
+      "properties": {
+        "document_title": {"bsonType": "string"},
+        "page_number": {"bsonType": "int", "minimum": 1},
+        "chunk_index": {"bsonType": "int", "minimum": 0},
+        "content": {"bsonType": "string"},
+        "character_count": {"bsonType": "int", "minimum": 1},
+        "language": {"bsonType": "string", "enum": ["en", "hi", "mixed", "und"]},
+        "declared_language": {"bsonType": "string"},
+        "extraction_method": {"bsonType": "string", "enum": ["pypdf", "tesseract_ocr"]},
+        "source_type": {"bsonType": "string"},
+        "source_url": {"bsonType": "string"},
+        "source_file": {"bsonType": "string"},
+        "source_id": {"bsonType": "string"},
+        "source_organization": {"bsonType": "string"},
+        "content_hash": {"bsonType": "string", "pattern": "^[a-f0-9]{64}$"},
+        "embedding": {"bsonType": "array", "items": {"bsonType": "double"}},
+        "embedding_model": {"bsonType": "string"},
+        "embedding_dimension": {"bsonType": "int", "minimum": 1},
+        "embedding_content_hash": {"bsonType": "string"},
+        "embedded_at": {"bsonType": "date"},
+        "ingested_at": {"bsonType": "date"},
+        "extraction_run_id": {"bsonType": "string"},
+        "extracting_agent": {"bsonType": "string"},
+        "extracted_at": {"bsonType": "string"}
+      },
+      "indexes": [
+        {
+          "name": "unique_document_page_chunk",
+          "keys": ["source_url", "page_number", "chunk_index"],
+          "unique": true
+        },
+        {
+          "name": "agriculture_document_text",
+          "keys": ["content", "document_title"],
+          "type": "text",
+          "default_language": "none"
+        },
+        {
+          "name": "document_embedding_model",
+          "keys": ["embedding_model"],
+          "unique": false
+        }
+      ]
+    },
+    "agent_runs": {
+      "description": "One auditable Phase 2 supervisor execution.",
+      "identity_fields": ["run_id"],
+      "required": [
+        "run_id", "orchestrator", "routing_strategy", "requested_sources",
+        "dry_run", "status", "started_at", "events", "langsmith"
+      ],
+      "properties": {
+        "run_id": {"bsonType": "string"},
+        "orchestrator": {"bsonType": "string"},
+        "routing_strategy": {"bsonType": "string"},
+        "requested_sources": {"bsonType": "array", "items": {"bsonType": "string"}},
+        "dry_run": {"bsonType": "bool"},
+        "status": {"bsonType": "string", "enum": ["running", "completed", "partial_failure", "failed"]},
+        "started_at": {"bsonType": "string"},
+        "completed_at": {"bsonType": "string"},
+        "events": {"bsonType": "array"},
+        "results": {"bsonType": "array"},
+        "automation_metrics": {"bsonType": "object"},
+        "langsmith": {"bsonType": "object"}
+      },
+      "indexes": [
+        {"name": "run_id_1", "keys": ["run_id"], "unique": true},
+        {"name": "started_at_-1", "keys": ["started_at"], "direction": -1}
+      ]
+    },
+    "mandi_ingestion_runs": {
+      "description": "One scheduled or catch-up Phase 4 mandi collection run.",
+      "identity_fields": ["run_id"],
+      "required": [
+        "run_id", "orchestrator", "agent_id", "tool_name",
+        "routing_strategy", "collection_dates", "dry_run", "status",
+        "started_at", "events"
+      ],
+      "properties": {
+        "run_id": {"bsonType": "string"},
+        "orchestrator": {"bsonType": "string"},
+        "agent_id": {"bsonType": "string"},
+        "tool_name": {"bsonType": "string"},
+        "routing_strategy": {"bsonType": "string"},
+        "collection_dates": {"bsonType": "array", "items": {"bsonType": "string"}},
+        "dry_run": {"bsonType": "bool"},
+        "status": {"bsonType": "string", "enum": ["running", "completed", "partial_failure", "failed"]},
+        "started_at": {"bsonType": "string"},
+        "completed_at": {"bsonType": "string"},
+        "events": {"bsonType": "array"},
+        "results": {"bsonType": "array"},
+        "metrics": {"bsonType": "object"}
+      },
+      "indexes": [
+        {"name": "run_id_1", "keys": ["run_id"], "unique": true},
+        {"name": "started_at_-1", "keys": ["started_at"], "direction": -1}
+      ]
+    }
+  }
+}

@@ -1,0 +1,447 @@
+{
+  "generated_at": "2026-10-18T11:35:30.182358+00:00",
+  "dry_run": false,
+  "markets_considered": 49,
+  "verified": 0,
+  "unresolved": 7,
+  "already_geocoded": 42,
+  "database_write": {
+    "inserted": 0,
+    "matched": 0,
+    "modified": 0
+  },
+  "verified_locations": [],
+  "unresolved_markets": [
+    {
+      "market_code": 417,
+      "market": "Samastipur APMC",
+      "district": "Samastipur",
+      "district_code": "217",
+      "latest_observation_date": "2026-10-16",
+      "status": "unresolved",
+      "reason": "no_candidate_passed_bihar_name_and_district_checks",
+      "query": "Samastipur, Bihar, India",
+      "query_strategy": "generic_suffix_removed_without_district",
+      "accept_language": "en,hi",
+      "candidate_count": 3,
+      "query_attempts": [
+        {
+          "query": "Samastipur APMC, Samastipur, Bihar, India",
+          "query_strategy": "official_name",
+          "accept_language": "en,hi",
+          "candidate_count": 0,
+          "status": "unresolved",
+          "reason": "no_candidate_passed_bihar_name_and_district_checks"
+        },
+        {
+          "query": "Samastipur, Samastipur, Bihar, India",
+          "query_strategy": "generic_suffix_removed",
+          "accept_language": "en,hi",
+          "candidate_count": 3,
+          "status": "unresolved",
+          "reason": "no_candidate_passed_bihar_name_and_district_checks"
+        },
+        {
+          "query": "Samastipur APMC, Bihar, India",
+          "query_strategy": "official_name_without_district",
+          "accept_language": "en,hi",
+          "candidate_count": 0,
+          "status": "unresolved",
+          "reason": "no_candidate_passed_bihar_name_and_district_checks"
+        },
+        {
+          "query": "Samastipur, Bihar, India",
+          "query_strategy": "generic_suffix_removed_without_district",
+          "accept_language": "en,hi",
+          "candidate_count": 3,
+          "status": "unresolved",
+          "reason": "no_candidate_passed_bihar_name_and_district_checks"
+        }
+      ]
+    },
+    {
+      "market_code": 10020,
+      "market": "कैमूर",
+      "district": "कैमूर",
+      "district_code": "200",
+      "latest_observation_date": "2026-10-17",
+      "status": "unresolved",
+      "reason": "no_candidate_passed_bihar_name_and_district_checks",
+      "query": "कैमूर, Bihar, India",
+      "query_strategy": "official_name_without_district",
+      "accept_language": "hi,en",
+      "candidate_count": 1,
+      "query_attempts": [
+        {
+          "query": "कैमूर, कैमूर, Bihar, India",
+          "query_strategy": "official_name",
+          "accept_language": "hi,en",
+          "candidate_count": 0,
+          "status": "unresolved",
+          "reason": "no_candidate_passed_bihar_name_and_district_checks"
+        },
+        {
+          "query": "कैमूर, Bihar, India",
+          "query_strategy": "official_name_without_district",
+          "accept_language": "hi,en",
+          "candidate_count": 1,
+          "status": "unresolved",
+          "reason": "no_candidate_passed_bihar_name_and_district_checks"
+        }
+      ]
+    },
+    {
+      "market_code": 10014,
+      "market": "टेकारी",
+      "district": "गया",
+      "district_code": "196",
+      "latest_observation_date": "2026-10-16",
+      "geocoding_aliases": [
+        "टिकारी",
+        "Tikari"
+      ],
+      "geocoding_query_district": "Gaya",
+      "geocoding_district_aliases": [
+        "Gaya"
+      ],
+      "alias_evidence": "https://wiki.openstreetmap.org/wiki/Subdistricts_in_Bihar",
+      "status": "unresolved",
+      "reason": "no_candidate_passed_bihar_name_and_district_checks",
+      "query": "Tikari, Bihar, India",
+      "query_strategy": "reviewed_alias_without_district",
+      "accept_language": "en,hi",
+      "candidate_count": 1,
+      "query_attempts": [
+        {
+          "query": "टेकारी, गया, Bihar, India",
+          "query_strategy": "official_name",
+          "accept_language": "hi,en",
+          "candidate_count": 0,
+          "status": "unresolved",
+          "reason": "no_candidate_passed_bihar_name_and_district_checks"
+        },
+        {
+          "query": "टिकारी, Gaya, Bihar, India",
+          "query_strategy": "reviewed_alias",
+          "accept_language": "hi,en",
+          "candidate_count": 1,
+          "status": "unresolved",
+          "reason": "no_candidate_passed_bihar_name_and_district_checks"
+        },
+        {
+          "query": "Tikari, Gaya, Bihar, India",
+          "query_strategy": "reviewed_alias",
+          "accept_language": "en,hi",
+          "candidate_count": 1,
+          "status": "unresolved",
+          "reason": "no_candidate_passed_bihar_name_and_district_checks"
+        },
+        {
+          "query": "टेकारी, Bihar, India",
+          "query_strategy": "official_name_without_district",
+          "accept_language": "hi,en",
+          "candidate_count": 0,
+          "status": "unresolved",
+          "reason": "no_candidate_passed_bihar_name_and_district_checks"
+        },
+        {
+          "query": "टिकारी, Bihar, India",
+          "query_strategy": "reviewed_alias_without_district",
+          "accept_language": "hi,en",
+          "candidate_count": 1,
+          "status": "unresolved",
+          "reason": "no_candidate_passed_bihar_name_and_district_checks"
+        },
+        {
+          "query": "Tikari, Bihar, India",
+          "query_strategy": "reviewed_alias_without_district",
+          "accept_language": "en,hi",
+          "candidate_count": 1,
+          "status": "unresolved",
+          "reason": "no_candidate_passed_bihar_name_and_district_checks"
+        }
+      ]
+    },
+    {
+      "market_code": 10013,
+      "market": "बहादुरपुर (एकमी घाट)",
+      "district": "दरभंगा",
+      "district_code": "195",
+      "latest_observation_date": "2026-10-10",
+      "geocoding_aliases": [
+        "एकमी",
+        "Ekmi"
+      ],
+      "geocoding_query_district": "Darbhanga",
+      "geocoding_district_aliases": [
+        "Darbhanga"
+      ],
+      "alias_evidence": "https://censusindia.gov.in/nada/index.php/catalog/23533",
+      "status": "unresolved",
+      "reason": "no_candidate_passed_bihar_name_and_district_checks",
+      "query": "Ekmi, Bihar, India",
+      "query_strategy": "reviewed_alias_without_district",
+      "accept_language": "en,hi",
+      "candidate_count": 0,
+      "query_attempts": [
+        {
+          "query": "बहादुरपुर (एकमी घाट), दरभंगा, Bihar, India",
+          "query_strategy": "official_name",
+          "accept_language": "hi,en",
+          "candidate_count": 0,
+          "status": "unresolved",
+          "reason": "no_candidate_passed_bihar_name_and_district_checks"
+        },
+        {
+          "query": "बहादुरपुर, दरभंगा, Bihar, India",
+          "query_strategy": "generic_suffix_removed",
+          "accept_language": "hi,en",
+          "candidate_count": 0,
+          "status": "unresolved",
+          "reason": "no_candidate_passed_bihar_name_and_district_checks"
+        },
+        {
+          "query": "एकमी, Darbhanga, Bihar, India",
+          "query_strategy": "reviewed_alias",
+          "accept_language": "hi,en",
+          "candidate_count": 0,
+          "status": "unresolved",
+          "reason": "no_candidate_passed_bihar_name_and_district_checks"
+        },
+        {
+          "query": "Ekmi, Darbhanga, Bihar, India",
+          "query_strategy": "reviewed_alias",
+          "accept_language": "en,hi",
+          "candidate_count": 0,
+          "status": "unresolved",
+          "reason": "no_candidate_passed_bihar_name_and_district_checks"
+        },
+        {
+          "query": "बहादुरपुर (एकमी घाट), Bihar, India",
+          "query_strategy": "official_name_without_district",
+          "accept_language": "hi,en",
+          "candidate_count": 0,
+          "status": "unresolved",
+          "reason": "no_candidate_passed_bihar_name_and_district_checks"
+        },
+        {
+          "query": "बहादुरपुर, Bihar, India",
+          "query_strategy": "generic_suffix_removed_without_district",
+          "accept_language": "hi,en",
+          "candidate_count": 0,
+          "status": "unresolved",
+          "reason": "no_candidate_passed_bihar_name_and_district_checks"
+        },
+        {
+          "query": "एकमी, Bihar, India",
+          "query_strategy": "reviewed_alias_without_district",
+          "accept_language": "hi,en",
+          "candidate_count": 0,
+          "status": "unresolved",
+          "reason": "no_candidate_passed_bihar_name_and_district_checks"
+        },
+        {
+          "query": "Ekmi, Bihar, India",
+          "query_strategy": "reviewed_alias_without_district",
+          "accept_language": "en,hi",
+          "candidate_count": 0,
+          "status": "unresolved",
+          "reason": "no_candidate_passed_bihar_name_and_district_checks"
+        }
+      ]
+    },
+    {
+      "market_code": 10021,
+      "market": "मधुबन (नया)",
+      "district": "पूर्वी चंपारण",
+      "district_code": "213",
+      "latest_observation_date": "2026-10-16",
+      "geocoding_aliases": [
+        "मधुबन",
+        "Madhuban"
+      ],
+      "geocoding_query_district": "East Champaran",
+      "geocoding_district_aliases": [
+        "East Champaran",
+        "Purbi Champaran"
+      ],
+      "alias_evidence": "https://wiki.openstreetmap.org/wiki/Subdistricts_in_Bihar",
+      "status": "unresolved",
+      "reason": "no_candidate_passed_bihar_name_and_district_checks",
+      "query": "Madhuban, Bihar, India",
+      "query_strategy": "reviewed_alias_without_district",
+      "accept_language": "en,hi",
+      "candidate_count": 2,
+      "query_attempts": [
+        {
+          "query": "मधुबन (नया), पूर्वी चंपारण, Bihar, India",
+          "query_strategy": "official_name",
+          "accept_language": "hi,en",
+          "candidate_count": 0,
+          "status": "unresolved",
+          "reason": "no_candidate_passed_bihar_name_and_district_checks"
+        },
+        {
+          "query": "मधुबन, पूर्वी चंपारण, Bihar, India",
+          "query_strategy": "generic_suffix_removed",
+          "accept_language": "hi,en",
+          "candidate_count": 0,
+          "status": "unresolved",
+          "reason": "no_candidate_passed_bihar_name_and_district_checks"
+        },
+        {
+          "query": "Madhuban, East Champaran, Bihar, India",
+          "query_strategy": "reviewed_alias",
+          "accept_language": "en,hi",
+          "candidate_count": 2,
+          "status": "unresolved",
+          "reason": "no_candidate_passed_bihar_name_and_district_checks"
+        },
+        {
+          "query": "मधुबन (नया), Bihar, India",
+          "query_strategy": "official_name_without_district",
+          "accept_language": "hi,en",
+          "candidate_count": 0,
+          "status": "unresolved",
+          "reason": "no_candidate_passed_bihar_name_and_district_checks"
+        },
+        {
+          "query": "मधुबन, Bihar, India",
+          "query_strategy": "generic_suffix_removed_without_district",
+          "accept_language": "hi,en",
+          "candidate_count": 0,
+          "status": "unresolved",
+          "reason": "no_candidate_passed_bihar_name_and_district_checks"
+        },
+        {
+          "query": "Madhuban, Bihar, India",
+          "query_strategy": "reviewed_alias_without_district",
+          "accept_language": "en,hi",
+          "candidate_count": 2,
+          "status": "unresolved",
+          "reason": "no_candidate_passed_bihar_name_and_district_checks"
+        }
+      ]
+    },
+    {
+      "market_code": 10025,
+      "market": "भगवानपुर मंडी (नई)",
+      "district": "मुजफ्फरपुर",
+      "district_code": "208",
+      "latest_observation_date": "2026-10-16",
+      "geocoding_aliases": [
+        "भगवानपुर",
+        "Bhagwanpur",
+        "Bhagwanpur Chowk"
+      ],
+      "geocoding_query_district": "Muzaffarpur",
+      "geocoding_district_aliases": [
+        "Muzaffarpur"
+      ],
+      "alias_evidence": "https://rera.bihar.gov.in/QRCODE.aspx?id=RERAP08052020113107-1",
+      "status": "unresolved",
+      "reason": "no_candidate_passed_bihar_name_and_district_checks",
+      "query": "Bhagwanpur Chowk, Bihar, India",
+      "query_strategy": "reviewed_alias_without_district",
+      "accept_language": "en,hi",
+      "candidate_count": 0,
+      "query_attempts": [
+        {
+          "query": "भगवानपुर मंडी (नई), मुजफ्फरपुर, Bihar, India",
+          "query_strategy": "official_name",
+          "accept_language": "hi,en",
+          "candidate_count": 0,
+          "status": "unresolved",
+          "reason": "no_candidate_passed_bihar_name_and_district_checks"
+        },
+        {
+          "query": "भगवानपुर, मुजफ्फरपुर, Bihar, India",
+          "query_strategy": "generic_suffix_removed",
+          "accept_language": "hi,en",
+          "candidate_count": 0,
+          "status": "unresolved",
+          "reason": "no_candidate_passed_bihar_name_and_district_checks"
+        },
+        {
+          "query": "Bhagwanpur, Muzaffarpur, Bihar, India",
+          "query_strategy": "reviewed_alias",
+          "accept_language": "en,hi",
+          "candidate_count": 1,
+          "status": "unresolved",
+          "reason": "no_candidate_passed_bihar_name_and_district_checks"
+        },
+        {
+          "query": "Bhagwanpur Chowk, Muzaffarpur, Bihar, India",
+          "query_strategy": "reviewed_alias",
+          "accept_language": "en,hi",
+          "candidate_count": 0,
+          "status": "unresolved",
+          "reason": "no_candidate_passed_bihar_name_and_district_checks"
+        },
+        {
+          "query": "भगवानपुर मंडी (नई), Bihar, India",
+          "query_strategy": "official_name_without_district",
+          "accept_language": "hi,en",
+          "candidate_count": 0,
+          "status": "unresolved",
+          "reason": "no_candidate_passed_bihar_name_and_district_checks"
+        },
+        {
+          "query": "भगवानपुर, Bihar, India",
+          "query_strategy": "generic_suffix_removed_without_district",
+          "accept_language": "hi,en",
+          "candidate_count": 1,
+          "status": "unresolved",
+          "reason": "no_candidate_passed_bihar_name_and_district_checks"
+        },
+        {
+          "query": "Bhagwanpur, Bihar, India",
+          "query_strategy": "reviewed_alias_without_district",
+          "accept_language": "en,hi",
+          "candidate_count": 5,
+          "status": "unresolved",
+          "reason": "no_candidate_passed_bihar_name_and_district_checks"
+        },
+        {
+          "query": "Bhagwanpur Chowk, Bihar, India",
+          "query_strategy": "reviewed_alias_without_district",
+          "accept_language": "en,hi",
+          "candidate_count": 0,
+          "status": "unresolved",
+          "reason": "no_candidate_passed_bihar_name_and_district_checks"
+        }
+      ]
+    },
+    {
+      "market_code": 418,
+      "market": "सैदपुरहाट",
+      "district": "समस्तीपुर",
+      "district_code": "217",
+      "latest_observation_date": "2026-10-13",
+      "status": "unresolved",
+      "reason": "no_candidate_passed_bihar_name_and_district_checks",
+      "query": "सैदपुरहाट, Bihar, India",
+      "query_strategy": "official_name_without_district",
+      "accept_language": "hi,en",
+      "candidate_count": 0,
+      "query_attempts": [
+        {
+          "query": "सैदपुरहाट, समस्तीपुर, Bihar, India",
+          "query_strategy": "official_name",
+          "accept_language": "hi,en",
+          "candidate_count": 0,
+          "status": "unresolved",
+          "reason": "no_candidate_passed_bihar_name_and_district_checks"
+        },
+        {
+          "query": "सैदपुरहाट, Bihar, India",
+          "query_strategy": "official_name_without_district",
+          "accept_language": "hi,en",
+          "candidate_count": 0,
+          "status": "unresolved",
+          "reason": "no_candidate_passed_bihar_name_and_district_checks"
+        }
+      ]
+    }
+  ]
+}

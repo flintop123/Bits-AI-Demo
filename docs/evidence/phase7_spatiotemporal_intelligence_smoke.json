@@ -1,0 +1,1404 @@
+{
+  "phase": "Phase 7 spatiotemporal market intelligence",
+  "generated_at": "2026-10-18T13:35:36.092340+00:00",
+  "status": "PASS",
+  "selected_crop": "आलू",
+  "checks": {
+    "observations_present": true,
+    "daily_series_present": true,
+    "market_comparison_present": true,
+    "latest_matches_series": true,
+    "freshness_present": true,
+    "methodology_present": true,
+    "dropdown_values_equal_live_database_catalog": true,
+    "english_display_labels_are_english": true,
+    "hindi_display_labels_are_hindi": true,
+    "catalog_source_is_persistent_mongodb_cache": true,
+    "cached_catalog_load_under_three_seconds": true,
+    "localized_market_results_are_english": true,
+    "market_labels_never_use_semantic_translation": true,
+    "market_labels_are_short_place_labels": true,
+    "english_hindi_filter_resolution": true,
+    "api_status_200": true
+  },
+  "observed_summary": {
+    "observations": 329,
+    "dates": 30,
+    "markets": 35,
+    "districts": 21,
+    "crops": 1,
+    "average_modal_price": 1240.31,
+    "earliest_average_price": 1300.91,
+    "latest_average_price": 1450.0,
+    "change_absolute": 149.09,
+    "change_percent": 11.46,
+    "direction": "rising",
+    "daily_volatility_percent": 5.3,
+    "anomaly_days": 1,
+    "unit": "quintal"
+  },
+  "freshness": {
+    "latest_data_date": "2026-10-18",
+    "dataset_latest_date": "2026-10-18",
+    "days_behind_latest_dataset": 0,
+    "status": "current"
+  },
+  "locality": {
+    "mode": "statewide",
+    "origin": null,
+    "radius_km": null,
+    "verified_markets_in_radius": null
+  },
+  "market_sample": [
+    {
+      "market": "औरंगाबाद",
+      "market_code": 416,
+      "district": "औरंगाबाद",
+      "district_code": "189",
+      "latest_date": "2026-10-18",
+      "latest_average_price": 2000.0,
+      "window_average_price": 2000.0,
+      "minimum_modal_price": 2000.0,
+      "maximum_modal_price": 2000.0,
+      "observation_count": 2,
+      "distance_km": null,
+      "location_precision": null,
+      "latest_price_rank": 1,
+      "market_label": "Aurangabad",
+      "district_label": "Aurangabad"
+    },
+    {
+      "market": "बीरपुर",
+      "market_code": 1645,
+      "district": "सुपौल",
+      "district_code": "223",
+      "latest_date": "2026-10-16",
+      "latest_average_price": 1800.0,
+      "window_average_price": 2000.0,
+      "minimum_modal_price": 1800.0,
+      "maximum_modal_price": 2200.0,
+      "observation_count": 7,
+      "distance_km": null,
+      "location_precision": null,
+      "latest_price_rank": 2,
+      "market_label": "Birapur",
+      "district_label": "Supaul"
+    },
+    {
+      "market": "शिवहर (नवीन)",
+      "market_code": 10035,
+      "district": "शिवहर",
+      "district_code": "220",
+      "latest_date": "2026-09-26",
+      "latest_average_price": 1800.0,
+      "window_average_price": 1800.0,
+      "minimum_modal_price": 1800.0,
+      "maximum_modal_price": 1800.0,
+      "observation_count": 1,
+      "distance_km": null,
+      "location_precision": null,
+      "latest_price_rank": 3,
+      "market_label": "Shivahar (navin)",
+      "district_label": "Sheohar"
+    },
+    {
+      "market": "त्रिवेणीगंज (नया)",
+      "market_code": 10037,
+      "district": "सुपौल",
+      "district_code": "223",
+      "latest_date": "2026-10-18",
+      "latest_average_price": 1600.0,
+      "window_average_price": 1597.53,
+      "minimum_modal_price": 1578.0,
+      "maximum_modal_price": 1600.0,
+      "observation_count": 15,
+      "distance_km": null,
+      "location_precision": null,
+      "latest_price_rank": 4,
+      "market_label": "Triveniganj",
+      "district_label": "Supaul"
+    },
+    {
+      "market": "महाराजगंज(नवीन)",
+      "market_code": 10036,
+      "district": "सिवान",
+      "district_code": "222",
+      "latest_date": "2026-10-16",
+      "latest_average_price": 1600.0,
+      "window_average_price": 1580.0,
+      "minimum_modal_price": 1500.0,
+      "maximum_modal_price": 1600.0,
+      "observation_count": 5,
+      "distance_km": null,
+      "location_precision": null,
+      "latest_price_rank": 5,
+      "market_label": "Maharajaganja(navin)",
+      "district_label": "Sivan"
+    }
+  ],
+  "anomalies": [
+    {
+      "date": "2026-10-18",
+      "average_modal_price": 1450.0,
+      "z_score": 2.92,
+      "direction": "high"
+    }
+  ],
+  "methodology": {
+    "window": "Trailing calendar days ending on latest matching data date",
+    "change": "Latest daily average versus earliest daily average",
+    "volatility": "Population standard deviation of daily averages divided by their mean",
+    "anomaly": "Absolute z-score of daily average is at least 2.0; minimum five dates",
+    "ranking": "Descriptive latest average price; not a recommendation or forecast"
+  },
+  "bilingual_resolution": {
+    "requested": "Potato",
+    "resolved": "आलू",
+    "method": "bilingual_alias"
+  },
+  "dynamic_bilingual_catalog": {
+    "source": "mongodb_distinct_with_persistent_label_cache",
+    "official_crop_count": 37,
+    "official_district_count": 26,
+    "official_market_count": 49,
+    "load_seconds": 0.0327,
+    "crop_options": [
+      {
+        "value": "सेब",
+        "labels": {
+          "en": "Apple",
+          "hi": "सेब"
+        },
+        "methods": {
+          "en": "offline_translation",
+          "hi": "official_catalog_label"
+        }
+      },
+      {
+        "value": "अरहर दाल",
+        "labels": {
+          "en": "Arul Dal",
+          "hi": "अरहर दाल"
+        },
+        "methods": {
+          "en": "offline_translation",
+          "hi": "official_catalog_label"
+        }
+      },
+      {
+        "value": "केला - हरा",
+        "labels": {
+          "en": "Banana - Green",
+          "hi": "केला - हरा"
+        },
+        "methods": {
+          "en": "offline_translation",
+          "hi": "official_catalog_label"
+        }
+      },
+      {
+        "value": "मूली",
+        "labels": {
+          "en": "Basic",
+          "hi": "मूली"
+        },
+        "methods": {
+          "en": "offline_translation",
+          "hi": "official_catalog_label"
+        }
+      },
+      {
+        "value": "लौकी",
+        "labels": {
+          "en": "Bottle gourd",
+          "hi": "लौकी"
+        },
+        "methods": {
+          "en": "reviewed_bilingual_alias",
+          "hi": "official_catalog_label"
+        }
+      },
+      {
+        "value": "बैंगन",
+        "labels": {
+          "en": "Brinjal",
+          "hi": "बैंगन"
+        },
+        "methods": {
+          "en": "reviewed_bilingual_alias",
+          "hi": "official_catalog_label"
+        }
+      },
+      {
+        "value": "भिंडी (लेडीज फिंगर)",
+        "labels": {
+          "en": "Brother Fly (Dedge Finger)",
+          "hi": "भिंडी (लेडीज फिंगर)"
+        },
+        "methods": {
+          "en": "offline_translation",
+          "hi": "official_catalog_label"
+        }
+      },
+      {
+        "value": "पत्ता गोभी",
+        "labels": {
+          "en": "Card go Even",
+          "hi": "पत्ता गोभी"
+        },
+        "methods": {
+          "en": "offline_translation",
+          "hi": "official_catalog_label"
+        }
+      },
+      {
+        "value": "गाजर",
+        "labels": {
+          "en": "Carrots",
+          "hi": "गाजर"
+        },
+        "methods": {
+          "en": "offline_translation",
+          "hi": "official_catalog_label"
+        }
+      },
+      {
+        "value": "फूलगोभी",
+        "labels": {
+          "en": "Cauliflower",
+          "hi": "फूलगोभी"
+        },
+        "methods": {
+          "en": "reviewed_bilingual_alias",
+          "hi": "official_catalog_label"
+        }
+      },
+      {
+        "value": "शिमला मिर्च",
+        "labels": {
+          "en": "Chimla Chill",
+          "hi": "शिमला मिर्च"
+        },
+        "methods": {
+          "en": "offline_translation",
+          "hi": "official_catalog_label"
+        }
+      },
+      {
+        "value": "परवल",
+        "labels": {
+          "en": "Constraint",
+          "hi": "परवल"
+        },
+        "methods": {
+          "en": "offline_translation",
+          "hi": "official_catalog_label"
+        }
+      },
+      {
+        "value": "धान(धन)(सामान्य)",
+        "labels": {
+          "en": "Cresctores (transgressional)",
+          "hi": "धान(धन)(सामान्य)"
+        },
+        "methods": {
+          "en": "offline_translation",
+          "hi": "official_catalog_label"
+        }
+      },
+      {
+        "value": "खीरा",
+        "labels": {
+          "en": "Cucumber",
+          "hi": "खीरा"
+        },
+        "methods": {
+          "en": "reviewed_bilingual_alias",
+          "hi": "official_catalog_label"
+        }
+      },
+      {
+        "value": "चुकंदर",
+        "labels": {
+          "en": "Darein",
+          "hi": "चुकंदर"
+        },
+        "methods": {
+          "en": "offline_translation",
+          "hi": "official_catalog_label"
+        }
+      },
+      {
+        "value": "कद्दू",
+        "labels": {
+          "en": "Eclipse",
+          "hi": "कद्दू"
+        },
+        "methods": {
+          "en": "offline_translation",
+          "hi": "official_catalog_label"
+        }
+      },
+      {
+        "value": "हाथी रतालू (सूरन)",
+        "labels": {
+          "en": "Elephant Rautol",
+          "hi": "हाथी रतालू (सूरन)"
+        },
+        "methods": {
+          "en": "offline_translation",
+          "hi": "official_catalog_label"
+        }
+      },
+      {
+        "value": "फ़्रेंच बीन्स (फ़्रासबीन)",
+        "labels": {
+          "en": "French Bevertics (Festili)",
+          "hi": "फ़्रेंच बीन्स (फ़्रासबीन)"
+        },
+        "methods": {
+          "en": "offline_translation",
+          "hi": "official_catalog_label"
+        }
+      },
+      {
+        "value": "लहसुन",
+        "labels": {
+          "en": "Garlic",
+          "hi": "लहसुन"
+        },
+        "methods": {
+          "en": "reviewed_bilingual_alias",
+          "hi": "official_catalog_label"
+        }
+      },
+      {
+        "value": "हरी मिर्च",
+        "labels": {
+          "en": "Green chilli",
+          "hi": "हरी मिर्च"
+        },
+        "methods": {
+          "en": "reviewed_bilingual_alias",
+          "hi": "official_catalog_label"
+        }
+      },
+      {
+        "value": "मक्का",
+        "labels": {
+          "en": "Maize",
+          "hi": "मक्का"
+        },
+        "methods": {
+          "en": "reviewed_bilingual_alias",
+          "hi": "official_catalog_label"
+        }
+      },
+      {
+        "value": "आम",
+        "labels": {
+          "en": "Mango",
+          "hi": "आम"
+        },
+        "methods": {
+          "en": "reviewed_bilingual_alias",
+          "hi": "official_catalog_label"
+        }
+      },
+      {
+        "value": "पालक",
+        "labels": {
+          "en": "Master",
+          "hi": "पालक"
+        },
+        "methods": {
+          "en": "offline_translation",
+          "hi": "official_catalog_label"
+        }
+      },
+      {
+        "value": "सरसों",
+        "labels": {
+          "en": "Mustard",
+          "hi": "सरसों"
+        },
+        "methods": {
+          "en": "reviewed_bilingual_alias",
+          "hi": "official_catalog_label"
+        }
+      },
+      {
+        "value": "प्याज",
+        "labels": {
+          "en": "Onion",
+          "hi": "प्याज"
+        },
+        "methods": {
+          "en": "reviewed_bilingual_alias",
+          "hi": "official_catalog_label"
+        }
+      },
+      {
+        "value": "स्पंज लौकी",
+        "labels": {
+          "en": "Peacocks",
+          "hi": "स्पंज लौकी"
+        },
+        "methods": {
+          "en": "offline_translation",
+          "hi": "official_catalog_label"
+        }
+      },
+      {
+        "value": "आलू",
+        "labels": {
+          "en": "Potato",
+          "hi": "आलू"
+        },
+        "methods": {
+          "en": "reviewed_bilingual_alias",
+          "hi": "official_catalog_label"
+        }
+      },
+      {
+        "value": "पपीता",
+        "labels": {
+          "en": "Puppies",
+          "hi": "पपीता"
+        },
+        "methods": {
+          "en": "offline_translation",
+          "hi": "official_catalog_label"
+        }
+      },
+      {
+        "value": "पपीता (कच्चा)",
+        "labels": {
+          "en": "Puppies (ainner)",
+          "hi": "पपीता (कच्चा)"
+        },
+        "methods": {
+          "en": "offline_translation",
+          "hi": "official_catalog_label"
+        }
+      },
+      {
+        "value": "चावल",
+        "labels": {
+          "en": "Rice",
+          "hi": "चावल"
+        },
+        "methods": {
+          "en": "offline_translation",
+          "hi": "official_catalog_label"
+        }
+      },
+      {
+        "value": "रिजगार्ड(टोरी)",
+        "labels": {
+          "en": "Ridge & Teletori)",
+          "hi": "रिजगार्ड(टोरी)"
+        },
+        "methods": {
+          "en": "offline_translation",
+          "hi": "official_catalog_label"
+        }
+      },
+      {
+        "value": "छोटी लौकी (कुंदरू)",
+        "labels": {
+          "en": "Small Podaki (ducks)",
+          "hi": "छोटी लौकी (कुंदरू)"
+        },
+        "methods": {
+          "en": "offline_translation",
+          "hi": "official_catalog_label"
+        }
+      },
+      {
+        "value": "साँप रक्षक",
+        "labels": {
+          "en": "Snake Guard",
+          "hi": "साँप रक्षक"
+        },
+        "methods": {
+          "en": "offline_translation",
+          "hi": "official_catalog_label"
+        }
+      },
+      {
+        "value": "धनिए के पत्ते)",
+        "labels": {
+          "en": "The leaves of the money)",
+          "hi": "धनिए के पत्ते)"
+        },
+        "methods": {
+          "en": "offline_translation",
+          "hi": "official_catalog_label"
+        }
+      },
+      {
+        "value": "करेला",
+        "labels": {
+          "en": "Tola",
+          "hi": "करेला"
+        },
+        "methods": {
+          "en": "offline_translation",
+          "hi": "official_catalog_label"
+        }
+      },
+      {
+        "value": "टमाटर",
+        "labels": {
+          "en": "Tomato",
+          "hi": "टमाटर"
+        },
+        "methods": {
+          "en": "reviewed_bilingual_alias",
+          "hi": "official_catalog_label"
+        }
+      },
+      {
+        "value": "गेहूँ",
+        "labels": {
+          "en": "Wheat",
+          "hi": "गेहूँ"
+        },
+        "methods": {
+          "en": "reviewed_bilingual_alias",
+          "hi": "official_catalog_label"
+        }
+      }
+    ],
+    "district_options": [
+      {
+        "value": "अरवल",
+        "labels": {
+          "en": "Arwal",
+          "hi": "अरवल"
+        },
+        "methods": {
+          "en": "reviewed_bilingual_alias",
+          "hi": "official_catalog_label"
+        }
+      },
+      {
+        "value": "औरंगाबाद",
+        "labels": {
+          "en": "Aurangabad",
+          "hi": "औरंगाबाद"
+        },
+        "methods": {
+          "en": "reviewed_bilingual_alias",
+          "hi": "official_catalog_label"
+        }
+      },
+      {
+        "value": "बांका",
+        "labels": {
+          "en": "Banka",
+          "hi": "बांका"
+        },
+        "methods": {
+          "en": "reviewed_bilingual_alias",
+          "hi": "official_catalog_label"
+        }
+      },
+      {
+        "value": "बेगूसराय",
+        "labels": {
+          "en": "Begusarai",
+          "hi": "बेगूसराय"
+        },
+        "methods": {
+          "en": "reviewed_bilingual_alias",
+          "hi": "official_catalog_label"
+        }
+      },
+      {
+        "value": "भागलपुर",
+        "labels": {
+          "en": "Bhagalpur",
+          "hi": "भागलपुर"
+        },
+        "methods": {
+          "en": "reviewed_bilingual_alias",
+          "hi": "official_catalog_label"
+        }
+      },
+      {
+        "value": "भोजपुर",
+        "labels": {
+          "en": "Bhojpur",
+          "hi": "भोजपुर"
+        },
+        "methods": {
+          "en": "reviewed_bilingual_alias",
+          "hi": "official_catalog_label"
+        }
+      },
+      {
+        "value": "बक्सर",
+        "labels": {
+          "en": "Buxar",
+          "hi": "बक्सर"
+        },
+        "methods": {
+          "en": "reviewed_bilingual_alias",
+          "hi": "official_catalog_label"
+        }
+      },
+      {
+        "value": "दरभंगा",
+        "labels": {
+          "en": "Darbhanga",
+          "hi": "दरभंगा"
+        },
+        "methods": {
+          "en": "reviewed_bilingual_alias",
+          "hi": "official_catalog_label"
+        }
+      },
+      {
+        "value": "पूर्वी चंपारण",
+        "labels": {
+          "en": "East Champaran",
+          "hi": "पूर्वी चंपारण"
+        },
+        "methods": {
+          "en": "reviewed_bilingual_alias",
+          "hi": "official_catalog_label"
+        }
+      },
+      {
+        "value": "गया",
+        "labels": {
+          "en": "Gaya",
+          "hi": "गया"
+        },
+        "methods": {
+          "en": "reviewed_bilingual_alias",
+          "hi": "official_catalog_label"
+        }
+      },
+      {
+        "value": "गोपालगंज",
+        "labels": {
+          "en": "Gopalganj",
+          "hi": "गोपालगंज"
+        },
+        "methods": {
+          "en": "reviewed_bilingual_alias",
+          "hi": "official_catalog_label"
+        }
+      },
+      {
+        "value": "जमुई",
+        "labels": {
+          "en": "Jamui",
+          "hi": "जमुई"
+        },
+        "methods": {
+          "en": "reviewed_bilingual_alias",
+          "hi": "official_catalog_label"
+        }
+      },
+      {
+        "value": "कैमूर",
+        "labels": {
+          "en": "Kaimur",
+          "hi": "कैमूर"
+        },
+        "methods": {
+          "en": "reviewed_bilingual_alias",
+          "hi": "official_catalog_label"
+        }
+      },
+      {
+        "value": "खगरिया",
+        "labels": {
+          "en": "Khagaria",
+          "hi": "खगरिया"
+        },
+        "methods": {
+          "en": "reviewed_bilingual_alias",
+          "hi": "official_catalog_label"
+        }
+      },
+      {
+        "value": "किशनगंज",
+        "labels": {
+          "en": "Kishanganj",
+          "hi": "किशनगंज"
+        },
+        "methods": {
+          "en": "reviewed_bilingual_alias",
+          "hi": "official_catalog_label"
+        }
+      },
+      {
+        "value": "मधुबनी",
+        "labels": {
+          "en": "Madhubani",
+          "hi": "मधुबनी"
+        },
+        "methods": {
+          "en": "reviewed_bilingual_alias",
+          "hi": "official_catalog_label"
+        }
+      },
+      {
+        "value": "मुजफ्फरपुर",
+        "labels": {
+          "en": "Muzaffarpur",
+          "hi": "मुजफ्फरपुर"
+        },
+        "methods": {
+          "en": "reviewed_bilingual_alias",
+          "hi": "official_catalog_label"
+        }
+      },
+      {
+        "value": "नालन्दा",
+        "labels": {
+          "en": "Nalanda",
+          "hi": "नालन्दा"
+        },
+        "methods": {
+          "en": "reviewed_bilingual_alias",
+          "hi": "official_catalog_label"
+        }
+      },
+      {
+        "value": "सहरसा",
+        "labels": {
+          "en": "Saharsa",
+          "hi": "सहरसा"
+        },
+        "methods": {
+          "en": "reviewed_bilingual_alias",
+          "hi": "official_catalog_label"
+        }
+      },
+      {
+        "value": "Samastipur",
+        "labels": {
+          "en": "Samastipur",
+          "hi": "समस्तीपुर"
+        },
+        "methods": {
+          "en": "official_catalog_label",
+          "hi": "reviewed_bilingual_alias"
+        }
+      },
+      {
+        "value": "समस्तीपुर",
+        "labels": {
+          "en": "Samastipur",
+          "hi": "समस्तीपुर"
+        },
+        "methods": {
+          "en": "reviewed_bilingual_alias",
+          "hi": "official_catalog_label"
+        }
+      },
+      {
+        "value": "सारण",
+        "labels": {
+          "en": "Saran",
+          "hi": "सारण"
+        },
+        "methods": {
+          "en": "reviewed_bilingual_alias",
+          "hi": "official_catalog_label"
+        }
+      },
+      {
+        "value": "शेखपुरा",
+        "labels": {
+          "en": "Sheikhpura",
+          "hi": "शेखपुरा"
+        },
+        "methods": {
+          "en": "reviewed_bilingual_alias",
+          "hi": "official_catalog_label"
+        }
+      },
+      {
+        "value": "शिवहर",
+        "labels": {
+          "en": "Sheohar",
+          "hi": "शिवहर"
+        },
+        "methods": {
+          "en": "reviewed_bilingual_alias",
+          "hi": "official_catalog_label"
+        }
+      },
+      {
+        "value": "सिवान",
+        "labels": {
+          "en": "Sivan",
+          "hi": "सिवान"
+        },
+        "methods": {
+          "en": "offline_translation",
+          "hi": "official_catalog_label"
+        }
+      },
+      {
+        "value": "सुपौल",
+        "labels": {
+          "en": "Supaul",
+          "hi": "सुपौल"
+        },
+        "methods": {
+          "en": "reviewed_bilingual_alias",
+          "hi": "official_catalog_label"
+        }
+      }
+    ],
+    "market_options": [
+      {
+        "value": "अमरपुर",
+        "labels": {
+          "en": "Amarpur",
+          "hi": "अमरपुर"
+        },
+        "methods": {
+          "en": "reviewed_bilingual_alias",
+          "hi": "official_catalog_label"
+        }
+      },
+      {
+        "value": "आरा",
+        "labels": {
+          "en": "Ar",
+          "hi": "आरा"
+        },
+        "methods": {
+          "en": "devanagari_transliteration",
+          "hi": "official_catalog_label"
+        }
+      },
+      {
+        "value": "अरवल",
+        "labels": {
+          "en": "Araval",
+          "hi": "अरवल"
+        },
+        "methods": {
+          "en": "devanagari_transliteration",
+          "hi": "official_catalog_label"
+        }
+      },
+      {
+        "value": "औरंगाबाद",
+        "labels": {
+          "en": "Aurangabad",
+          "hi": "औरंगाबाद"
+        },
+        "methods": {
+          "en": "devanagari_transliteration",
+          "hi": "official_catalog_label"
+        }
+      },
+      {
+        "value": "बहादुरगंज",
+        "labels": {
+          "en": "Bahaduraganj",
+          "hi": "बहादुरगंज"
+        },
+        "methods": {
+          "en": "devanagari_transliteration",
+          "hi": "official_catalog_label"
+        }
+      },
+      {
+        "value": "बक्सर",
+        "labels": {
+          "en": "Baksar",
+          "hi": "बक्सर"
+        },
+        "methods": {
+          "en": "devanagari_transliteration",
+          "hi": "official_catalog_label"
+        }
+      },
+      {
+        "value": "बलिया",
+        "labels": {
+          "en": "Balia",
+          "hi": "बलिया"
+        },
+        "methods": {
+          "en": "reviewed_bilingual_alias",
+          "hi": "official_catalog_label"
+        }
+      },
+      {
+        "value": "बाराहाट",
+        "labels": {
+          "en": "Barahat",
+          "hi": "बाराहाट"
+        },
+        "methods": {
+          "en": "reviewed_bilingual_alias",
+          "hi": "official_catalog_label"
+        }
+      },
+      {
+        "value": "बरबीघा (नया)",
+        "labels": {
+          "en": "Barbigha",
+          "hi": "बरबीघा (नया)"
+        },
+        "methods": {
+          "en": "reviewed_bilingual_alias",
+          "hi": "official_catalog_label"
+        }
+      },
+      {
+        "value": "बेगूसराय",
+        "labels": {
+          "en": "Begusaray",
+          "hi": "बेगूसराय"
+        },
+        "methods": {
+          "en": "devanagari_transliteration",
+          "hi": "official_catalog_label"
+        }
+      },
+      {
+        "value": "बेनीपट्टी (नया)",
+        "labels": {
+          "en": "Benipatti",
+          "hi": "बेनीपट्टी (नया)"
+        },
+        "methods": {
+          "en": "devanagari_transliteration",
+          "hi": "official_catalog_label"
+        }
+      },
+      {
+        "value": "भागलपुर",
+        "labels": {
+          "en": "Bhagalapur",
+          "hi": "भागलपुर"
+        },
+        "methods": {
+          "en": "devanagari_transliteration",
+          "hi": "official_catalog_label"
+        }
+      },
+      {
+        "value": "भगवानपुर मंडी (नई)",
+        "labels": {
+          "en": "Bhagwanpur",
+          "hi": "भगवानपुर मंडी (नई)"
+        },
+        "methods": {
+          "en": "reviewed_bilingual_alias",
+          "hi": "official_catalog_label"
+        }
+      },
+      {
+        "value": "बिहपुर",
+        "labels": {
+          "en": "Bihapur",
+          "hi": "बिहपुर"
+        },
+        "methods": {
+          "en": "devanagari_transliteration",
+          "hi": "official_catalog_label"
+        }
+      },
+      {
+        "value": "बिहारशरीफ",
+        "labels": {
+          "en": "Biharasharif",
+          "hi": "बिहारशरीफ"
+        },
+        "methods": {
+          "en": "devanagari_transliteration",
+          "hi": "official_catalog_label"
+        }
+      },
+      {
+        "value": "बीरपुर",
+        "labels": {
+          "en": "Birapur",
+          "hi": "बीरपुर"
+        },
+        "methods": {
+          "en": "devanagari_transliteration",
+          "hi": "official_catalog_label"
+        }
+      },
+      {
+        "value": "चकिया",
+        "labels": {
+          "en": "Chakia",
+          "hi": "चकिया"
+        },
+        "methods": {
+          "en": "reviewed_bilingual_alias",
+          "hi": "official_catalog_label"
+        }
+      },
+      {
+        "value": "चपरा",
+        "labels": {
+          "en": "Chapra",
+          "hi": "चपरा"
+        },
+        "methods": {
+          "en": "reviewed_bilingual_alias",
+          "hi": "official_catalog_label"
+        }
+      },
+      {
+        "value": "दरभंगा",
+        "labels": {
+          "en": "Darabhang",
+          "hi": "दरभंगा"
+        },
+        "methods": {
+          "en": "devanagari_transliteration",
+          "hi": "official_catalog_label"
+        }
+      },
+      {
+        "value": "दाउनगर",
+        "labels": {
+          "en": "Daudnagar",
+          "hi": "दाउनगर"
+        },
+        "methods": {
+          "en": "reviewed_bilingual_alias",
+          "hi": "official_catalog_label"
+        }
+      },
+      {
+        "value": "दुमरांव",
+        "labels": {
+          "en": "Dumraon",
+          "hi": "दुमरांव"
+        },
+        "methods": {
+          "en": "reviewed_bilingual_alias",
+          "hi": "official_catalog_label"
+        }
+      },
+      {
+        "value": "बहादुरपुर (एकमी घाट)",
+        "labels": {
+          "en": "Ekmi",
+          "hi": "बहादुरपुर (एकमी घाट)"
+        },
+        "methods": {
+          "en": "reviewed_bilingual_alias",
+          "hi": "official_catalog_label"
+        }
+      },
+      {
+        "value": "गया",
+        "labels": {
+          "en": "Gay",
+          "hi": "गया"
+        },
+        "methods": {
+          "en": "devanagari_transliteration",
+          "hi": "official_catalog_label"
+        }
+      },
+      {
+        "value": "गोपालगंज",
+        "labels": {
+          "en": "Gopalaganj",
+          "hi": "गोपालगंज"
+        },
+        "methods": {
+          "en": "devanagari_transliteration",
+          "hi": "official_catalog_label"
+        }
+      },
+      {
+        "value": "हरनौत (नया)",
+        "labels": {
+          "en": "Harnaut",
+          "hi": "हरनौत (नया)"
+        },
+        "methods": {
+          "en": "reviewed_bilingual_alias",
+          "hi": "official_catalog_label"
+        }
+      },
+      {
+        "value": "जमुई",
+        "labels": {
+          "en": "Jamui",
+          "hi": "जमुई"
+        },
+        "methods": {
+          "en": "devanagari_transliteration",
+          "hi": "official_catalog_label"
+        }
+      },
+      {
+        "value": "जयनगर",
+        "labels": {
+          "en": "Jayanagar",
+          "hi": "जयनगर"
+        },
+        "methods": {
+          "en": "devanagari_transliteration",
+          "hi": "official_catalog_label"
+        }
+      },
+      {
+        "value": "झंझारपुर",
+        "labels": {
+          "en": "Jhanjharapur",
+          "hi": "झंझारपुर"
+        },
+        "methods": {
+          "en": "devanagari_transliteration",
+          "hi": "official_catalog_label"
+        }
+      },
+      {
+        "value": "कैमूर",
+        "labels": {
+          "en": "Kaimur",
+          "hi": "कैमूर"
+        },
+        "methods": {
+          "en": "devanagari_transliteration",
+          "hi": "official_catalog_label"
+        }
+      },
+      {
+        "value": "खगरिया",
+        "labels": {
+          "en": "Khagaria",
+          "hi": "खगरिया"
+        },
+        "methods": {
+          "en": "reviewed_bilingual_alias",
+          "hi": "official_catalog_label"
+        }
+      },
+      {
+        "value": "किशनगंज",
+        "labels": {
+          "en": "Kishanaganj",
+          "hi": "किशनगंज"
+        },
+        "methods": {
+          "en": "devanagari_transliteration",
+          "hi": "official_catalog_label"
+        }
+      },
+      {
+        "value": "मधुबन (नया)",
+        "labels": {
+          "en": "Madhuban",
+          "hi": "मधुबन (नया)"
+        },
+        "methods": {
+          "en": "reviewed_bilingual_alias",
+          "hi": "official_catalog_label"
+        }
+      },
+      {
+        "value": "मधुबनी",
+        "labels": {
+          "en": "Madhubani",
+          "hi": "मधुबनी"
+        },
+        "methods": {
+          "en": "devanagari_transliteration",
+          "hi": "official_catalog_label"
+        }
+      },
+      {
+        "value": "महाराजगंज(नवीन)",
+        "labels": {
+          "en": "Maharajaganja(navin)",
+          "hi": "महाराजगंज(नवीन)"
+        },
+        "methods": {
+          "en": "devanagari_transliteration",
+          "hi": "official_catalog_label"
+        }
+      },
+      {
+        "value": "मानसी मंडी (नया)",
+        "labels": {
+          "en": "Mansi",
+          "hi": "मानसी मंडी (नया)"
+        },
+        "methods": {
+          "en": "reviewed_bilingual_alias",
+          "hi": "official_catalog_label"
+        }
+      },
+      {
+        "value": "मोतिहारी",
+        "labels": {
+          "en": "Motihari",
+          "hi": "मोतिहारी"
+        },
+        "methods": {
+          "en": "devanagari_transliteration",
+          "hi": "official_catalog_label"
+        }
+      },
+      {
+        "value": "पिरो",
+        "labels": {
+          "en": "Piro",
+          "hi": "पिरो"
+        },
+        "methods": {
+          "en": "reviewed_bilingual_alias",
+          "hi": "official_catalog_label"
+        }
+      },
+      {
+        "value": "रक्सौल (नया)",
+        "labels": {
+          "en": "Raksaul",
+          "hi": "रक्सौल (नया)"
+        },
+        "methods": {
+          "en": "devanagari_transliteration",
+          "hi": "official_catalog_label"
+        }
+      },
+      {
+        "value": "सहरसा",
+        "labels": {
+          "en": "Saharas",
+          "hi": "सहरसा"
+        },
+        "methods": {
+          "en": "devanagari_transliteration",
+          "hi": "official_catalog_label"
+        }
+      },
+      {
+        "value": "सैदपुरहाट",
+        "labels": {
+          "en": "Saidapurahat",
+          "hi": "सैदपुरहाट"
+        },
+        "methods": {
+          "en": "devanagari_transliteration",
+          "hi": "official_catalog_label"
+        }
+      },
+      {
+        "value": "Samastipur APMC",
+        "labels": {
+          "en": "Samastipur APMC",
+          "hi": "समस्तीपुर एपीएमसी"
+        },
+        "methods": {
+          "en": "official_catalog_label",
+          "hi": "reviewed_bilingual_alias"
+        }
+      },
+      {
+        "value": "शेखपुरा",
+        "labels": {
+          "en": "Sheikhpura",
+          "hi": "शेखपुरा"
+        },
+        "methods": {
+          "en": "reviewed_bilingual_alias",
+          "hi": "official_catalog_label"
+        }
+      },
+      {
+        "value": "शिवहर (नवीन)",
+        "labels": {
+          "en": "Shivahar (navin)",
+          "hi": "शिवहर (नवीन)"
+        },
+        "methods": {
+          "en": "devanagari_transliteration",
+          "hi": "official_catalog_label"
+        }
+      },
+      {
+        "value": "सोनपुर (नया)",
+        "labels": {
+          "en": "Sonepur",
+          "hi": "सोनपुर (नया)"
+        },
+        "methods": {
+          "en": "reviewed_bilingual_alias",
+          "hi": "official_catalog_label"
+        }
+      },
+      {
+        "value": "सुपौल",
+        "labels": {
+          "en": "Supaul",
+          "hi": "सुपौल"
+        },
+        "methods": {
+          "en": "devanagari_transliteration",
+          "hi": "official_catalog_label"
+        }
+      },
+      {
+        "value": "ताजपुर (नया)",
+        "labels": {
+          "en": "Tajpur",
+          "hi": "ताजपुर (नया)"
+        },
+        "methods": {
+          "en": "reviewed_bilingual_alias",
+          "hi": "official_catalog_label"
+        }
+      },
+      {
+        "value": "तेघरा",
+        "labels": {
+          "en": "Teghra",
+          "hi": "तेघरा"
+        },
+        "methods": {
+          "en": "reviewed_bilingual_alias",
+          "hi": "official_catalog_label"
+        }
+      },
+      {
+        "value": "टेकारी",
+        "labels": {
+          "en": "Tikari",
+          "hi": "टेकारी"
+        },
+        "methods": {
+          "en": "reviewed_bilingual_alias",
+          "hi": "official_catalog_label"
+        }
+      },
+      {
+        "value": "त्रिवेणीगंज (नया)",
+        "labels": {
+          "en": "Triveniganj",
+          "hi": "त्रिवेणीगंज (नया)"
+        },
+        "methods": {
+          "en": "devanagari_transliteration",
+          "hi": "official_catalog_label"
+        }
+      }
+    ]
+  }
+}

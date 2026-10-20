@@ -1,0 +1,41 @@
+sources:
+  - id: bihar_annual_scheme_2022_23
+    title: Bihar Annual Scheme 2022-23 - Agriculture and Allied Sector
+    organization: Government of Bihar
+    language: en
+    url: https://betastate.bihar.gov.in/file_2/FileUpload/2024/Apr/18-Apr-2024/16/DyPage/f8cbff28-9f30-4b42-8557-75d10965d4b5.pdf
+    filename: bihar_annual_scheme_2022_23.pdf
+    start_page: 11
+    end_page: 30
+    enabled: true
+
+  - id: bihar_horticulture_baipp_brochure
+    title: Bihar Agri Investment Promotion Policy - Horticulture Brochure
+    organization: Directorate of Horticulture, Government of Bihar
+    language: mixed
+    url: https://horticulture.bihar.gov.in/HORTMIS/baipp/Downloads/BAIPP_Brochures.PDF
+    filename: bihar_horticulture_baipp_brochure.pdf
+    start_page: 1
+    enabled: true
+
+  - id: apeda_makhana_hindi
+    title: भारत से मखाना निर्यात को प्रोत्साहित किए जाने हेतु कार्यनीति
+    organization: Agricultural and Processed Food Products Export Development Authority
+    language: hi
+    url: https://apeda.gov.in/hindi/sites/default/files/study_reports/Makhana_Report_Hindi.pdf
+    filename: apeda_makhana_report_hindi.pdf
+    start_page: 1
+    end_page: 20
+    force_ocr: true
+    enabled: true
+
+  - id: pmfme_makhana_handbook_hindi
+    title: पीएमएफएमई मखाना पुस्तिका
+    organization: National Institute of Food Technology Entrepreneurship and Management
+    language: hi
+    url: https://niftem.ac.in/newsite/pmfme/wp-content/uploads/2022/08/Makhana-Handbook-Hindi.pdf
+    filename: pmfme_makhana_handbook_hindi.pdf
+    start_page: 1
+    end_page: 15
+    force_ocr: true
+    enabled: true
