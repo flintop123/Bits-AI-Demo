@@ -11,7 +11,7 @@ Repository: <https://github.com/flintop123/Bits-AI-Demo>
 - Public dashboard: <https://p20260108git.github.io/Bits-AI-Demo/>
 - Source repository: <https://github.com/flintop123/Bits-AI-Demo>
 - Phase II protocol evaluation: **40/40 cases passed**
-- Automated regression suite: **184 tests passed**
+- Automated regression suite: **198 tests passed**
 - Validated database snapshot: **11,912 records**
 - Evaluator-style rehearsal: **21/21 checks passed**
 
@@ -82,6 +82,15 @@ curl.exe -sS http://127.0.0.1:11434/api/tags
 
 If `ollama` is not on `PATH`, its usual per-user executable can be invoked as
 `& "$env:LOCALAPPDATA\Programs\Ollama\ollama.exe"`.
+
+Prepare the checked Hindi evaluation source. The allowlisted command downloads the
+official PDF into the Git-ignored `data/pdfs` directory and performs a dry run
+without writing to MongoDB:
+
+```powershell
+python ingest_agriculture_sources.py --source pmfme_makhana_handbook_hindi --dry-run
+python eval\run_eval.py
+```
 
 Finally, verify the clean clone before running a demonstration:
 

@@ -87,7 +87,7 @@ def main() -> None:
         "retrieval": retrieval["metrics"],
         "evaluation": {
             "protocol_cases": {"passed": 40, "total": 40},
-            "automated_tests": {"passed": 177, "total": 177},
+            "automated_tests": {"passed": 198, "total": 198},
             "rehearsal_checks": {"passed": 21, "total": 21},
             "agent_trajectories": {"passed": 3, "total": 3},
             "database_records_validated": 11912,
