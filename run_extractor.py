@@ -22,4 +22,4 @@ if __name__ == "__main__":
     if len(sys.argv) < 2:
         print('Usage: python run_extractor.py "<plain English request>"')
         raise SystemExit(1)
-    print(run(" ".join(sys.argv[1:])))
+    run(" ".join(sys.argv[1:]))

@@ -267,7 +267,15 @@ def print_summary(summary):
         print(f"Database count after: {summary['count_after']}")
 
 
+def _configure_console_encoding():
+    for stream in (sys.stdout, sys.stderr):
+        reconfigure = getattr(stream, "reconfigure", None)
+        if reconfigure is not None:
+            reconfigure(encoding="utf-8", errors="replace")
+
+
 def main(argv=None):
+    _configure_console_encoding()
     try:
         args = parse_args(argv)
         sources = load_manifest(args.manifest)

@@ -4,6 +4,7 @@ from tempfile import TemporaryDirectory
 from unittest.mock import Mock, patch
 
 from ingest_agriculture_sources import (
+    _configure_console_encoding,
     load_manifest,
     run_ingestion,
     select_sources,
@@ -144,6 +145,20 @@ sources:
                 sources, ["disabled_source"]
             )],
             ["disabled_source"],
+        )
+
+    @patch("ingest_agriculture_sources.sys.stderr")
+    @patch("ingest_agriculture_sources.sys.stdout")
+    def test_console_streams_are_configured_for_utf8(
+        self, stdout, stderr
+    ):
+        _configure_console_encoding()
+
+        stdout.reconfigure.assert_called_once_with(
+            encoding="utf-8", errors="replace"
+        )
+        stderr.reconfigure.assert_called_once_with(
+            encoding="utf-8", errors="replace"
         )
 
     @patch("ingest_agriculture_sources.extract_source")

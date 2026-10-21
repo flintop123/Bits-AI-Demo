@@ -92,4 +92,4 @@ if __name__ == "__main__":
     if len(sys.argv) < 2:
         print('Usage: python agent.py "<free text request>"')
         raise SystemExit(1)
-    print(run(" ".join(sys.argv[1:])))
+    run(" ".join(sys.argv[1:]))
