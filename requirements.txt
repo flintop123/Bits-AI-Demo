@@ -1,7 +1,8 @@
 # Core LangChain + Ollama integration
-langchain>=0.2.0
+# agent.py uses langchain 1.x create_agent (native tool calling).
+langchain>=1.0,<2.0
 langchain-ollama>=0.1.0
-langchain-core>=0.2.0
+langchain-core>=1.0,<2.0
 
 # MongoDB driver
 pymongo>=4.7.0
