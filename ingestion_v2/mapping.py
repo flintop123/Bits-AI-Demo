@@ -86,6 +86,52 @@ def _normalized_field_name(value):
     return re.sub(r"[^a-z0-9]+", "", str(value).casefold())
 
 
+def _available_source_fields(request: MappingRequest):
+    fields = []
+    seen = set()
+    for record in request.extraction.records:
+        for source_field in record.data:
+            if source_field not in seen:
+                fields.append(source_field)
+                seen.add(source_field)
+    return fields
+
+
+def _enforce_extractor_schema_contract(plan: MappingPlan, request: MappingRequest):
+    """Reject a model target that conflicts with the extractor's record schema."""
+    available = {
+        _normalized_field_name(item) for item in _available_source_fields(request)
+    }
+    document_signature = {
+        "documenttitle", "pagenumber", "chunkindex", "content", "language",
+        "extractionmethod", "sourceurl", "sourcefile", "contenthash",
+    }
+    if (
+        request.inspection.modality == SourceModality.PDF
+        and document_signature.issubset(available)
+        and plan.target_collection != TargetCollection.AGRICULTURE_DOCUMENTS
+    ):
+        original = plan.target_collection.value
+        return plan.model_copy(update={
+            "target_collection": TargetCollection.AGRICULTURE_DOCUMENTS,
+            "source_scope": None,
+            "data_start_row": None,
+            "field_mappings": [],
+            "series_mappings": [],
+            "static_values": {},
+            "identity_fields": [
+                "source_url", "page_number", "chunk_index", "content_hash",
+            ],
+            "confidence": max(plan.confidence, 0.99),
+            "explanation": (
+                f"{plan.explanation} Extractor schema contract rejected "
+                f"incompatible target {original}; canonical PDF chunks require "
+                "agriculture_documents."
+            ),
+        })
+    return plan
+
+
 def _complete_exact_field_mappings(plan: MappingPlan, request: MappingRequest):
     """Restore unambiguous exact-name mappings omitted by the model.
 
@@ -366,6 +412,7 @@ class SchemaMappingAgent:
                 "locator": record.record_locator.model_dump(mode="json"),
                 "data": record.data,
             })
+        available_source_fields = _available_source_fields(request)
         prompt = {
             "task": (
                 "Propose one safe mapping from the extracted source into exactly one "
@@ -373,7 +420,9 @@ class SchemaMappingAgent:
                 "Use source column letters/keys exactly as shown. Map every required "
                 "source field when it is present. For wide annual Excel "
                 "tables use series_mappings to map each period column. Set data_start_row "
-                "to the first actual data row. Explain uncertainty."
+                "to the first actual data row. Select a structured collection only when "
+                "the extracted source fields contain evidence for its required schema. "
+                "Explain uncertainty."
             ),
             "allowed_collections": [item.value for item in request.allowed_collections],
             "canonical_fields": {
@@ -384,6 +433,7 @@ class SchemaMappingAgent:
             },
             "source": request.inspection.model_dump(mode="json"),
             "extraction_method": request.extraction.extraction_method,
+            "available_source_fields": available_source_fields,
             "preview": preview,
         }
         structured = llm.with_structured_output(MappingPlan)
@@ -393,6 +443,7 @@ class SchemaMappingAgent:
         )
         if plan.target_collection not in request.allowed_collections:
             raise ValueError("The mapping agent selected a non-allowlisted collection")
+        plan = _enforce_extractor_schema_contract(plan, request)
         plan = _complete_exact_field_mappings(plan, request)
         return _repair_wide_crop_statistics_plan(plan, request)
 

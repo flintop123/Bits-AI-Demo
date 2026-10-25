@@ -14,14 +14,19 @@ from ingestion_v2.extraction import (
 from ingestion_v2.mapping import SchemaMappingAgent, apply_mapping_plan
 from ingestion_v2.models import (
     ExtractFileInput,
+    ExtractFileOutput,
+    ExtractedRecord,
+    ExtractionMetrics,
     FieldMapping,
     InspectFileInput,
+    InspectFileOutput,
     MappingPlan,
     MappingRequest,
     PersistInput,
     SeriesColumn,
     SeriesMapping,
     SourceModality,
+    SourceLocator,
     TargetCollection,
     WriteMode,
 )
@@ -127,6 +132,82 @@ class ToolContractTests(unittest.TestCase):
 
 
 class MappingTests(unittest.TestCase):
+    def test_pdf_extractor_contract_rejects_incompatible_model_target(self):
+        locator = SourceLocator(
+            source_file="makhana.pdf",
+            source_url="file:///makhana.pdf",
+            modality=SourceModality.PDF,
+            page_number=1,
+            chunk_index=0,
+        )
+        data = {
+            "document_title": "Makhana report",
+            "page_number": 1,
+            "chunk_index": 0,
+            "content": "मखाना उत्पादन और प्रसंस्करण की जानकारी।",
+            "language": "hi",
+            "extraction_method": "tesseract_ocr",
+            "source_type": "pdf",
+            "source_url": "file:///makhana.pdf",
+            "source_file": "makhana.pdf",
+            "content_hash": "a" * 64,
+        }
+        inspection = InspectFileOutput(
+            file_path="/tmp/makhana.pdf",
+            source_file="makhana.pdf",
+            source_hash="b" * 64,
+            size_bytes=100,
+            modality=SourceModality.PDF,
+            mime_type="application/pdf",
+            supported=True,
+        )
+        extraction = ExtractFileOutput(
+            modality=SourceModality.PDF,
+            extraction_method="pypdf_tesseract_extractor",
+            records=[ExtractedRecord(
+                record_index=0,
+                data=data,
+                field_locators={key: locator for key in data},
+                record_locator=locator,
+            )],
+            metrics=ExtractionMetrics(
+                source_units_attempted=1,
+                source_units_extracted=1,
+                records_extracted=1,
+                units_skipped=0,
+                extraction_coverage=1,
+            ),
+        )
+        request = MappingRequest(
+            run_id="run-pdf-contract",
+            inspection=inspection,
+            extraction=extraction,
+        )
+        incompatible = MappingPlan(
+            target_collection=TargetCollection.MANDI_LOCATIONS,
+            field_mappings=[],
+            identity_fields=["market_code", "market_name"],
+            confidence=0.91,
+            explanation="Incorrectly interpreted narrative locations",
+        )
+
+        class FakeStructuredModel:
+            def with_structured_output(self, _schema):
+                return self
+
+            def invoke(self, _prompt):
+                return incompatible
+
+        plan = SchemaMappingAgent(FakeStructuredModel()).propose(request)
+        output = apply_mapping_plan(request, plan)
+
+        self.assertEqual(
+            plan.target_collection, TargetCollection.AGRICULTURE_DOCUMENTS
+        )
+        self.assertIn("incompatible target mandi_locations", plan.explanation)
+        self.assertEqual(output.records_valid, 1)
+        self.assertEqual(output.records[0].data["language"], "hi")
+
     def test_agent_repairs_wide_excel_plan_from_explicit_header(self):
         with TemporaryDirectory() as directory:
             path = Path(directory) / "wide-statistics.xlsx"
