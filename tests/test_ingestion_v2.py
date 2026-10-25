@@ -11,7 +11,7 @@ from ingestion_v2.extraction import (
     extract_supported_file,
     inspect_input_file,
 )
-from ingestion_v2.mapping import apply_mapping_plan
+from ingestion_v2.mapping import SchemaMappingAgent, apply_mapping_plan
 from ingestion_v2.models import (
     ExtractFileInput,
     FieldMapping,
@@ -127,6 +127,55 @@ class ToolContractTests(unittest.TestCase):
 
 
 class MappingTests(unittest.TestCase):
+    def test_agent_restores_exact_required_field_omitted_by_model(self):
+        with TemporaryDirectory() as directory:
+            path = Path(directory) / "prices.json"
+            path.write_text(json.dumps([{
+                "district": "Arwal",
+                "market": "Arwal",
+                "date": "2026-10-17",
+                "crop": "Potato",
+                "variety": "Local",
+                "price": 1200,
+                "unit": "quintal",
+            }]), encoding="utf-8")
+            inspection = inspect_input_file(InspectFileInput(file_path=str(path)))
+            extraction = extract_supported_file(ExtractFileInput(file_path=str(path)))
+            request = MappingRequest(
+                run_id="run-repair", inspection=inspection, extraction=extraction
+            )
+
+            omitted_date_plan = mandi_plan().model_copy(update={
+                "field_mappings": [
+                    item for item in mandi_plan().field_mappings
+                    if item.target_field != "date"
+                ]
+            })
+
+            class FakeStructuredModel:
+                def with_structured_output(self, _schema):
+                    return self
+
+                def invoke(self, _prompt):
+                    return omitted_date_plan
+
+            plan = SchemaMappingAgent(FakeStructuredModel()).propose(request)
+            output = apply_mapping_plan(request, plan)
+
+        date_mapping = next(
+            item for item in plan.field_mappings if item.target_field == "date"
+        )
+        self.assertEqual(date_mapping.source_field, "date")
+        self.assertEqual(date_mapping.transformation, "date")
+        self.assertEqual(
+            date_mapping.mapping_method, "exact_name_schema_safeguard"
+        )
+        self.assertEqual(output.records_valid, 1)
+        self.assertEqual(
+            output.records[0].field_provenance["date"].mapping_method,
+            "exact_name_schema_safeguard",
+        )
+
     def test_normalized_mandi_json_maps_and_validates(self):
         with TemporaryDirectory() as directory:
             path = Path(directory) / "prices.json"

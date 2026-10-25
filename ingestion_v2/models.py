@@ -136,6 +136,10 @@ class FieldMapping(StrictModel):
         "identity", "text", "number", "integer", "date", "year"
     ] = "identity"
     unit: str | None = None
+    mapping_method: Literal[
+        "model_proposed_schema_mapping",
+        "exact_name_schema_safeguard",
+    ] = "model_proposed_schema_mapping"
 
 
 class SeriesColumn(StrictModel):

@@ -12,6 +12,7 @@ from pydantic import BaseModel, ConfigDict, Field, ValidationError, model_valida
 
 from ingestion_v2.models import (
     ExtractedRecord,
+    FieldMapping,
     FieldProvenance,
     MappedRecord,
     MappingOutput,
@@ -20,6 +21,106 @@ from ingestion_v2.models import (
     SourceModality,
     TargetCollection,
 )
+
+
+PLANNER_FIELDS = {
+    TargetCollection.AGRICULTURE_DOCUMENTS: [
+        "document_title", "page_number", "chunk_index", "content",
+        "language", "extraction_method", "source_type", "source_url",
+        "source_file", "content_hash",
+    ],
+    TargetCollection.CROP_STATISTICS: [
+        "crop", "season", "year", "area_hectares", "production",
+        "yield_kg_per_hectare", "area_unit", "production_unit",
+        "yield_unit", "source_file", "source_row",
+    ],
+    TargetCollection.MANDI_PRICES: [
+        "district", "market", "date", "crop", "variety", "price",
+        "minimum_price", "maximum_price", "unit", "arrival_quantity",
+        "arrival_unit",
+    ],
+    TargetCollection.MANDI_LOCATIONS: [
+        "market_code", "market_name", "district_code", "district_name",
+        "location", "location_precision", "verification_status",
+        "coordinate_source",
+    ],
+}
+
+
+REQUIRED_SOURCE_FIELDS = {
+    TargetCollection.AGRICULTURE_DOCUMENTS: [
+        "document_title", "content", "language", "extraction_method",
+    ],
+    TargetCollection.CROP_STATISTICS: ["crop", "season", "year"],
+    TargetCollection.MANDI_PRICES: [
+        "district", "market", "date", "crop", "variety", "unit",
+    ],
+    TargetCollection.MANDI_LOCATIONS: [
+        "market_code", "market_name", "district_code", "district_name",
+        "location", "location_precision", "verification_status",
+        "coordinate_source",
+    ],
+}
+
+
+FIELD_TRANSFORMS = {
+    "date": "date",
+    "year": "year",
+    "page_number": "integer",
+    "chunk_index": "integer",
+    "source_row": "integer",
+    "market_code": "integer",
+    "area_hectares": "number",
+    "production": "number",
+    "yield_kg_per_hectare": "number",
+    "price": "number",
+    "minimum_price": "number",
+    "maximum_price": "number",
+    "arrival_quantity": "number",
+}
+
+
+def _normalized_field_name(value):
+    return re.sub(r"[^a-z0-9]+", "", str(value).casefold())
+
+
+def _complete_exact_field_mappings(plan: MappingPlan, request: MappingRequest):
+    """Restore unambiguous exact-name mappings omitted by the model.
+
+    The language model still chooses the collection and semantic mappings. This
+    safeguard only accepts a source key whose normalized spelling exactly equals
+    a canonical field, so it cannot invent a synonym or value.
+    """
+    available = {}
+    for record in request.extraction.records:
+        for source_field in record.data:
+            available.setdefault(_normalized_field_name(source_field), source_field)
+
+    mapped_targets = {item.target_field for item in plan.field_mappings}
+    static_targets = set(plan.static_values)
+    additions = []
+    for target_field in PLANNER_FIELDS[plan.target_collection]:
+        if target_field in mapped_targets or target_field in static_targets:
+            continue
+        source_field = available.get(_normalized_field_name(target_field))
+        if source_field is None:
+            continue
+        additions.append(FieldMapping(
+            source_field=source_field,
+            target_field=target_field,
+            transformation=FIELD_TRANSFORMS.get(target_field, "identity"),
+            mapping_method="exact_name_schema_safeguard",
+        ))
+
+    if not additions:
+        return plan
+    restored = ", ".join(item.target_field for item in additions)
+    return plan.model_copy(update={
+        "field_mappings": [*plan.field_mappings, *additions],
+        "explanation": (
+            f"{plan.explanation} Exact-name schema safeguard restored: {restored}."
+        ),
+    })
 
 
 class CanonicalModel(BaseModel):
@@ -127,7 +228,7 @@ class SchemaMappingAgent:
             llm = get_chat_model(temperature=0.0)
 
         preview = []
-        for record in request.extraction.records[:16]:
+        for record in request.extraction.records[:5]:
             preview.append({
                 "record_index": record.record_index,
                 "locator": record.record_locator.model_dump(mode="json"),
@@ -137,27 +238,17 @@ class SchemaMappingAgent:
             "task": (
                 "Propose one safe mapping from the extracted source into exactly one "
                 "allowed canonical collection. Do not write data and do not invent values. "
-                "Use source column letters/keys exactly as shown. For wide annual Excel "
+                "Use source column letters/keys exactly as shown. Map every required "
+                "source field when it is present. For wide annual Excel "
                 "tables use series_mappings to map each period column. Set data_start_row "
                 "to the first actual data row. Explain uncertainty."
             ),
             "allowed_collections": [item.value for item in request.allowed_collections],
             "canonical_fields": {
-                "agriculture_documents": [
-                    "document_title", "page_number", "chunk_index", "content",
-                    "language", "extraction_method", "source_type", "source_url",
-                    "source_file", "content_hash",
-                ],
-                "crop_statistics": [
-                    "crop", "season", "year", "area_hectares", "production",
-                    "yield_kg_per_hectare", "area_unit", "production_unit",
-                    "yield_unit", "source_file", "source_row",
-                ],
-                "mandi_prices": [
-                    "district", "market", "date", "crop", "variety", "price",
-                    "minimum_price", "maximum_price", "unit", "arrival_quantity",
-                    "arrival_unit",
-                ],
+                key.value: value for key, value in PLANNER_FIELDS.items()
+            },
+            "required_source_fields": {
+                key.value: value for key, value in REQUIRED_SOURCE_FIELDS.items()
             },
             "source": request.inspection.model_dump(mode="json"),
             "extraction_method": request.extraction.extraction_method,
@@ -170,7 +261,7 @@ class SchemaMappingAgent:
         )
         if plan.target_collection not in request.allowed_collections:
             raise ValueError("The mapping agent selected a non-allowlisted collection")
-        return plan
+        return _complete_exact_field_mappings(plan, request)
 
 
 def _text(value):
@@ -248,7 +339,7 @@ def _base_data(record, plan):
             raw_field=mapping.source_field,
             raw_value=raw_value,
             transformation=mapping.transformation,
-            mapping_method="model_proposed_schema_mapping",
+            mapping_method=mapping.mapping_method,
             confidence=plan.confidence,
         )
     for key, value in plan.static_values.items():
