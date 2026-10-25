@@ -127,6 +127,62 @@ class ToolContractTests(unittest.TestCase):
 
 
 class MappingTests(unittest.TestCase):
+    def test_agent_repairs_wide_excel_plan_from_explicit_header(self):
+        with TemporaryDirectory() as directory:
+            path = Path(directory) / "wide-statistics.xlsx"
+            pd.DataFrame([
+                ["Bihar crop statistics", None, None, None, None, None, None, None],
+                ["Place: Bihar", None, None, None, None, None, None, None],
+                ["Reporting periods", None, None, None, None, None, None, None],
+                ["Source note", None, None, None, None, None, None, None],
+                [None, None, None, None, None, None, None, None],
+                [
+                    "Crop", "Season", "Area (ha) 2023-24", "Area (ha) 2024-25",
+                    "Production (tonnes) 2023-24", "Production (tonnes) 2024-25",
+                    "Yield (kg/ha) 2023-24", "Yield (kg/ha) 2024-25",
+                ],
+                ["Wheat", "Total", 2275578, 2250610, 7168070.7, 7119804.74, 3150, 3164],
+            ]).to_excel(path, sheet_name="Bihar crops", header=False, index=False)
+            inspection = inspect_input_file(InspectFileInput(file_path=str(path)))
+            extraction = extract_supported_file(ExtractFileInput(file_path=str(path)))
+            request = MappingRequest(
+                run_id="run-wide-repair", inspection=inspection,
+                extraction=extraction,
+            )
+            incomplete = MappingPlan(
+                target_collection=TargetCollection.CROP_STATISTICS,
+                field_mappings=[
+                    FieldMapping(source_field="A", target_field="crop"),
+                    FieldMapping(source_field="B", target_field="season"),
+                ],
+                identity_fields=["crop", "season", "year"],
+                confidence=0.85,
+                explanation="The workbook contains wide period columns",
+            )
+
+            class FakeStructuredModel:
+                def with_structured_output(self, _schema):
+                    return self
+
+                def invoke(self, _prompt):
+                    return incomplete
+
+            plan = SchemaMappingAgent(FakeStructuredModel()).propose(request)
+            output = apply_mapping_plan(request, plan)
+
+        self.assertEqual(plan.source_scope, "Bihar crops")
+        self.assertEqual(plan.data_start_row, 7)
+        self.assertEqual(len(plan.series_mappings), 3)
+        self.assertEqual(
+            sum(len(item.columns) for item in plan.series_mappings), 6
+        )
+        self.assertEqual(output.records_attempted, 2)
+        self.assertEqual(output.records_valid, 2)
+        self.assertEqual(
+            output.records[0].field_provenance["year"].mapping_method,
+            "wide_header_schema_safeguard",
+        )
+
     def test_agent_restores_exact_required_field_omitted_by_model(self):
         with TemporaryDirectory() as directory:
             path = Path(directory) / "prices.json"

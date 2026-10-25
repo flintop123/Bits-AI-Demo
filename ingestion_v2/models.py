@@ -139,6 +139,7 @@ class FieldMapping(StrictModel):
     mapping_method: Literal[
         "model_proposed_schema_mapping",
         "exact_name_schema_safeguard",
+        "wide_header_schema_safeguard",
     ] = "model_proposed_schema_mapping"
 
 
@@ -152,6 +153,10 @@ class SeriesMapping(StrictModel):
     columns: list[SeriesColumn]
     transformation: Literal["number", "integer"] = "number"
     unit: str | None = None
+    mapping_method: Literal[
+        "model_proposed_series_mapping",
+        "wide_header_schema_safeguard",
+    ] = "model_proposed_series_mapping"
 
 
 class MappingPlan(StrictModel):

@@ -18,6 +18,8 @@ from ingestion_v2.models import (
     MappingOutput,
     MappingPlan,
     MappingRequest,
+    SeriesColumn,
+    SeriesMapping,
     SourceModality,
     TargetCollection,
 )
@@ -121,6 +123,136 @@ def _complete_exact_field_mappings(plan: MappingPlan, request: MappingRequest):
             f"{plan.explanation} Exact-name schema safeguard restored: {restored}."
         ),
     })
+
+
+WIDE_MEASURE_PATTERNS = (
+    ("yield_kg_per_hectare", re.compile(r"\byield\b", re.IGNORECASE)),
+    ("production", re.compile(r"\bproduction\b", re.IGNORECASE)),
+    ("area_hectares", re.compile(r"\barea\b", re.IGNORECASE)),
+)
+
+
+def _period_from_header(value):
+    match = re.search(r"\b(20\d{2}-\d{2})\b", str(value or ""))
+    return match.group(1) if match else None
+
+
+def _measure_from_header(value):
+    text = str(value or "")
+    for target_field, pattern in WIDE_MEASURE_PATTERNS:
+        if pattern.search(text):
+            return target_field
+    return None
+
+
+def _wide_header_candidate(request: MappingRequest):
+    best = None
+    for record in request.extraction.records:
+        columns = []
+        for source_field, value in record.data.items():
+            period = _period_from_header(value)
+            measure = _measure_from_header(value)
+            if period and measure:
+                columns.append((measure, period, source_field))
+        if len(columns) < 2:
+            continue
+        periods = {item[1] for item in columns}
+        measures = {item[0] for item in columns}
+        score = (len(columns), len(periods), len(measures))
+        if best is None or score > best[0]:
+            best = (score, record, columns)
+    return best
+
+
+def _header_direct_mapping(record, target_field):
+    expected = _normalized_field_name(target_field)
+    for source_field, value in record.data.items():
+        normalized = _normalized_field_name(value)
+        if normalized == expected:
+            return source_field
+    return None
+
+
+def _repair_wide_crop_statistics_plan(plan: MappingPlan, request: MappingRequest):
+    """Convert an evident wide crop-statistics header into period mappings.
+
+    This repair is intentionally bounded to Excel crop-statistics plans and
+    requires explicit measure names and reporting periods in one source row.
+    """
+    if (
+        request.inspection.modality != SourceModality.EXCEL
+        or plan.target_collection != TargetCollection.CROP_STATISTICS
+    ):
+        return plan
+    candidate = _wide_header_candidate(request)
+    if candidate is None:
+        return plan
+
+    _score, header_record, columns = candidate
+    detected_series = []
+    for target_field, _pattern in WIDE_MEASURE_PATTERNS:
+        series_columns = [
+            SeriesColumn(period=period, source_field=source_field)
+            for measure, period, source_field in columns
+            if measure == target_field
+        ]
+        if series_columns:
+            detected_series.append(SeriesMapping(
+                target_field=target_field,
+                columns=series_columns,
+                transformation="number",
+                mapping_method="wide_header_schema_safeguard",
+            ))
+
+    detected_count = sum(len(item.columns) for item in detected_series)
+    existing_count = sum(len(item.columns) for item in plan.series_mappings)
+    updates = {}
+    repaired = []
+    if detected_count > existing_count:
+        updates["series_mappings"] = detected_series
+        repaired.append(f"{detected_count} period-measure columns")
+
+    header_row = header_record.record_locator.row_number
+    if header_row and (
+        plan.data_start_row is None or plan.data_start_row <= header_row
+    ):
+        updates["data_start_row"] = header_row + 1
+        repaired.append(f"data row {header_row + 1}")
+    if not plan.source_scope and header_record.record_locator.sheet_name:
+        updates["source_scope"] = header_record.record_locator.sheet_name
+        repaired.append(f"sheet {header_record.record_locator.sheet_name}")
+
+    field_mappings = list(plan.field_mappings)
+    mapped_targets = {item.target_field for item in field_mappings}
+    for target_field in ("crop", "season"):
+        if target_field in mapped_targets:
+            continue
+        source_field = _header_direct_mapping(header_record, target_field)
+        if source_field:
+            field_mappings.append(FieldMapping(
+                source_field=source_field,
+                target_field=target_field,
+                transformation="text",
+                mapping_method="wide_header_schema_safeguard",
+            ))
+            repaired.append(f"{source_field} to {target_field}")
+    if len(field_mappings) != len(plan.field_mappings):
+        updates["field_mappings"] = field_mappings
+
+    identity_fields = list(plan.identity_fields)
+    for field in ("crop", "season", "year"):
+        if field not in identity_fields:
+            identity_fields.append(field)
+    if identity_fields != plan.identity_fields:
+        updates["identity_fields"] = identity_fields
+
+    if not updates:
+        return plan
+    updates["explanation"] = (
+        f"{plan.explanation} Wide-header schema safeguard restored: "
+        f"{', '.join(repaired)}."
+    )
+    return plan.model_copy(update=updates)
 
 
 class CanonicalModel(BaseModel):
@@ -261,7 +393,8 @@ class SchemaMappingAgent:
         )
         if plan.target_collection not in request.allowed_collections:
             raise ValueError("The mapping agent selected a non-allowlisted collection")
-        return _complete_exact_field_mappings(plan, request)
+        plan = _complete_exact_field_mappings(plan, request)
+        return _repair_wide_crop_statistics_plan(plan, request)
 
 
 def _text(value):
@@ -422,11 +555,20 @@ def apply_mapping_plan(request: MappingRequest, plan: MappingPlan):
                 data = dict(base_data)
                 provenance = dict(base_provenance)
                 data["year"] = period
+                period_methods = {
+                    series.mapping_method
+                    for series in plan.series_mappings
+                    if any(item.period == period for item in series.columns)
+                }
                 provenance["year"] = FieldProvenance(
                     locator=record.record_locator,
                     raw_value=period,
                     transformation="wide_period_header",
-                    mapping_method="model_proposed_series_mapping",
+                    mapping_method=(
+                        "wide_header_schema_safeguard"
+                        if "wide_header_schema_safeguard" in period_methods
+                        else "model_proposed_series_mapping"
+                    ),
                     confidence=plan.confidence,
                 )
                 for series in plan.series_mappings:
@@ -449,7 +591,7 @@ def apply_mapping_plan(request: MappingRequest, plan: MappingPlan):
                         raw_field=column.source_field,
                         raw_value=raw_value,
                         transformation=series.transformation,
-                        mapping_method="model_proposed_series_mapping",
+                        mapping_method=series.mapping_method,
                         confidence=plan.confidence,
                     )
                 variants.append((period, data, provenance))
