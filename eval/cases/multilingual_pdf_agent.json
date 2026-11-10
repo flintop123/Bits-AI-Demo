@@ -1,0 +1,12 @@
+[
+  {"case_id":"pdf_hi_drying_hours","agent_id":"multilingual_pdf_agent","source_group":"Document","input":{"source_id":"pmfme_makhana_handbook_hindi","page_number":12,"field":"drying_hours"}},
+  {"case_id":"pdf_hi_target_moisture","agent_id":"multilingual_pdf_agent","source_group":"Document","input":{"source_id":"pmfme_makhana_handbook_hindi","page_number":12,"field":"target_moisture_percent"}},
+  {"case_id":"pdf_hi_storage_days","agent_id":"multilingual_pdf_agent","source_group":"Document","input":{"source_id":"pmfme_makhana_handbook_hindi","page_number":12,"field":"storage_days"}},
+  {"case_id":"pdf_hi_size_grades","agent_id":"multilingual_pdf_agent","source_group":"Document","input":{"source_id":"pmfme_makhana_handbook_hindi","page_number":12,"field":"size_grades"}},
+  {"case_id":"pdf_hi_tempering_hours","agent_id":"multilingual_pdf_agent","source_group":"Document","input":{"source_id":"pmfme_makhana_handbook_hindi","page_number":12,"field":"tempering_hours"}},
+  {"case_id":"pdf_hi_post_harvest_steps","agent_id":"multilingual_pdf_agent","source_group":"Document","input":{"source_id":"pmfme_makhana_handbook_hindi","page_number":11,"field":"post_harvest_steps"}},
+  {"case_id":"pdf_hi_bamboo_tool","agent_id":"multilingual_pdf_agent","source_group":"Document","input":{"source_id":"pmfme_makhana_handbook_hindi","page_number":13,"field":"bamboo_tool"}},
+  {"case_id":"pdf_hi_sieve","agent_id":"multilingual_pdf_agent","source_group":"Document","input":{"source_id":"pmfme_makhana_handbook_hindi","page_number":13,"field":"sieve"}},
+  {"case_id":"pdf_hi_producing_district","agent_id":"multilingual_pdf_agent","source_group":"Document","input":{"source_id":"pmfme_makhana_handbook_hindi","page_number":4,"field":"producing_district"}},
+  {"case_id":"pdf_hi_food_description","agent_id":"multilingual_pdf_agent","source_group":"Document","input":{"source_id":"pmfme_makhana_handbook_hindi","page_number":5,"field":"food_description"}}
+]

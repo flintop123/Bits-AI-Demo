@@ -1,0 +1,12 @@
+[
+  {"case_id":"qa_en_rice_production","agent_id":"grounded_qa_agent","source_group":"Database","input":{"question":"What was total rice production in 2024-25?","answer_language":"en"}},
+  {"case_id":"qa_hi_wheat_production","agent_id":"grounded_qa_agent","source_group":"Database","input":{"question":"2024-25 में गेहूं का कुल उत्पादन कितना था?","answer_language":"hi"}},
+  {"case_id":"qa_en_rice_yield","agent_id":"grounded_qa_agent","source_group":"Database","input":{"question":"What was the total rice yield in 2024-25?","answer_language":"en"}},
+  {"case_id":"qa_hi_organic_corridor","agent_id":"grounded_qa_agent","source_group":"Document","input":{"question":"गंगा नदी के किनारे जैविक कॉरिडोर कितने जिलों में स्थापित किया गया है?","answer_language":"hi"}},
+  {"case_id":"qa_en_organic_corridor","agent_id":"grounded_qa_agent","source_group":"Document","input":{"question":"How many districts are covered by the organic corridor along the Ganga?","answer_language":"en"}},
+  {"case_id":"qa_hi_makhana_storage","agent_id":"grounded_qa_agent","source_group":"Document","input":{"question":"पीएमएफएमई मखाना पुस्तिका के अनुसार बीजों को प्रसंस्करण से पहले कितने दिनों तक भंडारित किया जाता है?","answer_language":"hi"}},
+  {"case_id":"qa_en_makhana_grades","agent_id":"grounded_qa_agent","source_group":"Document","input":{"question":"According to the PMFME makhana handbook, into how many size grades are the sun-dried seeds classified?","answer_language":"en"}},
+  {"case_id":"qa_en_cotton_unit","agent_id":"grounded_qa_agent","source_group":"Database","input":{"question":"What production unit is used for Cotton in the 1994-95 total-season crop statistics?","answer_language":"en"}},
+  {"case_id":"qa_hi_makhana_processing","agent_id":"grounded_qa_agent","source_group":"Document","input":{"question":"पीएमएफएमई मखाना पुस्तिका में कटाई के बाद की प्रसंस्करण प्रक्रियाएं कौन सी हैं?","answer_language":"hi"}},
+  {"case_id":"qa_en_unsupported_weather","agent_id":"grounded_qa_agent","source_group":"Database","input":{"question":"Will it rain in Patna tomorrow?","answer_language":"en"}}
+]

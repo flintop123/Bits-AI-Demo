@@ -1,0 +1,12 @@
+[
+  {"case_id":"mandi_2026_07_21","agent_id":"daily_mandi_api_agent","source_group":"Database","input":{"date":"2026-07-21"}},
+  {"case_id":"mandi_2026_07_22","agent_id":"daily_mandi_api_agent","source_group":"Database","input":{"date":"2026-07-22"}},
+  {"case_id":"mandi_2026_07_23","agent_id":"daily_mandi_api_agent","source_group":"Database","input":{"date":"2026-07-23"}},
+  {"case_id":"mandi_2026_07_24","agent_id":"daily_mandi_api_agent","source_group":"Database","input":{"date":"2026-07-24"}},
+  {"case_id":"mandi_2026_07_25","agent_id":"daily_mandi_api_agent","source_group":"Database","input":{"date":"2026-07-25"}},
+  {"case_id":"mandi_2026_07_26","agent_id":"daily_mandi_api_agent","source_group":"Database","input":{"date":"2026-07-26"}},
+  {"case_id":"mandi_2026_07_27","agent_id":"daily_mandi_api_agent","source_group":"Database","input":{"date":"2026-07-27"}},
+  {"case_id":"mandi_2026_07_28","agent_id":"daily_mandi_api_agent","source_group":"Database","input":{"date":"2026-07-28"}},
+  {"case_id":"mandi_2026_07_29","agent_id":"daily_mandi_api_agent","source_group":"Database","input":{"date":"2026-07-29"}},
+  {"case_id":"mandi_2026_07_30","agent_id":"daily_mandi_api_agent","source_group":"Database","input":{"date":"2026-07-30"}}
+]

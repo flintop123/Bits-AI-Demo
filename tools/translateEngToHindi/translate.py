@@ -83,7 +83,7 @@ Lighter option: Helsinki-NLP opus-mt-hi-en - smaller, simpler, a bit lower quali
 
 Setup:
     pip install torch transformers sentencepiece sacremoses
-    pip install git+https://github.com/VarunGumma/IndicTransToolkit.git   # needed for IndicTrans2
+    # Optional IndicTrans2 experiments require IndicTransToolkit on Linux/macOS; the submitted Windows path uses Helsinki-NLP.
 
 Usage:
     python hindi_to_english_free.py "मुझे चाय पसंद है"

@@ -1,0 +1,8 @@
+input_id,run_id,timestamp,agent_id,source_group,input_status,manual_intervention,retries,tool_calls,evidence_path,notes
+mandi_live_table,4c0b3b0a-d607-40ed-bacf-2a960528f869,2026-10-17T21:44:53.074464+00:00,mandi_web_agent,Database,completed,0,0,1,docs/evidence/phase2_final_suite.json,Historical browser extraction case
+crop_statistics_workbook,43d6e68b-bfdb-411b-9c13-0772dae6d04a,2026-10-17T21:45:04.835108+00:00,crop_statistics_excel_agent,Database,completed,0,0,1,docs/evidence/phase2_final_suite.json,Checked workbook case
+pdf_english_direct_text,823cbc48-82e5-42df-8443-49eb68c0d240,2026-10-17T21:45:05.874121+00:00,multilingual_pdf_agent,Document,completed,0,0,1,docs/evidence/phase2_final_suite.json,English direct-text case
+pdf_hindi_ocr,dde51429-9ac7-4699-b989-60778f656ad3,2026-10-17T21:45:07.539244+00:00,multilingual_pdf_agent,Document,completed,0,0,1,docs/evidence/phase2_final_suite.json,Hindi OCR case
+qa_english_statistics,02eb4036-aa6b-474c-aab7-0357931ef39b,2026-10-17T21:45:52.449562+00:00,grounded_qa_agent,Database,completed,0,0,1,docs/evidence/phase2_final_suite.json,English grounded QA
+qa_hindi_documents,21c8519d-47be-495d-bab4-5126ca215c41,2026-10-17T21:46:20.533781+00:00,grounded_qa_agent,Document,completed,0,0,1,docs/evidence/phase2_final_suite.json,Hindi grounded QA
+retry_recovery_crop_statistics,74a3f68f-49d5-4cb3-8548-85c7e9743d61,2026-10-17T21:47:12.383540+00:00,crop_statistics_excel_agent,Database,completed,0,1,2,docs/evidence/phase2_final_suite.json,One injected transient failure recovered automatically

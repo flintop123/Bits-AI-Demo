@@ -1,0 +1,12 @@
+[
+  {"case_id":"mandi_2026_07_21","expected_record_count":99,"evidence":"docs/evidence/phase4_90day_backfill_live.json","checked_against_source":true},
+  {"case_id":"mandi_2026_07_22","expected_record_count":113,"evidence":"docs/evidence/phase4_90day_backfill_live.json","checked_against_source":true},
+  {"case_id":"mandi_2026_07_23","expected_record_count":107,"evidence":"docs/evidence/phase4_90day_backfill_live.json","checked_against_source":true},
+  {"case_id":"mandi_2026_07_24","expected_record_count":95,"evidence":"docs/evidence/phase4_90day_backfill_live.json","checked_against_source":true},
+  {"case_id":"mandi_2026_07_25","expected_record_count":102,"evidence":"docs/evidence/phase4_90day_backfill_live.json","checked_against_source":true},
+  {"case_id":"mandi_2026_07_26","expected_record_count":82,"evidence":"docs/evidence/phase4_90day_backfill_live.json","checked_against_source":true},
+  {"case_id":"mandi_2026_07_27","expected_record_count":115,"evidence":"docs/evidence/phase4_90day_backfill_live.json","checked_against_source":true},
+  {"case_id":"mandi_2026_07_28","expected_record_count":111,"evidence":"docs/evidence/phase4_90day_backfill_live.json","checked_against_source":true},
+  {"case_id":"mandi_2026_07_29","expected_record_count":116,"evidence":"docs/evidence/phase4_90day_backfill_live.json","checked_against_source":true},
+  {"case_id":"mandi_2026_07_30","expected_record_count":112,"evidence":"docs/evidence/phase4_90day_backfill_live.json","checked_against_source":true}
+]
