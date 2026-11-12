@@ -1,100 +1,4 @@
 
-from deep_translator import GoogleTranslator
-import time
-
-translator = GoogleTranslator(source="hi", target="en")
-translation_cache = {}
-
-def translate_text(value):
-    if not isinstance(value, str) or not value.strip():
-        return value
-
-    value = value.strip()
-
-    if value in translation_cache:
-        return translation_cache[value]
-
-    try:
-        # Translate a single text
-        translated = translator.translate(value)
-
-        translation_cache[value] = translated
-        print(f"{value} -> {translated}")
-
-        # Small delay before the next translation request
-        time.sleep(1)
-        return translated
-
-    except Exception as exc:
-        print(f"Translation failed for {value!r}: {exc}")
-        return value
-
-
-# print(translate_text("कृषि मंडी"))
-
-
-
-from transformers import pipeline
-
-# Downloads the model on first use.
-# After downloading, it can run locally.
-translator = pipeline(
-    "translation",
-    model="Helsinki-NLP/opus-mt-hi-en"
-)
-
-def translate_text(text):
-    if not isinstance(text, str) or not text.strip():
-        return text
-
-    try:
-        result = translator(text.strip(), max_length=128)
-        return result[0]["translation_text"]
-    except Exception as exc:
-        print(f"Translation failed for {text!r}: {exc}")
-        return text
-
-
-if __name__ == "__main__":
-    print(translate_text("कृषि मंडी"))
-    print(translate_text("सिवान"))
-    print(translate_text("आज आलू की कीमत 1600 रुपये प्रति क्विंटल है।"))
-
-
-
-"""
-Hindi -> English translation agent powered by Claude.
-
-Setup:
-    pip install anthropic
-    export ANTHROPIC_API_KEY="your-key"
-
-Usage:
-    python hindi_to_english_agent.py "मुझे चाय पसंद है"          # one-off
-    python hindi_to_english_agent.py --file input.txt            # translate a file
-    python hindi_to_english_agent.py                             # interactive chat mode
-"""
-
-"""
-Free, offline Hindi -> English translator (no API key, no per-use cost).
-
-Default model : AI4Bharat IndicTrans2 (distilled 200M) - best quality for Hindi, runs on CPU.
-Lighter option: Helsinki-NLP opus-mt-hi-en - smaller, simpler, a bit lower quality.
-
-Setup:
-    pip install torch transformers sentencepiece sacremoses
-    # Optional IndicTrans2 experiments require IndicTransToolkit on Linux/macOS; the submitted Windows path uses Helsinki-NLP.
-
-Usage:
-    python hindi_to_english_free.py "मुझे चाय पसंद है"
-    python hindi_to_english_free.py --file input.txt
-    python hindi_to_english_free.py --model opus "मुझे चाय पसंद है"
-    python hindi_to_english_free.py            # interactive mode
-
-The first run downloads the model from Hugging Face (internet needed once), then it works offline.
-"""
-
-
 import argparse
 import re
 import sys
@@ -112,14 +16,37 @@ def split_sentences(text: str) -> list[str]:
     return [part.strip() for part in parts if part.strip()]
 
 
+from pypdf import PdfReader
+
+from pathlib import Path
+from pypdf import PdfReader
+
+# 1. Use a raw string (r"...") so backslashes aren't treated as escape characters
+pdf_path = Path(r"C:\\Users\\JitendraKumar\\Downloads\\apeda_makhana_report_hindi-1-5.pdf")
+
+def extract_pdf(path: Path) -> str:
+    # Verify existence with pathlib
+    if not path.is_file():
+        raise FileNotFoundError(f"Python cannot see the file at: {path}")
+
+    reader = PdfReader(path)
+    text_content = []
+    for page in reader.pages:
+        extracted = page.extract_text()
+        if extracted:
+            text_content.append(extracted)
+
+    return "\n".join(text_content)
+
+
+
+
 class Translator:
     def __init__(self):
         print(f"Loading {MODEL_NAME} on {DEVICE} ...", file=sys.stderr)
 
         self.tokenizer = AutoTokenizer.from_pretrained(MODEL_NAME)
-        self.model = AutoModelForSeq2SeqLM.from_pretrained(MODEL_NAME)
-        self.model.to(DEVICE)
-        self.model.eval()
+        self.model = AutoModelForSeq2SeqLM.from_pretrained(MODEL_NAME).to(DEVICE)
 
         print("Translator ready.", file=sys.stderr)
 
@@ -149,7 +76,7 @@ class Translator:
                 outputs = self.model.generate(
                     **inputs,
                     num_beams=4,
-                    max_new_tokens=128,
+                    max_new_tokens=512,
                 )
 
             translated = self.tokenizer.batch_decode(
@@ -162,58 +89,14 @@ class Translator:
 
 
 def main() -> None:
-    parser = argparse.ArgumentParser(
-        description="Translate Hindi text to English locally using OPUS-MT."
-    )
-    parser.add_argument("text", nargs="?", help="Hindi text to translate")
-    parser.add_argument("--file", help="UTF-8 text file to translate")
-    parser.add_argument(
-        "--batch-size",
-        type=int,
-        default=8,
-        help="Number of sentences to translate per batch (default: 8)",
-    )
-    args = parser.parse_args()
-
-    if args.batch_size < 1:
-        parser.error("--batch-size must be at least 1")
-
-    if args.file and args.text:
-        parser.error("Provide either text or --file, not both")
-
     try:
-        translator = Translator()
-
-        if args.file:
-            with open(args.file, "r", encoding="utf-8") as file:
-                print(translator.translate(file.read(), args.batch_size))
-
-        elif args.text:
-            print(translator.translate(args.text, args.batch_size))
-
-        else:
-            print("Hindi to English translator. Type 'quit' to exit.\n")
-
-            while True:
-                try:
-                    text = input("हिंदी > ").strip()
-                except (EOFError, KeyboardInterrupt):
-                    print()
-                    break
-
-                if text.lower() in {"quit", "exit", "q"}:
-                    break
-
-                if text:
-                    print(
-                        "English > "
-                        + translator.translate(text, args.batch_size)
-                        + "\n"
-                    )
-
-    except (OSError, ValueError) as exc:
-        print(f"Error: {exc}", file=sys.stderr)
-        sys.exit(1)
+        text_content = extract_pdf(pdf_path)
+        # englisth_content = translates("अनाज या अनाज उतपािों को फु लाकर या भूनकर प्राप्त िाद्य पिाथ्व", 8)
+        # print(f"Successfully extracted {len(text)} characters from PDF.")
+        englisth_content = Translator().translate(text_content, 8)
+        print(englisth_content)
+    except Exception as e:
+        print(f"Error: {e}")
 
 
 if __name__ == "__main__":

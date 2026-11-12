@@ -22,7 +22,7 @@ class BiharCropMongo:
         self.client = MongoClient("mongodb://localhost:27017/")
         self.db = self.client["bihar_agriculture"]
         self.collection = self.db["mandi_prices"]
-        ensure_mandi_identity_indexes(self.collection)
+        #ensure_mandi_identity_indexes(self.collection)
 
     def insert_records(self, records):
         if not records:

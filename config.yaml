@@ -1,12 +1,29 @@
 milvus:
   host: localhost
   port: 19530
-  collectionName: recVectorDB
-  zilliz_token: 
-  zilliz_uri:
+  collectionName: bihar_agriculture_krishi_data
+  zilliz_token: c9c92eaac66ac00d0775fac78fb090114c71f5d6a608af5842f1e50e9562ce0a11dd53f352702529cdcc043738201298cd0ef631
+  zilliz_uri: https://in03-109fdb1d5b8eea3.serverless.gcp-us-west1.cloud.zilliz.com 
 
 bihar_krishi:
   urls: ['https://www.biharkrishi.in/mandi']
+
+document_ingestion:
+  pdf_paths: ["C:\\Users\\JitendraKumar\\Repo\\Bits-AI-Demo\\data\\pdfs\\bihar_annual_scheme_2022_23.pdf"]
+  api_urls: [https://www.biharkrishi.in/mandi]
+  api_headers: {}
+  api_timeout_ms: 60000
+  force_ocr: false
+  ocr_enabled: true
+  run_mandi_ingestion: true
+  mongo_database: bihar_agriculture
+  sync_mongodb_to_milvus: true
+  milvus_batch_size: 16
+
+retriever:
+  qa_enabled: true
+  top_k: 3
+  search_params: {"metric_type": "L2", "params": {"nprobe": 10}}
 
 langSmith:
     LANGSMITH_TRACING : "true"

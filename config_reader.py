@@ -1,6 +1,5 @@
 import yaml
 import os
-import consul
 from loghandler import getLogger
 
 logger = getLogger()

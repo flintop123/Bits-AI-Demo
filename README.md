@@ -107,6 +107,57 @@ python run.py --input <file>
 
 The command accepts PDF, Excel, CSV and JSON inputs, selects a bounded extractor, writes an auditable JSON trace under `artifacts/phase2/`, and does not write to MongoDB. Use `--force-ocr` only when an unseen scanned PDF requires it.
 
+### Ingest a PDF or generic API response into MongoDB
+
+Add local PDF paths and generic API URLs under `document_ingestion` in
+`config.yaml`, then start the existing application entry point:
+
+```yaml
+document_ingestion:
+  pdf_paths:
+    - 'data\pdfs\report.pdf'
+  api_urls:
+    - 'https://example.test/api/data'
+  api_headers: {}
+  api_timeout_ms: 60000
+  force_ocr: false
+  ocr_enabled: true
+  run_mandi_ingestion: true
+```
+
+Then run:
+
+```powershell
+python main.py
+```
+
+The Flask endpoint is available at
+`http://127.0.0.1:5000/bihar-crop-chatbot/ask?question=hello`. Greeting-only
+inputs receive a greeting. Other inputs produce exactly four subquestions;
+each is used to retrieve evidence from Milvus before the final grounded answer
+is generated. The API response includes the final `answer`, the four
+`questions`, and their `source` references. Reuse the returned `thread_id` in
+the `X-Thread-ID` request header to continue the LangGraph checkpoint thread.
+The default `MemorySaver` checkpoint is retained while the process is running.
+
+With `sync_mongodb_to_milvus: true`, the main ingestion class reads every
+collection in `mongo_database`, creates deterministic embeddings with the
+configured Ollama embedding model, inspects the Milvus collection schema, and
+upserts the vectors into the collection named by `milvus.collectionName`.
+MongoDB records are embedded as JSON text; existing embedding fields are
+excluded to avoid re-embedding stored vectors.
+
+PDF pages are extracted and language-detected. Hindi chunks are translated to
+English with the local Helsinki-NLP model from `tools/translateEngToHindi/translate.py`;
+the original Hindi text is retained in MongoDB. The model is downloaded on first
+use. API responses can be JSON, HTML tables, HTML text, or plain text. API
+records are stored in the `api_documents` collection and deduplicated by source
+URL and content hash; PDF chunks use the existing `agriculture_documents`
+collection and source/page/chunk upsert identity. Playwright is used to fetch
+API responses and render client-side HTML tables. Set `run_mandi_ingestion` to
+`false` to skip the existing mandi-specific scraper. Set `MONGODB_URI` to use a
+MongoDB instance other than `mongodb://localhost:27017/`.
+
 ```mermaid
 flowchart TD
     A[Unseen input] --> B{Supervisor routing}
