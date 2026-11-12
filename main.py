@@ -41,47 +41,47 @@ class InsertTheBiharKrishiData:
         
         ingestion = self.config.get("document_ingestion", {})
 
-        # for pdf_path in ingestion.get("pdf_paths", []):
-        #     summary = ingest_pdf(
-        #         pdf_path,
-        #         force_ocr=ingestion.get("force_ocr", False),
-        #         ocr_enabled=ingestion.get("ocr_enabled", True),
-        #     )
-        #     logger.info(f"PDF ingestion completed: {summary}")
+        for pdf_path in ingestion.get("pdf_paths", []):
+            summary = ingest_pdf(
+                pdf_path,
+                force_ocr=ingestion.get("force_ocr", False),
+                ocr_enabled=ingestion.get("ocr_enabled", True),
+            )
+            logger.info(f"PDF ingestion completed: {summary}")
 
-        # api_urls = ingestion.get("api_urls", [])
-        # if api_urls:
-        #     summary = ingest_api_urls(
-        #         api_urls,
-        #         headers=ingestion.get("api_headers"),
-        #         timeout_ms=ingestion.get("api_timeout_ms", 60000),
-        #     )
-        #     logger.info(f"Generic API ingestion completed: {summary}")
+        api_urls = ingestion.get("api_urls", [])
+        if api_urls:
+            summary = ingest_api_urls(
+                api_urls,
+                headers=ingestion.get("api_headers"),
+                timeout_ms=ingestion.get("api_timeout_ms", 60000),
+            )
+            logger.info(f"Generic API ingestion completed: {summary}")
 
-        # if ingestion.get("run_mandi_ingestion", True):
-        #     mandi_urls = self.config.get("bihar_krishi", {}).get("urls", [])
-        #     if mandi_urls:
-        #         documents = ReadMundiData().load_bihar_krishi_mandi_pages(
-        #             mandi_urls
-        #         )
-        #         database = BiharCropMongo()
-        #         try:
-        #             for index, document in enumerate(documents):
-        #                 source_url = (
-        #                     getattr(document, "source", None)
-        #                     or document.metadata.get("source")
-        #                     or mandi_urls[min(index, len(mandi_urls) - 1)]
-        #                 )
-        #                 inserted = database.write_mandi_records(
-        #                     [document],
-        #                     source_url=source_url,
-        #                 )
-        #                 logger.info(
-        #                     f"Mandi data from {source_url}: {inserted} "
-        #                     "new record(s)"
-        #                 )
-        #         finally:
-        #             database.client.close()
+        if ingestion.get("run_mandi_ingestion", True):
+            mandi_urls = self.config.get("bihar_krishi", {}).get("urls", [])
+            if mandi_urls:
+                documents = ReadMundiData().load_bihar_krishi_mandi_pages(
+                    mandi_urls
+                )
+                database = BiharCropMongo()
+                try:
+                    for index, document in enumerate(documents):
+                        source_url = (
+                            getattr(document, "source", None)
+                            or document.metadata.get("source")
+                            or mandi_urls[min(index, len(mandi_urls) - 1)]
+                        )
+                        inserted = database.write_mandi_records(
+                            [document],
+                            source_url=source_url,
+                        )
+                        logger.info(
+                            f"Mandi data from {source_url}: {inserted} "
+                            "new record(s)"
+                        )
+                finally:
+                    database.client.close()
 
         if ingestion.get("sync_mongodb_to_milvus", False):
             summary = sync_mongodb_to_milvus(self.config)
