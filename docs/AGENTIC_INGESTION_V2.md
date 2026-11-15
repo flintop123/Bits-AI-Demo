@@ -89,11 +89,42 @@ artifacts/ingestion_v2/<run-id>/
     extraction.json
     mapping.json
     persistence.json
+    evidence_report.json
+    evidence_report.html
 ```
 
 The bundle reports extraction coverage, required-field coverage, validation
 rate, inserted/matched/modified counts, rejections, quarantines, tool versions,
 and source locators.
+
+The standalone HTML report is designed for evaluator inspection. For every
+candidate record, it places the extracted source data, canonical mapping and
+MongoDB read-back in adjacent panels. Field lineage expands to show the raw
+value, target value, transformation, confidence and exact page/cell/JSONPath.
+Extraction success, schema-validation success and persistence success are
+reported separately, so text recovery cannot be mistaken for correct storage.
+
+Regenerate a report for an existing run and verify the MongoDB collection:
+
+```powershell
+python run_ingestion_v2.py --report-run <run-id> --verify-mongo
+```
+
+Open the resulting file in a browser:
+
+```powershell
+start artifacts\ingestion_v2\<run-id>\evidence_report.html
+```
+
+Compare a failed and corrected run quantitatively:
+
+```powershell
+python run_ingestion_v2.py --compare-runs <before-run-id> <after-run-id>
+```
+
+This creates `comparison.json` and `comparison.html` under
+`artifacts/ingestion_v2/comparisons/`. The report shows extraction,
+validation, rejection and persistence results before and after a correction.
 
 Locators are modality-specific:
 
@@ -112,13 +143,13 @@ The foundation supports canonical validation for:
 - verified `mandi_locations`.
 
 It also supports wide annual Excel tables by converting period columns into
-one canonical record per period. A subsequent branch will add the visual
-side-by-side ingestion inspector and the expanded source registry.
+one canonical record per period. The visual side-by-side inspector is generated
+for every CLI run without changing the existing ReAct demonstration.
 
 ## Tests
 
 ```powershell
-python -m unittest tests.test_ingestion_v2 -v
+python -m unittest tests.test_ingestion_v2 tests.test_ingestion_evidence_report tests.test_run_ingestion_v2_observability -v
 ```
 
 The focused suite covers contracts, unknown fields, source locators, wide-table

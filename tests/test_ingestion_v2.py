@@ -106,6 +106,8 @@ class ToolContractTests(unittest.TestCase):
                 "extract_supported_file",
                 "propose_and_apply_mapping",
                 "persist_validated_records",
+                "build_ingestion_evidence_report",
+                "compare_ingestion_runs",
             },
         )
         for contract in TOOL_CONTRACTS.values():
@@ -125,7 +127,7 @@ class ToolContractTests(unittest.TestCase):
         from ingestion_v2.langchain_tools import default_ingestion_tools
 
         tools = default_ingestion_tools()
-        self.assertEqual(len(tools), 4)
+        self.assertEqual(len(tools), 6)
         for structured_tool in tools:
             self.assertIsNotNone(structured_tool.args_schema)
             self.assertTrue(structured_tool.args_schema.model_json_schema()["properties"])
@@ -522,7 +524,10 @@ class PersistenceAndPipelineTests(unittest.TestCase):
         self.assertEqual(run.status.value, "completed")
         self.assertEqual(run.metrics.valid_records, 1)
         self.assertTrue(
-            {"run.json", "events.jsonl", "extraction.json", "mapping.json", "persistence.json"}
+            {
+                "run.json", "events.jsonl", "extraction.json", "mapping.json",
+                "persistence.json", "evidence_report.json", "evidence_report.html",
+            }
             <= files
         )
 

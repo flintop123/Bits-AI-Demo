@@ -5,6 +5,7 @@ from __future__ import annotations
 import uuid
 
 from ingestion_v2.extraction import extract_supported_file, inspect_input_file
+from ingestion_v2.evidence_report import write_run_evidence_report
 from ingestion_v2.mapping import SchemaMappingAgent, apply_mapping_plan
 from ingestion_v2.models import (
     ExtractFileInput,
@@ -147,6 +148,42 @@ class AgenticIngestionPipeline:
             self.store.add_event(
                 run, "run", run.status.value, "Ingestion run finished"
             )
+            try:
+                evidence = write_run_evidence_report(
+                    self.store.directory(run.run_id),
+                    verify_mongo=(write and self.database is None),
+                )
+                self.store.add_event(
+                    run,
+                    "evidence_report",
+                    "completed",
+                    "Generated source-to-schema-to-Mongo evidence report",
+                    tool_name="build_ingestion_evidence_report",
+                    tool_version="2.0.0",
+                    metrics={
+                        "html": str(evidence["html"]),
+                        "json": str(evidence["json"]),
+                        "mongo_status": evidence["report"]
+                        ["mongo_verification"]["status"],
+                    },
+                )
+                write_run_evidence_report(
+                    self.store.directory(run.run_id),
+                    mongo_verification=evidence["report"]["mongo_verification"],
+                )
+            except Exception as exc:
+                run.warnings.append(
+                    f"Evidence report unavailable: {type(exc).__name__}: {exc}"
+                )
+                self.store.add_event(
+                    run,
+                    "evidence_report",
+                    "partial",
+                    str(exc),
+                    tool_name="build_ingestion_evidence_report",
+                    tool_version="2.0.0",
+                    error_type=type(exc).__name__,
+                )
             return run
         except Exception as exc:
             run.status = RunStatus.FAILED
@@ -159,4 +196,10 @@ class AgenticIngestionPipeline:
                 str(exc),
                 error_type=type(exc).__name__,
             )
+            try:
+                write_run_evidence_report(self.store.directory(run.run_id))
+            except Exception:
+                # The original ingestion exception remains the authoritative
+                # failure. Report rendering must never conceal or replace it.
+                pass
             raise
