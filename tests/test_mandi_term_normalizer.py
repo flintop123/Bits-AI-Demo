@@ -1,5 +1,4 @@
 import unittest
-from unittest.mock import Mock
 
 from services.mandi_term_normalizer import MandiTermNormalizer
 
@@ -26,6 +25,18 @@ class FakeTranslator:
             "execution": "local_inference",
             "remote_api_used": False,
         }
+
+
+class FakeBatchTranslator(FakeTranslator):
+    def __init__(self, forward, round_trip):
+        super().__init__(forward)
+        self.round_trip = round_trip
+
+    def translate_many(self, values, source_language, target_language):
+        self.calls.append((values, source_language, target_language))
+        if source_language == "hi":
+            return [self.output for _value in values]
+        return [self.round_trip for _value in values]
 
 
 class MandiTermNormalizerTests(unittest.TestCase):
@@ -124,9 +135,7 @@ class MandiTermNormalizerTests(unittest.TestCase):
         self.assertEqual(translated, "अन्य शब्द")
 
     def test_dropdown_options_are_exactly_the_live_catalog_values(self):
-        translator = Mock()
-        translator.translate_many.return_value = ["Horse gram"]
-        normalizer = MandiTermNormalizer(translator=translator)
+        normalizer = MandiTermNormalizer()
 
         options = normalizer.localized_options(
             ["कुलथी"], "crop", "en"
@@ -134,7 +143,9 @@ class MandiTermNormalizerTests(unittest.TestCase):
 
         self.assertEqual([item["value"] for item in options], ["कुलथी"])
         self.assertEqual(options[0]["label"], "Horse gram")
-        self.assertEqual(options[0]["method"], "offline_translation")
+        self.assertEqual(
+            options[0]["method"], "reviewed_bilingual_alias"
+        )
 
     def test_dropdown_preserves_value_when_only_label_is_translated(self):
         normalizer = MandiTermNormalizer()
@@ -151,22 +162,45 @@ class MandiTermNormalizerTests(unittest.TestCase):
 
     def test_model_generated_label_exposes_translation_evidence(self):
         normalizer = MandiTermNormalizer(
-            translator=FakeTranslator("Horse gram")
+            translator=FakeBatchTranslator(
+                "Test crop", "परीक्षण फसल"
+            )
         )
 
         option = normalizer.localized_options(
-            ["कुलथी"], "crop", "en"
+            ["परीक्षण फसल"], "crop", "en"
         )[0]
 
         evidence = option["translation_evidence"]
         self.assertEqual(evidence["model_name"], "test/local-translator")
         self.assertEqual(
             evidence["validation_status"],
-            "display_label_generated_offline",
+            "accepted_round_trip_match",
         )
+        self.assertEqual(evidence["round_trip_candidate"], "परीक्षण फसल")
         self.assertTrue(evidence["official_value_preserved"])
         self.assertIsNone(evidence["confidence"])
         self.assertEqual(evidence["confidence_basis"], "not_calibrated")
+
+    def test_bad_display_translation_is_rejected_by_round_trip(self):
+        normalizer = MandiTermNormalizer(
+            translator=FakeBatchTranslator("Total", "कुल")
+        )
+
+        option = normalizer.localized_options(
+            ["अज्ञात फसल"], "crop", "en"
+        )[0]
+
+        self.assertEqual(option["value"], "अज्ञात फसल")
+        self.assertEqual(option["label"], "अज्ञात फसल")
+        self.assertEqual(option["label_language"], "hi")
+        self.assertEqual(
+            option["method"], "official_label_translation_rejected"
+        )
+        self.assertEqual(
+            option["translation_evidence"]["validation_status"],
+            "rejected_round_trip_mismatch",
+        )
 
     def test_unmatched_model_translation_is_logged_as_rejected(self):
         normalizer = MandiTermNormalizer(

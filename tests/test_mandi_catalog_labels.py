@@ -82,7 +82,7 @@ class MandiCatalogLabelMongoTests(unittest.TestCase):
         self.assertEqual(second, {"observed": 1, "created": 0})
         document = self.database.collection.documents[("crop", "आलू")]
         self.assertEqual(document["labels"], {"en": "Potato", "hi": "आलू"})
-        self.assertEqual(document["label_policy_version"], 4)
+        self.assertEqual(document["label_policy_version"], 5)
         self.assertEqual(
             document["translation_evidence"]["en"]["model_name"],
             "test/local-translator",

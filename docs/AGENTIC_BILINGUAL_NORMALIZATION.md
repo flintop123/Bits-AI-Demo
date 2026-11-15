@@ -24,7 +24,7 @@ The original official value is always retained. A generated translation may be u
 
 ## Stored evidence
 
-Label policy version 4 stores an evidence block independently for the English and Hindi label. The block records:
+Label policy version 5 stores an evidence block independently for the English and Hindi label. The block records:
 
 - provider and model family;
 - exact model name;
@@ -43,12 +43,15 @@ MarianMT generation scores are not treated as calibrated semantic confidence. Co
 | `not_required` | Source value already uses the requested display language |
 | `accepted_reviewed_alias` | Human-reviewed bilingual alias used |
 | `accepted_proper_name_transliteration` | Hindi market name romanized without semantic generation |
-| `display_label_generated_offline` | Local MarianMT label generated while official value remains unchanged |
+| `accepted_round_trip_match` | Local MarianMT label translated back to the normalized source term successfully |
+| `rejected_round_trip_mismatch` | Back-translation did not match; generated display label was rejected |
 | `accepted_exact_catalog_match` | Model candidate exactly matched a live-catalogue value |
 | `accepted_catalog_alias` | Model candidate matched a reviewed alias |
 | `rejected_not_in_live_catalog` | Generated candidate was not accepted for filtering |
 | `translation_failed` | Local model could not produce a result |
 | `translation_unavailable` | Safe fallback retained the official label |
+
+Known agricultural terms may use reviewed aliases before the model. For example, `कुलथी` is mapped to “Horse gram” through the reviewed crop vocabulary because the live MarianMT test incorrectly produced “Total.” For an unknown term, a generated display label is accepted only when target-to-source back-translation matches the normalized original term. A failed round trip retains the official source label and records the rejected candidate path.
 
 ## Demonstration
 

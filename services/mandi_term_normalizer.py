@@ -35,6 +35,7 @@ CROP_GROUPS = (
     ("आम", "mango", "mangoes", "aam"),
     ("अमरूद", "guava", "amrud"),
     ("मखाना", "makhana", "fox nut", "fox nuts"),
+    ("कुलथी", "horse gram", "kulthi"),
 )
 
 DISTRICT_GROUPS = (
@@ -213,26 +214,31 @@ class MandiTermNormalizer:
                     source_values, source_language, language
                 )
             )
-            for value, translated in zip(source_values, translations):
+            for value, translated, item_evidence in zip(
+                source_values, translations, translation_evidence
+            ):
                 if translated:
                     entries.append(self._option(
                         value,
                         translated,
                         language,
                         "offline_translation",
-                        dict(translation_evidence),
+                        item_evidence,
                     ))
                 else:
-                    unavailable_evidence = dict(translation_evidence)
-                    unavailable_evidence["validation_status"] = (
-                        "translation_unavailable"
-                    )
+                    rejected = item_evidence.get(
+                        "validation_status"
+                    ) == "rejected_round_trip_mismatch"
                     entries.append(self._option(
                         value,
                         value,
                         source_language,
-                        "official_label_translation_unavailable",
-                        unavailable_evidence,
+                        (
+                            "official_label_translation_rejected"
+                            if rejected
+                            else "official_label_translation_unavailable"
+                        ),
+                        item_evidence,
                     ))
 
         return sorted(
@@ -305,11 +311,7 @@ class MandiTermNormalizer:
         self, values, source_language, target_language
     ):
         if not values:
-            return [], self._non_model_evidence(
-                source_language,
-                target_language,
-                "not_required",
-            )
+            return [], []
         translator = self.translator
         if translator is None:
             translator = LocalTranslationService()
@@ -318,12 +320,15 @@ class MandiTermNormalizer:
             translator,
             source_language,
             target_language,
-            "display_label_generated_offline",
+            "model_candidate_generated",
         )
         try:
             if hasattr(translator, "translate_many"):
                 translated = translator.translate_many(
                     values, source_language, target_language
+                )
+                round_trips = translator.translate_many(
+                    translated, target_language, source_language
                 )
             else:
                 translated = [
@@ -332,12 +337,44 @@ class MandiTermNormalizer:
                     )
                     for value in values
                 ]
-            return translated, translation_evidence
+                round_trips = [
+                    translator.translate(
+                        value, target_language, source_language
+                    )
+                    for value in translated
+                ]
+            accepted = []
+            evidence_items = []
+            for source, candidate, round_trip in zip(
+                values, translated, round_trips
+            ):
+                evidence = dict(translation_evidence)
+                evidence["round_trip_candidate"] = round_trip
+                if self._round_trip_matches(source, round_trip):
+                    evidence["validation_status"] = (
+                        "accepted_round_trip_match"
+                    )
+                    accepted.append(candidate)
+                else:
+                    evidence["validation_status"] = (
+                        "rejected_round_trip_mismatch"
+                    )
+                    accepted.append(None)
+                evidence_items.append(evidence)
+            return accepted, evidence_items
         except (LocalTranslationError, OSError, ValueError):
             translation_evidence["validation_status"] = (
                 "translation_failed"
             )
-            return [None] * len(values), translation_evidence
+            return (
+                [None] * len(values),
+                [dict(translation_evidence) for _value in values],
+            )
+
+    @staticmethod
+    def _round_trip_matches(source, round_trip):
+        """Conservatively accept only a normalized exact round trip."""
+        return _normal(source) == _normal(round_trip)
 
     @classmethod
     def _group_label(cls, value, groups, language):

@@ -12,7 +12,7 @@ class MandiCatalogLabelMongo:
 
     IDENTITY_FIELDS = ("entity_type", "official_value")
     SUPPORTED_FIELDS = ("crop", "district", "market")
-    LABEL_POLICY_VERSION = 4
+    LABEL_POLICY_VERSION = 5
 
     def __init__(self, database, normalizer=None):
         self.collection = database["mandi_catalog_labels"]
