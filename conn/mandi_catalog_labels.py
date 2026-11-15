@@ -12,7 +12,7 @@ class MandiCatalogLabelMongo:
 
     IDENTITY_FIELDS = ("entity_type", "official_value")
     SUPPORTED_FIELDS = ("crop", "district", "market")
-    LABEL_POLICY_VERSION = 5
+    LABEL_POLICY_VERSION = 6
 
     def __init__(self, database, normalizer=None):
         self.collection = database["mandi_catalog_labels"]
@@ -68,6 +68,25 @@ class MandiCatalogLabelMongo:
         for value in missing:
             en = english[value]
             hi = hindi[value]
+            previous = existing.get(value, {})
+            translation_history = list(
+                previous.get("translation_history", [])
+            )
+            previous_evidence = previous.get("translation_evidence")
+            if (
+                previous_evidence
+                and previous.get("label_policy_version")
+                != self.LABEL_POLICY_VERSION
+            ):
+                translation_history.append({
+                    "label_policy_version": previous.get(
+                        "label_policy_version"
+                    ),
+                    "labels": previous.get("labels", {}),
+                    "methods": previous.get("methods", {}),
+                    "translation_evidence": previous_evidence,
+                    "generated_at": previous.get("generated_at"),
+                })
             operations.append(UpdateOne(
                 {"entity_type": field, "official_value": value},
                 {"$set": {
@@ -84,6 +103,7 @@ class MandiCatalogLabelMongo:
                         "en": en.get("translation_evidence", {}),
                         "hi": hi.get("translation_evidence", {}),
                     },
+                    "translation_history": translation_history,
                     "source_collection": "mandi_prices",
                     "label_policy_version": self.LABEL_POLICY_VERSION,
                     "generated_at": generated_at,

@@ -27,7 +27,7 @@ The original official value is always retained. A generated translation may be u
 
 ## Stored evidence
 
-Label policy version 5 stores an evidence block independently for the English and Hindi label. The block records:
+Label policy version 6 stores an evidence block independently for the English and Hindi label. The block records:
 
 - provider and model family;
 - exact model name;
@@ -59,6 +59,28 @@ MarianMT generation scores are not treated as calibrated semantic confidence. Co
 Known agricultural terms may use reviewed aliases before the model. For example, `कुलथी` is mapped to “Horse gram” through the reviewed crop vocabulary because the live MarianMT test incorrectly produced “Total.” For an unknown term, Marian first attempts a direct translation and round trip. If that fails, Qwen proposes a context-aware agricultural label, which is translated back independently by Marian. A candidate is accepted only when the normalized back-translation matches the original term. Otherwise the official source label is retained and both rejection paths are recorded.
 
 `CatalogTranslationAgent.tool_schemas()` exposes strict Pydantic-derived input and output JSON schemas. Unknown fields are rejected. The agent refuses semantic translation of market proper names; those continue to use reviewed aliases or transliteration.
+
+## Reviewed approval workflow
+
+When automatic validators disagree, the Qwen proposal remains in `translation_evidence` and the official source-language label remains active. A project reviewer may approve a proposal by adding an entry to `sources/mandi_term_aliases.yaml` with `review_status: approved`. Pending or rejected entries are ignored at runtime.
+
+The reviewed file stores the entity type, official value, Hindi and English labels, optional search aliases, review source and review note. It is version controlled, so an evaluator can distinguish:
+
+- model-proposed but rejected labels in MongoDB evidence;
+- human-approved bilingual aliases in YAML;
+- built-in core aliases retained for backward compatibility.
+
+When a label-policy refresh replaces a rejected proposal with a reviewed alias, the previous labels, methods and model evidence are appended to `translation_history` in MongoDB. Approval therefore does not erase the original failure or model decision trail.
+
+The initial reviewed entries record the two live findings from Round 2: `कुलथी → Horse gram` and `हल्दी → Turmeric`. Increasing the label policy to version 6 refreshes older cache entries without changing their official source values.
+
+Export the current review queue with:
+
+```cmd
+python scripts\export_translation_review_queue.py
+```
+
+The command writes `artifacts/translation_review_queue.json`. It does not modify the approval YAML or the database.
 
 ## Demonstration
 

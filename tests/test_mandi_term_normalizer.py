@@ -1,4 +1,6 @@
 import unittest
+from pathlib import Path
+from tempfile import TemporaryDirectory
 
 from services.catalog_translation_agent import CatalogTranslationResult
 from services.mandi_term_normalizer import MandiTermNormalizer
@@ -215,6 +217,7 @@ class MandiTermNormalizerTests(unittest.TestCase):
         normalizer = MandiTermNormalizer(
             translator=FakeBatchTranslator("Total", "कुल"),
             translation_agent=False,
+            term_alias_path="missing-term-aliases.yaml",
         )
 
         option = normalizer.localized_options(
@@ -236,6 +239,7 @@ class MandiTermNormalizerTests(unittest.TestCase):
         normalizer = MandiTermNormalizer(
             translator=FakeBatchTranslator("Total", "कुल"),
             translation_agent=FakeCatalogAgent(),
+            term_alias_path="missing-term-aliases.yaml",
         )
 
         option = normalizer.localized_options(
@@ -252,6 +256,37 @@ class MandiTermNormalizerTests(unittest.TestCase):
             option["translation_evidence"]["validation_status"],
             "accepted_independent_round_trip_match",
         )
+
+    def test_only_approved_yaml_aliases_are_loaded(self):
+        payload = """
+aliases:
+  - entity_type: crop
+    official_value: हल्दी
+    labels:
+      hi: हल्दी
+      en: Turmeric
+    review_status: approved
+  - entity_type: crop
+    official_value: अप्रमाणित
+    labels:
+      en: Unreviewed
+    review_status: pending
+"""
+        with TemporaryDirectory() as directory:
+            path = Path(directory) / "aliases.yaml"
+            path.write_text(payload, encoding="utf-8")
+            normalizer = MandiTermNormalizer(term_alias_path=path)
+
+            option = normalizer.localized_options(
+                ["हल्दी"], "crop", "en"
+            )[0]
+            pending = normalizer._group_label(
+                "अप्रमाणित", normalizer._alias_groups("crop"), "en"
+            )
+
+        self.assertEqual(option["label"], "Turmeric")
+        self.assertEqual(option["method"], "reviewed_bilingual_alias")
+        self.assertIsNone(pending)
 
     def test_unmatched_model_translation_is_logged_as_rejected(self):
         normalizer = MandiTermNormalizer(

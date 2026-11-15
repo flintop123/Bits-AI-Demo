@@ -82,7 +82,7 @@ class MandiCatalogLabelMongoTests(unittest.TestCase):
         self.assertEqual(second, {"observed": 1, "created": 0})
         document = self.database.collection.documents[("crop", "आलू")]
         self.assertEqual(document["labels"], {"en": "Potato", "hi": "आलू"})
-        self.assertEqual(document["label_policy_version"], 5)
+        self.assertEqual(document["label_policy_version"], 6)
         self.assertEqual(
             document["translation_evidence"]["en"]["model_name"],
             "test/local-translator",
@@ -109,6 +109,30 @@ class MandiCatalogLabelMongoTests(unittest.TestCase):
             option["selected_translation_evidence"]["model_name"],
             "test/local-translator",
         )
+
+    def test_policy_refresh_preserves_previous_translation_evidence(self):
+        self.cache.sync("crop", ["आलू"])
+        key = ("crop", "आलू")
+        previous = self.database.collection.documents[key]
+        previous["label_policy_version"] = 5
+        previous["labels"] = {"en": "Bad label", "hi": "आलू"}
+        previous["methods"] = {
+            "en": "official_label_translation_rejected",
+            "hi": "official_catalog_label",
+        }
+        previous["translation_evidence"] = {
+            "en": {"proposed_label": "Bad label"},
+            "hi": {},
+        }
+
+        refreshed = self.cache.sync("crop", ["आलू"])
+
+        self.assertEqual(refreshed, {"observed": 1, "created": 1})
+        document = self.database.collection.documents[key]
+        self.assertEqual(len(document["translation_history"]), 1)
+        history = document["translation_history"][0]
+        self.assertEqual(history["label_policy_version"], 5)
+        self.assertEqual(history["labels"]["en"], "Bad label")
 
 
 if __name__ == "__main__":

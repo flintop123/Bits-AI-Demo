@@ -39,7 +39,6 @@ CROP_GROUPS = (
     ("आम", "mango", "mangoes", "aam"),
     ("अमरूद", "guava", "amrud"),
     ("मखाना", "makhana", "fox nut", "fox nuts"),
-    ("कुलथी", "horse gram", "kulthi"),
 )
 
 DISTRICT_GROUPS = (
@@ -87,13 +86,18 @@ class MandiTermNormalizer:
         translator=None,
         market_alias_path=None,
         translation_agent=None,
+        term_alias_path=None,
     ):
         self.translator = translator
         self.translation_agent = translation_agent
         self.market_alias_path = Path(
             market_alias_path or "sources/mandi_market_aliases.yaml"
         )
+        self.term_alias_path = Path(
+            term_alias_path or "sources/mandi_term_aliases.yaml"
+        )
         self._market_groups = None
+        self._reviewed_term_groups = None
 
     def resolve_filters(self, filters, catalog):
         resolved = {}
@@ -146,11 +150,7 @@ class MandiTermNormalizer:
         official_values = sorted({
             str(value).strip() for value in values if str(value or "").strip()
         })
-        groups = {
-            "crop": CROP_GROUPS,
-            "district": DISTRICT_GROUPS,
-            "market": self._market_alias_groups(),
-        }.get(field, ())
+        groups = self._alias_groups(field)
         entries = []
         pending = []
 
@@ -548,11 +548,7 @@ class MandiTermNormalizer:
         if direct is not None:
             return direct, "exact_catalog_match", None
 
-        groups = {
-            "crop": CROP_GROUPS,
-            "district": DISTRICT_GROUPS,
-            "market": self._market_alias_groups(),
-        }.get(field, ())
+        groups = self._alias_groups(field)
         alias = self._group_match(requested, choice_lookup, groups)
         if alias is not None:
             return alias, "bilingual_alias", None
@@ -605,3 +601,47 @@ class MandiTermNormalizer:
                 groups.append(tuple(value for value in values if value))
         self._market_groups = tuple(groups)
         return self._market_groups
+
+    def _alias_groups(self, field):
+        built_in = {
+            "crop": CROP_GROUPS,
+            "district": DISTRICT_GROUPS,
+            "market": self._market_alias_groups(),
+        }.get(field, ())
+        reviewed = self._reviewed_alias_groups().get(field, ())
+        return tuple(built_in) + tuple(reviewed)
+
+    def _reviewed_alias_groups(self):
+        if self._reviewed_term_groups is not None:
+            return self._reviewed_term_groups
+        groups = {"crop": [], "district": [], "market": [], "variety": []}
+        if self.term_alias_path.exists():
+            payload = yaml.safe_load(
+                self.term_alias_path.read_text(encoding="utf-8")
+            ) or {}
+            for item in payload.get("aliases", []):
+                if item.get("review_status") != "approved":
+                    continue
+                entity_type = item.get("entity_type")
+                official_value = str(
+                    item.get("official_value") or ""
+                ).strip()
+                labels = item.get("labels") or {}
+                if entity_type not in groups or not official_value:
+                    continue
+                values = [official_value]
+                values.extend(
+                    str(value).strip()
+                    for value in labels.values()
+                    if str(value or "").strip()
+                )
+                values.extend(
+                    str(value).strip()
+                    for value in item.get("aliases", [])
+                    if str(value or "").strip()
+                )
+                groups[entity_type].append(tuple(dict.fromkeys(values)))
+        self._reviewed_term_groups = {
+            field: tuple(values) for field, values in groups.items()
+        }
+        return self._reviewed_term_groups
