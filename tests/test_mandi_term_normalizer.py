@@ -1,5 +1,6 @@
 import unittest
 
+from services.catalog_translation_agent import CatalogTranslationResult
 from services.mandi_term_normalizer import MandiTermNormalizer
 
 
@@ -37,6 +38,34 @@ class FakeBatchTranslator(FakeTranslator):
         if source_language == "hi":
             return [self.output for _value in values]
         return [self.round_trip for _value in values]
+
+
+class FakeCatalogAgent:
+    def __init__(self, accepted=True):
+        self.accepted = accepted
+
+    def translate(self, request):
+        accepted = self.accepted
+        return CatalogTranslationResult(
+            official_value=request["official_value"],
+            translated_label="Turmeric" if accepted else None,
+            proposed_label="Turmeric",
+            round_trip_candidate=(
+                request["official_value"] if accepted else "अन्य"
+            ),
+            accepted=accepted,
+            translation_evidence={
+                "provider": "local_ollama",
+                "model_family": "Qwen",
+                "model_name": "qwen3:4b",
+                "validation_status": (
+                    "accepted_independent_round_trip_match"
+                    if accepted
+                    else "rejected_independent_round_trip_mismatch"
+                ),
+                "official_value_preserved": True,
+            },
+        )
 
 
 class MandiTermNormalizerTests(unittest.TestCase):
@@ -184,7 +213,8 @@ class MandiTermNormalizerTests(unittest.TestCase):
 
     def test_bad_display_translation_is_rejected_by_round_trip(self):
         normalizer = MandiTermNormalizer(
-            translator=FakeBatchTranslator("Total", "कुल")
+            translator=FakeBatchTranslator("Total", "कुल"),
+            translation_agent=False,
         )
 
         option = normalizer.localized_options(
@@ -200,6 +230,27 @@ class MandiTermNormalizerTests(unittest.TestCase):
         self.assertEqual(
             option["translation_evidence"]["validation_status"],
             "rejected_round_trip_mismatch",
+        )
+
+    def test_qwen_fallback_is_used_after_marian_round_trip_rejection(self):
+        normalizer = MandiTermNormalizer(
+            translator=FakeBatchTranslator("Total", "कुल"),
+            translation_agent=FakeCatalogAgent(),
+        )
+
+        option = normalizer.localized_options(
+            ["हल्दी"], "crop", "en"
+        )[0]
+
+        self.assertEqual(option["value"], "हल्दी")
+        self.assertEqual(option["label"], "Turmeric")
+        self.assertEqual(option["method"], "agentic_offline_translation")
+        self.assertEqual(
+            option["translation_evidence"]["model_name"], "qwen3:4b"
+        )
+        self.assertEqual(
+            option["translation_evidence"]["validation_status"],
+            "accepted_independent_round_trip_match",
         )
 
     def test_unmatched_model_translation_is_logged_as_rejected(self):

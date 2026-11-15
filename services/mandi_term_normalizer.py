@@ -6,6 +6,10 @@ from pathlib import Path
 
 import yaml
 
+from services.catalog_translation_agent import (
+    CatalogTranslationAgent,
+    CatalogTranslationError,
+)
 from services.local_translation_service import (
     LocalTranslationError,
     LocalTranslationService,
@@ -78,8 +82,14 @@ def _normal(value):
 class MandiTermNormalizer:
     """Resolve bilingual input only to values present in the live catalog."""
 
-    def __init__(self, translator=None, market_alias_path=None):
+    def __init__(
+        self,
+        translator=None,
+        market_alias_path=None,
+        translation_agent=None,
+    ):
         self.translator = translator
+        self.translation_agent = translation_agent
         self.market_alias_path = Path(
             market_alias_path or "sources/mandi_market_aliases.yaml"
         )
@@ -209,20 +219,23 @@ class MandiTermNormalizer:
             source_values = [
                 item[0] for item in pending if item[1] == source_language
             ]
-            translations, translation_evidence = (
+            translations, translation_evidence, translation_methods = (
                 self._translate_catalog_values(
-                    source_values, source_language, language
+                    source_values, source_language, language, field
                 )
             )
-            for value, translated, item_evidence in zip(
-                source_values, translations, translation_evidence
+            for value, translated, item_evidence, item_method in zip(
+                source_values,
+                translations,
+                translation_evidence,
+                translation_methods,
             ):
                 if translated:
                     entries.append(self._option(
                         value,
                         translated,
                         language,
-                        "offline_translation",
+                        item_method,
                         item_evidence,
                     ))
                 else:
@@ -308,10 +321,10 @@ class MandiTermNormalizer:
         return " ".join(words) or value
 
     def _translate_catalog_values(
-        self, values, source_language, target_language
+        self, values, source_language, target_language, field
     ):
         if not values:
-            return [], []
+            return [], [], []
         translator = self.translator
         if translator is None:
             translator = LocalTranslationService()
@@ -345,6 +358,7 @@ class MandiTermNormalizer:
                 ]
             accepted = []
             evidence_items = []
+            methods = []
             for source, candidate, round_trip in zip(
                 values, translated, round_trips
             ):
@@ -355,13 +369,45 @@ class MandiTermNormalizer:
                         "accepted_round_trip_match"
                     )
                     accepted.append(candidate)
+                    methods.append("offline_translation")
                 else:
                     evidence["validation_status"] = (
                         "rejected_round_trip_mismatch"
                     )
-                    accepted.append(None)
+                    agent_result = self._agentic_catalog_translation(
+                        source,
+                        field,
+                        source_language,
+                        target_language,
+                        translator,
+                    )
+                    if agent_result is not None and agent_result.accepted:
+                        accepted.append(agent_result.translated_label)
+                        methods.append("agentic_offline_translation")
+                        evidence = dict(
+                            agent_result.translation_evidence
+                        )
+                        evidence["proposed_label"] = (
+                            agent_result.proposed_label
+                        )
+                        evidence["round_trip_candidate"] = (
+                            agent_result.round_trip_candidate
+                        )
+                    else:
+                        accepted.append(None)
+                        methods.append(None)
+                        if agent_result is not None:
+                            evidence["agentic_fallback"] = {
+                                **agent_result.translation_evidence,
+                                "proposed_label": (
+                                    agent_result.proposed_label
+                                ),
+                                "round_trip_candidate": (
+                                    agent_result.round_trip_candidate
+                                ),
+                            }
                 evidence_items.append(evidence)
-            return accepted, evidence_items
+            return accepted, evidence_items, methods
         except (LocalTranslationError, OSError, ValueError):
             translation_evidence["validation_status"] = (
                 "translation_failed"
@@ -369,7 +415,34 @@ class MandiTermNormalizer:
             return (
                 [None] * len(values),
                 [dict(translation_evidence) for _value in values],
+                [None] * len(values),
             )
+
+    def _agentic_catalog_translation(
+        self,
+        value,
+        field,
+        source_language,
+        target_language,
+        back_translator,
+    ):
+        agent = self.translation_agent
+        if agent is False:
+            return None
+        if agent is None:
+            agent = CatalogTranslationAgent(
+                back_translator=back_translator
+            )
+            self.translation_agent = agent
+        try:
+            return agent.translate({
+                "official_value": value,
+                "entity_type": field,
+                "source_language": source_language,
+                "target_language": target_language,
+            })
+        except CatalogTranslationError:
+            return None
 
     @staticmethod
     def _round_trip_matches(source, round_trip):
