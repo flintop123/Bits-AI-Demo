@@ -26,6 +26,7 @@ class SourceModality(str, Enum):
 
 class TargetCollection(str, Enum):
     AGRICULTURE_DOCUMENTS = "agriculture_documents"
+    AGRICULTURE_FACTS = "agriculture_facts"
     CROP_STATISTICS = "crop_statistics"
     MANDI_PRICES = "mandi_prices"
     MANDI_LOCATIONS = "mandi_locations"
@@ -127,6 +128,56 @@ class ExtractFileOutput(StrictModel):
     records: list[ExtractedRecord]
     metrics: ExtractionMetrics
     warnings: list[str] = Field(default_factory=list)
+
+
+class SemanticFactCandidate(StrictModel):
+    source_record_index: int = Field(ge=0)
+    fact_type: Literal[
+        "crop_area",
+        "crop_production",
+        "crop_yield",
+        "scheme_metric",
+        "market_metric",
+        "horticulture_metric",
+        "other_agriculture_metric",
+    ]
+    subject: str = Field(min_length=1)
+    metric: str = Field(min_length=1)
+    value_as_reported: str = Field(min_length=1)
+    normalized_value: float | None = Field(default=None, ge=0)
+    unit_as_reported: str | None = None
+    normalized_unit: str | None = None
+    period: str | None = None
+    geography: str | None = None
+    crop: str | None = None
+    scheme_name: str | None = None
+    evidence_quote: str = Field(min_length=1)
+    confidence: float = Field(ge=0, le=1)
+
+
+class SemanticFactBatchProposal(StrictModel):
+    facts: list[SemanticFactCandidate] = Field(default_factory=list)
+
+
+class ExtractSemanticFactsInput(StrictModel):
+    run_id: str
+    inspection: InspectFileOutput
+    extraction: ExtractFileOutput
+    max_chunks: int = Field(default=40, ge=1, le=200)
+    batch_size: int = Field(default=2, ge=1, le=4)
+    minimum_confidence: float = Field(default=0.85, ge=0, le=1)
+
+
+class ExtractSemanticFactsOutput(StrictModel):
+    target_collection: TargetCollection = TargetCollection.AGRICULTURE_FACTS
+    records: list["MappedRecord"]
+    chunks_available: int = Field(ge=0)
+    chunks_examined: int = Field(ge=0)
+    facts_proposed: int = Field(ge=0)
+    facts_valid: int = Field(ge=0)
+    facts_rejected: int = Field(ge=0)
+    facts_review_required: int = Field(ge=0)
+    duplicate_facts_removed: int = Field(ge=0)
 
 
 class FieldMapping(StrictModel):
@@ -252,6 +303,13 @@ class RunMetrics(StrictModel):
     required_field_coverage: float = 0
     validation_rate: float = 0
     persistence_rate: float = 0
+    semantic_chunks_examined: int = 0
+    semantic_facts_proposed: int = 0
+    semantic_facts_valid: int = 0
+    semantic_facts_rejected: int = 0
+    semantic_facts_review_required: int = 0
+    semantic_fact_duplicates_removed: int = 0
+    semantic_facts_inserted: int = 0
 
 
 class IngestionRun(StrictModel):

@@ -13,6 +13,7 @@ from ingestion_v2.extraction import (
 from ingestion_v2.mapping import SchemaMappingAgent, apply_mapping_plan
 from ingestion_v2.models import (
     ExtractFileInput,
+    ExtractSemanticFactsInput,
     InspectFileInput,
     MappingRequest,
     PersistInput,
@@ -20,6 +21,7 @@ from ingestion_v2.models import (
 from ingestion_v2.persistence import (
     persist_validated_records as _persist_validated_records,
 )
+from ingestion_v2.semantic_facts import extract_semantic_pdf_facts as _extract_facts
 
 
 @tool("inspect_input_file_v2", args_schema=InspectFileInput)
@@ -82,10 +84,32 @@ def persist_validated_records_v2(
     return _persist_validated_records(payload).model_dump(mode="json")
 
 
+@tool("extract_semantic_pdf_facts_v2", args_schema=ExtractSemanticFactsInput)
+def extract_semantic_pdf_facts_v2(
+    run_id: str,
+    inspection: dict,
+    extraction: dict,
+    max_chunks: int = 40,
+    batch_size: int = 2,
+    minimum_confidence: float = 0.85,
+) -> dict:
+    """Extract quote-anchored structured facts from unfamiliar PDF layouts."""
+    payload = ExtractSemanticFactsInput.model_validate({
+        "run_id": run_id,
+        "inspection": inspection,
+        "extraction": extraction,
+        "max_chunks": max_chunks,
+        "batch_size": batch_size,
+        "minimum_confidence": minimum_confidence,
+    })
+    return _extract_facts(payload).model_dump(mode="json")
+
+
 def default_ingestion_tools():
     return [
         inspect_input_file_v2,
         extract_supported_file_v2,
         propose_and_apply_mapping_v2,
         persist_validated_records_v2,
+        extract_semantic_pdf_facts_v2,
     ]

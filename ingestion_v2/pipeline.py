@@ -7,6 +7,7 @@ import uuid
 from ingestion_v2.extraction import extract_supported_file, inspect_input_file
 from ingestion_v2.mapping import SchemaMappingAgent, apply_mapping_plan
 from ingestion_v2.models import (
+    ExtractSemanticFactsInput,
     ExtractFileInput,
     IngestionRun,
     InspectFileInput,
@@ -19,15 +20,35 @@ from ingestion_v2.models import (
 )
 from ingestion_v2.persistence import persist_validated_records
 from ingestion_v2.run_store import LocalIngestionRunStore
+from ingestion_v2.semantic_facts import SemanticDocumentFactAgent
 
 
 class AgenticIngestionPipeline:
-    def __init__(self, planner=None, store=None, database=None):
+    def __init__(
+        self,
+        planner=None,
+        store=None,
+        database=None,
+        fact_agent=None,
+        fact_database=None,
+    ):
         self.planner = planner or SchemaMappingAgent()
         self.store = store or LocalIngestionRunStore()
         self.database = database
+        self.fact_agent = fact_agent
+        self.fact_database = fact_database
 
-    def run(self, file_path, *, write=False, force_ocr=False, plan=None):
+    def run(
+        self,
+        file_path,
+        *,
+        write=False,
+        force_ocr=False,
+        plan=None,
+        semantic_facts=False,
+        max_fact_chunks=40,
+        fact_batch_size=2,
+    ):
         run = IngestionRun(
             run_id=str(uuid.uuid4()),
             status=RunStatus.STARTED,
@@ -94,6 +115,42 @@ class AgenticIngestionPipeline:
                 },
             )
 
+            facts = None
+            if semantic_facts:
+                fact_agent = self.fact_agent or SemanticDocumentFactAgent()
+                facts = fact_agent.extract(ExtractSemanticFactsInput(
+                    run_id=run.run_id,
+                    inspection=inspection,
+                    extraction=extraction,
+                    max_chunks=max_fact_chunks,
+                    batch_size=fact_batch_size,
+                ))
+                self.store.save_artifact(
+                    run.run_id, "semantic_facts.json", facts
+                )
+                self.store.add_event(
+                    run,
+                    "semantic_fact_extraction",
+                    "partial" if facts.facts_rejected else "completed",
+                    (
+                        f"Validated {facts.facts_valid}/"
+                        f"{facts.facts_proposed} proposed semantic fact(s)"
+                    ),
+                    tool_name="extract_semantic_pdf_facts",
+                    tool_version="2.0.0",
+                    metrics={
+                        "chunks_available": facts.chunks_available,
+                        "chunks_examined": facts.chunks_examined,
+                        "facts_proposed": facts.facts_proposed,
+                        "facts_valid": facts.facts_valid,
+                        "facts_rejected": facts.facts_rejected,
+                        "facts_review_required": facts.facts_review_required,
+                        "duplicate_facts_removed": (
+                            facts.duplicate_facts_removed
+                        ),
+                    },
+                )
+
             persistence = persist_validated_records(
                 PersistInput(
                     run_id=run.run_id,
@@ -117,6 +174,38 @@ class AgenticIngestionPipeline:
                 metrics=persistence.model_dump(mode="json"),
             )
 
+            fact_persistence = None
+            if facts is not None:
+                fact_persistence = persist_validated_records(
+                    PersistInput(
+                        run_id=run.run_id,
+                        write_mode=run.write_mode,
+                        records=facts.records,
+                    ),
+                    database=self.fact_database,
+                )
+                self.store.save_artifact(
+                    run.run_id,
+                    "semantic_fact_persistence.json",
+                    fact_persistence,
+                )
+                self.store.add_event(
+                    run,
+                    "semantic_fact_persistence",
+                    "completed",
+                    (
+                        "Semantic facts validated without database writes"
+                        if not write
+                        else (
+                            f"Persisted {fact_persistence.inserted} new "
+                            "semantic fact(s)"
+                        )
+                    ),
+                    tool_name="persist_validated_records",
+                    tool_version="2.0.0",
+                    metrics=fact_persistence.model_dump(mode="json"),
+                )
+
             valid = mapping.records_valid
             # MongoDB's modified count is a subset of matched count, not an
             # additional set of records.
@@ -136,11 +225,37 @@ class AgenticIngestionPipeline:
                 persistence_rate=(
                     persisted / valid if write and valid else 0
                 ),
+                semantic_chunks_examined=(
+                    facts.chunks_examined if facts is not None else 0
+                ),
+                semantic_facts_proposed=(
+                    facts.facts_proposed if facts is not None else 0
+                ),
+                semantic_facts_valid=(
+                    facts.facts_valid if facts is not None else 0
+                ),
+                semantic_facts_rejected=(
+                    facts.facts_rejected if facts is not None else 0
+                ),
+                semantic_facts_review_required=(
+                    facts.facts_review_required if facts is not None else 0
+                ),
+                semantic_fact_duplicates_removed=(
+                    facts.duplicate_facts_removed if facts is not None else 0
+                ),
+                semantic_facts_inserted=(
+                    fact_persistence.inserted
+                    if fact_persistence is not None else 0
+                ),
             )
             run.warnings.extend(extraction.warnings)
             run.status = (
                 RunStatus.PARTIAL
-                if extraction.warnings or mapping.records_rejected
+                if (
+                    extraction.warnings
+                    or mapping.records_rejected
+                    or (facts is not None and facts.facts_rejected)
+                )
                 else RunStatus.COMPLETED
             )
             run.completed_at = utc_now()

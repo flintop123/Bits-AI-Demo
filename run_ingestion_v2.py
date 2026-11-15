@@ -21,6 +21,28 @@ def parse_args(argv=None):
     )
     parser.add_argument("--force-ocr", action="store_true")
     parser.add_argument(
+        "--semantic-facts",
+        action="store_true",
+        help=(
+            "Use the local model to extract quote-anchored structured facts "
+            "from PDF chunks"
+        ),
+    )
+    parser.add_argument(
+        "--max-fact-chunks",
+        type=int,
+        default=40,
+        help="Maximum PDF chunks examined by the semantic fact agent",
+    )
+    parser.add_argument(
+        "--fact-batch-size",
+        type=int,
+        default=2,
+        choices=range(1, 5),
+        metavar="1..4",
+        help="PDF chunks supplied to the local model per structured call",
+    )
+    parser.add_argument(
         "--plan",
         help="Optional reviewed MappingPlan JSON; otherwise the local model proposes one",
     )
@@ -32,6 +54,8 @@ def parse_args(argv=None):
     args = parser.parse_args(argv)
     if not args.print_tool_schemas and not args.input:
         parser.error("--input is required unless --print-tool-schemas is used")
+    if not 1 <= args.max_fact_chunks <= 200:
+        parser.error("--max-fact-chunks must be between 1 and 200")
     return args
 
 
@@ -51,6 +75,9 @@ def main(argv=None):
             write=args.write,
             force_ocr=args.force_ocr,
             plan=plan,
+            semantic_facts=args.semantic_facts,
+            max_fact_chunks=args.max_fact_chunks,
+            fact_batch_size=args.fact_batch_size,
         )
     except Exception as exc:
         print(f"Status: failed\nError: {type(exc).__name__}: {exc}")
@@ -62,6 +89,13 @@ def main(argv=None):
         f"Valid records: {run.metrics.valid_records}/"
         f"{run.metrics.candidate_records}\n"
         f"Database write: {run.write_mode.value}\n"
+        f"Semantic fact proposals: {run.metrics.semantic_facts_proposed}\n"
+        f"Semantic facts accepted: {run.metrics.semantic_facts_valid}\n"
+        f"Semantic facts rejected: {run.metrics.semantic_facts_rejected}\n"
+        f"Semantic fact duplicates: "
+        f"{run.metrics.semantic_fact_duplicates_removed}\n"
+        f"Semantic fact review: "
+        f"{run.metrics.semantic_facts_review_required}\n"
         f"Evidence: artifacts/ingestion_v2/{run.run_id}/run.json"
     )
     return 0

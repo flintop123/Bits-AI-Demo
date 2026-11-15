@@ -16,6 +16,11 @@ separate path for:
 5. confidence-gated, duplicate-safe persistence; and
 6. stage-by-stage audit evidence.
 
+For unfamiliar PDF layouts, an optional semantic document agent also extracts
+explicit numeric facts. Every proposed fact must carry a verbatim evidence
+quote and is checked against the original page/chunk before it can become a
+write-eligible record.
+
 The model never generates or executes MongoDB syntax. It may propose a mapping
 only to one of the allowlisted collections. Pydantic models validate the plan
 and every output record before the persistence tool can run.
@@ -27,6 +32,11 @@ flowchart TD
     A[PDF, Excel, CSV or JSON] --> B[Inspect tool]
     B --> C[Locator-aware extraction]
     C --> D[Schema-mapping agent]
+    C --> J[Optional semantic PDF fact agent]
+    J --> K[Quote and value validation]
+    K -->|valid and confident| F
+    K -->|uncertain| H
+    K -->|unsupported quote| G
     D --> E[Canonical validation]
     E -->|valid and confident| F[Allowlisted upsert]
     E -->|invalid| G[Rejected evidence]
@@ -71,6 +81,46 @@ A record must be schema-valid and meet the default mapping-confidence threshold
 of 0.85. Invalid records are rejected. Valid records below the threshold are
 quarantined from writes.
 
+## Semantic PDF facts
+
+Use the local Qwen model to inspect extracted PDF chunks for explicit numeric
+agriculture facts:
+
+```powershell
+python run_ingestion_v2.py --input "unfamiliar-report.pdf" --semantic-facts
+```
+
+This remains a dry run. To persist both the normal PDF chunks and only the
+validated, high-confidence facts:
+
+```powershell
+python run_ingestion_v2.py --input "unfamiliar-report.pdf" --semantic-facts --write
+```
+
+The agent is bounded to four chunks per model call and defaults to two. The
+maximum number of examined chunks can be controlled without changing source
+code:
+
+```powershell
+python run_ingestion_v2.py --input "unfamiliar-report.pdf" `
+  --semantic-facts --max-fact-chunks 20 --fact-batch-size 2
+```
+
+Safety rules are enforced after model inference:
+
+- `evidence_quote` must occur in the referenced extracted chunk;
+- `value_as_reported` must occur inside that quote and contain a number;
+- page, chunk and character offsets come from the extractor, not the model;
+- duplicate facts from overlapping chunks are removed;
+- low-confidence but otherwise valid facts require human review and are not
+  written by the default persistence threshold; and
+- the model cannot issue database commands or select an arbitrary collection.
+
+Validated facts are stored in the allowlisted `agriculture_facts` collection,
+using `fact_id` as an idempotent identity. The original wording, optional model
+normalization, page/chunk locator, extraction model and complete field
+provenance are retained.
+
 For a reproducible evaluation, a reviewed plan can be saved and supplied:
 
 ```powershell
@@ -89,6 +139,8 @@ artifacts/ingestion_v2/<run-id>/
     extraction.json
     mapping.json
     persistence.json
+    semantic_facts.json                 # when --semantic-facts is used
+    semantic_fact_persistence.json      # when --semantic-facts is used
 ```
 
 The bundle reports extraction coverage, required-field coverage, validation
@@ -107,6 +159,7 @@ Locators are modality-specific:
 The foundation supports canonical validation for:
 
 - `agriculture_documents`;
+- evidence-anchored `agriculture_facts`;
 - `crop_statistics`;
 - `mandi_prices`; and
 - verified `mandi_locations`.
@@ -118,9 +171,12 @@ side-by-side ingestion inspector and the expanded source registry.
 ## Tests
 
 ```powershell
-python -m unittest tests.test_ingestion_v2 -v
+python -m unittest tests.test_ingestion_v2 tests.test_semantic_document_facts -v
 ```
 
 The focused suite covers contracts, unknown fields, source locators, wide-table
 mapping, validation failure, confidence quarantine, dry-run safety, explicit
 writes and evidence generation.
+The semantic-document suite additionally covers quote grounding, numeric-value
+grounding, hallucination rejection, deduplication, confidence review and the
+MongoDB fact identity.

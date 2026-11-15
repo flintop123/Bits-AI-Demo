@@ -104,6 +104,7 @@ class ToolContractTests(unittest.TestCase):
             {
                 "inspect_input_file",
                 "extract_supported_file",
+                "extract_semantic_pdf_facts",
                 "propose_and_apply_mapping",
                 "persist_validated_records",
             },
@@ -125,7 +126,7 @@ class ToolContractTests(unittest.TestCase):
         from ingestion_v2.langchain_tools import default_ingestion_tools
 
         tools = default_ingestion_tools()
-        self.assertEqual(len(tools), 4)
+        self.assertEqual(len(tools), 5)
         for structured_tool in tools:
             self.assertIsNotNone(structured_tool.args_schema)
             self.assertTrue(structured_tool.args_schema.model_json_schema()["properties"])

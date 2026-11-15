@@ -15,6 +15,10 @@ CONNECTORS = {
         "conn.agriculture_documents_mongodb",
         "AgricultureDocumentsMongo",
     ),
+    TargetCollection.AGRICULTURE_FACTS: (
+        "conn.agriculture_facts_mongodb",
+        "AgricultureFactsMongo",
+    ),
     TargetCollection.CROP_STATISTICS: (
         "conn.crop_statistics_mongodb",
         "CropStatisticsMongo",
@@ -41,7 +45,10 @@ def persist_validated_records(payload: PersistInput, database=None):
     valid = [item for item in payload.records if item.valid]
     eligible = [
         item for item in valid
-        if item.mapping_confidence >= payload.minimum_confidence
+        if (
+            item.mapping_confidence >= payload.minimum_confidence
+            and item.data.get("review_status") != "human_review_required"
+        )
     ]
     rejected = len(payload.records) - len(valid)
     quarantined = len(valid) - len(eligible)

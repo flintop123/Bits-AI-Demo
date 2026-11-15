@@ -1,6 +1,8 @@
 """Versioned machine-readable contracts for all ingestion-v2 tools."""
 
 from ingestion_v2.models import (
+    ExtractSemanticFactsInput,
+    ExtractSemanticFactsOutput,
     ExtractFileInput,
     ExtractFileOutput,
     InspectFileInput,
@@ -79,11 +81,24 @@ TOOL_CONTRACTS = {
         side_effect="write",
         allowed_collections=(
             TargetCollection.AGRICULTURE_DOCUMENTS,
+            TargetCollection.AGRICULTURE_FACTS,
             TargetCollection.CROP_STATISTICS,
             TargetCollection.MANDI_PRICES,
             TargetCollection.MANDI_LOCATIONS,
         ),
         dry_run_supported=True,
+    ),
+    "extract_semantic_pdf_facts": _contract(
+        "extract_semantic_pdf_facts",
+        "2.0.0",
+        (
+            "Use a local language model to propose explicit PDF facts, then "
+            "validate every proposal against an exact source quote."
+        ),
+        ExtractSemanticFactsInput,
+        ExtractSemanticFactsOutput,
+        side_effect="none",
+        allowed_collections=(TargetCollection.AGRICULTURE_FACTS,),
     ),
 }
 
