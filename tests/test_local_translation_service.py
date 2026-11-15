@@ -36,6 +36,33 @@ class LocalTranslationServiceTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, "English-Hindi"):
             service.translate("bonjour", "fr", "hi")
 
+    def test_translation_metadata_identifies_local_marian_model(self):
+        metadata = LocalTranslationService.translation_metadata("hi", "en")
+
+        self.assertEqual(metadata["model_family"], "MarianMT")
+        self.assertEqual(
+            metadata["model_name"], "Helsinki-NLP/opus-mt-hi-en"
+        )
+        self.assertEqual(metadata["execution"], "local_inference")
+        self.assertFalse(metadata["remote_api_used"])
+
+    def test_translate_with_metadata_returns_text_and_model_evidence(self):
+        service = LocalTranslationService()
+        service._loaded[service.MODELS[("en", "hi")]] = (
+            FakeTokenizer(),
+            FakeModel(),
+        )
+
+        result = service.translate_with_metadata(
+            "The organic corridor covers 13 districts.", "en", "hi"
+        )
+
+        self.assertEqual(result["text"], "जैविक कॉरिडोर 13 जिलों में है।")
+        self.assertEqual(
+            result["translation_evidence"]["model_name"],
+            "Helsinki-NLP/opus-mt-en-hi",
+        )
+
 
 if __name__ == "__main__":
     unittest.main()

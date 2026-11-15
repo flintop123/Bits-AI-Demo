@@ -8,6 +8,8 @@ class LocalTranslationError(RuntimeError):
 
 
 class LocalTranslationService:
+    PROVIDER = "huggingface_transformers"
+    MODEL_FAMILY = "MarianMT"
     MODELS = {
         ("en", "hi"): "Helsinki-NLP/opus-mt-en-hi",
         ("hi", "en"): "Helsinki-NLP/opus-mt-hi-en",
@@ -15,6 +17,63 @@ class LocalTranslationService:
 
     def __init__(self):
         self._loaded = {}
+
+    @classmethod
+    def translation_metadata(cls, source_language, target_language):
+        """Describe the local model path without loading model weights."""
+        source_language = str(source_language).lower()
+        target_language = str(target_language).lower()
+        if source_language == target_language:
+            return {
+                "provider": "identity",
+                "model_family": None,
+                "model_name": None,
+                "source_language": source_language,
+                "target_language": target_language,
+                "execution": "not_required",
+                "remote_api_used": False,
+            }
+        model_name = cls.MODELS.get((source_language, target_language))
+        if not model_name:
+            raise ValueError(
+                "Only English-Hindi local translation is supported"
+            )
+        return {
+            "provider": cls.PROVIDER,
+            "model_family": cls.MODEL_FAMILY,
+            "model_name": model_name,
+            "source_language": source_language,
+            "target_language": target_language,
+            "execution": "local_inference",
+            "remote_api_used": False,
+        }
+
+    def translate_with_metadata(
+        self, text, source_language, target_language
+    ):
+        """Translate text and return auditable model metadata."""
+        return {
+            "text": self.translate(text, source_language, target_language),
+            "translation_evidence": self.translation_metadata(
+                source_language, target_language
+            ),
+        }
+
+    def translate_many_with_metadata(
+        self, texts, source_language, target_language, batch_size=32
+    ):
+        """Translate a bounded batch with one shared model evidence block."""
+        return {
+            "texts": self.translate_many(
+                texts,
+                source_language,
+                target_language,
+                batch_size=batch_size,
+            ),
+            "translation_evidence": self.translation_metadata(
+                source_language, target_language
+            ),
+        }
 
     def translate(self, text, source_language, target_language):
         value = re.sub(r"\s+", " ", str(text or "")).strip()

@@ -57,6 +57,14 @@ class FakeNormalizer:
             "label": translations.get((value, language), value),
             "label_language": language,
             "method": "test_translation",
+            "translation_evidence": {
+                "model_family": "TestTranslationModel",
+                "model_name": "test/local-translator",
+                "source_language": self._language(value),
+                "target_language": language,
+                "validation_status": "test_validated",
+                "official_value_preserved": True,
+            },
         } for value in values]
 
 
@@ -74,12 +82,33 @@ class MandiCatalogLabelMongoTests(unittest.TestCase):
         self.assertEqual(second, {"observed": 1, "created": 0})
         document = self.database.collection.documents[("crop", "आलू")]
         self.assertEqual(document["labels"], {"en": "Potato", "hi": "आलू"})
+        self.assertEqual(document["label_policy_version"], 4)
+        self.assertEqual(
+            document["translation_evidence"]["en"]["model_name"],
+            "test/local-translator",
+        )
 
     def test_all_options_keep_official_value_and_both_labels(self):
         options = self.cache.options("crop", ["आलू"], language="all")
         self.assertEqual(options[0]["value"], "आलू")
         self.assertEqual(options[0]["labels"]["en"], "Potato")
         self.assertEqual(options[0]["labels"]["hi"], "आलू")
+        self.assertTrue(
+            options[0]["translation_evidence"]["en"][
+                "official_value_preserved"
+            ]
+        )
+
+    def test_single_language_option_exposes_selected_evidence(self):
+        option = self.cache.options(
+            "crop", ["आलू"], language="en"
+        )[0]
+
+        self.assertEqual(option["label"], "Potato")
+        self.assertEqual(
+            option["selected_translation_evidence"]["model_name"],
+            "test/local-translator",
+        )
 
 
 if __name__ == "__main__":

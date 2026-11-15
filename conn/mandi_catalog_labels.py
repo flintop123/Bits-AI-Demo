@@ -12,7 +12,7 @@ class MandiCatalogLabelMongo:
 
     IDENTITY_FIELDS = ("entity_type", "official_value")
     SUPPORTED_FIELDS = ("crop", "district", "market")
-    LABEL_POLICY_VERSION = 3
+    LABEL_POLICY_VERSION = 4
 
     def __init__(self, database, normalizer=None):
         self.collection = database["mandi_catalog_labels"]
@@ -80,6 +80,10 @@ class MandiCatalogLabelMongo:
                         "hi": hi["label_language"],
                     },
                     "methods": {"en": en["method"], "hi": hi["method"]},
+                    "translation_evidence": {
+                        "en": en.get("translation_evidence", {}),
+                        "hi": hi.get("translation_evidence", {}),
+                    },
                     "source_collection": "mandi_prices",
                     "label_policy_version": self.LABEL_POLICY_VERSION,
                     "generated_at": generated_at,
@@ -117,10 +121,14 @@ class MandiCatalogLabelMongo:
                     "en": self.normalizer._language(value),
                     "hi": self.normalizer._language(value),
                 }
+                translation_evidence = {"en": {}, "hi": {}}
             else:
                 labels = item.get("labels", {})
                 methods = item.get("methods", {})
                 label_languages = item.get("label_languages", {})
+                translation_evidence = item.get(
+                    "translation_evidence", {}
+                )
             option = {
                 "value": value,
                 "labels": {
@@ -131,12 +139,19 @@ class MandiCatalogLabelMongo:
                     "en": methods.get("en", "cache_miss"),
                     "hi": methods.get("hi", "cache_miss"),
                 },
+                "translation_evidence": {
+                    "en": translation_evidence.get("en", {}),
+                    "hi": translation_evidence.get("hi", {}),
+                },
             }
             if language != "all":
                 option.update({
                     "label": option["labels"][language],
                     "label_language": label_languages.get(language, language),
                     "method": option["methods"][language],
+                    "selected_translation_evidence": option[
+                        "translation_evidence"
+                    ][language],
                 })
             options.append(option)
         label_key = (

@@ -108,6 +108,23 @@ class MandiTermNormalizer:
             }
             if translated:
                 evidence[field]["translated_candidate"] = translated
+                source_language = self._language(value)
+                target_language = (
+                    "en" if source_language == "hi" else "hi"
+                )
+                validation_status = {
+                    "offline_translation": "accepted_exact_catalog_match",
+                    "offline_translation_alias": "accepted_catalog_alias",
+                    "unresolved": "rejected_not_in_live_catalog",
+                }.get(method, "not_applicable")
+                evidence[field]["translation_evidence"] = (
+                    self._translation_evidence(
+                        self.translator,
+                        source_language,
+                        target_language,
+                        validation_status,
+                    )
+                )
         return resolved, evidence
 
     def localized_options(self, values, field, language):
@@ -130,28 +147,59 @@ class MandiTermNormalizer:
             source_language = self._language(value)
             if source_language == language:
                 entries.append(self._option(
-                    value, value, language, "official_catalog_label"
+                    value,
+                    value,
+                    language,
+                    "official_catalog_label",
+                    self._non_model_evidence(
+                        source_language,
+                        language,
+                        "not_required",
+                    ),
                 ))
                 continue
             alias = self._group_label(value, groups, language)
             if alias:
                 entries.append(self._option(
-                    value, alias, language, "reviewed_bilingual_alias"
+                    value,
+                    alias,
+                    language,
+                    "reviewed_bilingual_alias",
+                    self._non_model_evidence(
+                        source_language,
+                        language,
+                        "accepted_reviewed_alias",
+                    ),
                 ))
                 continue
             if field == "market":
                 if source_language == "hi" and language == "en":
                     label = self._transliterate_market_name(value)
                     entries.append(self._option(
-                        value, label, "en", "devanagari_transliteration"
+                        value,
+                        label,
+                        "en",
+                        "devanagari_transliteration",
+                        self._non_model_evidence(
+                            source_language,
+                            language,
+                            "accepted_proper_name_transliteration",
+                        ),
                     ))
                 else:
                     # Place names must never be sent through an unconstrained
                     # semantic translation model. Retaining the official name
                     # is safer than inventing a different locality.
                     entries.append(self._option(
-                        value, value, source_language,
+                        value,
+                        value,
+                        source_language,
                         "official_place_name_translation_unavailable",
+                        self._non_model_evidence(
+                            source_language,
+                            language,
+                            "translation_unavailable",
+                        ),
                     ))
                 continue
             pending.append((value, source_language))
@@ -160,18 +208,31 @@ class MandiTermNormalizer:
             source_values = [
                 item[0] for item in pending if item[1] == source_language
             ]
-            translations = self._translate_catalog_values(
-                source_values, source_language, language
+            translations, translation_evidence = (
+                self._translate_catalog_values(
+                    source_values, source_language, language
+                )
             )
             for value, translated in zip(source_values, translations):
                 if translated:
                     entries.append(self._option(
-                        value, translated, language, "offline_translation"
+                        value,
+                        translated,
+                        language,
+                        "offline_translation",
+                        dict(translation_evidence),
                     ))
                 else:
+                    unavailable_evidence = dict(translation_evidence)
+                    unavailable_evidence["validation_status"] = (
+                        "translation_unavailable"
+                    )
                     entries.append(self._option(
-                        value, value, source_language,
+                        value,
+                        value,
+                        source_language,
                         "official_label_translation_unavailable",
+                        unavailable_evidence,
                     ))
 
         return sorted(
@@ -244,24 +305,39 @@ class MandiTermNormalizer:
         self, values, source_language, target_language
     ):
         if not values:
-            return []
+            return [], self._non_model_evidence(
+                source_language,
+                target_language,
+                "not_required",
+            )
         translator = self.translator
         if translator is None:
             translator = LocalTranslationService()
             self.translator = translator
+        translation_evidence = self._translation_evidence(
+            translator,
+            source_language,
+            target_language,
+            "display_label_generated_offline",
+        )
         try:
             if hasattr(translator, "translate_many"):
-                return translator.translate_many(
+                translated = translator.translate_many(
                     values, source_language, target_language
                 )
-            return [
-                translator.translate(
-                    value, source_language, target_language
-                )
-                for value in values
-            ]
+            else:
+                translated = [
+                    translator.translate(
+                        value, source_language, target_language
+                    )
+                    for value in values
+                ]
+            return translated, translation_evidence
         except (LocalTranslationError, OSError, ValueError):
-            return [None] * len(values)
+            translation_evidence["validation_status"] = (
+                "translation_failed"
+            )
+            return [None] * len(values), translation_evidence
 
     @classmethod
     def _group_label(cls, value, groups, language):
@@ -275,13 +351,72 @@ class MandiTermNormalizer:
         return None
 
     @staticmethod
-    def _option(value, label, language, method):
-        return {
+    def _option(
+        value, label, language, method, translation_evidence=None
+    ):
+        option = {
             "value": value,
             "label": MandiTermNormalizer._display_case(label, language),
             "label_language": language,
             "method": method,
         }
+        if translation_evidence is not None:
+            option["translation_evidence"] = translation_evidence
+        return option
+
+    @staticmethod
+    def _non_model_evidence(
+        source_language, target_language, validation_status
+    ):
+        return {
+            "provider": None,
+            "model_family": None,
+            "model_name": None,
+            "source_language": source_language,
+            "target_language": target_language,
+            "execution": "deterministic",
+            "remote_api_used": False,
+            "validation_status": validation_status,
+            "confidence": None,
+            "confidence_basis": "not_calibrated",
+            "official_value_preserved": True,
+        }
+
+    @classmethod
+    def _translation_evidence(
+        cls,
+        translator,
+        source_language,
+        target_language,
+        validation_status,
+    ):
+        metadata_method = getattr(
+            type(translator), "translation_metadata", None
+        )
+        if callable(metadata_method):
+            metadata = dict(translator.translation_metadata(
+                source_language, target_language
+            ))
+        else:
+            model_name = getattr(translator, "model_name", None)
+            if model_name is not None and not isinstance(model_name, str):
+                model_name = type(translator).__name__
+            metadata = {
+                "provider": "injected_translator",
+                "model_family": type(translator).__name__,
+                "model_name": model_name,
+                "source_language": source_language,
+                "target_language": target_language,
+                "execution": "local_or_test_double",
+                "remote_api_used": False,
+            }
+        metadata.update({
+            "validation_status": validation_status,
+            "confidence": None,
+            "confidence_basis": "not_calibrated",
+            "official_value_preserved": True,
+        })
+        return metadata
 
     @staticmethod
     def _display_case(value, language):

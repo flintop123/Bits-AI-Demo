@@ -5,6 +5,8 @@ from services.mandi_term_normalizer import MandiTermNormalizer
 
 
 class FakeTranslator:
+    model_name = "test/local-translator"
+
     def __init__(self, output):
         self.output = output
         self.calls = []
@@ -12,6 +14,18 @@ class FakeTranslator:
     def translate(self, text, source_language, target_language):
         self.calls.append((text, source_language, target_language))
         return self.output
+
+    @classmethod
+    def translation_metadata(cls, source_language, target_language):
+        return {
+            "provider": "test_provider",
+            "model_family": "TestTranslationModel",
+            "model_name": cls.model_name,
+            "source_language": source_language,
+            "target_language": target_language,
+            "execution": "local_inference",
+            "remote_api_used": False,
+        }
 
 
 class MandiTermNormalizerTests(unittest.TestCase):
@@ -133,6 +147,50 @@ class MandiTermNormalizerTests(unittest.TestCase):
         )
         self.assertEqual(
             {item["label"] for item in options}, {"Potato", "Onion"}
+        )
+
+    def test_model_generated_label_exposes_translation_evidence(self):
+        normalizer = MandiTermNormalizer(
+            translator=FakeTranslator("Horse gram")
+        )
+
+        option = normalizer.localized_options(
+            ["कुलथी"], "crop", "en"
+        )[0]
+
+        evidence = option["translation_evidence"]
+        self.assertEqual(evidence["model_name"], "test/local-translator")
+        self.assertEqual(
+            evidence["validation_status"],
+            "display_label_generated_offline",
+        )
+        self.assertTrue(evidence["official_value_preserved"])
+        self.assertIsNone(evidence["confidence"])
+        self.assertEqual(evidence["confidence_basis"], "not_calibrated")
+
+    def test_unmatched_model_translation_is_logged_as_rejected(self):
+        normalizer = MandiTermNormalizer(
+            translator=FakeTranslator("अन्य शब्द")
+        )
+
+        resolved, evidence = normalizer.resolve_filters(
+            {"crop": "unknown"},
+            {
+                "mandi_crops": ["आलू"],
+                "districts": [],
+                "markets": [],
+                "mandi_varieties": [],
+            },
+        )
+
+        self.assertEqual(resolved["crop"], "unknown")
+        translation = evidence["crop"]["translation_evidence"]
+        self.assertEqual(
+            translation["validation_status"],
+            "rejected_not_in_live_catalog",
+        )
+        self.assertEqual(
+            translation["model_name"], "test/local-translator"
         )
 
 
