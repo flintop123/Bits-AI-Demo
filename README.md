@@ -11,7 +11,7 @@ Repository: <https://github.com/flintop123/Bits-AI-Demo>
 - Public dashboard: <https://p20260108git.github.io/Bits-AI-Demo/>
 - Source repository: <https://github.com/flintop123/Bits-AI-Demo>
 - Phase II protocol evaluation: **40/40 cases passed**
-- Automated regression suite: **198 tests passed**
+- Automated regression suite: **222 tests passed**
 - Validated database snapshot: **11,912 records**
 - Evaluator-style rehearsal: **21/21 checks passed**
 
