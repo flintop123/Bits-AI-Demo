@@ -91,6 +91,20 @@ class AgenticIngestionPipeline:
                     "records_rejected": mapping.records_rejected,
                     "required_field_coverage": mapping.required_field_coverage,
                     "validation_rate": mapping.validation_rate,
+                    "reporting_frequency": next((
+                        item.data.get("reporting_frequency")
+                        for item in mapping.records if item.valid
+                    ), mapping_plan.reporting_frequency.value),
+                    "reporting_period_start": next((
+                        item.data.get("reporting_period_start")
+                        for item in mapping.records if item.valid
+                        and item.data.get("reporting_period_start")
+                    ), mapping_plan.reporting_period_start),
+                    "reporting_period_end": next((
+                        item.data.get("reporting_period_end")
+                        for item in mapping.records if item.valid
+                        and item.data.get("reporting_period_end")
+                    ), mapping_plan.reporting_period_end),
                 },
             )
 

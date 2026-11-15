@@ -364,6 +364,82 @@ class AgricultureQueryService:
         ]
         return list(self.mandi_prices.aggregate(pipeline))
 
+    def find_district_trends(self, filters, frequency, periods):
+        """Aggregate district price observations by a bounded calendar grain."""
+        if frequency not in {"daily", "weekly", "monthly"}:
+            raise ValueError("frequency must be daily, weekly or monthly")
+        if periods < 1 or periods > 60:
+            raise ValueError("periods must be between 1 and 60")
+
+        filters, _ = self.resolve_mandi_filters(filters)
+        query = {}
+        for field in ("district", "crop", "variety"):
+            if filters.get(field):
+                query[field] = self._exact_text(filters[field])
+        latest = self.mandi_prices.find_one(
+            query, {"_id": 0, "date": 1}, sort=[("date", -1)]
+        )
+        if latest is None:
+            return []
+        latest_date = date.fromisoformat(latest["date"])
+        if frequency == "daily":
+            cutoff = latest_date - timedelta(days=periods - 1)
+        elif frequency == "weekly":
+            current_week = latest_date - timedelta(days=latest_date.weekday())
+            cutoff = current_week - timedelta(weeks=periods - 1)
+        else:
+            month_index = latest_date.year * 12 + latest_date.month - periods
+            cutoff = date(month_index // 12, month_index % 12 + 1, 1)
+        query["date"] = {
+            "$gte": cutoff.isoformat(),
+            "$lte": latest_date.isoformat(),
+        }
+
+        truncation = {
+            "date": {"$dateFromString": {"dateString": "$date"}},
+            "unit": {"daily": "day", "weekly": "week", "monthly": "month"}[
+                frequency
+            ],
+            "timezone": "UTC",
+        }
+        if frequency == "weekly":
+            truncation["startOfWeek"] = "Monday"
+        pipeline = [
+            {"$match": query},
+            {"$set": {"period_date": {"$dateTrunc": truncation}}},
+            {"$group": {
+                "_id": {"district": "$district", "period": "$period_date"},
+                "observation_count": {"$sum": 1},
+                "average_modal_price": {"$avg": "$price"},
+                "minimum_price": {"$min": "$minimum_price"},
+                "maximum_price": {"$max": "$maximum_price"},
+                "markets": {"$addToSet": "$market"},
+                "crops": {"$addToSet": "$crop"},
+            }},
+            {"$sort": {"_id.period": 1, "_id.district": 1}},
+            {"$project": {
+                "_id": 0,
+                "district": "$_id.district",
+                "period_start": {
+                    "$dateToString": {
+                        "date": "$_id.period",
+                        "format": "%Y-%m-%d",
+                        "timezone": "UTC",
+                    }
+                },
+                "frequency": {"$literal": frequency},
+                "observation_count": 1,
+                "average_modal_price": {
+                    "$round": ["$average_modal_price", 2]
+                },
+                "minimum_price": 1,
+                "maximum_price": 1,
+                "market_count": {"$size": "$markets"},
+                "crop_count": {"$size": "$crops"},
+            }},
+        ]
+        return list(self.mandi_prices.aggregate(pipeline))
+
     def find_nearby_mandi_prices(
         self,
         latitude,

@@ -6,6 +6,8 @@
   <meta name="description" content="AgriAgent Group 17 Phase II evidence dashboard for Bihar agriculture intelligence.">
   <meta name="theme-color" content="#12372a">
   <title>AgriAgent · Bihar Agriculture Intelligence</title>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+        integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="anonymous">
   <link rel="stylesheet" href="./assets/dashboard.css">
 </head>
 <body>
@@ -72,17 +74,24 @@
           <p class="section-kicker" data-en="COLLECTION & COVERAGE" data-hi="संग्रह और कवरेज">COLLECTION &amp; COVERAGE</p>
           <h2 data-en="Ninety days of market activity, preserved with provenance." data-hi="नब्बे दिनों की मंडी गतिविधि, पूर्ण स्रोत-सूचना के साथ।">Ninety days of market activity,<br>preserved with provenance.</h2>
         </div>
-        <div class="window-control" role="group" aria-label="Chart window">
-          <button type="button" data-days="30">30D</button>
-          <button type="button" data-days="60">60D</button>
-          <button type="button" class="is-active" data-days="90">90D</button>
+        <div class="coverage-controls">
+          <div class="frequency-control" role="group" aria-label="Reporting frequency">
+            <button type="button" class="is-active" data-reporting-frequency="daily">Daily</button>
+            <button type="button" data-reporting-frequency="weekly">Weekly</button>
+            <button type="button" data-reporting-frequency="monthly">Monthly</button>
+          </div>
+          <div class="window-control" role="group" aria-label="Daily chart window">
+            <button type="button" data-days="30">30D</button>
+            <button type="button" data-days="60">60D</button>
+            <button type="button" class="is-active" data-days="90">90D</button>
+          </div>
         </div>
       </div>
 
       <div class="dashboard-grid">
         <article class="panel trend-panel">
           <div class="panel-header">
-            <div><span class="panel-label" data-en="DAILY INGESTION" data-hi="दैनिक संग्रह">DAILY INGESTION</span><h3 data-en="Official mandi observations" data-hi="आधिकारिक मंडी अवलोकन">Official mandi observations</h3></div>
+            <div><span id="reporting-frequency-label" class="panel-label">DAILY REPORT</span><h3 data-en="Official mandi observations" data-hi="आधिकारिक मंडी अवलोकन">Official mandi observations</h3></div>
             <div class="panel-stat"><strong id="window-total">—</strong><span data-en="records in view" data-hi="दिख रहे रिकॉर्ड">records in view</span></div>
           </div>
           <div id="ingestion-chart" class="chart" role="img" aria-label="Daily mandi records collected"></div>
@@ -115,9 +124,8 @@
       </div>
       <div class="map-layout">
         <article class="map-card">
-          <div id="market-map" class="market-map" role="img" aria-label="Verified Bihar mandi coordinate plot"></div>
-          <div id="map-tooltip" class="map-tooltip" hidden></div>
-          <div class="map-caption"><span data-en="Coordinate plot · longitude × latitude" data-hi="निर्देशांक प्लॉट · देशांतर × अक्षांश">Coordinate plot · longitude × latitude</span><span data-en="Not for navigation" data-hi="नेविगेशन हेतु नहीं">Not for navigation</span></div>
+          <div id="market-map" class="market-map" role="application" aria-label="OpenStreetMap view of verified Bihar mandi locations"></div>
+          <div class="map-caption"><span>OpenStreetMap · verified market-locality centroids</span><span data-en="Not for navigation" data-hi="नेविगेशन हेतु नहीं">Not for navigation</span></div>
         </article>
         <aside class="location-stats">
           <article><span data-en="Verified" data-hi="सत्यापित">Verified</span><strong id="verified-count">—</strong><small data-en="market localities" data-hi="मंडी स्थान">market localities</small></article>
@@ -126,6 +134,29 @@
           <div class="source-note"><span data-en="Coordinate source" data-hi="निर्देशांक स्रोत">Coordinate source</span><strong>OpenStreetMap Nominatim</strong><small>© OpenStreetMap contributors · ODbL 1.0</small></div>
         </aside>
       </div>
+    </section>
+
+    <section class="section district-section" id="district-trends">
+      <div class="section-heading compact">
+        <div>
+          <p class="section-kicker" data-en="DISTRICT TREND EXPLORER" data-hi="जिला प्रवृत्ति विश्लेषण">DISTRICT TREND EXPLORER</p>
+          <h2 data-en="One locality, three reporting windows." data-hi="एक स्थान, तीन रिपोर्टिंग अवधियां।">One locality,<br>three reporting windows.</h2>
+        </div>
+        <p class="section-summary" data-en="Compare committed price observations by district at daily, weekly or monthly grain. Every point is an aggregation of source records, not a forecast." data-hi="जिला स्तर पर दैनिक, साप्ताहिक या मासिक प्रतिबद्ध मूल्य अवलोकनों की तुलना करें। प्रत्येक बिंदु स्रोत रिकॉर्ड का एकत्रीकरण है, पूर्वानुमान नहीं।">Compare committed price observations by district at daily, weekly or monthly grain. Every point is an aggregation of source records, not a forecast.</p>
+      </div>
+      <div class="district-toolbar">
+        <label><span data-en="District" data-hi="जिला">District</span><select id="district-select"></select></label>
+        <div class="frequency-control" role="group" aria-label="District reporting frequency">
+          <button type="button" class="is-active" data-district-frequency="daily">Daily</button>
+          <button type="button" data-district-frequency="weekly">Weekly</button>
+          <button type="button" data-district-frequency="monthly">Monthly</button>
+        </div>
+      </div>
+      <article class="panel district-trend-panel">
+        <div class="panel-header"><div><span id="district-frequency-label" class="panel-label">DAILY DISTRICT VIEW</span><h3 id="district-trend-title">—</h3></div><div class="panel-stat"><strong id="district-observations">—</strong><span data-en="source observations" data-hi="स्रोत अवलोकन">source observations</span></div></div>
+        <div id="district-trend-chart" class="chart" role="img" aria-label="District mandi price trend"></div>
+        <p class="district-method" id="district-method"></p>
+      </article>
     </section>
 
     <section class="section intelligence-section" id="intelligence">
@@ -256,6 +287,8 @@
     <span>Serve the <code>docs</code> directory through a local web server or open the deployed GitHub Pages URL.</span>
   </div>
 
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+          integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin="anonymous" defer></script>
   <script src="./assets/dashboard.js" defer></script>
 </body>
 </html>

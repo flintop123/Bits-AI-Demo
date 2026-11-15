@@ -41,6 +41,17 @@ class GitHubPagesDashboardTests(unittest.TestCase):
         self.assertIn("Hosted evidence snapshot", self.javascript)
         self.assertIn("verified_examples", self.javascript)
 
+    def test_dashboard_uses_openstreetmap_and_frequency_views(self):
+        self.assertIn("leaflet@1.9.4", self.index)
+        self.assertIn("tile.openstreetmap.org", self.javascript)
+        self.assertIn('id="district-trends"', self.index)
+        self.assertIn("data-reporting-frequency=\"weekly\"", self.index)
+        self.assertIn("data-district-frequency=\"monthly\"", self.index)
+        self.assertIn("reporting_series", self.snapshot)
+        self.assertIn("district_trends", self.snapshot)
+        self.assertIn("weekly", self.snapshot["reporting_series"])
+        self.assertIn("monthly", self.snapshot["district_trends"]["frequencies"])
+
     def test_no_known_utf8_mojibake_patterns(self):
         combined = self.index + self.css + self.javascript + json.dumps(self.snapshot, ensure_ascii=False)
         self.assertNotIn("à¤", combined)

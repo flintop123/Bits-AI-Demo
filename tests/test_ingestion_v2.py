@@ -23,6 +23,7 @@ from ingestion_v2.models import (
     MappingPlan,
     MappingRequest,
     PersistInput,
+    ReportingFrequency,
     SeriesColumn,
     SeriesMapping,
     SourceModality,
@@ -343,6 +344,12 @@ class MappingTests(unittest.TestCase):
         )
         self.assertEqual(record.data["extraction_run_id"], "run-test")
         self.assertTrue(record.data["source_record_id"])
+        self.assertEqual(record.data["reporting_frequency"], "daily")
+        self.assertEqual(record.data["reporting_period_start"], "2026-10-17")
+        self.assertEqual(
+            record.field_provenance["reporting_frequency"].mapping_method,
+            "canonical_date_schema_safeguard",
+        )
 
     def test_wide_excel_series_is_unpivoted_to_period_records(self):
         with TemporaryDirectory() as directory:
@@ -398,6 +405,40 @@ class MappingTests(unittest.TestCase):
         self.assertEqual(
             record.field_provenance["production"].locator.cell_reference, "D3"
         )
+        self.assertEqual(record.data["reporting_frequency"], "annual")
+        self.assertEqual(record.data["reporting_period_start"], "2024-04-01")
+        self.assertEqual(record.data["reporting_period_end"], "2025-03-31")
+
+    def test_reviewed_monthly_plan_persists_explicit_reporting_window(self):
+        plan = mandi_plan().model_copy(update={
+            "reporting_frequency": ReportingFrequency.MONTHLY,
+            "reporting_period_start": "2026-10-01",
+            "reporting_period_end": "2026-10-31",
+        })
+        with TemporaryDirectory() as directory:
+            path = Path(directory) / "monthly-prices.json"
+            path.write_text(json.dumps([{
+                "district": "Arwal", "market": "Arwal",
+                "date": "2026-10-17", "crop": "Potato",
+                "variety": "Local", "price": 1200,
+                "minimum_price": 1100, "maximum_price": 1250,
+                "unit": "quintal",
+            }]), encoding="utf-8")
+            inspection = inspect_input_file(InspectFileInput(file_path=str(path)))
+            extraction = extract_supported_file(ExtractFileInput(file_path=str(path)))
+            output = apply_mapping_plan(
+                MappingRequest(
+                    run_id="run-monthly",
+                    inspection=inspection,
+                    extraction=extraction,
+                ),
+                plan,
+            )
+        self.assertEqual(output.records_valid, 1)
+        record = output.records[0].data
+        self.assertEqual(record["reporting_frequency"], "monthly")
+        self.assertEqual(record["reporting_period_start"], "2026-10-01")
+        self.assertEqual(record["reporting_period_end"], "2026-10-31")
 
     def test_missing_required_fields_are_rejected_not_silently_inserted(self):
         with TemporaryDirectory() as directory:
@@ -521,6 +562,13 @@ class PersistenceAndPipelineTests(unittest.TestCase):
             files = {item.name for item in run_dir.iterdir()}
         self.assertEqual(run.status.value, "completed")
         self.assertEqual(run.metrics.valid_records, 1)
+        mapping_event = next(
+            item for item in run.events
+            if item.stage == "mapping_validation"
+        )
+        self.assertEqual(
+            mapping_event.metrics["reporting_frequency"], "daily"
+        )
         self.assertTrue(
             {"run.json", "events.jsonl", "extraction.json", "mapping.json", "persistence.json"}
             <= files

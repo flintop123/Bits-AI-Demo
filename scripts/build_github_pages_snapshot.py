@@ -3,11 +3,79 @@
 from __future__ import annotations
 
 import argparse
+from collections import Counter, defaultdict
+from datetime import date, timedelta
 import json
 from pathlib import Path
 
 
 DEFAULT_ROOT = Path(__file__).resolve().parents[1]
+
+
+def period_start(value: str, frequency: str) -> str:
+    observed = date.fromisoformat(value)
+    if frequency == "weekly":
+        observed -= timedelta(days=observed.weekday())
+    elif frequency == "monthly":
+        observed = observed.replace(day=1)
+    return observed.isoformat()
+
+
+def aggregate_record_counts(records: list[dict], frequency: str) -> list[dict]:
+    grouped = defaultdict(int)
+    for item in records:
+        grouped[period_start(item["date"], frequency)] += int(item["records"])
+    return [
+        {"period_start": key, "records": grouped[key], "frequency": frequency}
+        for key in sorted(grouped)
+    ]
+
+
+def load_jsonl(path: Path) -> list[dict]:
+    if not path.exists():
+        return []
+    with path.open(encoding="utf-8") as handle:
+        return [json.loads(line) for line in handle if line.strip()]
+
+
+def district_trend_snapshot(records: list[dict]) -> dict:
+    usable = [
+        item for item in records
+        if item.get("district") and item.get("date")
+        and isinstance(item.get("price"), (int, float))
+    ]
+    crop = "आलू" if any(item.get("crop") == "आलू" for item in usable) else None
+    if crop:
+        usable = [item for item in usable if item.get("crop") == crop]
+    districts = [
+        value for value, _count in Counter(
+            item["district"] for item in usable
+        ).most_common(6)
+    ]
+    usable = [item for item in usable if item["district"] in districts]
+    frequencies = {}
+    for frequency in ("daily", "weekly", "monthly"):
+        grouped = defaultdict(list)
+        for item in usable:
+            key = (item["district"], period_start(item["date"], frequency))
+            grouped[key].append(float(item["price"]))
+        frequencies[frequency] = [
+            {
+                "district": district,
+                "period_start": period,
+                "average_modal_price": round(sum(values) / len(values), 2),
+                "observation_count": len(values),
+                "frequency": frequency,
+            }
+            for (district, period), values in sorted(grouped.items())
+        ]
+    return {
+        "crop": crop,
+        "districts": districts,
+        "frequencies": frequencies,
+        "source": "db/dump/mandi_prices.jsonl",
+        "method": "Calendar aggregation of committed observations",
+    }
 
 
 def main() -> None:
@@ -34,6 +102,15 @@ def main() -> None:
         for event in ingestion["events"]
         if event.get("event") == "tool_result" and event.get("status") == "success"
     ]
+    reporting_series = {
+        "daily": [
+            {"period_start": item["date"], "records": item["records"], "frequency": "daily"}
+            for item in daily_records
+        ],
+        "weekly": aggregate_record_counts(daily_records, "weekly"),
+        "monthly": aggregate_record_counts(daily_records, "monthly"),
+    }
+    mandi_dump = load_jsonl(root / "db" / "dump" / "mandi_prices.jsonl")
     locations = [
         {
             "market_code": item["market_code"],
@@ -67,6 +144,8 @@ def main() -> None:
         "totals": dashboard_observed["summary"],
         "quality": dashboard_observed["quality"],
         "daily_records": daily_records,
+        "reporting_series": reporting_series,
+        "district_trends": district_trend_snapshot(mandi_dump),
         "locations": locations,
         "geospatial": {
             "verified": geospatial["verified"],

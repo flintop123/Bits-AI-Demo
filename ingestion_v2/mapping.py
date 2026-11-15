@@ -21,6 +21,7 @@ from ingestion_v2.models import (
     SeriesColumn,
     SeriesMapping,
     SourceModality,
+    ReportingFrequency,
     TargetCollection,
 )
 
@@ -422,6 +423,9 @@ class SchemaMappingAgent:
                 "tables use series_mappings to map each period column. Set data_start_row "
                 "to the first actual data row. Select a structured collection only when "
                 "the extracted source fields contain evidence for its required schema. "
+                "Classify the source reporting_frequency as daily, weekly, monthly, "
+                "annual, event or unknown. Supply reporting period start and end dates "
+                "when the source explicitly states a bounded reporting window. "
                 "Explain uncertainty."
             ),
             "allowed_collections": [item.value for item in request.allowed_collections],
@@ -538,7 +542,38 @@ def _base_data(record, plan):
     return data, provenance
 
 
-def _augment_record(data, provenance, request, record):
+def _temporal_metadata(data, provenance, plan, record):
+    frequency = plan.reporting_frequency
+    period_start = plan.reporting_period_start
+    period_end = plan.reporting_period_end
+    method = "model_proposed_reporting_period"
+
+    if frequency == ReportingFrequency.UNKNOWN and data.get("date"):
+        frequency = ReportingFrequency.DAILY
+        period_start = period_end = data["date"]
+        method = "canonical_date_schema_safeguard"
+    elif frequency == ReportingFrequency.UNKNOWN and data.get("year"):
+        frequency = ReportingFrequency.ANNUAL
+        start_year = int(data["year"][:4])
+        period_start = f"{start_year:04d}-04-01"
+        period_end = f"{start_year + 1:04d}-03-31"
+        method = "canonical_year_schema_safeguard"
+
+    data["reporting_frequency"] = frequency.value
+    if period_start and period_end:
+        data["reporting_period_start"] = period_start
+        data["reporting_period_end"] = period_end
+    provenance["reporting_frequency"] = FieldProvenance(
+        locator=record.record_locator,
+        raw_field=None,
+        raw_value=frequency.value,
+        transformation="temporal_classification",
+        mapping_method=method,
+        confidence=plan.confidence,
+    )
+
+
+def _augment_record(data, provenance, request, record, plan):
     locator = record.record_locator
     data.setdefault("source_file", request.inspection.source_file)
     data.setdefault("source_url", locator.source_url or PathLike.file_uri(
@@ -561,6 +596,7 @@ def _augment_record(data, provenance, request, record):
         data["content_hash"] = hashlib.sha256(identity.encode("utf-8")).hexdigest()
     if data.get("year") == "2024-25":
         data.setdefault("is_advance_estimate", True)
+    _temporal_metadata(data, provenance, plan, record)
     data["field_provenance"] = {
         key: item.model_dump(mode="json") for key, item in provenance.items()
     }
@@ -657,7 +693,7 @@ def apply_mapping_plan(request: MappingRequest, plan: MappingPlan):
                     "source_record_id",
                     hashlib.sha256(identity.encode("utf-8")).hexdigest(),
                 )
-            _augment_record(data, provenance, request, record)
+            _augment_record(data, provenance, request, record, plan)
             errors = []
             try:
                 data = _canonicalize(plan.target_collection, data)

@@ -6,7 +6,7 @@ from datetime import datetime, timezone
 from enum import Enum
 from typing import Any, Literal
 
-from pydantic import BaseModel, ConfigDict, Field, field_validator
+from pydantic import BaseModel, ConfigDict, Field, field_validator, model_validator
 
 
 def utc_now():
@@ -51,6 +51,15 @@ class StageStatus(str, Enum):
 class WriteMode(str, Enum):
     DRY_RUN = "dry_run"
     WRITE = "write"
+
+
+class ReportingFrequency(str, Enum):
+    DAILY = "daily"
+    WEEKLY = "weekly"
+    MONTHLY = "monthly"
+    ANNUAL = "annual"
+    EVENT = "event"
+    UNKNOWN = "unknown"
 
 
 class SourceLocator(StrictModel):
@@ -169,9 +178,29 @@ class MappingPlan(StrictModel):
     field_mappings: list[FieldMapping]
     series_mappings: list[SeriesMapping] = Field(default_factory=list)
     static_values: dict[str, Any] = Field(default_factory=dict)
+    reporting_frequency: ReportingFrequency = ReportingFrequency.UNKNOWN
+    reporting_period_start: str | None = Field(
+        default=None, pattern=r"^\d{4}-\d{2}-\d{2}$"
+    )
+    reporting_period_end: str | None = Field(
+        default=None, pattern=r"^\d{4}-\d{2}-\d{2}$"
+    )
     identity_fields: list[str]
     confidence: float = Field(ge=0, le=1)
     explanation: str
+
+    @model_validator(mode="after")
+    def validate_reporting_period(self):
+        if bool(self.reporting_period_start) != bool(self.reporting_period_end):
+            raise ValueError(
+                "reporting_period_start and reporting_period_end must be supplied together"
+            )
+        if (
+            self.reporting_period_start
+            and self.reporting_period_start > self.reporting_period_end
+        ):
+            raise ValueError("reporting period start must not be after its end")
+        return self
 
 
 class MappingRequest(StrictModel):
