@@ -23,6 +23,13 @@ from ingestion_v2.models import (
 )
 
 
+class _SemanticFactEnvelope(BaseModel):
+    """Require a facts list without discarding siblings on candidate failure."""
+
+    model_config = ConfigDict(extra="forbid")
+    facts: list[Any] = Field(strict=True)
+
+
 class CanonicalAgricultureFact(BaseModel):
     """Validated structured fact with immutable source evidence."""
 
@@ -285,15 +292,35 @@ class SemanticDocumentFactAgent:
                 "extraction agent. Output only the requested schema.\n"
                 + json.dumps(prompt, ensure_ascii=False, default=str)
             )
-            proposal = SemanticFactBatchProposal.model_validate(proposal)
+            if isinstance(proposal, SemanticFactBatchProposal):
+                proposal = proposal.model_dump()
+            envelope = _SemanticFactEnvelope.model_validate(proposal)
             candidates.extend(
-                (candidate, source_by_index) for candidate in proposal.facts[:8]
+                (candidate, source_by_index) for candidate in envelope.facts[:8]
             )
 
         mapped = []
         seen = set()
         duplicate_count = 0
-        for candidate, source_by_index in candidates:
+        for raw_candidate, source_by_index in candidates:
+            try:
+                candidate = SemanticFactCandidate.model_validate(raw_candidate)
+            except ValidationError as exc:
+                # Do not retain or echo arbitrary model values in rejected records.
+                error_types = sorted({error["type"] for error in exc.errors()})
+                mapped.append(MappedRecord(
+                    target_collection=TargetCollection.AGRICULTURE_FACTS,
+                    data={},
+                    field_provenance={},
+                    mapping_confidence=0.0,
+                    valid=False,
+                    validation_errors=[
+                        "Invalid fact structure: "
+                        + str(exc.error_count()) + " error(s) ("
+                        + ", ".join(error_types) + ")"
+                    ],
+                ))
+                continue
             source_record = source_by_index.get(candidate.source_record_index)
             errors = []
             data = {}
