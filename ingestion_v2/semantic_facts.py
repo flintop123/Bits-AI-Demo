@@ -243,10 +243,16 @@ class SemanticDocumentFactAgent:
         ]
         selected = available[:request.max_chunks]
         llm = self._model()
-        structured = llm.with_structured_output(SemanticFactBatchProposal)
         candidates = []
         for start in range(0, len(selected), request.batch_size):
             batch = selected[start:start + request.batch_size]
+            source_by_index = {record.record_index: record for record in batch}
+            # Constrain generation, but retain invalid proposals for the audit below.
+            schema = SemanticFactBatchProposal.model_json_schema()
+            schema["$defs"]["SemanticFactCandidate"]["properties"][
+                "source_record_index"
+            ]["enum"] = sorted(source_by_index)
+            structured = llm.with_structured_output(schema)
             prompt = {
                 "task": (
                     "Extract only explicit numeric agricultural facts from the supplied "
@@ -280,18 +286,14 @@ class SemanticDocumentFactAgent:
                 + json.dumps(prompt, ensure_ascii=False, default=str)
             )
             proposal = SemanticFactBatchProposal.model_validate(proposal)
-            candidates.extend(proposal.facts[:8])
+            candidates.extend(
+                (candidate, source_by_index) for candidate in proposal.facts[:8]
+            )
 
-        source_by_index = {record.record_index: record for record in selected}
         mapped = []
         seen = set()
         duplicate_count = 0
-        for candidate in candidates:
-            signature = _signature(candidate, request.inspection.source_hash)
-            if signature in seen:
-                duplicate_count += 1
-                continue
-            seen.add(signature)
+        for candidate, source_by_index in candidates:
             source_record = source_by_index.get(candidate.source_record_index)
             errors = []
             data = {}
@@ -359,6 +361,13 @@ class SemanticDocumentFactAgent:
                         ).model_dump(mode="json")
                     except (ValidationError, ValueError, TypeError) as exc:
                         errors.append(str(exc))
+            # A rejected proposal must not hide a later grounded duplicate.
+            if not errors:
+                signature = _signature(candidate, request.inspection.source_hash)
+                if signature in seen:
+                    duplicate_count += 1
+                    continue
+                seen.add(signature)
             mapped.append(MappedRecord(
                 target_collection=TargetCollection.AGRICULTURE_FACTS,
                 data=data,

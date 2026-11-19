@@ -308,7 +308,7 @@ class SemanticDocumentFactTests(unittest.TestCase):
         self.assertEqual(database.records, [])
 
     def test_overlapping_chunk_fact_is_deduplicated(self):
-        quote = "भारत वैश्विक आपूर्ति में 90 प्रतिशत की हिस्सेदारी रखता है।"
+        quote = "मखाना रिपोर्ट। भारत वैश्विक आपूर्ति में 90 प्रतिशत की हिस्सेदारी रखता है।"
         proposal = SemanticFactBatchProposal(facts=[
             candidate(source_record_index=0),
             candidate(source_record_index=1),
