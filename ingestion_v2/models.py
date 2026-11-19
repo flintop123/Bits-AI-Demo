@@ -278,6 +278,34 @@ class PersistOutput(StrictModel):
     document_ids: list[str] = Field(default_factory=list)
 
 
+class BuildEvidenceReportInput(StrictModel):
+    run_directory: str
+    verify_mongo: bool = False
+    max_records: int = Field(default=100, ge=1, le=1000)
+
+
+class BuildEvidenceReportOutput(StrictModel):
+    run_id: str
+    json_path: str
+    html_path: str
+    mongo_status: str
+    records_in_report: int = Field(ge=0)
+
+
+class CompareEvidenceRunsInput(StrictModel):
+    before_run_directory: str
+    after_run_directory: str
+    output_directory: str
+
+
+class CompareEvidenceRunsOutput(StrictModel):
+    before_run_id: str
+    after_run_id: str
+    json_path: str
+    html_path: str
+    conclusion: str
+
+
 class RunEvent(StrictModel):
     sequence: int = Field(ge=1)
     timestamp: str = Field(default_factory=utc_now)

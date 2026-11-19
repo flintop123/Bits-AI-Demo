@@ -1,3 +1,4 @@
+import json
 import unittest
 from contextlib import redirect_stderr
 from io import StringIO
@@ -328,7 +329,7 @@ class SemanticDocumentFactTests(unittest.TestCase):
                 FakeStructuredModel([])
             ).extract(request)
 
-    def test_pipeline_records_semantic_fact_artifacts_and_metrics(self):
+    def test_pipeline_records_semantic_facts_and_mapping_evidence_together(self):
         request = fact_request()
         proposal = SemanticFactBatchProposal(facts=[candidate()])
         fact_agent = SemanticDocumentFactAgent(FakeStructuredModel([proposal]))
@@ -375,17 +376,19 @@ class SemanticDocumentFactTests(unittest.TestCase):
                     plan=plan,
                     semantic_facts=True,
                 )
-            files = {
-                path.name
-                for path in (root / "artifacts" / run.run_id).iterdir()
-            }
+            run_dir = root / "artifacts" / run.run_id
+            files = {path.name for path in run_dir.iterdir()}
+            evidence = json.loads((run_dir / "evidence_report.json").read_text(encoding="utf-8"))
+            self.assertEqual(evidence["run"]["run_id"], run.run_id)
+            self.assertFalse(evidence["mongo_verification"].get("attempted", False))
 
         self.assertEqual(run.status.value, "completed")
         self.assertEqual(run.metrics.semantic_chunks_examined, 1)
         self.assertEqual(run.metrics.semantic_facts_valid, 1)
         self.assertEqual(run.metrics.semantic_facts_rejected, 0)
         self.assertTrue({
-            "semantic_facts.json", "semantic_fact_persistence.json"
+            "semantic_facts.json", "semantic_fact_persistence.json",
+            "evidence_report.json", "evidence_report.html"
         } <= files)
 
 

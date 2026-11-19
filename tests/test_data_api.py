@@ -1,6 +1,13 @@
 import unittest
 
-from data_api import create_app, parse_days, parse_float, parse_limit
+from data_api import (
+    create_app,
+    parse_days,
+    parse_float,
+    parse_limit,
+    parse_periods,
+    parse_reporting_frequency,
+)
 
 
 class FakeQueryService:
@@ -8,6 +15,7 @@ class FakeQueryService:
         self.mandi_call = None
         self.statistics_call = None
         self.trends_call = None
+        self.district_trends_call = None
         self.nearby_call = None
         self.dashboard_call = None
         self.intelligence_call = None
@@ -34,6 +42,15 @@ class FakeQueryService:
     def find_mandi_trends(self, filters, days):
         self.trends_call = (filters, days)
         return [{"date": "2026-10-18", "average_modal_price": 1200.0}]
+
+    def find_district_trends(self, filters, frequency, periods):
+        self.district_trends_call = (filters, frequency, periods)
+        return [{
+            "district": "Arwal",
+            "period_start": "2026-10-12",
+            "frequency": frequency,
+            "average_modal_price": 1200.0,
+        }]
 
     def find_nearby_mandi_prices(
         self, latitude, longitude, radius_km, filters, days, limit
@@ -159,6 +176,25 @@ class DataApiTests(unittest.TestCase):
         )
         self.assertEqual(response.json["count"], 1)
 
+    def test_district_trend_endpoint_passes_frequency_and_period_count(self):
+        response = self.client.get(
+            "/api/v1/mandi-prices/district-trends?district=Arwal"
+            "&crop=Potato&frequency=weekly&periods=8"
+        )
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(
+            self.service.district_trends_call,
+            ({"district": "Arwal", "crop": "Potato"}, "weekly", 8),
+        )
+        self.assertEqual(response.json["frequency"], "weekly")
+
+    def test_district_trend_endpoint_rejects_unknown_frequency(self):
+        response = self.client.get(
+            "/api/v1/mandi-prices/district-trends?frequency=quarterly"
+        )
+        self.assertEqual(response.status_code, 400)
+        self.assertIn("daily, weekly or monthly", response.json["error"])
+
     def test_invalid_limit_returns_400(self):
         response = self.client.get("/api/v1/mandi-prices?limit=500")
         self.assertEqual(response.status_code, 400)
@@ -264,6 +300,12 @@ class DataApiTests(unittest.TestCase):
     def test_parse_float_enforces_coordinate_bounds(self):
         with self.assertRaisesRegex(ValueError, "between -90 and 90"):
             parse_float("91", "latitude", -90, 90)
+
+    def test_parse_periods_and_frequency_are_bounded(self):
+        self.assertEqual(parse_periods("12"), 12)
+        self.assertEqual(parse_reporting_frequency("MONTHLY"), "monthly")
+        with self.assertRaisesRegex(ValueError, "between 1 and 60"):
+            parse_periods("61")
 
 
 if __name__ == "__main__":

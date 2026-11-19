@@ -4,6 +4,10 @@ import argparse
 import json
 from pathlib import Path
 
+from ingestion_v2.evidence_report import (
+    compare_run_evidence,
+    write_run_evidence_report,
+)
 from ingestion_v2.models import MappingPlan
 from ingestion_v2.pipeline import AgenticIngestionPipeline
 from ingestion_v2.tool_registry import tool_contracts_document
@@ -51,18 +55,73 @@ def parse_args(argv=None):
         action="store_true",
         help="Print every ingestion-v2 tool input/output schema",
     )
+    parser.add_argument(
+        "--report-run",
+        help="Generate an HTML/JSON evidence report for an existing run ID or directory",
+    )
+    parser.add_argument(
+        "--compare-runs",
+        nargs=2,
+        metavar=("BEFORE_RUN", "AFTER_RUN"),
+        help="Generate a quantitative before/after comparison for two run IDs or directories",
+    )
+    parser.add_argument(
+        "--verify-mongo",
+        action="store_true",
+        help="Read back records tagged with the run ID from the allowlisted Mongo collection",
+    )
     args = parser.parse_args(argv)
-    if not args.print_tool_schemas and not args.input:
-        parser.error("--input is required unless --print-tool-schemas is used")
+    modes = sum(bool(value) for value in (
+        args.input,
+        args.print_tool_schemas,
+        args.report_run,
+        args.compare_runs,
+    ))
+    if modes != 1:
+        parser.error(
+            "choose exactly one of --input, --print-tool-schemas, "
+            "--report-run or --compare-runs"
+        )
     if not 1 <= args.max_fact_chunks <= 200:
         parser.error("--max-fact-chunks must be between 1 and 200")
     return args
+
+
+def _run_directory(value):
+    supplied = Path(value)
+    return supplied if supplied.is_dir() else Path("artifacts/ingestion_v2") / value
 
 
 def main(argv=None):
     args = parse_args(argv)
     if args.print_tool_schemas:
         print(json.dumps(tool_contracts_document(), indent=2, ensure_ascii=False))
+        return 0
+    if args.report_run:
+        result = write_run_evidence_report(
+            _run_directory(args.report_run),
+            verify_mongo=args.verify_mongo,
+        )
+        print(
+            f"Evidence JSON: {result['json']}\n"
+            f"Evidence HTML: {result['html']}\n"
+            f"Mongo verification: "
+            f"{result['report']['mongo_verification']['status']}"
+        )
+        return 0
+    if args.compare_runs:
+        before = _run_directory(args.compare_runs[0])
+        after = _run_directory(args.compare_runs[1])
+        output = (
+            Path("artifacts/ingestion_v2/comparisons")
+            / f"{before.name}_to_{after.name}"
+        )
+        result = compare_run_evidence(before, after, output)
+        print(
+            f"Comparison JSON: {result['json']}\n"
+            f"Comparison HTML: {result['html']}\n"
+            f"Result: {result['comparison']['conclusion']}"
+        )
         return 0
     plan = None
     if args.plan:
@@ -96,7 +155,8 @@ def main(argv=None):
         f"{run.metrics.semantic_fact_duplicates_removed}\n"
         f"Semantic fact review: "
         f"{run.metrics.semantic_facts_review_required}\n"
-        f"Evidence: artifacts/ingestion_v2/{run.run_id}/run.json"
+        f"Evidence: artifacts/ingestion_v2/{run.run_id}/run.json\n"
+        f"Visual report: artifacts/ingestion_v2/{run.run_id}/evidence_report.html"
     )
     return 0
 

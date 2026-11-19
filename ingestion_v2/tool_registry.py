@@ -3,6 +3,10 @@
 from ingestion_v2.models import (
     ExtractSemanticFactsInput,
     ExtractSemanticFactsOutput,
+    BuildEvidenceReportInput,
+    BuildEvidenceReportOutput,
+    CompareEvidenceRunsInput,
+    CompareEvidenceRunsOutput,
     ExtractFileInput,
     ExtractFileOutput,
     InspectFileInput,
@@ -99,6 +103,22 @@ TOOL_CONTRACTS = {
         ExtractSemanticFactsOutput,
         side_effect="none",
         allowed_collections=(TargetCollection.AGRICULTURE_FACTS,),
+    ),
+    "build_ingestion_evidence_report": _contract(
+        "build_ingestion_evidence_report",
+        "2.0.0",
+        "Generate standalone JSON and HTML source-to-Mongo evidence for one run.",
+        BuildEvidenceReportInput,
+        BuildEvidenceReportOutput,
+        side_effect="write",
+    ),
+    "compare_ingestion_runs": _contract(
+        "compare_ingestion_runs",
+        "2.0.0",
+        "Generate quantitative before/after evidence for two ingestion runs.",
+        CompareEvidenceRunsInput,
+        CompareEvidenceRunsOutput,
+        side_effect="write",
     ),
 }
 

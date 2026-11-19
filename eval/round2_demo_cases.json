@@ -1,0 +1,306 @@
+[
+  {
+    "id": "Q01",
+    "category": "spatial",
+    "question": "For Arwal market in Arwal district, what was the potato modal price on 17 October 2026?",
+    "collection": "mandi_prices",
+    "filters": {
+      "district": "अरवल",
+      "market_code": 1635,
+      "crop": "आलू",
+      "source_type": "government_mandi_api",
+      "date": "2026-10-17"
+    },
+    "fields": [
+      "district",
+      "market",
+      "date",
+      "price",
+      "unit",
+      "variety"
+    ],
+    "expected": [
+      {
+        "district": "अरवल",
+        "market": "अरवल",
+        "date": "2026-10-17",
+        "price": 1200,
+        "unit": "quintal",
+        "variety": "Local"
+      }
+    ]
+  },
+  {
+    "id": "Q02",
+    "category": "spatial",
+    "question": "Which verified official markets are within 1 km of 25.24324° N, 84.662895° E? Is the point a facility or locality centroid?",
+    "collection": "mandi_locations",
+    "filters": {
+      "verification_status": "verified"
+    },
+    "fields": [
+      "market_code",
+      "market_name",
+      "location_precision",
+      "coordinate_source"
+    ],
+    "expected": [
+      {
+        "market_code": 1635,
+        "market_name": "अरवल",
+        "location_precision": "market_locality_centroid",
+        "coordinate_source": "OpenStreetMap Nominatim"
+      }
+    ],
+    "near": {
+      "longitude": 84.662895,
+      "latitude": 25.24324,
+      "radius_km": 1
+    }
+  },
+  {
+    "id": "Q03",
+    "category": "temporal",
+    "question": "Show the Arwal potato observations from 15 through 17 October 2026, in date order, with variety and modal price.",
+    "collection": "mandi_prices",
+    "filters": {
+      "district": "अरवल",
+      "market_code": 1635,
+      "crop": "आलू",
+      "source_type": "government_mandi_api",
+      "date": {
+        "$gte": "2026-10-15",
+        "$lte": "2026-10-17"
+      }
+    },
+    "fields": [
+      "date",
+      "variety",
+      "price",
+      "unit"
+    ],
+    "expected": [
+      {
+        "date": "2026-10-15",
+        "variety": "Local",
+        "price": 1100,
+        "unit": "quintal"
+      },
+      {
+        "date": "2026-10-16",
+        "variety": "Desi",
+        "price": 1250,
+        "unit": "quintal"
+      },
+      {
+        "date": "2026-10-17",
+        "variety": "Local",
+        "price": 1200,
+        "unit": "quintal"
+      }
+    ]
+  },
+  {
+    "id": "Q04",
+    "category": "temporal",
+    "question": "What are the stored Kharif rice production values for 1966–67, 1967–68 and 1968–69, with units?",
+    "collection": "crop_statistics",
+    "filters": {
+      "crop": "Rice",
+      "season": "Kharif",
+      "year": {
+        "$gte": "1966-67",
+        "$lte": "1968-69"
+      }
+    },
+    "fields": [
+      "year",
+      "production",
+      "production_unit"
+    ],
+    "expected": [
+      {
+        "year": "1966-67",
+        "production": 1445200,
+        "production_unit": "tonne"
+      },
+      {
+        "year": "1967-68",
+        "production": 4531600,
+        "production_unit": "tonne"
+      },
+      {
+        "year": "1968-69",
+        "production": 4997400,
+        "production_unit": "tonne"
+      }
+    ]
+  },
+  {
+    "id": "Q05",
+    "category": "provenance",
+    "question": "Trace the Kharif rice 1966–67 yield to the workbook file and row; retain the reported units.",
+    "collection": "crop_statistics",
+    "filters": {
+      "crop": "Rice",
+      "season": "Kharif",
+      "year": "1966-67"
+    },
+    "fields": [
+      "yield_kg_per_hectare",
+      "yield_unit",
+      "source_file",
+      "source_row",
+      "extracting_agent"
+    ],
+    "expected": [
+      {
+        "yield_kg_per_hectare": 329,
+        "yield_unit": "kg_per_hectare",
+        "source_file": "Crop wise Area Production & Yield.xlsx",
+        "source_row": 8,
+        "extracting_agent": "crop_statistics_excel_agent"
+      }
+    ]
+  },
+  {
+    "id": "Q06",
+    "category": "provenance",
+    "question": "Which PDF page and chunk contain the 2022–23 Agriculture and Allied Scheme outlay? Quote the row and preserve its scale.",
+    "collection": "agriculture_documents",
+    "filters": {
+      "source_id": "bihar_annual_scheme_2022_23",
+      "page_number": 11,
+      "chunk_index": 0
+    },
+    "fields": [
+      "document_title",
+      "page_number",
+      "chunk_index",
+      "extraction_method",
+      "source_organization"
+    ],
+    "expected": [
+      {
+        "document_title": "Bihar Annual Scheme 2022-23 - Agriculture and Allied Sector",
+        "page_number": 11,
+        "chunk_index": 0,
+        "extraction_method": "pypdf",
+        "source_organization": "Government of Bihar"
+      }
+    ],
+    "content_contains": [
+      "I Agriculture and Allied 505133.00 5.05",
+      "[Rs. in lakh]"
+    ],
+    "demo_note": "The PDF page number is 11; the printed page marker is 7. The row says 505133.00 lakh (5.05%). Verify the original PDF before claiming source accuracy."
+  },
+  {
+    "id": "Q07",
+    "category": "bilingual",
+    "question": "मखाना निर्यात की कार्यनीति के शीर्षक का मूल हिन्दी पाठ, PDF पृष्ठ और निष्कर्षण विधि दिखाएँ।",
+    "collection": "agriculture_documents",
+    "filters": {
+      "source_id": "apeda_makhana_hindi",
+      "page_number": 2,
+      "chunk_index": 0,
+      "language": "hi"
+    },
+    "fields": [
+      "page_number",
+      "chunk_index",
+      "language",
+      "extraction_method"
+    ],
+    "expected": [
+      {
+        "page_number": 2,
+        "chunk_index": 0,
+        "language": "hi",
+        "extraction_method": "tesseract_ocr"
+      }
+    ],
+    "content_contains": [
+      "भारत से मखाना निर्यात को प्रोत्साहित किए जाने हेतु कार्यनीति"
+    ]
+  },
+  {
+    "id": "Q08",
+    "category": "provenance",
+    "question": "Trace the Arwal Local potato observation on 17 October 2026 to its official source record and extraction run.",
+    "collection": "mandi_prices",
+    "filters": {
+      "district": "अरवल",
+      "market_code": 1635,
+      "crop": "आलू",
+      "source_type": "government_mandi_api",
+      "date": "2026-10-17",
+      "variety": "Local",
+      "source_record_id": "08b070d1-1de3-4da5-b01e-b3f666530eca"
+    },
+    "fields": [
+      "date",
+      "source_record_id",
+      "source_url",
+      "extracting_agent",
+      "extraction_run_id"
+    ],
+    "expected": [
+      {
+        "date": "2026-10-17",
+        "source_record_id": "08b070d1-1de3-4da5-b01e-b3f666530eca",
+        "source_url": "https://www.biharkrishi.in/mandi",
+        "extracting_agent": "daily_mandi_api_agent",
+        "extraction_run_id": "35958d0f-fdcf-49db-b48e-06e99e6d14dc"
+      }
+    ],
+    "demo_note": "Run ID is snapshot-specific. A refreshed row can have a different ID; verify its new value against the ingestion log."
+  },
+  {
+    "id": "Q09",
+    "category": "comparison",
+    "question": "What minimum, modal and maximum price were reported for 1st Sort onion at Daudnagar on 17 October 2026?",
+    "collection": "mandi_prices",
+    "filters": {
+      "market_code": 10001,
+      "crop": "प्याज",
+      "date": "2026-10-17",
+      "variety": "1st Sort",
+      "source_type": "government_mandi_api"
+    },
+    "fields": [
+      "market",
+      "minimum_price",
+      "price",
+      "maximum_price",
+      "unit"
+    ],
+    "expected": [
+      {
+        "market": "दाउनगर",
+        "minimum_price": 4000,
+        "price": 4100,
+        "maximum_price": 4200,
+        "unit": "quintal"
+      }
+    ]
+  },
+  {
+    "id": "Q10",
+    "category": "no_data",
+    "question": "Are there any Arwal potato observations on 1 January 1900 in this database?",
+    "collection": "mandi_prices",
+    "filters": {
+      "district": "अरवल",
+      "market_code": 1635,
+      "crop": "आलू",
+      "source_type": "government_mandi_api",
+      "date": "1900-01-01"
+    },
+    "fields": [
+      "source_record_id"
+    ],
+    "expected": [],
+    "demo_note": "No stored result is not a claim that the market or potato trade did not exist."
+  }
+]

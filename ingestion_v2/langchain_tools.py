@@ -10,8 +10,14 @@ from ingestion_v2.extraction import (
     extract_supported_file as _extract_supported_file,
     inspect_input_file as _inspect_input_file,
 )
+from ingestion_v2.evidence_report import (
+    compare_run_evidence as _compare_run_evidence,
+    write_run_evidence_report as _write_run_evidence_report,
+)
 from ingestion_v2.mapping import SchemaMappingAgent, apply_mapping_plan
 from ingestion_v2.models import (
+    BuildEvidenceReportInput,
+    CompareEvidenceRunsInput,
     ExtractFileInput,
     ExtractSemanticFactsInput,
     InspectFileInput,
@@ -105,6 +111,50 @@ def extract_semantic_pdf_facts_v2(
     return _extract_facts(payload).model_dump(mode="json")
 
 
+@tool("build_ingestion_evidence_report_v2", args_schema=BuildEvidenceReportInput)
+def build_ingestion_evidence_report_v2(
+    run_directory: str,
+    verify_mongo: bool = False,
+    max_records: int = 100,
+) -> dict:
+    """Generate auditable source, mapping, validation and Mongo evidence."""
+    result = _write_run_evidence_report(
+        run_directory,
+        verify_mongo=verify_mongo,
+        max_records=max_records,
+    )
+    report = result["report"]
+    return {
+        "run_id": report["run"].get("run_id"),
+        "json_path": str(result["json"]),
+        "html_path": str(result["html"]),
+        "mongo_status": report["mongo_verification"]["status"],
+        "records_in_report": report["records_in_report"],
+    }
+
+
+@tool("compare_ingestion_runs_v2", args_schema=CompareEvidenceRunsInput)
+def compare_ingestion_runs_v2(
+    before_run_directory: str,
+    after_run_directory: str,
+    output_directory: str,
+) -> dict:
+    """Compare failed and corrected ingestion outcomes quantitatively."""
+    result = _compare_run_evidence(
+        before_run_directory,
+        after_run_directory,
+        output_directory,
+    )
+    comparison = result["comparison"]
+    return {
+        "before_run_id": comparison["before"]["run_id"],
+        "after_run_id": comparison["after"]["run_id"],
+        "json_path": str(result["json"]),
+        "html_path": str(result["html"]),
+        "conclusion": comparison["conclusion"],
+    }
+
+
 def default_ingestion_tools():
     return [
         inspect_input_file_v2,
@@ -112,4 +162,6 @@ def default_ingestion_tools():
         propose_and_apply_mapping_v2,
         persist_validated_records_v2,
         extract_semantic_pdf_facts_v2,
+        build_ingestion_evidence_report_v2,
+        compare_ingestion_runs_v2,
     ]

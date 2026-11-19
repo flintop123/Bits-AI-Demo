@@ -33,6 +33,23 @@ def parse_days(raw_days):
     return days
 
 
+def parse_periods(raw_periods):
+    try:
+        periods = int(raw_periods)
+    except (TypeError, ValueError) as exc:
+        raise ValueError("periods must be an integer") from exc
+    if periods < 1 or periods > 60:
+        raise ValueError("periods must be between 1 and 60")
+    return periods
+
+
+def parse_reporting_frequency(raw_frequency):
+    frequency = str(raw_frequency or "daily").strip().lower()
+    if frequency not in {"daily", "weekly", "monthly"}:
+        raise ValueError("frequency must be daily, weekly or monthly")
+    return frequency
+
+
 def parse_float(raw_value, field_name, minimum, maximum):
     try:
         value = float(raw_value)
@@ -138,6 +155,24 @@ def create_app(service=None, qa_service=None):
         return jsonify({
             "count": len(records),
             "days": days,
+            "filters": filters,
+            "records": records,
+        })
+
+    @app.get("/api/v1/mandi-prices/district-trends")
+    def district_mandi_trends():
+        frequency = parse_reporting_frequency(
+            request.args.get("frequency", "daily")
+        )
+        periods = parse_periods(request.args.get("periods", "12"))
+        filters = selected_filters(("district", "crop", "variety", "unit"))
+        records = query_service.find_district_trends(
+            filters, frequency, periods
+        )
+        return jsonify({
+            "count": len(records),
+            "frequency": frequency,
+            "periods": periods,
             "filters": filters,
             "records": records,
         })

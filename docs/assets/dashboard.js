@@ -1,6 +1,15 @@
 "use strict";
 
-const state = { data: null, language: "en", days: 90 };
+const state = {
+  data: null,
+  language: "en",
+  days: 90,
+  reportingFrequency: "daily",
+  districtFrequency: "daily",
+  district: null,
+};
+let marketMap = null;
+let marketMarkerLayer = null;
 const qaState = {
   mode: "checking",
   apiBase: "http://127.0.0.1:5000",
@@ -197,8 +206,15 @@ function linePath(points) {
 }
 
 function renderIngestionChart() {
-  const all = state.data.daily_records;
-  const series = all.slice(-state.days);
+  const available = state.data.reporting_series || {};
+  const fallback = state.data.daily_records.map((item) => ({
+    ...item, period_start: item.date, frequency: "daily",
+  }));
+  const all = available[state.reportingFrequency] || fallback;
+  const series = state.reportingFrequency === "daily"
+    ? all.slice(-state.days)
+    : all;
+  if (!series.length) return;
   const width = 900;
   const height = 310;
   const padding = { top: 20, right: 18, bottom: 38, left: 48 };
@@ -220,77 +236,86 @@ function renderIngestionChart() {
       ${yTicks.map((tick) => `<line class="grid-line" x1="${padding.left}" y1="${y(tick)}" x2="${width - padding.right}" y2="${y(tick)}"/><text x="${padding.left - 10}" y="${y(tick) + 4}" text-anchor="end">${number(tick)}</text>`).join("")}
       <path class="area" d="${areaPath}"/>
       <path class="line" d="${path}"/>
-      ${points.filter((_, index) => index === 0 || index === points.length - 1 || index % Math.ceil(points.length / 12) === 0).map((point) => `<circle class="point" cx="${point.x}" cy="${point.y}" r="4"><title>${dateLabel(point.date, { year: true })}: ${number(point.records)} ${text("records", "रिकॉर्ड")}</title></circle>`).join("")}
-      ${xTickIndexes.map((index) => `<text x="${x(index)}" y="${height - 8}" text-anchor="${index === 0 ? "start" : index === series.length - 1 ? "end" : "middle"}">${dateLabel(series[index].date)}</text>`).join("")}
+      ${points.filter((_, index) => index === 0 || index === points.length - 1 || index % Math.max(1, Math.ceil(points.length / 12)) === 0).map((point) => `<circle class="point" cx="${point.x}" cy="${point.y}" r="4"><title>${dateLabel(point.period_start, { year: true })}: ${number(point.records)} ${text("records", "रिकॉर्ड")}</title></circle>`).join("")}
+      ${[...new Set(xTickIndexes)].map((index) => `<text x="${x(index)}" y="${height - 8}" text-anchor="${index === 0 ? "start" : index === series.length - 1 ? "end" : "middle"}">${dateLabel(series[index].period_start)}</text>`).join("")}
     </svg>`;
 
   const total = series.reduce((sum, item) => sum + item.records, 0);
   $("#window-total").textContent = number(total);
-  $("#date-range").textContent = `${dateLabel(series[0].date, { year: true })} — ${dateLabel(series.at(-1).date, { year: true })}`;
-}
-
-function convexHull(points) {
-  const sorted = [...points].sort((a, b) => a.x - b.x || a.y - b.y);
-  if (sorted.length <= 2) return sorted;
-  const cross = (o, a, b) => (a.x - o.x) * (b.y - o.y) - (a.y - o.y) * (b.x - o.x);
-  const lower = [];
-  for (const point of sorted) {
-    while (lower.length >= 2 && cross(lower.at(-2), lower.at(-1), point) <= 0) lower.pop();
-    lower.push(point);
-  }
-  const upper = [];
-  for (const point of sorted.reverse()) {
-    while (upper.length >= 2 && cross(upper.at(-2), upper.at(-1), point) <= 0) upper.pop();
-    upper.push(point);
-  }
-  return lower.slice(0, -1).concat(upper.slice(0, -1));
+  $("#date-range").textContent = `${dateLabel(series[0].period_start, { year: true })} — ${dateLabel(series.at(-1).period_start, { year: true })}`;
+  $("#reporting-frequency-label").textContent = `${state.reportingFrequency.toUpperCase()} ${text("REPORT", "रिपोर्ट")}`;
 }
 
 function renderMap() {
   const locations = state.data.locations;
-  const width = 940;
-  const height = 540;
-  const pad = 48;
-  const longitudes = locations.map((item) => item.longitude);
-  const latitudes = locations.map((item) => item.latitude);
-  const bounds = {
-    minLon: Math.min(...longitudes) - .25,
-    maxLon: Math.max(...longitudes) + .25,
-    minLat: Math.min(...latitudes) - .2,
-    maxLat: Math.max(...latitudes) + .2,
-  };
-  const x = (lon) => pad + ((lon - bounds.minLon) / (bounds.maxLon - bounds.minLon)) * (width - pad * 2);
-  const y = (lat) => height - pad - ((lat - bounds.minLat) / (bounds.maxLat - bounds.minLat)) * (height - pad * 2);
-  const points = locations.map((item) => ({ ...item, x: x(item.longitude), y: y(item.latitude) }));
-  const hull = convexHull(points);
-  const center = hull.reduce((acc, item) => ({ x: acc.x + item.x / hull.length, y: acc.y + item.y / hull.length }), { x: 0, y: 0 });
-  const expandedHull = hull.map((point) => ({ x: center.x + (point.x - center.x) * 1.08, y: center.y + (point.y - center.y) * 1.08 }));
-  const tooltip = $("#map-tooltip");
-
-  $("#market-map").innerHTML = `
-    <svg viewBox="0 0 ${width} ${height}" preserveAspectRatio="xMidYMid meet" aria-hidden="true">
-      ${[.2,.4,.6,.8].map((ratio) => `<line class="longitude" x1="${pad + ratio * (width-pad*2)}" y1="${pad}" x2="${pad + ratio * (width-pad*2)}" y2="${height-pad}"/><line class="latitude" x1="${pad}" y1="${pad + ratio * (height-pad*2)}" x2="${width-pad}" y2="${pad + ratio * (height-pad*2)}"/>`).join("")}
-      <path class="region" d="${expandedHull.map((point, index) => `${index ? "L" : "M"}${point.x.toFixed(1)},${point.y.toFixed(1)}`).join(" ")} Z"/>
-      ${points.map((point, index) => `<circle class="market-point" tabindex="0" data-index="${index}" cx="${point.x}" cy="${point.y}" r="5"><title>${point.market}, ${point.district}</title></circle>`).join("")}
-    </svg>`;
-
-  $$(".market-point", $("#market-map")).forEach((node) => {
-    const show = () => {
-      const item = points[Number(node.dataset.index)];
-      const card = $(".map-card").getBoundingClientRect();
-      const dot = node.getBoundingClientRect();
-      tooltip.innerHTML = `<strong>${item.market}</strong><span>${item.district}<br>${item.latitude.toFixed(4)}, ${item.longitude.toFixed(4)}<br>${text("Confidence", "विश्वास")}: ${number(item.confidence * 100, 1)}%</span>`;
-      tooltip.hidden = false;
-      const left = Math.min(card.width - 285, Math.max(12, dot.left - card.left + 12));
-      const top = Math.max(12, dot.top - card.top - 84);
-      tooltip.style.left = `${left}px`;
-      tooltip.style.top = `${top}px`;
-    };
-    node.addEventListener("mouseenter", show);
-    node.addEventListener("focus", show);
-    node.addEventListener("mouseleave", () => { tooltip.hidden = true; });
-    node.addEventListener("blur", () => { tooltip.hidden = true; });
+  const container = $("#market-map");
+  if (!window.L) {
+    container.textContent = text("OpenStreetMap could not be loaded.", "OpenStreetMap लोड नहीं हो सका।");
+    container.classList.add("map-unavailable");
+    return;
+  }
+  if (!marketMap) {
+    marketMap = L.map(container, { scrollWheelZoom: false });
+    L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", {
+      maxZoom: 19,
+      attribution: "&copy; OpenStreetMap contributors",
+    }).addTo(marketMap);
+    marketMarkerLayer = L.layerGroup().addTo(marketMap);
+  }
+  marketMarkerLayer.clearLayers();
+  const bounds = [];
+  locations.forEach((item) => {
+    const point = [item.latitude, item.longitude];
+    bounds.push(point);
+    const popup = document.createElement("div");
+    const title = document.createElement("strong");
+    const detail = document.createElement("span");
+    title.textContent = item.market;
+    detail.textContent = `${item.district} · ${item.latitude.toFixed(4)}, ${item.longitude.toFixed(4)} · ${text("confidence", "विश्वास")} ${number(item.confidence * 100, 1)}%`;
+    popup.append(title, document.createElement("br"), detail);
+    L.circleMarker(point, {
+      radius: 6, color: "#fffdf8", weight: 2, fillColor: "#d97927", fillOpacity: .92,
+    }).bindPopup(popup).addTo(marketMarkerLayer);
   });
+  if (bounds.length) marketMap.fitBounds(bounds, { padding: [28, 28] });
+  window.setTimeout(() => marketMap.invalidateSize(), 0);
+}
+
+function renderDistrictTrend() {
+  const snapshot = state.data.district_trends;
+  if (!snapshot || !snapshot.districts.length) return;
+  const district = state.district || snapshot.districts[0];
+  state.district = district;
+  const all = snapshot.frequencies[state.districtFrequency] || [];
+  const limit = { daily: 30, weekly: 16, monthly: 12 }[state.districtFrequency];
+  const series = all.filter((item) => item.district === district).slice(-limit);
+  const chart = $("#district-trend-chart");
+  if (!series.length) {
+    chart.textContent = text("No observations for this selection.", "इस चयन के लिए कोई अवलोकन नहीं है।");
+    return;
+  }
+  const width = 900;
+  const height = 300;
+  const pad = { top: 22, right: 18, bottom: 42, left: 66 };
+  const prices = series.map((item) => item.average_modal_price);
+  const minimum = Math.min(...prices);
+  const maximum = Math.max(...prices);
+  const range = Math.max(1, maximum - minimum);
+  const x = (index) => pad.left + index / Math.max(1, series.length - 1) * (width - pad.left - pad.right);
+  const y = (value) => pad.top + (maximum - value) / range * (height - pad.top - pad.bottom);
+  const points = series.map((item, index) => ({ ...item, x: x(index), y: y(item.average_modal_price) }));
+  const ticks = [minimum, minimum + range / 2, maximum];
+  chart.innerHTML = `<svg viewBox="0 0 ${width} ${height}" aria-hidden="true">
+    ${ticks.map((tick) => `<line class="grid-line" x1="${pad.left}" y1="${y(tick)}" x2="${width - pad.right}" y2="${y(tick)}"/><text x="${pad.left - 10}" y="${y(tick) + 4}" text-anchor="end">₹${number(tick)}</text>`).join("")}
+    <path class="line district-line" d="${linePath(points)}"/>
+    ${points.map((point) => `<circle class="point" cx="${point.x}" cy="${point.y}" r="4"><title>${dateLabel(point.period_start, { year: true })}: ₹${number(point.average_modal_price, 2)} (${number(point.observation_count)} observations)</title></circle>`).join("")}
+    <text x="${pad.left}" y="${height - 10}">${dateLabel(series[0].period_start)}</text>
+    <text x="${width - pad.right}" y="${height - 10}" text-anchor="end">${dateLabel(series.at(-1).period_start)}</text>
+  </svg>`;
+  $("#district-trend-title").textContent = `${district} · ${snapshot.crop} · ₹ / ${snapshot.unit}`;
+  $("#district-observations").textContent = number(series.reduce((sum, item) => sum + item.observation_count, 0));
+  $("#district-frequency-label").textContent = `${state.districtFrequency.toUpperCase()} ${text("DISTRICT VIEW", "जिला दृश्य")}`;
+  $("#district-method").textContent = `${snapshot.method} · ${snapshot.source}`;
 }
 
 function renderMarketRanking() {
@@ -392,6 +417,7 @@ function renderAll() {
 
   renderIngestionChart();
   renderMap();
+  renderDistrictTrend();
   renderMarketRanking();
   renderAgents();
   renderExamples();
@@ -408,6 +434,21 @@ async function initialize() {
     $$("[data-days]").forEach((candidate) => candidate.classList.toggle("is-active", candidate === button));
     renderIngestionChart();
   }));
+  $$("[data-reporting-frequency]").forEach((button) => button.addEventListener("click", () => {
+    state.reportingFrequency = button.dataset.reportingFrequency;
+    $$("[data-reporting-frequency]").forEach((candidate) => candidate.classList.toggle("is-active", candidate === button));
+    $(".window-control").classList.toggle("is-disabled", state.reportingFrequency !== "daily");
+    renderIngestionChart();
+  }));
+  $$("[data-district-frequency]").forEach((button) => button.addEventListener("click", () => {
+    state.districtFrequency = button.dataset.districtFrequency;
+    $$("[data-district-frequency]").forEach((candidate) => candidate.classList.toggle("is-active", candidate === button));
+    renderDistrictTrend();
+  }));
+  $("#district-select").addEventListener("change", (event) => {
+    state.district = event.target.value;
+    renderDistrictTrend();
+  });
   $("#ask-form").addEventListener("submit", submitQuestion);
   $("#question-input").addEventListener("input", () => {
     qaState.selectedExample = null;
@@ -418,6 +459,14 @@ async function initialize() {
     const response = await fetch("./data/dashboard_snapshot.json", { cache: "no-store" });
     if (!response.ok) throw new Error(`HTTP ${response.status}`);
     state.data = await response.json();
+    const districts = state.data.district_trends?.districts || [];
+    $("#district-select").replaceChildren(...districts.map((district) => {
+      const option = document.createElement("option");
+      option.value = district;
+      option.textContent = district;
+      return option;
+    }));
+    state.district = districts[0] || null;
     renderAll();
     await detectLocalQa();
   } catch (error) {
