@@ -27,6 +27,8 @@ from ingestion_v2.models import (
 from ingestion_v2.persistence import (
     persist_validated_records as _persist_validated_records,
 )
+from ingestion_v2.pdf_table_models import ExtractPdfTableInput
+from ingestion_v2.pdf_tables import extract_pdf_table as _extract_pdf_table
 from ingestion_v2.semantic_facts import extract_semantic_pdf_facts as _extract_facts
 
 
@@ -162,6 +164,14 @@ def default_ingestion_tools():
         propose_and_apply_mapping_v2,
         persist_validated_records_v2,
         extract_semantic_pdf_facts_v2,
+        extract_pdf_table_v2,
         build_ingestion_evidence_report_v2,
         compare_ingestion_runs_v2,
     ]
+
+
+@tool("extract_pdf_table_v2", args_schema=ExtractPdfTableInput)
+def extract_pdf_table_v2(file_path: str, profile: dict) -> dict:
+    """Read numeric cells from a reviewed PDF table without accessing a database."""
+    payload = ExtractPdfTableInput(file_path=file_path, profile=profile)
+    return _extract_pdf_table(payload).model_dump(mode="json")

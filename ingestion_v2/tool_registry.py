@@ -1,5 +1,6 @@
 """Versioned machine-readable contracts for all ingestion-v2 tools."""
 
+from ingestion_v2.pdf_table_models import ExtractPdfTableInput, ExtractPdfTableOutput
 from ingestion_v2.models import (
     ExtractSemanticFactsInput,
     ExtractSemanticFactsOutput,
@@ -46,6 +47,14 @@ def _contract(
 
 
 TOOL_CONTRACTS = {
+    "extract_pdf_table": _contract(
+        "extract_pdf_table",
+        "2.0.0",
+        "Read numeric cells and geometric evidence from a reviewed, hash-pinned PDF table.",
+        ExtractPdfTableInput,
+        ExtractPdfTableOutput,
+        side_effect="read",
+    ),
     "inspect_input_file": _contract(
         "inspect_input_file",
         "2.0.0",

@@ -1,0 +1,21 @@
+{
+  "expected_sha256": "35f8bdb9d23baa6cfa663b04afa66748adc5458ded9b58fb92980abbb87a66aa",
+  "page": 3,
+  "strategy": "positioned",
+  "clip": [31, 65, 397, 521],
+  "x_edges": [31, 138, 225, 326, 397],
+  "header_rows": 2,
+  "row_label_header": "Crop",
+  "rows": ["Wheat", "Rice", "Maize"],
+  "columns": [
+    {"key": "area", "header": "Area (Hectare)", "unit_text": "Hectare"},
+    {"key": "production", "header": "Production (MT)", "unit_text": "MT"},
+    {"key": "yield", "header": "Yield (KG/Hectare)", "unit_text": "KG/Hectare"}
+  ],
+  "context": {
+    "report": {"page": 3, "text": "Crop Wise Final Estimation: Year 2024-25"},
+    "estimate_stage": {"page": 3, "text": "Final Estimation"},
+    "period": {"page": 3, "text": "2024-25"},
+    "geography": {"page": 2, "text": "Jurisdiction: Bihar"}
+  }
+}
