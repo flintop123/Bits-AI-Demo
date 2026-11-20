@@ -49,6 +49,7 @@ class AgenticIngestionPipeline:
         semantic_facts=False,
         max_fact_chunks=40,
         fact_batch_size=2,
+        progress=False,
     ):
         run = IngestionRun(
             run_id=str(uuid.uuid4()),
@@ -59,7 +60,13 @@ class AgenticIngestionPipeline:
         self.store.add_event(
             run, "run", "started", "Ingestion run started"
         )
+
+        def start_stage(stage, message):
+            if progress:
+                self.store.add_event(run, stage, "started", message)
+
         try:
+            start_stage("inspection", "Inspecting and hashing source file")
             inspection = inspect_input_file(InspectFileInput(file_path=file_path))
             run.source = inspection
             self.store.add_event(
@@ -72,6 +79,7 @@ class AgenticIngestionPipeline:
                 metrics={"size_bytes": inspection.size_bytes},
             )
 
+            start_stage("extraction", "Extracting source records and locators")
             extraction = extract_supported_file(ExtractFileInput(
                 file_path=file_path,
                 force_ocr=force_ocr,
@@ -91,6 +99,11 @@ class AgenticIngestionPipeline:
                 run_id=run.run_id,
                 inspection=inspection,
                 extraction=extraction,
+            )
+            start_stage(
+                "mapping_validation",
+                "Applying reviewed plan and validating records" if plan else
+                "Waiting for mapping proposal, then validating records",
             )
             mapping_plan = plan or self.planner.propose(request)
             run.mapping_plan = mapping_plan
@@ -118,6 +131,7 @@ class AgenticIngestionPipeline:
 
             facts = None
             if semantic_facts:
+                start_stage("semantic_fact_extraction", "Extracting and grounding semantic PDF facts")
                 fact_agent = self.fact_agent or SemanticDocumentFactAgent()
                 facts = fact_agent.extract(ExtractSemanticFactsInput(
                     run_id=run.run_id,
@@ -152,6 +166,7 @@ class AgenticIngestionPipeline:
                     },
                 )
 
+            start_stage("persistence", "Checking accepted records in " + run.write_mode.value + " mode")
             persistence = persist_validated_records(
                 PersistInput(
                     run_id=run.run_id,

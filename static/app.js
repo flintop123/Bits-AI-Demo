@@ -66,6 +66,16 @@ function applyIntelligenceCatalogLanguage() {
     { hi: "सभी जिले", en: "All districts" },
   );
   populateCatalogSelect(
+    document.querySelector("#district-trends-district"),
+    intelligenceCatalog.districts,
+    { hi: "जिला चुनें", en: "Select a district" },
+  );
+  populateCatalogSelect(
+    document.querySelector("#district-trends-crop"),
+    intelligenceCatalog.crops,
+    { hi: "फसल चुनें", en: "Select a crop" },
+  );
+  populateCatalogSelect(
     intelligenceMarket,
     intelligenceCatalog.markets,
     { hi: "सभी मंडियां", en: "All markets" },
@@ -302,17 +312,76 @@ function renderRankBars(selector, records) {
   });
 }
 
+let liveMarketMap, liveMarketMarkers, liveRadiusLayers;
+
+function validMapPoint(point) {
+  return Array.isArray(point) && point.length === 2 &&
+    Number.isFinite(point[0]) && Math.abs(point[0]) <= 90 &&
+    Number.isFinite(point[1]) && Math.abs(point[1]) <= 180;
+}
+
+function leafletPoint(coordinates) {
+  if (!Array.isArray(coordinates) || coordinates.length !== 2) return null;
+  const point = [coordinates[1], coordinates[0]];
+  return validMapPoint(point) ? point : null;
+}
+
+function renderLiveMarketMap(container, locations) {
+  if (!window.L) return false;
+  if (!liveMarketMap) {
+    container.replaceChildren();
+    container.classList.add("has-live-map");
+    liveMarketMap = L.map(container, { scrollWheelZoom: false });
+    let tilesLoaded = 0;
+    let tilesFailed = 0;
+    const tiles = L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", {
+      maxZoom: 19, attribution: "&copy; OpenStreetMap contributors",
+    });
+    setText("#market-map-status", "Loading OpenStreetMap tiles and verified points…");
+    tiles.on("tileload", () => {
+      tilesLoaded += 1;
+      setText("#market-map-status", tilesFailed ? "Some OpenStreetMap tiles did not load; verified markers remain available." : "OpenStreetMap tiles loaded.");
+    }).on("tileerror", () => {
+      tilesFailed += 1;
+      setText("#market-map-status", tilesLoaded ? "Some OpenStreetMap tiles did not load; verified markers remain available." : "OpenStreetMap tiles are unavailable. Verified markers still show.");
+    }).addTo(liveMarketMap);
+    liveMarketMarkers = L.layerGroup().addTo(liveMarketMap);
+    liveRadiusLayers = L.layerGroup().addTo(liveMarketMap);
+  }
+  liveMarketMarkers.clearLayers();
+  const points = [];
+  for (const location of locations) {
+    const point = leafletPoint(location.location?.coordinates);
+    if (!point) continue;
+    points.push(point);
+    const popup = textElement("span", `${location.market_name || "Market"} · ${location.district_name || "Bihar"}`);
+    L.circleMarker(point, { radius: 5, color: "#225e49" }).bindPopup(popup).addTo(liveMarketMarkers);
+  }
+  if (points.length) {
+    const radiusBounds = liveRadiusLayers.getLayers()[0]?.getBounds();
+    liveMarketMap.fitBounds(radiusBounds || points, { padding: [22, 22], maxZoom: 12 });
+  }
+  return true;
+}
+
 function renderMarketMap(geospatial) {
   const container = document.querySelector("#market-map");
-  container.replaceChildren();
   const locations = geospatial.locations || [];
   const bounds = geospatial.bounds || {};
   if (!locations.length) {
+    if (liveMarketMap) {
+      liveMarketMarkers.clearLayers();
+      setText("#market-map-status", "No verified market coordinates are available for this data window.");
+    } else {
+      container.replaceChildren(textElement("p", "No verified market coordinates available."));
+    }
     setText("#market-map-total", "0 verified points");
-    container.append(textElement("p", "No verified market coordinates available."));
     return;
   }
   setText("#market-map-total", `${formatNumber(locations.length)} verified points`);
+  if (renderLiveMarketMap(container, locations)) return;
+  container.replaceChildren();
+  setText("#market-map-status", "OpenStreetMap library unavailable; showing the offline coordinate plot.");
   const width = 760;
   const height = 330;
   const margin = 35;
@@ -321,8 +390,8 @@ function renderMarketMap(geospatial) {
   const minLat = bounds.min_latitude;
   const maxLat = bounds.max_latitude;
   const project = (longitude, latitude) => ({
-    x: margin + (longitude - minLon) / (maxLon - minLon) * (width - margin * 2),
-    y: margin + (maxLat - latitude) / (maxLat - minLat) * (height - margin * 2),
+    x: margin + (longitude - minLon) / (maxLon - minLon || 1) * (width - margin * 2),
+    y: margin + (maxLat - latitude) / (maxLat - minLat || 1) * (height - margin * 2),
   });
   const svg = svgElement("svg", { viewBox: `0 0 ${width} ${height}` });
   svg.append(svgElement("rect", { x: margin, y: margin, width: width - margin * 2, height: height - margin * 2, rx: 18, class: "map-background" }));
@@ -650,6 +719,31 @@ document.querySelector("#dashboard-window").addEventListener("change", loadDashb
 const nearbyForm = document.querySelector("#nearby-form");
 const nearbyStatus = document.querySelector("#nearby-status");
 const nearbyResults = document.querySelector("#nearby-results");
+const nearbyMapLink = document.querySelector("#nearby-map-link");
+
+function renderNearbyRadius(response) {
+  nearbyMapLink.hidden = true;
+  if (liveRadiusLayers) liveRadiusLayers.clearLayers();
+  const point = leafletPoint(response.origin?.coordinates);
+  const radius = response.radius_km;
+  if (!point || !Number.isFinite(radius) || radius < 1 || radius > 300) return;
+  if (!liveMarketMap && !renderLiveMarketMap(document.querySelector("#market-map"), [])) return;
+  const circle = L.circle(point, {
+    radius: radius * 1000, color: "#d97827", fillOpacity: 0.13,
+  }).bindTooltip(`${radius} km search radius`).addTo(liveRadiusLayers);
+  L.circleMarker(point, { radius: 6, color: "#d97827" }).bindTooltip("Search centre").addTo(liveRadiusLayers);
+  const plotted = new Set();
+  for (const record of response.records || []) {
+    const location = leafletPoint(record.market_location?.coordinates);
+    if (!location || plotted.has(record.market_code)) continue;
+    plotted.add(record.market_code);
+    L.circleMarker(location, { radius: 6, color: "#d97827" })
+      .bindPopup(textElement("span", `${record.market || "Market"} · ${record.distance_km} km`))
+      .addTo(liveRadiusLayers);
+  }
+  liveMarketMap.fitBounds(circle.getBounds(), { padding: [20, 20] });
+  nearbyMapLink.hidden = false;
+}
 
 function renderNearbyPrices(records) {
   nearbyResults.replaceChildren();
@@ -666,7 +760,7 @@ function renderNearbyPrices(records) {
     card.append(heading, textElement("span", `${record.crop || "Crop"} · ${price}`));
     card.append(textElement("small", `${record.district || "Bihar"} · ${record.date || "Date unavailable"}`));
     const coordinates = record.market_location && record.market_location.coordinates;
-    if (coordinates && coordinates.length === 2) {
+    if (leafletPoint(coordinates)) {
       const mapLink = document.createElement("a");
       mapLink.href = `https://www.openstreetmap.org/?mlat=${coordinates[1]}&mlon=${coordinates[0]}#map=13/${coordinates[1]}/${coordinates[0]}`;
       mapLink.target = "_blank";
@@ -678,8 +772,10 @@ function renderNearbyPrices(records) {
   });
 }
 
+let nearbyRequest = 0;
 nearbyForm.addEventListener("submit", async (event) => {
   event.preventDefault();
+  const requestId = ++nearbyRequest;
   const latitude = document.querySelector("#nearby-latitude").value;
   const longitude = document.querySelector("#nearby-longitude").value;
   const radius = document.querySelector("#nearby-radius").value;
@@ -688,21 +784,108 @@ nearbyForm.addEventListener("submit", async (event) => {
     latitude,
     longitude,
     radius_km: radius,
-    days: "7",
-    limit: "30",
+    days: "365",
+    limit: "100",
   });
   if (crop) params.set("crop", crop);
   nearbyStatus.textContent = "Searching verified market locations…";
   nearbyResults.replaceChildren();
+  renderNearbyRadius({});
   try {
     const response = await fetch(`/api/v1/mandi-prices/nearby?${params}`);
     const data = await response.json();
+    if (requestId !== nearbyRequest) return;
     if (!response.ok) throw new Error(data.error || "Nearby search failed.");
     renderNearbyPrices(data.records || []);
+    renderNearbyRadius(data);
   } catch (error) {
-    nearbyStatus.textContent = error.message || "Nearby search failed.";
+    if (requestId === nearbyRequest) nearbyStatus.textContent = error.message || "Nearby search failed.";
   }
 });
+
+document.querySelector("#arwal-preset").addEventListener("click", () => {
+  document.querySelector("#nearby-latitude").value = "25.24324";
+  document.querySelector("#nearby-longitude").value = "84.662895";
+  document.querySelector("#nearby-radius").value = "1";
+  nearbyStatus.textContent = "Verified Arwal locality centre loaded. Compare 1 km and 75 km with the same crop filter.";
+});
+
+function renderReportTable(container, labels, rows) {
+  const table = document.createElement("table");
+  const header = document.createElement("tr");
+  for (const label of labels) {
+    const th = textElement("th", label);
+    th.scope = "col";
+    header.append(th);
+  }
+  table.createTHead().append(header);
+  const body = table.createTBody();
+  for (const row of rows) {
+    const tr = body.insertRow();
+    for (const value of row) tr.append(textElement("td", value));
+  }
+  container.replaceChildren(table);
+}
+
+let districtTrendRequest = 0;
+document.querySelector("#district-trends-form").addEventListener("submit", async (event) => {
+  event.preventDefault();
+  const requestId = ++districtTrendRequest;
+  const district = document.querySelector("#district-trends-district").value;
+  const crop = document.querySelector("#district-trends-crop").value;
+  const frequency = document.querySelector("#district-trends-frequency").value;
+  const params = new URLSearchParams({ district, crop, frequency, periods: "12" });
+  const status = document.querySelector("#district-trends-status");
+  const results = document.querySelector("#district-trends-results");
+  results.replaceChildren();
+  status.textContent = "Loading district observations…";
+  try {
+    const response = await fetch(`/api/v1/mandi-prices/district-trends?${params}`);
+    const data = await response.json();
+    if (requestId !== districtTrendRequest) return;
+    if (!response.ok) throw new Error(data.error || "District trend unavailable.");
+    status.textContent = data.count ? `${data.count} observed ${frequency} groups` : "No matching observations.";
+    if (data.count) renderReportTable(results, ["Period start", "District", "Crop", "Average modal price", "Observations"], data.records.map((row) => [
+      row.period_start, row.district, row.crop,
+      `₹${formatNumber(row.average_modal_price)} / ${row.unit}`, row.observation_count,
+    ]));
+  } catch (error) {
+    if (requestId === districtTrendRequest) status.textContent = error.message || "District trend unavailable.";
+  }
+});
+
+for (const panel of document.querySelectorAll("[data-period-preview]")) {
+  const input = panel.querySelector("input");
+  const status = panel.querySelector(".period-status");
+  const records = panel.querySelector(".period-records");
+  let currentRequest = 0;
+  input.addEventListener("change", async () => {
+    const requestId = ++currentRequest;
+    const file = input.files[0];
+    records.replaceChildren();
+    if (!file) { status.textContent = ""; return; }
+    if (file.size > 512 * 1024) { status.textContent = "The CSV is larger than 512 KiB."; return; }
+    status.textContent = "Validating report…";
+    try {
+      const frequency = panel.dataset.periodPreview;
+      const response = await fetch(`/api/v1/mandi-period-report/preview?frequency=${frequency}`, {
+        method: "POST", headers: { "Content-Type": "text/csv" }, body: file,
+      });
+      const report = await response.json();
+      if (requestId !== currentRequest) return;
+      if (!response.ok) throw new Error(report.error || "Invalid report.");
+      status.textContent = `${report.count} valid rows · SHA-256 ${report.sha256} · not saved`;
+      renderReportTable(records, ["Period", "District", "Crop", "Average modal price", "Observations", "Source"],
+        report.rows.map((row) => [
+          `${row.period_start} – ${row.period_end}`, row.district, row.crop,
+          `₹${row.average_modal_price_inr} / ${row.price_unit}`,
+          row.observation_count, `${row.source} · CSV line ${row.source_line}`,
+        ]));
+    } catch (error) {
+      if (requestId === currentRequest) status.textContent = error.message || "Preview failed.";
+    }
+  });
+}
 
 document.querySelector("#use-location").addEventListener("click", () => {
   if (!navigator.geolocation) {

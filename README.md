@@ -133,9 +133,17 @@ flowchart TD
 - Runtime schema, dictionary and reproducible dump: `db/`
 - Honest base/adapter comparison: `eval/adapter_comparison.csv`
 
-M18 is intentionally left pending until the same held-out set has been run against both the base model and a genuine LoRA/QLoRA adapter. The protocol rewards the documented comparison, not an invented positive gain.
+The saved M18 comparison records **2/10 base and 4/10 adapter** intent routes
+correct on the same ten held-out cases: two additional correct routes, or
+20 percentage points. Six remained incorrect. To reproduce the calculation
+from the saved results without training, run
+`python scripts/summarize_adapter_comparison.py`.
 
 Run the CPU-compatible LoRA experiment with `python eval/run_adapter_experiment.py`. It adapts only the QA intent-routing decision using a separate training set and compares the same base checkpoint before and after PEFT LoRA on all ten held-out QA cases. It does **not** claim that the deployed Qwen answer model was fine-tuned.
+
+The [Round 2 feedback and rehearsal guide](docs/ROUND2_FEEDBACK_IMPLEMENTATION.md)
+covers read-only map and report checks, field accuracy, live progress,
+supported formats, and pending-source acceptance gates.
 
 ## Phase 7: spatiotemporal market intelligence
 

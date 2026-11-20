@@ -3,13 +3,16 @@
 import argparse
 import json
 from pathlib import Path
+import sys
 
 from ingestion_v2.evidence_report import (
     compare_run_evidence,
     write_run_evidence_report,
 )
+from ingestion_v2.extraction import SUPPORTED_SUFFIXES
 from ingestion_v2.models import MappingPlan
 from ingestion_v2.pipeline import AgenticIngestionPipeline
+from ingestion_v2.run_store import LocalIngestionRunStore
 from ingestion_v2.tool_registry import tool_contracts_document
 
 
@@ -24,6 +27,10 @@ def parse_args(argv=None):
         help="Explicitly enable validated MongoDB upserts; default is dry run",
     )
     parser.add_argument("--force-ocr", action="store_true")
+    parser.add_argument(
+        "--progress", action="store_true",
+        help="Stream durable stage updates to stderr during file ingestion",
+    )
     parser.add_argument(
         "--semantic-facts",
         action="store_true",
@@ -51,6 +58,10 @@ def parse_args(argv=None):
         help="Optional reviewed MappingPlan JSON; otherwise the local model proposes one",
     )
     parser.add_argument(
+        "--list-formats", action="store_true",
+        help="List actual ingestion inputs and explicitly report Word conversion support",
+    )
+    parser.add_argument(
         "--print-tool-schemas",
         action="store_true",
         help="Print every ingestion-v2 tool input/output schema",
@@ -73,17 +84,20 @@ def parse_args(argv=None):
     args = parser.parse_args(argv)
     modes = sum(bool(value) for value in (
         args.input,
+        args.list_formats,
         args.print_tool_schemas,
         args.report_run,
         args.compare_runs,
     ))
     if modes != 1:
         parser.error(
-            "choose exactly one of --input, --print-tool-schemas, "
+            "choose exactly one of --input, --list-formats, --print-tool-schemas, "
             "--report-run or --compare-runs"
         )
     if not 1 <= args.max_fact_chunks <= 200:
         parser.error("--max-fact-chunks must be between 1 and 200")
+    if args.progress and not args.input:
+        parser.error("--progress requires --input")
     return args
 
 
@@ -92,8 +106,23 @@ def _run_directory(value):
     return supplied if supplied.is_dir() else Path("artifacts/ingestion_v2") / value
 
 
+def _progress_line(run_id, event):
+    print(
+        f"[{run_id} #{event.sequence}] {event.stage}: {event.status.value}"
+        f" - {event.message}",
+        file=sys.stderr, flush=True,
+    )
+
+
 def main(argv=None):
     args = parse_args(argv)
+    if args.list_formats:
+        print(json.dumps({
+            "ingestion_inputs": {extension: kind.value for extension, kind in SUPPORTED_SUFFIXES.items()},
+            "period_preview_input": ".csv (district period report schema)",
+            "word_conversion": {"doc_input": False, "docx_input": False, "docx_output": False},
+        }, indent=2))
+        return 0
     if args.print_tool_schemas:
         print(json.dumps(tool_contracts_document(), indent=2, ensure_ascii=False))
         return 0
@@ -129,7 +158,11 @@ def main(argv=None):
             Path(args.plan).read_text(encoding="utf-8")
         )
     try:
-        run = AgenticIngestionPipeline().run(
+        pipeline = (
+            AgenticIngestionPipeline(store=LocalIngestionRunStore(on_event=_progress_line))
+            if args.progress else AgenticIngestionPipeline()
+        )
+        run = pipeline.run(
             args.input,
             write=args.write,
             force_ocr=args.force_ocr,
@@ -137,6 +170,7 @@ def main(argv=None):
             semantic_facts=args.semantic_facts,
             max_fact_chunks=args.max_fact_chunks,
             fact_batch_size=args.fact_batch_size,
+            **({"progress": True} if args.progress else {}),
         )
     except Exception as exc:
         print(f"Status: failed\nError: {type(exc).__name__}: {exc}")

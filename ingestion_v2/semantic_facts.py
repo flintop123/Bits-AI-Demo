@@ -11,6 +11,7 @@ from typing import Any, Literal
 
 from pydantic import BaseModel, ConfigDict, Field, ValidationError
 
+from ingestion_v2.pdf_sections import heading_for_evidence
 from ingestion_v2.models import (
     ExtractSemanticFactsInput,
     ExtractSemanticFactsOutput,
@@ -188,6 +189,9 @@ def _provenance(candidate, source_record, text_start, text_end):
     locator = source_record.record_locator.model_copy(update={
         "text_start": text_start,
         "text_end": text_end,
+        "section_heading": heading_for_evidence(
+            source_record.data.get("content", ""), text_start, text_end,
+        ),
     })
     values: dict[str, Any] = {
         "fact_type": candidate.fact_type,

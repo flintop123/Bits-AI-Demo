@@ -1,12 +1,15 @@
 """Read-only HTTP API for Bihar agriculture data."""
 
 import atexit
+import csv
+import math
 import os
 from urllib.parse import urlsplit
 
 from flask import Flask, jsonify, render_template, request
 from werkzeug.exceptions import HTTPException
 
+from ingestion_v2.period_report import MAX_REPORT_BYTES, preview_period_report
 from services.agriculture_query_service import AgricultureQueryService
 from services.multilingual_query_expansion import expand_document_query
 from services.agriculture_qa_service import AgricultureQAService
@@ -55,7 +58,7 @@ def parse_float(raw_value, field_name, minimum, maximum):
         value = float(raw_value)
     except (TypeError, ValueError) as exc:
         raise ValueError(f"{field_name} must be a number") from exc
-    if value < minimum or value > maximum:
+    if not math.isfinite(value) or value < minimum or value > maximum:
         raise ValueError(
             f"{field_name} must be between {minimum} and {maximum}"
         )
@@ -125,6 +128,20 @@ def create_app(service=None, qa_service=None):
     @app.get("/")
     def demo():
         return render_template("index.html")
+
+    @app.post("/api/v1/mandi-period-report/preview")
+    def preview_mandi_period_report():
+        if request.mimetype not in {"text/csv", "application/csv"}:
+            return jsonify({"error": "Send the CSV bytes as text/csv"}), 415
+        if request.content_length is None or not 0 < request.content_length <= MAX_REPORT_BYTES:
+            return jsonify({"error": "CSV must be nonempty and no larger than 512 KiB"}), 413
+        try:
+            report = preview_period_report(
+                request.stream.read(MAX_REPORT_BYTES + 1), request.args.get("frequency"),
+            )
+        except (csv.Error, UnicodeError, OverflowError) as exc:
+            raise ValueError("Invalid UTF-8 CSV or period date") from exc
+        return jsonify(report)
 
     @app.get("/api/v1/mandi-prices")
     def mandi_prices():

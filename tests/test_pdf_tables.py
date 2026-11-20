@@ -8,7 +8,7 @@ from pathlib import Path
 import tempfile
 import unittest
 
-import fitz
+import pymupdf as fitz
 from pydantic import ValidationError
 
 from ingestion_v2.pdf_table_models import ExtractPdfTableInput

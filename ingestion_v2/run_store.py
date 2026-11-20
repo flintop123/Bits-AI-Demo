@@ -7,8 +7,9 @@ from ingestion_v2.models import IngestionRun, RunEvent, StageStatus
 
 
 class LocalIngestionRunStore:
-    def __init__(self, root="artifacts/ingestion_v2"):
+    def __init__(self, root="artifacts/ingestion_v2", *, on_event=None):
         self.root = Path(root)
+        self.on_event = on_event
 
     def directory(self, run_id):
         path = self.root / run_id
@@ -44,6 +45,8 @@ class LocalIngestionRunStore:
                 event.model_dump(mode="json"), ensure_ascii=False
             ) + "\n")
         self.save_run(run)
+        if self.on_event is not None:
+            self.on_event(run.run_id, event)
         return event
 
     def save_run(self, run: IngestionRun):

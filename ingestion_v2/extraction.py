@@ -9,6 +9,7 @@ import mimetypes
 from pathlib import Path
 
 from openpyxl.utils import get_column_letter
+from ingestion_v2.pdf_sections import leading_heading
 
 from ingestion_v2.models import (
     ExtractedRecord,
@@ -97,6 +98,7 @@ def _extract_pdf(inspection, payload):
             modality=SourceModality.PDF,
             page_number=record["page_number"],
             chunk_index=record["chunk_index"],
+            section_heading=leading_heading(record["content"]),
         )
         records.append(ExtractedRecord(
             record_index=index,

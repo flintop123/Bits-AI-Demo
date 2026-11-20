@@ -49,7 +49,7 @@ def _evidence(page, cells):
 
 
 def _context(document, name, anchor):
-    import fitz
+    import pymupdf as fitz
 
     page = document[anchor.page - 1]
     pattern = _literal_pattern(anchor.text)
@@ -219,7 +219,7 @@ def extract_pdf_table(payload: ExtractPdfTableInput) -> ExtractPdfTableOutput:
     if hashlib.sha256(data).hexdigest() != expected:
         raise PdfTableValidationError("PDF changed after source inspection")
 
-    import fitz
+    import pymupdf as fitz
 
     with fitz.open(stream=data, filetype="pdf") as document:
         if not document.is_pdf or document.needs_pass:
