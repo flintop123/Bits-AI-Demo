@@ -1,0 +1,24 @@
+{
+  "expected_sha256": "ea3d3758d499964558288b11daec19b323e62df8392eb3475dd44ca679131cf2",
+  "page": 7,
+  "strategy": "lines_strict",
+  "header_rows": 1,
+  "row_label_header": "Name of the Scheme",
+  "rows": [
+    "Development of Agriculture Marketing",
+    "Prdhanmantri Formalization of Micro Food Processing Enterprizes",
+    "Strengthening of Weights & Measures"
+  ],
+  "columns": [
+    {
+      "key": "outlay",
+      "header": "Outlay 2022-23",
+      "unit_text": "Rs. in lakh",
+      "unit_context": "unit"
+    }
+  ],
+  "context": {
+    "report": {"page": 7, "text": "Agriculture Department"},
+    "unit": {"page": 7, "text": "[Rs. in lakh]"}
+  }
+}
