@@ -129,7 +129,9 @@ def create_app(service=None, qa_service=None):
 
     @app.get("/")
     def demo():
-        return render_template("index.html")
+        # Browser-scoped credentials only; never render a MapTiler service token.
+        key = os.environ.get("AGRI_MAPTILER_PUBLIC_KEY", "").strip()
+        return render_template("index.html", maptiler_public_key=key)
 
     @app.get("/market-explorer/<asset_name>")
     def market_explorer_asset(asset_name):

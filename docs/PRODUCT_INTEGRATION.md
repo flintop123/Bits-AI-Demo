@@ -21,6 +21,27 @@ With the pointer over the map, pinch or scroll to zoom the map; drag to pan.
 Turn off **Touchpad zoom** to let wheel gestures pass through to the page.
 The map's **+ / −** buttons work in either mode.
 
+**Satellite imagery.** Street view is the default. Select a verified market and
+use **Open satellite in Google Maps** to open its locality at building-scale
+zoom without a key. If no market is selected, that link opens a Bihar overview.
+The link does not forward the radius or a browser-derived location.
+
+For an inline **Street / Satellite** toggle, obtain a MapTiler **public browser
+key** and configure it locally before starting Flask. Restrict the key to the
+intended HTTP origin and use a separate key for your public deployment. Never
+put a private MapTiler service token in this setting or commit a key.
+
+```cmd
+set "AGRI_MAPTILER_PUBLIC_KEY=YOUR_BROWSER_KEY" && set "API_PORT=5003" && .venv\Scripts\python.exe data_api.py
+```
+
+On a static deployment, inject an origin-restricted browser key into the empty
+`data-maptiler-key` attribute of the market explorer during deployment, or keep
+the no-key link. Switching layers retains the map centre, zoom, verified pins,
+search filters and radius. A complete satellite tile failure returns to Street.
+Imagery is not live; the age and resolution vary, and it does not verify
+individual market buildings or entrances.
+
 For a no-database demo, serve `docs` using `python -m http.server 8000 --directory docs`.
 The hosted map uses the committed snapshot, not the live database. Its radius
 counts verified snapshot coordinates only. Basemap tiles are fetched on demand

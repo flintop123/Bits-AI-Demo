@@ -13,6 +13,11 @@
 .market-explorer .market-map.map-choosing { cursor: crosshair; }
 .market-explorer .market-map.leaflet-container svg { width: auto; height: auto; }
 .market-explorer .market-explorer-zoom-hint { margin: .3rem 0; color: #35594b; font-size: .875rem; }
+.market-explorer-basemaps { display: flex; flex-wrap: wrap; align-items: center; gap: .45rem; margin: .55rem 0 .25rem; }
+.market-explorer-basemaps a { display: inline-flex; min-height: 44px; align-items: center; padding: .35rem .55rem; font-size: .875rem; color: #145b3b; }
+.market-explorer-basemap-notice { margin: .2rem 0 .45rem; color: #35594b; font-size: .875rem; }
+.market-explorer-satellite-logo { position: absolute; z-index: 500; left: .45rem; bottom: 2rem; padding: .15rem .28rem; background: #ffffffea; border-radius: .2rem; }
+.market-explorer-satellite-logo img { display: block; width: 74px; height: auto; }
 .market-explorer .market-explorer-status, .market-explorer .market-explorer-summary { margin: .55rem 0; color: #35594b; font-size: .875rem; }
 .market-explorer .market-explorer-summary { font-weight: 700; }
 .market-explorer-body { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: .75rem; margin: .65rem 0; }

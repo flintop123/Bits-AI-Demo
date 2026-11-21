@@ -11,6 +11,7 @@
   const point = (lat, lon) => Number.isFinite(lat) && Number.isFinite(lon) &&
     Math.abs(lat) <= 90 && Math.abs(lon) <= 180 ? [lat, lon] : null;
   const radians = (x) => x * Math.PI / 180;
+  const BIHAR_OVERVIEW = [25.8, 85.6];
 
   function distanceKm(a, b) {
     const sinLat = Math.sin(radians(b[0] - a[0]) / 2);
@@ -26,6 +27,16 @@
     } catch (_) { return ""; }
   }
 
+  function satelliteViewerUrl(marketPoint) {
+    const p = point(marketPoint?.[0], marketPoint?.[1]);
+    const url = new URL("https://www.google.com/maps/@");
+    url.search = new URLSearchParams({
+      api: "1", map_action: "map", basemap: "satellite",
+      center: (p || BIHAR_OVERVIEW).join(","), zoom: p ? "18" : "8",
+    });
+    return url.href;
+  }
+
   class MarketExplorer {
     constructor(root, { translate = (en) => en, onLiveSearch = null } = {}) {
       this.root = root;
@@ -39,6 +50,8 @@
       this.status = root.querySelector(".market-explorer-status");
       this.markets = [];
       this.radius = 75;
+      this.basemap = "street";
+      this.satelliteKey = (root.dataset.maptilerKey || "").trim();
       this.tileStatus = "loading";
       this.buildControls();
       this.initMap();
@@ -77,6 +90,7 @@
       });
       this.zoomHint = make("p", null, "market-explorer-zoom-hint");
       this.controls.after(this.zoomHint);
+      this.buildBasemapControls();
       this.search.addEventListener("input", () => this.update());
       this.district.addEventListener("change", () => this.update(true));
       const updateRadius = (settled) => {
@@ -94,6 +108,21 @@
       };
       this.radiusInput.addEventListener("input", () => updateRadius(false));
       this.radiusInput.addEventListener("change", () => updateRadius(true));
+    }
+
+    buildBasemapControls() {
+      this.basemapControls = make("div", null, "market-explorer-basemaps");
+      this.basemapControls.setAttribute("role", "group");
+      this.streetButton = this.button(this.basemapControls, () => this.setBasemap("street"));
+      this.satelliteButton = this.button(this.basemapControls, () => this.setBasemap("satellite"));
+      this.satelliteLink = make("a");
+      Object.assign(this.satelliteLink, {
+        href: satelliteViewerUrl(), target: "_blank", rel: "noopener noreferrer",
+      });
+      this.basemapControls.append(this.satelliteLink);
+      this.basemapNotice = make("p", null, "market-explorer-basemap-notice");
+      this.basemapNotice.setAttribute("aria-live", "polite");
+      this.zoomHint.after(this.basemapControls, this.basemapNotice);
     }
 
     field(input) {
@@ -119,9 +148,9 @@
       }
       this.canvas.classList.add("has-live-map");
       this.map = L.map(this.canvas, {
-        scrollWheelZoom: true, touchZoom: true, minZoom: 5, maxZoom: 17,
+        scrollWheelZoom: true, touchZoom: true, minZoom: 5, maxZoom: 20,
       })
-        .setView([25.8, 85.6], 7);
+        .setView(BIHAR_OVERVIEW, 7);
       // Chrome represents a touchpad pinch as Ctrl+wheel. Cancel page zoom
       // only inside the map, without stopping Leaflet's wheel handler.
       this.canvas.addEventListener("wheel", (event) => {
@@ -129,17 +158,21 @@
           event.preventDefault();
         }
       }, { capture: true, passive: false });
-      L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", {
-        maxZoom: 19,
+      this.basemaps = {};
+      this.basemaps.street = this.createBasemap("street", "https://tile.openstreetmap.org/{z}/{x}/{y}.png", {
+        maxNativeZoom: 19, maxZoom: 20,
         attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
-      }).on("tileload", () => {
-        if (this.tileStatus === "loading") this.tileStatus = "loaded";
-        else if (this.tileStatus === "offline") this.tileStatus = "partial";
-        this.renderStatus();
-      }).on("tileerror", () => {
-        this.tileStatus = ["loaded", "partial"].includes(this.tileStatus) ? "partial" : "offline";
-        this.renderStatus();
-      }).addTo(this.map);
+      });
+      if (this.satelliteKey) {
+        const key = encodeURIComponent(this.satelliteKey);
+        this.basemaps.satellite = this.createBasemap(
+          "satellite", `https://api.maptiler.com/tiles/satellite-v2/{z}/{x}/{y}.jpg?key=${key}`, {
+            crossOrigin: "anonymous", maxNativeZoom: 20, maxZoom: 20,
+            attribution: '&copy; <a href="https://www.maptiler.com/copyright/">MapTiler and imagery contributors</a> · &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap contributors</a>',
+          },
+        );
+      }
+      this.basemaps.street.addTo(this.map);
       L.control.scale({ imperial: false, position: "bottomleft" }).addTo(this.map);
       this.pins = L.layerGroup().addTo(this.map);
       this.circleLayer = L.layerGroup().addTo(this.map);
@@ -150,6 +183,45 @@
         this.setOrigin([latlng.lat, latlng.lng], this.tr("Selected point", "चुना गया स्थान"));
       });
       if (window.ResizeObserver) new ResizeObserver(() => this.map.invalidateSize({ pan: false })).observe(this.canvas);
+    }
+
+    createBasemap(name, url, options) {
+      let loaded = 0, failed = 0;
+      const updateStatus = () => {
+        if (name !== this.basemap) return;
+        this.tileStatus = failed ? (loaded ? "partial" : "offline") : loaded ? "loaded" : "loading";
+        this.renderStatus();
+      };
+      return L.tileLayer(url, options)
+        .on("loading", () => { loaded = failed = 0; updateStatus(); })
+        .on("tileload", () => { loaded += 1; updateStatus(); })
+        .on("tileerror", () => { failed += 1; updateStatus(); })
+        .on("load", () => {
+          if (name === "satellite" && this.basemap === name && failed && !loaded) {
+            this.setBasemap("street", { satelliteFailed: true });
+          }
+        });
+    }
+
+    setBasemap(name, { satelliteFailed = false } = {}) {
+      if (!this.basemaps?.[name] || this.basemap === name) return;
+      const oldLayer = this.basemaps[this.basemap];
+      this.basemap = name;
+      this.satelliteFailed = satelliteFailed;
+      this.tileStatus = "loading";
+      this.map.removeLayer(oldLayer);
+      this.basemaps[name].addTo(this.map);
+      if (name === "satellite" && !this.satelliteLogo) {
+        this.satelliteLogo = make("a", null, "market-explorer-satellite-logo");
+        Object.assign(this.satelliteLogo, { href: "https://www.maptiler.com/", target: "_blank", rel: "noopener noreferrer" });
+        const logo = make("img");
+        Object.assign(logo, { src: "https://api.maptiler.com/resources/logo.svg", alt: "MapTiler" });
+        this.satelliteLogo.append(logo);
+        this.canvas.append(this.satelliteLogo);
+      }
+      if (this.satelliteLogo) this.satelliteLogo.hidden = name !== "satellite";
+      this.refreshBasemapControls();
+      this.renderStatus();
     }
 
     setMarkets(raw, { fit = !this.markets.length } = {}) {
@@ -196,13 +268,31 @@
         ? t("Pinch or scroll over the map to zoom. Drag to pan.", "ज़ूम के लिए मानचित्र पर पिंच या स्क्रॉल करें। खिसकाने के लिए खींचें।")
         : t("Touchpad zoom is off. Use + and − to zoom the map.", "टचपैड ज़ूम बंद है। मानचित्र ज़ूम के लिए + और − का उपयोग करें।");
       this.clearButton.textContent = t("Reset map", "मानचित्र रीसेट करें");
+      this.refreshBasemapControls();
+    }
+
+    refreshBasemapControls() {
+      const t = this.tr;
+      this.basemapControls.setAttribute("aria-label", t("Map view", "मानचित्र दृश्य"));
+      this.streetButton.hidden = !this.map;
+      this.streetButton.textContent = t("Street", "सड़क");
+      this.streetButton.setAttribute("aria-pressed", String(this.basemap === "street"));
+      this.satelliteButton.hidden = !this.basemaps?.satellite;
+      this.satelliteButton.textContent = t("Satellite", "उपग्रह");
+      this.satelliteButton.setAttribute("aria-pressed", String(this.basemap === "satellite"));
+      this.satelliteLink.textContent = t("Open satellite in Google Maps", "Google Maps में उपग्रह दृश्य खोलें");
+      this.basemapNotice.textContent = this.satelliteFailed
+        ? t("Satellite tiles did not load. Street view restored.", "उपग्रह टाइल नहीं खुलीं। सड़क दृश्य वापस आ गया।")
+        : t("Imagery date and building detail vary. Market pins mark localities, not individual entrances.", "चित्र की तारीख और भवन का विवरण बदल सकता है। मंडी बिंदु स्थानीयता दिखाते हैं, प्रवेश द्वार नहीं।");
     }
 
     renderStatus() {
       const t = this.tr;
       this.status.textContent = {
         loading: t("Loading map tiles…", "मानचित्र लोड हो रहा है…"),
-        loaded: t("OpenStreetMap tiles loaded.", "OpenStreetMap मानचित्र उपलब्ध है।"),
+        loaded: this.basemap === "satellite"
+          ? t("MapTiler satellite imagery loaded.", "MapTiler उपग्रह चित्र उपलब्ध हैं।")
+          : t("OpenStreetMap tiles loaded.", "OpenStreetMap मानचित्र उपलब्ध है।"),
         partial: t("Some tiles are unavailable. Verified points and the directory still work.", "कुछ टाइल उपलब्ध नहीं हैं। सत्यापित बिंदु और सूची उपलब्ध हैं।"),
         offline: t("Basemap unavailable. You can still explore verified markets and measure a radius.", "आधार मानचित्र उपलब्ध नहीं है। आप मंडियों और दूरी को देख सकते हैं।"),
       }[this.tileStatus];
@@ -253,6 +343,8 @@
 
     renderDetails() {
       const t = this.tr;
+      // Share only an official market point, never a user-derived search origin.
+      this.satelliteLink.href = satelliteViewerUrl(this.active?.p);
       this.details.replaceChildren();
       if (this.active) {
         const { market, district, p, source, confidence, code } = this.active;

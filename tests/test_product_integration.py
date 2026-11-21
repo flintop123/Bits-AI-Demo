@@ -141,6 +141,12 @@ class QATests(unittest.TestCase):
 
 
 class MapIntegrationTests(unittest.TestCase):
+    @patch.dict(os.environ, {"AGRI_MAPTILER_PUBLIC_KEY": "  local-browser-fixture  "})
+    def test_map_uses_only_the_explicit_browser_key_environment(self):
+        with create_app(Mock(), Mock()).test_client() as client:
+            with client.get("/") as response:
+                self.assertIn(b'data-maptiler-key="local-browser-fixture"', response.data)
+
     def test_flask_serves_only_the_two_shared_map_assets(self):
         with create_app(Mock(), Mock()).test_client() as client:
             for name in ("market-explorer.js", "market-explorer.css"):
