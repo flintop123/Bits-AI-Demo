@@ -61,6 +61,13 @@
         this.refreshLabels();
       });
       this.fitButton = this.button(this.controls, () => this.fit());
+      this.zoomButton = this.button(this.controls, () => {
+        if (!this.map) return;
+        const wheel = this.map.scrollWheelZoom;
+        if (wheel.enabled()) wheel.disable();
+        else wheel.enable();
+        this.refreshLabels();
+      });
       this.clearButton = this.button(this.controls, () => {
         this.search.value = this.district.value = "";
         this.origin = this.active = this.liveResult = null;
@@ -68,6 +75,8 @@
         this.canvas.classList.remove("map-choosing");
         this.update(true);
       });
+      this.zoomHint = make("p", null, "market-explorer-zoom-hint");
+      this.controls.after(this.zoomHint);
       this.search.addEventListener("input", () => this.update());
       this.district.addEventListener("change", () => this.update(true));
       const updateRadius = (settled) => {
@@ -109,8 +118,17 @@
         return;
       }
       this.canvas.classList.add("has-live-map");
-      this.map = L.map(this.canvas, { scrollWheelZoom: false, minZoom: 5, maxZoom: 17 })
+      this.map = L.map(this.canvas, {
+        scrollWheelZoom: true, touchZoom: true, minZoom: 5, maxZoom: 17,
+      })
         .setView([25.8, 85.6], 7);
+      // Chrome represents a touchpad pinch as Ctrl+wheel. Cancel page zoom
+      // only inside the map, without stopping Leaflet's wheel handler.
+      this.canvas.addEventListener("wheel", (event) => {
+        if (event.ctrlKey && event.cancelable && this.map.scrollWheelZoom.enabled()) {
+          event.preventDefault();
+        }
+      }, { capture: true, passive: false });
       L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", {
         maxZoom: 19,
         attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
@@ -170,6 +188,13 @@
       this.pickButton.setAttribute("aria-pressed", String(Boolean(this.choosing)));
       this.fitButton.hidden = !this.map;
       this.fitButton.textContent = t("Fit map", "मानचित्र समायोजित करें");
+      const zoomEnabled = this.map?.scrollWheelZoom.enabled() ?? false;
+      this.zoomButton.hidden = this.zoomHint.hidden = !this.map;
+      this.zoomButton.textContent = t("Touchpad zoom", "टचपैड ज़ूम");
+      this.zoomButton.setAttribute("aria-pressed", String(zoomEnabled));
+      this.zoomHint.textContent = zoomEnabled
+        ? t("Pinch or scroll over the map to zoom. Drag to pan.", "ज़ूम के लिए मानचित्र पर पिंच या स्क्रॉल करें। खिसकाने के लिए खींचें।")
+        : t("Touchpad zoom is off. Use + and − to zoom the map.", "टचपैड ज़ूम बंद है। मानचित्र ज़ूम के लिए + और − का उपयोग करें।");
       this.clearButton.textContent = t("Reset map", "मानचित्र रीसेट करें");
     }
 

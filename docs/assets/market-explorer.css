@@ -12,6 +12,7 @@
 .market-explorer .market-map.leaflet-container { height: clamp(300px, 55vh, 510px); z-index: 0; isolation: isolate; }
 .market-explorer .market-map.map-choosing { cursor: crosshair; }
 .market-explorer .market-map.leaflet-container svg { width: auto; height: auto; }
+.market-explorer .market-explorer-zoom-hint { margin: .3rem 0; color: #35594b; font-size: .875rem; }
 .market-explorer .market-explorer-status, .market-explorer .market-explorer-summary { margin: .55rem 0; color: #35594b; font-size: .875rem; }
 .market-explorer .market-explorer-summary { font-weight: 700; }
 .market-explorer-body { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: .75rem; margin: .65rem 0; }

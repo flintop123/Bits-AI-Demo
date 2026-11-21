@@ -17,6 +17,9 @@ centre or pick a point on the map. Set a 1–300 km radius. Distances are
 straight-line estimates between locality centroids, not directions or travel
 times. The live map can submit the existing nearby-price form; the map
 distinguishes geographic coverage from markets present in capped price results.
+With the pointer over the map, pinch or scroll to zoom the map; drag to pan.
+Turn off **Touchpad zoom** to let wheel gestures pass through to the page.
+The map's **+ / −** buttons work in either mode.
 
 For a no-database demo, serve `docs` using `python -m http.server 8000 --directory docs`.
 The hosted map uses the committed snapshot, not the live database. Its radius
