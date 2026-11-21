@@ -20,6 +20,7 @@ from ingestion_v2.models import (
     MappingRequest,
     SeriesColumn,
     SeriesMapping,
+    SourceLocator,
     SourceModality,
     TargetCollection,
 )
@@ -589,9 +590,76 @@ def _periods(plan):
     return periods
 
 
+def _wide_period_header_index(request, plan):
+    """Find source-backed year cells using the columns the plan actually maps."""
+    if request.inspection.modality != SourceModality.EXCEL:
+        return {}
+    planned = {
+        (column.source_field, column.period, series.target_field)
+        for series in plan.series_mappings for column in series.columns
+    }
+    if not planned:
+        return {}
+    matches = {}
+    for record in request.extraction.records:
+        sheet = record.record_locator.sheet_name
+        row = record.record_locator.row_number
+        if not sheet or not row or (plan.source_scope and sheet != plan.source_scope):
+            continue
+        if plan.data_start_row and row >= plan.data_start_row:
+            continue
+        for field, raw in record.data.items():
+            period = _period_from_header(raw)
+            if not period or (field, period, _measure_from_header(raw)) not in planned:
+                continue
+            locator = record.field_locators.get(field)
+            if not locator or (
+                locator.modality != SourceModality.EXCEL or locator.sheet_name != sheet
+                or locator.row_number != row or locator.column_name != field
+                or locator.cell_reference != f"{field}{row}"
+            ):
+                continue
+            # Several measures often name the same period on the same header
+            # row. Use the first column in worksheet order to cite it once.
+            matches.setdefault((sheet, period), {}).setdefault(row, (locator, field, raw))
+    return {key: next(iter(rows.values())) for key, rows in matches.items() if len(rows) == 1}
+
+
+def _year_provenance(record, period, plan, headers):
+    record_locator = record.record_locator
+    evidence = headers.get((record_locator.sheet_name, period))
+    if evidence and record_locator.row_number and evidence[0].row_number < record_locator.row_number:
+        locator, raw_field, raw_value = evidence
+        transformation = "wide_period_header"
+    else:
+        locator = SourceLocator(
+            modality=record_locator.modality,
+            source_file=record_locator.source_file,
+            source_url=record_locator.source_url,
+            sheet_name=record_locator.sheet_name,
+        )
+        raw_field, raw_value = None, period
+        transformation = "wide_period_plan_unanchored"
+    period_methods = {
+        series.mapping_method for series in plan.series_mappings
+        if any(item.period == period for item in series.columns)
+    }
+    return FieldProvenance(
+        locator=locator, raw_field=raw_field, raw_value=raw_value,
+        transformation=transformation,
+        mapping_method=(
+            "wide_header_schema_safeguard"
+            if "wide_header_schema_safeguard" in period_methods
+            else "model_proposed_series_mapping"
+        ),
+        confidence=plan.confidence,
+    )
+
+
 def apply_mapping_plan(request: MappingRequest, plan: MappingPlan):
     mapped = []
     periods = _periods(plan)
+    headers = _wide_period_header_index(request, plan)
     required_total = 0
     required_present = 0
 
@@ -606,22 +674,7 @@ def apply_mapping_plan(request: MappingRequest, plan: MappingPlan):
                 data = dict(base_data)
                 provenance = dict(base_provenance)
                 data["year"] = period
-                period_methods = {
-                    series.mapping_method
-                    for series in plan.series_mappings
-                    if any(item.period == period for item in series.columns)
-                }
-                provenance["year"] = FieldProvenance(
-                    locator=record.record_locator,
-                    raw_value=period,
-                    transformation="wide_period_header",
-                    mapping_method=(
-                        "wide_header_schema_safeguard"
-                        if "wide_header_schema_safeguard" in period_methods
-                        else "model_proposed_series_mapping"
-                    ),
-                    confidence=plan.confidence,
-                )
+                provenance["year"] = _year_provenance(record, period, plan, headers)
                 for series in plan.series_mappings:
                     column = next(
                         (item for item in series.columns if item.period == period),

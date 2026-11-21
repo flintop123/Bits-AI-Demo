@@ -267,6 +267,13 @@ class MappingTests(unittest.TestCase):
             output.records[0].field_provenance["year"].mapping_method,
             "wide_header_schema_safeguard",
         )
+        for mapped, expected_cell in zip(output.records, ("C6", "D6"), strict=True):
+            year = mapped.field_provenance["year"]
+            self.assertEqual(year.locator.cell_reference, expected_cell)
+            self.assertEqual(year.locator.row_number, 6)
+            self.assertEqual(year.locator.sheet_name, "Bihar crops")
+            self.assertEqual(year.raw_value.split()[-1], mapped.data["year"])
+            self.assertEqual(mapped.data["source_row"], 7)
 
     def test_agent_restores_exact_required_field_omitted_by_model(self):
         with TemporaryDirectory() as directory:
@@ -395,6 +402,18 @@ class MappingTests(unittest.TestCase):
                 ),
                 plan,
             )
+            # A plan can produce a valid year without a matching header. In
+            # that case keep the value but don't label the data row as evidence.
+            missing_header = apply_mapping_plan(
+                MappingRequest(
+                    run_id="run-excel",
+                    inspection=inspection,
+                    extraction=extraction.model_copy(update={
+                        "records": extraction.records[2:],
+                    }),
+                ),
+                plan,
+            )
         self.assertEqual(output.records_valid, 1)
         record = output.records[0]
         self.assertEqual(record.data["year"], "2024-25")
@@ -402,6 +421,12 @@ class MappingTests(unittest.TestCase):
         self.assertEqual(
             record.field_provenance["production"].locator.cell_reference, "D3"
         )
+        self.assertEqual(record.field_provenance["year"].locator.cell_reference, "C2")
+        self.assertEqual(record.field_provenance["year"].raw_value, "Area 2024-25")
+        unanchored = missing_header.records[0]
+        self.assertEqual(unanchored.data["year"], "2024-25")
+        self.assertEqual(unanchored.field_provenance["year"].transformation, "wide_period_plan_unanchored")
+        self.assertIsNone(unanchored.field_provenance["year"].locator.row_number)
 
     def test_missing_required_fields_are_rejected_not_silently_inserted(self):
         with TemporaryDirectory() as directory:

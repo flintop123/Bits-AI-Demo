@@ -92,8 +92,14 @@ def _locator_label(locator):
 def _source_match(mapped, extracted_by_locator):
     locators = [
         item.get("locator")
-        for item in mapped.get("field_provenance", {}).values()
+        for field, item in mapped.get("field_provenance", {}).items()
         if item.get("locator")
+        # A wide Excel year may come from a separate header row. Its exact
+        # cell remains in field lineage, not in the data-row join.
+        and not (field == "year" and item["locator"].get("modality") == "excel"
+                 and item.get("transformation") in {
+            "wide_period_header", "wide_period_plan_unanchored",
+        })
     ]
     keys = {_locator_key(locator) for locator in locators}
     keys.discard(None)

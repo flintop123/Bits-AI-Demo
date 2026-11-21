@@ -4,6 +4,8 @@ from pathlib import Path
 from tempfile import TemporaryDirectory
 
 from ingestion_v2.evidence_report import (
+    _locator_key,
+    _source_match,
     collect_run_evidence,
     compare_run_evidence,
     write_run_evidence_report,
@@ -199,6 +201,29 @@ class IngestionEvidenceReportTests(unittest.TestCase):
 
 
 class EvidenceJoinRegressionTests(unittest.TestCase):
+    def test_wide_excel_header_lineage_does_not_override_data_row_join(self):
+        data_row = {
+            "modality": "excel", "source_file": "crop.xlsx",
+            "sheet_name": "Bihar crops", "row_number": 7,
+        }
+        header = {**data_row, "row_number": 6}
+        extracted = {"record_locator": data_row, "data": {"A": "Rice"}}
+        mapped = {"field_provenance": {
+            "crop": {"locator": {**data_row, "cell_reference": "A7"}},
+            "year": {
+                "locator": {**header, "cell_reference": "C6"},
+                "transformation": "wide_period_header",
+            },
+        }}
+        matched, locator, status = _source_match(mapped, {
+            _locator_key(header): [{"record_locator": header}],
+            _locator_key(data_row): [extracted],
+        })
+        self.assertIs(matched, extracted)
+        self.assertEqual(locator["row_number"], 7)
+        self.assertEqual(status, "matched")
+        self.assertEqual(mapped["field_provenance"]["year"]["locator"]["cell_reference"], "C6")
+
     def test_wrapped_json_rows_join_by_path_not_position(self):
         with TemporaryDirectory() as temporary:
             root, _ = make_run(Path(temporary), "wrapped", valid=True)

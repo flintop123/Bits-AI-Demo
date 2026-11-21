@@ -68,12 +68,17 @@ class FieldAccuracyTests(unittest.TestCase):
         receipt = {
             "status": "verified", "collection": self.target, "query": {"extraction_run_id": "run-a"},
             "matched_count": 1,
-            "records": [{**self.record, "market": "Arwal", "unit": "quintal"}],
+            "records": [{
+                **self.record, "market": "Arwal", "unit": "quintal",
+                "field_provenance": {"price": {"locator": {"json_path": "$.wrong_path"}}},
+            }],
         }
         with patch("ingestion_v2.field_accuracy.read_mongo_verification", return_value=receipt):
             report = audit_fields(self.directory, self.source, self.manifest, verify_mongo=True)
         self.assertEqual(report["mongo_accuracy"]["correct"], 3)
         self.assertEqual(report["mapped_accuracy"]["correct"], 1)
+        self.assertTrue(report["fields"][0]["provenance_match"])
+        self.assertFalse(report["fields"][0]["mongo_provenance_match"])
 
     def test_truncated_readback_does_not_claim_missing(self):
         with patch("ingestion_v2.field_accuracy.read_mongo_verification", return_value={

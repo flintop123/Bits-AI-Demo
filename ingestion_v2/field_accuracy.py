@@ -87,6 +87,16 @@ def _index(records, target):
     return index
 
 
+def _audit_locator(candidates, field, expected):
+    if len(candidates) != 1:
+        return None, None
+    provenance = candidates[0].get("field_provenance") or {}
+    locator = (provenance.get(field) or {}).get("locator")
+    if not expected:
+        return locator, None
+    return locator, isinstance(locator, dict) and all(locator.get(k) == v for k, v in expected.items())
+
+
 def _summary(results, key):
     counts = Counter(row[key]["status"] for row in results)
     total = len(results)
@@ -146,16 +156,10 @@ def audit_fields(run_directory, source_path, manifest, *, verify_mongo=False):
         mapped_candidates = mapped[identity]
         mongo_candidates = stored[identity]
         for field, expected in record.fields.items():
-            locator = None
-            if len(mapped_candidates) == 1:
-                provenance = mapped_candidates[0].get("field_provenance") or {}
-                locator = (provenance.get(field) or {}).get("locator")
-            provenance_match = None
-            if expected.expected_locator:
-                provenance_match = isinstance(locator, dict) and all(
-                    locator.get(key) == expected_value
-                    for key, expected_value in expected.expected_locator.items()
-                )
+            locator, provenance_match = _audit_locator(mapped_candidates, field, expected.expected_locator)
+            mongo_locator, mongo_provenance_match = _audit_locator(
+                mongo_candidates, field, expected.expected_locator,
+            )
             results.append({
                 "identity": record.identity,
                 "field": field,
@@ -163,6 +167,8 @@ def audit_fields(run_directory, source_path, manifest, *, verify_mongo=False):
                 "expected": expected.value,
                 "actual_locator": locator,
                 "provenance_match": provenance_match,
+                "mongo_actual_locator": mongo_locator,
+                "mongo_provenance_match": mongo_provenance_match,
                 "mapped": _score(mapped_candidates, field, expected.value),
                 "mongo": _score(
                     mongo_candidates, field, expected.value,
@@ -200,7 +206,8 @@ def render_audit_html(report, events):
             f"<tr><td>{cell(row['identity'])}<br>{escape(row['field'])}</td>"
             f"<td>{source}<br><strong>{cell(row['expected'])}</strong><br>{cell(row['actual_locator'])}</td>"
             f"<td>{escape(row['mapped']['status'])}: {cell(row['mapped'].get('actual'))}</td>"
-            f"<td>{escape(row['mongo']['status'])}: {cell(row['mongo'].get('actual'))}</td></tr>"
+            f"<td>{escape(row['mongo']['status'])}: {cell(row['mongo'].get('actual'))}"
+            f"<br>{cell(row['mongo_actual_locator'])}</td></tr>"
         )
     timeline = []
     for event in events:

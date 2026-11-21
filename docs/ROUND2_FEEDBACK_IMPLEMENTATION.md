@@ -94,9 +94,17 @@ The HTML view puts reviewed source locations, mapped fields, stored fields and
 the process log side by side. Keep the original file open at the cited location.
 For an **existing saved write run**, add `--verify-mongo` to the audit for
 read-back only. A dry run is not evidence of a MongoDB write, and an unsampled
-record is not treated as missing. Prefer a read-only MongoDB account.
+record is not treated as missing. The audit checks mapped and stored locators
+separately; a correct value does not imply a correct locator. Prefer a
+read-only MongoDB account.
 
-JSONPath and Excel sheet/cell evidence are unchanged. PDF source locators now
+Wide Excel period lineage cites the matching header cell when the mapped
+measure column and year are both present in a single preceding header row.
+The data values keep their data-row anchors. If the period cannot be tied to a
+unique header, its source row is left unknown. This fix affects new runs;
+it does not rewrite existing artifacts or MongoDB records.
+
+JSONPath and direct Excel sheet/cell evidence are unchanged. PDF source locators now
 include literal numbered headings when the heading can be tied to the same
 chunk. Semantic quotes that span headings, or have no exact offsets, are not
 given a guessed section. The reviewed PDF-table path remains read-only. It
