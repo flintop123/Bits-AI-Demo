@@ -8,6 +8,7 @@
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
         integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="anonymous">
   <link rel="stylesheet" href="{{ url_for('static', filename='app.css') }}">
+  <link rel="stylesheet" href="{{ url_for('market_explorer_asset', asset_name='market-explorer.css') }}">
 </head>
 <body>
   <div class="page-shell">
@@ -125,13 +126,19 @@
             <div id="district-bars" class="rank-bars"></div>
           </article>
 
-          <article class="visual-card visual-wide map-card">
+          <article class="visual-card visual-wide map-card market-explorer">
             <div class="visual-heading">
-              <div><span>Verified coordinate coverage</span><h3>Bihar mandi location plot</h3></div>
-              <span id="market-map-total" class="chart-note">Verified market points</span>
+              <div><span>Verified coordinate coverage</span><h3>Bihar market explorer</h3></div>
             </div>
+            <div class="market-explorer-controls" role="group" aria-label="Market map filters"></div>
             <div id="market-map" class="market-map" role="region" aria-label="Verified mandi locations"></div>
-            <p id="market-map-status" class="dashboard-status" aria-live="polite"></p>
+            <p class="market-explorer-status" aria-live="polite"></p>
+            <p class="market-explorer-summary" aria-live="polite"></p>
+            <div class="market-explorer-legend"><span>Verified market</span><span>Within radius or in returned results</span></div>
+            <div class="market-explorer-body">
+              <div class="market-explorer-directory" role="group" aria-label="Matching markets"></div>
+              <div class="market-explorer-details" aria-live="polite"></div>
+            </div>
             <p class="map-note">Markers show verified locality centroids, not surveyed market gates. Radius distances are straight-line, not road distance.</p>
           </article>
 
@@ -398,6 +405,7 @@
   </div>
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
           integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin="anonymous" defer></script>
+  <script src="{{ url_for('market_explorer_asset', asset_name='market-explorer.js') }}" defer></script>
   <script src="{{ url_for('static', filename='app.js') }}" defer></script>
 </body>
 </html>

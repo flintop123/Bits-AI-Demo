@@ -107,6 +107,29 @@ python run.py --input <file>
 
 The command accepts PDF, Excel, CSV and JSON inputs, selects a bounded extractor, writes an auditable JSON trace under `artifacts/phase2/`, and does not write to MongoDB. Use `--force-ocr` only when an unseen scanned PDF requires it.
 
+### Optional public-document retrieval lab
+
+The main dashboard remains `python data_api.py`. Its market explorer supports
+search, district filters, a keyboard-accessible directory, verified market
+details, a straight-line radius, and nearby live price results. The GitHub Pages
+map browses the committed snapshot; it does not make live price queries. An
+unavailable basemap does not prevent searching the directory or measuring from
+a selected market. Unresolved coordinates are never guessed.
+
+Jitendra's separate intake and Milvus pipeline is opt-in:
+
+```text
+python main.py preview-pdf --input path/to/report.pdf
+python main.py preview-api --url https://example.test/public.json
+python main.py sync --collection agri_public_v1
+python main.py serve
+```
+
+These examples do not write. The optional chat endpoint runs on loopback port
+5002; it does not replace the dashboard's evidence-grounded QA. See
+[Product integration and verification](docs/PRODUCT_INTEGRATION.md) for the
+reviewed-source, local staging, and citation contracts.
+
 ```mermaid
 flowchart TD
     A[Unseen input] --> B{Supervisor routing}

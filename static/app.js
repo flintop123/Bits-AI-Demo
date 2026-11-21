@@ -312,116 +312,30 @@ function renderRankBars(selector, records) {
   });
 }
 
-let liveMarketMap, liveMarketMarkers, liveRadiusLayers;
-
-function validMapPoint(point) {
-  return Array.isArray(point) && point.length === 2 &&
-    Number.isFinite(point[0]) && Math.abs(point[0]) <= 90 &&
-    Number.isFinite(point[1]) && Math.abs(point[1]) <= 180;
-}
+let marketExplorer;
 
 function leafletPoint(coordinates) {
   if (!Array.isArray(coordinates) || coordinates.length !== 2) return null;
-  const point = [coordinates[1], coordinates[0]];
-  return validMapPoint(point) ? point : null;
+  const [longitude, latitude] = coordinates;
+  return Number.isFinite(latitude) && Number.isFinite(longitude) &&
+    Math.abs(latitude) <= 90 && Math.abs(longitude) <= 180 ? [latitude, longitude] : null;
 }
 
-function renderLiveMarketMap(container, locations) {
-  if (!window.L) return false;
-  if (!liveMarketMap) {
-    container.replaceChildren();
-    container.classList.add("has-live-map");
-    liveMarketMap = L.map(container, { scrollWheelZoom: false });
-    let tilesLoaded = 0;
-    let tilesFailed = 0;
-    const tiles = L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", {
-      maxZoom: 19, attribution: "&copy; OpenStreetMap contributors",
-    });
-    setText("#market-map-status", "Loading OpenStreetMap tiles and verified points…");
-    tiles.on("tileload", () => {
-      tilesLoaded += 1;
-      setText("#market-map-status", tilesFailed ? "Some OpenStreetMap tiles did not load; verified markers remain available." : "OpenStreetMap tiles loaded.");
-    }).on("tileerror", () => {
-      tilesFailed += 1;
-      setText("#market-map-status", tilesLoaded ? "Some OpenStreetMap tiles did not load; verified markers remain available." : "OpenStreetMap tiles are unavailable. Verified markers still show.");
-    }).addTo(liveMarketMap);
-    liveMarketMarkers = L.layerGroup().addTo(liveMarketMap);
-    liveRadiusLayers = L.layerGroup().addTo(liveMarketMap);
-  }
-  liveMarketMarkers.clearLayers();
-  const points = [];
-  for (const location of locations) {
-    const point = leafletPoint(location.location?.coordinates);
-    if (!point) continue;
-    points.push(point);
-    const popup = textElement("span", `${location.market_name || "Market"} · ${location.district_name || "Bihar"}`);
-    L.circleMarker(point, { radius: 5, color: "#225e49" }).bindPopup(popup).addTo(liveMarketMarkers);
-  }
-  if (points.length) {
-    const radiusBounds = liveRadiusLayers.getLayers()[0]?.getBounds();
-    liveMarketMap.fitBounds(radiusBounds || points, { padding: [22, 22], maxZoom: 12 });
-  }
-  return true;
+function getMarketExplorer() {
+  if (!marketExplorer) marketExplorer = new MarketExplorer(document.querySelector('.market-explorer'), {
+    onLiveSearch: ([latitude, longitude], radius) => {
+      document.querySelector('#nearby-latitude').value = latitude.toFixed(6);
+      document.querySelector('#nearby-longitude').value = longitude.toFixed(6);
+      document.querySelector('#nearby-radius').value = radius;
+      document.querySelector('#nearby-form').requestSubmit();
+      document.querySelector('#nearby-status').scrollIntoView({ block: 'center' });
+    },
+  });
+  return marketExplorer;
 }
 
 function renderMarketMap(geospatial) {
-  const container = document.querySelector("#market-map");
-  const locations = geospatial.locations || [];
-  const bounds = geospatial.bounds || {};
-  if (!locations.length) {
-    if (liveMarketMap) {
-      liveMarketMarkers.clearLayers();
-      setText("#market-map-status", "No verified market coordinates are available for this data window.");
-    } else {
-      container.replaceChildren(textElement("p", "No verified market coordinates available."));
-    }
-    setText("#market-map-total", "0 verified points");
-    return;
-  }
-  setText("#market-map-total", `${formatNumber(locations.length)} verified points`);
-  if (renderLiveMarketMap(container, locations)) return;
-  container.replaceChildren();
-  setText("#market-map-status", "OpenStreetMap library unavailable; showing the offline coordinate plot.");
-  const width = 760;
-  const height = 330;
-  const margin = 35;
-  const minLon = bounds.min_longitude;
-  const maxLon = bounds.max_longitude;
-  const minLat = bounds.min_latitude;
-  const maxLat = bounds.max_latitude;
-  const project = (longitude, latitude) => ({
-    x: margin + (longitude - minLon) / (maxLon - minLon || 1) * (width - margin * 2),
-    y: margin + (maxLat - latitude) / (maxLat - minLat || 1) * (height - margin * 2),
-  });
-  const svg = svgElement("svg", { viewBox: `0 0 ${width} ${height}` });
-  svg.append(svgElement("rect", { x: margin, y: margin, width: width - margin * 2, height: height - margin * 2, rx: 18, class: "map-background" }));
-
-  for (let longitude = 84; longitude <= 88; longitude += 1) {
-    const point = project(longitude, minLat);
-    svg.append(svgElement("line", { x1: point.x, y1: margin, x2: point.x, y2: height - margin, class: "map-gridline" }));
-    const label = svgElement("text", { x: point.x, y: height - 12, class: "map-axis-label", "text-anchor": "middle" });
-    label.textContent = `${longitude}°E`;
-    svg.append(label);
-  }
-  for (let latitude = 25; latitude <= 27; latitude += 1) {
-    const point = project(minLon, latitude);
-    svg.append(svgElement("line", { x1: margin, y1: point.y, x2: width - margin, y2: point.y, class: "map-gridline" }));
-    const label = svgElement("text", { x: 8, y: point.y + 4, class: "map-axis-label" });
-    label.textContent = `${latitude}°N`;
-    svg.append(label);
-  }
-
-  locations.forEach((location) => {
-    const coordinates = location.location && location.location.coordinates;
-    if (!coordinates || coordinates.length !== 2) return;
-    const point = project(coordinates[0], coordinates[1]);
-    const marker = svgElement("circle", { cx: point.x, cy: point.y, r: 5.5, class: "map-marker", tabindex: "0" });
-    const title = svgElement("title");
-    title.textContent = `${location.market_name}, ${location.district_name} · confidence ${Math.round((location.confidence || 0) * 100)}%`;
-    marker.append(title);
-    svg.append(marker);
-  });
-  container.append(svg);
+  getMarketExplorer().setMarkets(geospatial.locations || []);
 }
 
 function renderCoverage(summary) {
@@ -722,26 +636,13 @@ const nearbyResults = document.querySelector("#nearby-results");
 const nearbyMapLink = document.querySelector("#nearby-map-link");
 
 function renderNearbyRadius(response) {
-  nearbyMapLink.hidden = true;
-  if (liveRadiusLayers) liveRadiusLayers.clearLayers();
-  const point = leafletPoint(response.origin?.coordinates);
-  const radius = response.radius_km;
-  if (!point || !Number.isFinite(radius) || radius < 1 || radius > 300) return;
-  if (!liveMarketMap && !renderLiveMarketMap(document.querySelector("#market-map"), [])) return;
-  const circle = L.circle(point, {
-    radius: radius * 1000, color: "#d97827", fillOpacity: 0.13,
-  }).bindTooltip(`${radius} km search radius`).addTo(liveRadiusLayers);
-  L.circleMarker(point, { radius: 6, color: "#d97827" }).bindTooltip("Search centre").addTo(liveRadiusLayers);
-  const plotted = new Set();
-  for (const record of response.records || []) {
-    const location = leafletPoint(record.market_location?.coordinates);
-    if (!location || plotted.has(record.market_code)) continue;
-    plotted.add(record.market_code);
-    L.circleMarker(location, { radius: 6, color: "#d97827" })
-      .bindPopup(textElement("span", `${record.market || "Market"} · ${record.distance_km} km`))
-      .addTo(liveRadiusLayers);
+  const explorer = getMarketExplorer();
+  if (!response.origin) {
+    explorer.clearLiveResults();
+    nearbyMapLink.hidden = true;
+    return;
   }
-  liveMarketMap.fitBounds(circle.getBounds(), { padding: [20, 20] });
+  explorer.setLiveResults(response);
   nearbyMapLink.hidden = false;
 }
 

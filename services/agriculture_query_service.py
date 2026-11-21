@@ -188,6 +188,7 @@ class AgricultureQueryService:
                 "location": 1,
                 "confidence": 1,
                 "location_precision": 1,
+                "coordinate_source_url": 1,
             },
         ).sort([("district_name", 1), ("market_name", 1)]).limit(200))
 

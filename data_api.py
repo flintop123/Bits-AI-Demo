@@ -4,9 +4,11 @@ import atexit
 import csv
 import math
 import os
+from pathlib import Path
 from urllib.parse import urlsplit
 
-from flask import Flask, jsonify, render_template, request
+from flask import Flask, jsonify, render_template, request, send_from_directory
+from werkzeug.exceptions import NotFound
 from werkzeug.exceptions import HTTPException
 
 from ingestion_v2.period_report import MAX_REPORT_BYTES, preview_period_report
@@ -128,6 +130,12 @@ def create_app(service=None, qa_service=None):
     @app.get("/")
     def demo():
         return render_template("index.html")
+
+    @app.get("/market-explorer/<asset_name>")
+    def market_explorer_asset(asset_name):
+        if asset_name not in {"market-explorer.js", "market-explorer.css"}:
+            raise NotFound()
+        return send_from_directory(Path(__file__).resolve().parent / "docs" / "assets", asset_name)
 
     @app.post("/api/v1/mandi-period-report/preview")
     def preview_mandi_period_report():

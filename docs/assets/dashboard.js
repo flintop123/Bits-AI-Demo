@@ -8,8 +8,7 @@ const state = {
   districtFrequency: "daily",
   district: null,
 };
-let marketMap = null;
-let marketMarkerLayer = null;
+let marketExplorer = null;
 const qaState = {
   mode: "checking",
   apiBase: "http://127.0.0.1:5000",
@@ -247,38 +246,8 @@ function renderIngestionChart() {
 }
 
 function renderMap() {
-  const locations = state.data.locations;
-  const container = $("#market-map");
-  if (!window.L) {
-    container.textContent = text("OpenStreetMap could not be loaded.", "OpenStreetMap लोड नहीं हो सका।");
-    container.classList.add("map-unavailable");
-    return;
-  }
-  if (!marketMap) {
-    marketMap = L.map(container, { scrollWheelZoom: false });
-    L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", {
-      maxZoom: 19,
-      attribution: "&copy; OpenStreetMap contributors",
-    }).addTo(marketMap);
-    marketMarkerLayer = L.layerGroup().addTo(marketMap);
-  }
-  marketMarkerLayer.clearLayers();
-  const bounds = [];
-  locations.forEach((item) => {
-    const point = [item.latitude, item.longitude];
-    bounds.push(point);
-    const popup = document.createElement("div");
-    const title = document.createElement("strong");
-    const detail = document.createElement("span");
-    title.textContent = item.market;
-    detail.textContent = `${item.district} · ${item.latitude.toFixed(4)}, ${item.longitude.toFixed(4)} · ${text("confidence", "विश्वास")} ${number(item.confidence * 100, 1)}%`;
-    popup.append(title, document.createElement("br"), detail);
-    L.circleMarker(point, {
-      radius: 6, color: "#fffdf8", weight: 2, fillColor: "#d97927", fillOpacity: .92,
-    }).bindPopup(popup).addTo(marketMarkerLayer);
-  });
-  if (bounds.length) marketMap.fitBounds(bounds, { padding: [28, 28] });
-  window.setTimeout(() => marketMap.invalidateSize(), 0);
+  if (!marketExplorer) marketExplorer = new MarketExplorer($('#locality .market-explorer'), { translate: text });
+  marketExplorer.setMarkets(state.data.locations);
 }
 
 function renderDistrictTrend() {

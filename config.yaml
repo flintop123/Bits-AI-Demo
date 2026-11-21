@@ -1,15 +1,18 @@
 milvus:
-  host: localhost
+  host: 127.0.0.1
   port: 19530
-  collectionName: recVectorDB
-  zilliz_token: 
-  zilliz_uri:
+  # Set AGRI_MILVUS_COLLECTION to a verified, loaded corpus before serving.
+  collectionName: ""
 
 bihar_krishi:
   urls: ['https://www.biharkrishi.in/mandi']
 
-langSmith:
-    LANGSMITH_TRACING : "true"
-    LANGSMITH_ENDPOINT : "https://api.smith.langchain.com"
-    LANGSMITH_API_KEY : ""
-    LANGSMITH_PROJECT : "bihar-crop-chatbot"
+document_ingestion:
+  mongo_database: bihar_agriculture
+  # These lists are operator-reviewed; an empty list denies intake or sync.
+  api_hosts: []
+  approved_document_sources: []
+
+retriever:
+  top_k: 3
+  max_context_chars: 10000

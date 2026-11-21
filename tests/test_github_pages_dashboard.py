@@ -43,7 +43,9 @@ class GitHubPagesDashboardTests(unittest.TestCase):
 
     def test_dashboard_uses_openstreetmap_and_frequency_views(self):
         self.assertIn("leaflet@1.9.4", self.index)
-        self.assertIn("tile.openstreetmap.org", self.javascript)
+        explorer = (ROOT / "docs" / "assets" / "market-explorer.js").read_text(encoding="utf-8")
+        self.assertIn("tile.openstreetmap.org", explorer)
+        self.assertIn("./assets/market-explorer.js", self.index)
         self.assertIn('id="district-trends"', self.index)
         self.assertIn("data-reporting-frequency=\"weekly\"", self.index)
         self.assertIn("data-district-frequency=\"monthly\"", self.index)
