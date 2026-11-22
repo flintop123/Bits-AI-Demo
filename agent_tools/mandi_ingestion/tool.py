@@ -15,6 +15,7 @@ untouched by this module.
 from langchain_core.tools import tool
 
 from agent_tools._shared import extract_days, wants_dry_run
+from agent_tools.agent_logging import get_logger
 from phase4.mandi_api_client import BiharMandiApiClient
 from phase4.mandi_orchestrator import DailyMandiOrchestrator
 from run_phase4_mandi_pipeline import resolve_dates
@@ -41,9 +42,11 @@ def ingest_mandi_prices(instruction: str = "") -> str:
 
             database = MandiObservationMongo()
 
-        orchestrator = DailyMandiOrchestrator(
-            client=BiharMandiApiClient(), database=database
+        client = BiharMandiApiClient()
+        get_logger().info(
+            "Calling API: %s | dates: %s", client.endpoint, ", ".join(map(str, dates))
         )
+        orchestrator = DailyMandiOrchestrator(client=client, database=database)
         trace = orchestrator.run(dates, dry_run=dry_run)
     except Exception as exc:  # noqa: BLE001 - surfaced as an Observation, not a crash
         return f"ERROR: mandi ingestion failed: {exc}"

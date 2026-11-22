@@ -38,13 +38,24 @@ from agent_tools import (
     ingest_crop_statistics,
     ingest_mandi_prices,
 )
+from agent_tools.agent_logging import (
+    AgentLogCallback,
+    configure_logging,
+)
+from agent_tools.capabilities import (
+    clarify,
+    describe,
+    request_after_choice,
+    resolve_request,
+)
 
 SYSTEM_PROMPT = (
     "You handle requests about Bihar agriculture data. Choose the single "
     "best tool for the request and pass the request text to it. Ingestion "
     "tools fetch and store new data; the question tool only answers from "
-    "data already stored. When a tool returns its observation, answer the "
-    "user's request from that observation."
+    "data already stored. Before calling a tool, state in one short "
+    "sentence why you chose it. When a tool returns its observation, "
+    "answer the user's request from that observation."
 )
 
 
@@ -75,21 +86,98 @@ def build_agent(llm=None, tools=None):
     return create_agent(llm, tools, system_prompt=SYSTEM_PROMPT)
 
 
-def run(request, verbose=True):
-    agent = build_agent()
+def resolve_capability(
+    request, *, logger, interactive, input_fn=input, output_fn=print
+):
+    """Fixed-code resolution step that runs before the model.
+
+    Returns (capability, user_chose). capability is None if the request
+    could not be resolved and the user did not pick one (cancelled, or
+    non-interactive). user_chose is True when the user picked from options.
+    """
+    logger.info("Parsing human input and finding matching tool...")
+    resolution = resolve_request(request)
+    logger.info("Resolver: %s (%s)", resolution.status, resolution.reason)
+    if resolution.status == "resolved":
+        return resolution.capability, False
+
+    if not interactive:
+        output_fn(describe(resolution))
+        logger.info("Non-interactive run: no tool selected, options listed")
+        return None, False
+
+    logger.info("Asking the user to choose a source")
+    chosen = clarify(
+        resolution, input_fn=input_fn, output_fn=output_fn
+    )
+    if chosen is None:
+        logger.info("No source chosen; stopping without running a tool")
+        return None, False
+    logger.info("User selected: %s", chosen.label)
+    return chosen, True
+
+
+def run(
+    request,
+    verbose=True,
+    *,
+    llm=None,
+    interactive=None,
+    input_fn=input,
+    output_fn=print,
+):
+    """Resolve the request to one capability, then run the ReAct loop over
+    just that capability's tool. Returns the final answer text, or a short
+    message if nothing was run."""
+    logger = configure_logging()
+    logger.info('Human input = "%s"', request)
+    if interactive is None:
+        interactive = sys.stdin.isatty()
+
+    capability, user_chose = resolve_capability(
+        request, logger=logger, interactive=interactive,
+        input_fn=input_fn, output_fn=output_fn,
+    )
+    if capability is None:
+        return "No tool was selected for this request."
+
+    agent_request = request
+    if user_chose:
+        agent_request = request_after_choice(capability, request)
+        logger.info('Request passed to agent = "%s"', agent_request)
+
+    tools_by_name = {t.name: t for t in default_tools()}
+    logger.info(
+        "Found required tool: %s | action: %s",
+        capability.tool_name, capability.action,
+    )
+    agent = build_agent(llm=llm, tools=[tools_by_name[capability.tool_name]])
+
     final_state = None
     for state in agent.stream(
-        {"messages": [{"role": "user", "content": request}]},
+        {"messages": [{"role": "user", "content": agent_request}]},
+        config={"callbacks": [AgentLogCallback(logger)]},
         stream_mode="values",
     ):
         final_state = state
         if verbose:
             state["messages"][-1].pretty_print()
-    return final_state["messages"][-1].content
+    answer = final_state["messages"][-1].content
+    logger.info("Final answer: %s", " ".join(str(answer).split())[:300])
+    return answer
+
+
+def parse_cli(argv):
+    """Split argv into (request, interactive). --non-interactive makes an
+    unresolvable request list its options and exit instead of prompting."""
+    args = [a for a in argv if a != "--non-interactive"]
+    interactive = None if len(args) == len(argv) else False
+    return " ".join(args), interactive
 
 
 if __name__ == "__main__":
-    if len(sys.argv) < 2:
-        print('Usage: python agent.py "<free text request>"')
+    request, interactive = parse_cli(sys.argv[1:])
+    if not request:
+        print('Usage: python agent.py [--non-interactive] "<free text request>"')
         raise SystemExit(1)
-    run(" ".join(sys.argv[1:]))
+    run(request, interactive=interactive)
