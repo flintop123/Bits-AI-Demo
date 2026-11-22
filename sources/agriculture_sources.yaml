@@ -1,5 +1,6 @@
 sources:
   - id: bihar_annual_scheme_2022_23
+    keywords: [annual scheme, annual plan, 2022-23, scheme]
     title: Bihar Annual Scheme 2022-23 - Agriculture and Allied Sector
     organization: Government of Bihar
     language: en
@@ -10,6 +11,7 @@ sources:
     enabled: true
 
   - id: bihar_horticulture_baipp_brochure
+    keywords: [horticulture, baipp, brochure, investment]
     title: Bihar Agri Investment Promotion Policy - Horticulture Brochure
     organization: Directorate of Horticulture, Government of Bihar
     language: mixed
@@ -19,6 +21,7 @@ sources:
     enabled: true
 
   - id: apeda_makhana_hindi
+    keywords: [apeda, makhana, export, मखाना]
     title: भारत से मखाना निर्यात को प्रोत्साहित किए जाने हेतु कार्यनीति
     organization: Agricultural and Processed Food Products Export Development Authority
     language: hi
@@ -30,6 +33,7 @@ sources:
     enabled: true
 
   - id: pmfme_makhana_handbook_hindi
+    keywords: [pmfme, niftem, makhana, handbook, मखाना]
     title: पीएमएफएमई मखाना पुस्तिका
     organization: National Institute of Food Technology Entrepreneurship and Management
     language: hi

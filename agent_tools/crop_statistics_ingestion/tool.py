@@ -7,6 +7,7 @@ committed workbook); this module only adds the LLM-facing description.
 from langchain_core.tools import tool
 
 from agent_tools._shared import new_run_id, wants_dry_run
+from agent_tools.agent_logging import get_logger
 from phase2.agents import CropStatisticsSourceAgent
 
 
@@ -21,6 +22,7 @@ def ingest_crop_statistics(instruction: str = "") -> str:
     """
     try:
         agent = CropStatisticsSourceAgent()
+        get_logger().info("Parsing Excel file: %s", agent.workbook_path)
         result = agent.execute(new_run_id(), dry_run=wants_dry_run(instruction))
     except Exception as exc:  # noqa: BLE001 - surfaced as an Observation, not a crash
         return f"ERROR: crop statistics ingestion failed: {exc}"
