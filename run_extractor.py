@@ -16,10 +16,14 @@ ingestion and for the measured Phase 2 evaluation. See docs/REACT_AGENT.md.
 
 import sys
 
-from agent import run
+from agent import parse_cli, run
 
 if __name__ == "__main__":
-    if len(sys.argv) < 2:
-        print('Usage: python run_extractor.py "<plain English request>"')
+    request, interactive = parse_cli(sys.argv[1:])
+    if not request:
+        print(
+            'Usage: python run_extractor.py [--non-interactive] '
+            '"<plain English request>"'
+        )
         raise SystemExit(1)
-    run(" ".join(sys.argv[1:]))
+    run(request, interactive=interactive)

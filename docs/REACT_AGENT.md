@@ -19,9 +19,10 @@ everything below.
 ## 2. run_extractor.py — a constrained ReAct agent, for free-text requests
 
 For the opposite situation: a human gives a free-text request and the
-system doesn't know in advance which capability applies. A LangChain 1.x
-agent (`create_agent`, Ollama `qwen3:4b`) reads the request and decides,
-one step at a time, which tool to call and what arguments to pass it. The
+system doesn't know in advance which capability applies. Fixed code first
+resolves the request to one capability (see "Resolution step" below), then
+a LangChain 1.x agent (`create_agent`, Ollama `qwen3:4b`) runs over just
+that capability's tool and decides what argument to pass it. The
 model returns a structured tool call, the framework runs it and feeds the
 result back, and the loop ends when the model replies without a tool call.
 "Constrained" means the model is never handed anything beyond four fixed,
@@ -36,6 +37,75 @@ python run_extractor.py "what was total rice production in 2024-25?"
 `run_extractor.py` is the named entry point; it's a thin wrapper around
 `agent.py`'s `build_agent()`/`run()`, which stays importable as a library
 for anything else that wants to embed the same agent.
+
+### Resolution step (before the model)
+
+`agent.run()` does not hand the raw request to the model. It first calls
+`agent_tools/capabilities.py`, which holds the **capability table** — the
+in-code list of what the agent can really do, one entry per
+(domain, source format) pair mapped to a tool:
+
+| Domain | Format | Tool |
+|---|---|---|
+| mandi | api | `ingest_mandi_prices` |
+| crop_statistics | excel | `ingest_crop_statistics` |
+| documents | pdf | `ingest_agriculture_documents` |
+| question | stored data | `ask_agriculture_question` |
+
+`resolve_request()` (fixed keyword code, no model) returns one of:
+
+- **resolved** — exactly one capability matches; the agent is built with
+  only that tool.
+- **unsupported** — a real domain with a format it doesn't have, e.g.
+  "load mandi data via excel" (mandi is API-only).
+- **ambiguous** / **unclear** — several, or no, sources match.
+
+For anything but *resolved*, the user is shown the valid options and asked
+to pick a number; the chosen capability is then run. With
+`--non-interactive` (or when stdin is not a terminal) the options are
+printed and nothing runs. This replaces the model improvising a refusal.
+
+After the user picks an option, the model is not given their original
+wording: "load mandi data via excel" next to a crop-only tool makes a small
+model refuse. `request_after_choice()` restates the request from the chosen
+capability instead, keeping only the day count and dry-run flag that fixed
+code can read from the original. The log shows it as
+`Request passed to agent = "..."`.
+
+To add a capability, add one entry to `CAPABILITIES` (and its tool to
+`agent_tools/__init__.py` / `agent.default_tools()`);
+`tests/test_agent_resolution.py` checks every entry maps to a real tool.
+
+**PDF selection (second level).** Inside `ingest_agriculture_documents`,
+`agent_tools/agriculture_documents_ingestion/selection.py` narrows the
+manifest from the request: an exact source id, else the optional
+`keywords` list on each entry in `sources/agriculture_sources.yaml`, else a
+"hindi" / "english" filter ("mixed" documents satisfy either). With no
+hint, all enabled PDFs are ingested as before. No match returns an
+`ERROR:` observation listing the available sources.
+
+### Run log
+
+Each run writes short, informational lines to the console and to
+`logs/agent_run.log` (git-ignored; separate from the Phase 2
+`logs/automation_log.csv`):
+
+```
+Human input = "load mandi data via excel"
+Parsing human input and finding matching tool...
+Resolver: unsupported (mandi data is not available as excel)
+Asking the user to choose a source
+User selected: Crop area / production / yield from the Excel workbook
+Found required tool: ingest_crop_statistics | action: reading crop statistics from the Excel workbook
+Agent reason: <one sentence from the model, or "(not stated)"> | chose tool=... args=...
+Performing action: reading crop statistics from the Excel workbook (tool=ingest_crop_statistics)
+Tool result: status=completed; records_processed=...
+Final answer: ...
+```
+
+The resolver lines are exact (fixed code). "Agent reason" is whatever
+one-line rationale the model wrote before its tool call; the system prompt
+asks for one, but a small local model may skip it.
 
 ### The four tools
 
@@ -75,9 +145,11 @@ the write.
 This is worth stating explicitly, since it's judged directly in the
 demonstration protocol:
 
-- **Model-made:** which of the four tools applies to a given free-text
-  request; what single text argument to pass it; when to stop and give a
-  final answer. Inside `ask_agriculture_question` specifically, the model
+- **Fixed code (resolver):** which of the four tools applies to a given
+  free-text request, including refusing unsupported combinations and asking
+  the user to choose; which manifest PDFs a document request means.
+- **Model-made:** what single text argument to pass the (already chosen)
+  tool; when to stop and give a final answer. Inside `ask_agriculture_question` specifically, the model
   also makes a second, narrower decision — the query plan (intent +
   filters) used by `AgricultureQAService`.
 - **Fixed code:** the actual extraction, validation, and MongoDB writes
@@ -106,7 +178,7 @@ and checks `extract_days()`'s day-range parsing directly — none of this
 requires Ollama or MongoDB to be running. Run it with:
 
 ```powershell
-python -m unittest tests.test_react_agent
+python -m unittest tests.test_react_agent tests.test_agent_resolution
 ```
 
 This is a mechanical sanity check, not a substitute for a real run — a live
