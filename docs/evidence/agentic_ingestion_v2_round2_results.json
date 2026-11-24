@@ -1,0 +1,133 @@
+{
+  "schema_version": "1.0",
+  "evaluation": "Phase II Round-2 agentic ingestion",
+  "evaluation_date": "2026-11-15",
+  "branch": "anuj/agentic-ingestion-v2-foundation",
+  "react_layer_modified": false,
+  "summary": {
+    "inputs_evaluated": 5,
+    "valid_outputs": 158,
+    "attempted_outputs": 158,
+    "validation_rate": 1.0,
+    "full_tests_passed": 215,
+    "full_tests_total": 215,
+    "portable_dump_valid_records": 12348
+  },
+  "database_before": {
+    "mandi_prices": 7698,
+    "crop_statistics": 4372,
+    "agriculture_documents": 153,
+    "mandi_locations": 42
+  },
+  "database_after": {
+    "mandi_prices": 7713,
+    "crop_statistics": 4372,
+    "agriculture_documents": 221,
+    "mandi_locations": 42
+  },
+  "final_runs": [
+    {
+      "input": "JSON_mandi_prices.json",
+      "modality": "json",
+      "target_collection": "mandi_prices",
+      "run_id": "1adcd0d4-e8a3-4e52-90dc-db34badb1e31",
+      "valid": 15,
+      "attempted": 15,
+      "write_mode": "write",
+      "outcome": "completed"
+    },
+    {
+      "input": "Excel_crop_area_production_yield.xlsx",
+      "modality": "excel",
+      "target_collection": "crop_statistics",
+      "run_id": "fb210766-bd5b-4ab7-a228-5f6c7150fd25",
+      "valid": 75,
+      "attempted": 75,
+      "write_mode": "write",
+      "outcome": "completed",
+      "persistence_note": "75 existing compound identities updated without increasing collection count"
+    },
+    {
+      "input": "ScannedPDF_makhana.pdf",
+      "modality": "pdf",
+      "target_collection": "agriculture_documents",
+      "run_id": "4812ab68-154b-4406-bc93-5b63b74eed48",
+      "valid": 32,
+      "attempted": 32,
+      "write_mode": "write",
+      "outcome": "completed",
+      "extraction_method": "tesseract_ocr",
+      "language": "hi"
+    },
+    {
+      "input": "PDF_annual_scheme_agriculture.pdf",
+      "modality": "pdf",
+      "target_collection": "agriculture_documents",
+      "run_id": "273c1179-cba9-4197-bb81-f556e069232d",
+      "valid": 30,
+      "attempted": 30,
+      "write_mode": "write",
+      "outcome": "completed",
+      "extraction_method": "pypdf",
+      "language": "en"
+    },
+    {
+      "input": "PDF_horticulture_brochure.pdf",
+      "modality": "pdf",
+      "target_collection": "agriculture_documents",
+      "run_id": "544bc510-e019-4ea0-8b44-bade13617143",
+      "valid": 6,
+      "attempted": 6,
+      "write_mode": "write",
+      "outcome": "completed",
+      "extraction_method": "pypdf",
+      "language": "en"
+    }
+  ],
+  "resolved_failures": [
+    {
+      "input": "JSON_mandi_prices.json",
+      "initial_result": "0/15",
+      "cause": "required date field omitted from model mapping",
+      "safeguard": "exact-name required-field restoration",
+      "final_result": "15/15"
+    },
+    {
+      "input": "Excel_crop_area_production_yield.xlsx",
+      "initial_result": "0/20 initial candidates",
+      "cause": "header row and period-series mappings omitted",
+      "safeguard": "explicit wide-header detection and unpivot repair",
+      "final_result": "75/75"
+    },
+    {
+      "input": "ScannedPDF_makhana.pdf",
+      "initial_result": "0/32 routed to mandi_locations",
+      "cause": "model target incompatible with extracted PDF chunk schema",
+      "safeguard": "extractor-target schema compatibility guard",
+      "final_result": "32/32 in agriculture_documents"
+    },
+    {
+      "input": "ScannedPDF_makhana.pdf",
+      "initial_result": "traceable but corrupted hidden-text extraction",
+      "cause": "poor embedded Hindi text layer",
+      "safeguard": "forced hin+eng OCR and stable page/chunk upsert identity",
+      "final_result": "32/32 corrected OCR chunks; 0 stale old-run chunks"
+    }
+  ],
+  "backups": {
+    "pre_write": "D:\\BiharAgriculture\\Phase2_Round2_Backups\\bihar_agriculture_pre_v2_20261115-202553.archive.gz",
+    "post_write": "D:\\BiharAgriculture\\Phase2_Round2_Backups\\bihar_agriculture_post_v2_20261115-210130.archive.gz"
+  },
+  "checks": {
+    "focused_ingestion_v2_tests": "17/17 passed",
+    "full_regression_tests": "215/215 passed",
+    "pip_check": "No broken requirements found",
+    "portable_dump_validation": "12348/12348 valid",
+    "git_diff_check": "passed"
+  },
+  "known_limitations": [
+    "OCR may retain errors in charts, small numerals and stylized glyphs",
+    "Multi-column brochure order is imperfect and is retained as narrative evidence",
+    "Model-assisted bilingual normalization, weekly/monthly views, district trends and OpenStreetMap are follow-up workstreams"
+  ]
+}

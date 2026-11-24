@@ -29,7 +29,7 @@ class DemoUiTests(unittest.TestCase):
             self.assertIn(b'id="dashboard"', response.data)
             self.assertIn(b'id="daily-chart"', response.data)
             self.assertIn(b'id="market-map"', response.data)
-            self.assertIn(b'id="market-map-total"', response.data)
+            self.assertIn(b'market-explorer-summary', response.data)
             self.assertIn(b'id="intelligence-form"', response.data)
             self.assertIn(b'id="intelligence-catalog-language"', response.data)
             self.assertIn(b'id="intelligence-crop"', response.data)
@@ -59,7 +59,7 @@ class DemoUiTests(unittest.TestCase):
             self.assertIn(b"applyIntelligenceCatalogLanguage", js_response.data)
             self.assertIn(b"market.market_label", js_response.data)
             self.assertIn(b"/api/v1/mandi-intelligence", js_response.data)
-            self.assertIn(b"verified points", js_response.data)
+            self.assertIn(b"getMarketExplorer", js_response.data)
         finally:
             css_response.close()
             js_response.close()

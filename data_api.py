@@ -1,16 +1,22 @@
-"""Read-only HTTP API for Bihar agriculture data."""
+"""Bihar agriculture dashboard and its separate local viva workflow."""
 
 import atexit
+import csv
+import math
 import os
+from pathlib import Path
 from urllib.parse import urlsplit
 
-from flask import Flask, jsonify, render_template, request
+from flask import Flask, jsonify, render_template, request, send_from_directory
+from werkzeug.exceptions import NotFound
 from werkzeug.exceptions import HTTPException
 
+from ingestion_v2.period_report import MAX_REPORT_BYTES, preview_period_report
 from services.agriculture_query_service import AgricultureQueryService
 from services.multilingual_query_expansion import expand_document_query
 from services.agriculture_qa_service import AgricultureQAService
 from services.ollama_client import OllamaUnavailableError
+from viva_api import VIVA_PREFIX, viva_blueprint
 
 
 def parse_limit(raw_limit):
@@ -33,12 +39,29 @@ def parse_days(raw_days):
     return days
 
 
+def parse_periods(raw_periods):
+    try:
+        periods = int(raw_periods)
+    except (TypeError, ValueError) as exc:
+        raise ValueError("periods must be an integer") from exc
+    if periods < 1 or periods > 60:
+        raise ValueError("periods must be between 1 and 60")
+    return periods
+
+
+def parse_reporting_frequency(raw_frequency):
+    frequency = str(raw_frequency or "daily").strip().lower()
+    if frequency not in {"daily", "weekly", "monthly"}:
+        raise ValueError("frequency must be daily, weekly or monthly")
+    return frequency
+
+
 def parse_float(raw_value, field_name, minimum, maximum):
     try:
         value = float(raw_value)
     except (TypeError, ValueError) as exc:
         raise ValueError(f"{field_name} must be a number") from exc
-    if value < minimum or value > maximum:
+    if not math.isfinite(value) or value < minimum or value > maximum:
         raise ValueError(
             f"{field_name} must be between {minimum} and {maximum}"
         )
@@ -67,17 +90,21 @@ def is_local_dashboard_origin(origin):
     )
 
 
-def create_app(service=None, qa_service=None):
+def create_app(service=None, qa_service=None, *, viva_react=None, viva_upload_store=None):
     app = Flask(__name__)
     query_service = service or AgricultureQueryService()
     if service is None:
         atexit.register(query_service.close)
     agriculture_qa = qa_service or AgricultureQAService(query_service)
+    app.register_blueprint(viva_blueprint(
+        agriculture_qa, lambda: query_service.database,
+        react=viva_react, upload_store=viva_upload_store,
+    ))
 
     @app.after_request
     def allow_local_static_dashboard(response):
         origin = request.headers.get("Origin", "")
-        if is_local_dashboard_origin(origin):
+        if not request.path.startswith(VIVA_PREFIX + "/") and is_local_dashboard_origin(origin):
             response.headers["Access-Control-Allow-Origin"] = origin
             response.headers["Access-Control-Allow-Headers"] = "Content-Type"
             response.headers["Access-Control-Allow-Methods"] = (
@@ -107,7 +134,29 @@ def create_app(service=None, qa_service=None):
 
     @app.get("/")
     def demo():
-        return render_template("index.html")
+        # Browser-scoped credentials only; never render a MapTiler service token.
+        key = os.environ.get("AGRI_MAPTILER_PUBLIC_KEY", "").strip()
+        return render_template("index.html", maptiler_public_key=key)
+
+    @app.get("/market-explorer/<asset_name>")
+    def market_explorer_asset(asset_name):
+        if asset_name not in {"market-explorer.js", "market-explorer.css"}:
+            raise NotFound()
+        return send_from_directory(Path(__file__).resolve().parent / "docs" / "assets", asset_name)
+
+    @app.post("/api/v1/mandi-period-report/preview")
+    def preview_mandi_period_report():
+        if request.mimetype not in {"text/csv", "application/csv"}:
+            return jsonify({"error": "Send the CSV bytes as text/csv"}), 415
+        if request.content_length is None or not 0 < request.content_length <= MAX_REPORT_BYTES:
+            return jsonify({"error": "CSV must be nonempty and no larger than 512 KiB"}), 413
+        try:
+            report = preview_period_report(
+                request.stream.read(MAX_REPORT_BYTES + 1), request.args.get("frequency"),
+            )
+        except (csv.Error, UnicodeError, OverflowError) as exc:
+            raise ValueError("Invalid UTF-8 CSV or period date") from exc
+        return jsonify(report)
 
     @app.get("/api/v1/mandi-prices")
     def mandi_prices():
@@ -138,6 +187,24 @@ def create_app(service=None, qa_service=None):
         return jsonify({
             "count": len(records),
             "days": days,
+            "filters": filters,
+            "records": records,
+        })
+
+    @app.get("/api/v1/mandi-prices/district-trends")
+    def district_mandi_trends():
+        frequency = parse_reporting_frequency(
+            request.args.get("frequency", "daily")
+        )
+        periods = parse_periods(request.args.get("periods", "12"))
+        filters = selected_filters(("district", "crop", "variety", "unit"))
+        records = query_service.find_district_trends(
+            filters, frequency, periods
+        )
+        return jsonify({
+            "count": len(records),
+            "frequency": frequency,
+            "periods": periods,
             "filters": filters,
             "records": records,
         })

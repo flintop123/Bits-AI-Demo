@@ -1,4 +1,4 @@
-"""Validate the JSONL dump and load its relational mirror into SQLite."""
+"""Validate the JSONL dump; explicitly seed local MongoDB or export SQLite."""
 
 import argparse
 import json
@@ -91,17 +91,73 @@ def load_sqlite(all_records, destination):
         connection.close()
 
 
+def seed_mongo(all_records, database):
+    """Seed a stopped-app, empty demo database without replacing any records."""
+    existing = set(database.list_collection_names()) | set(COLLECTIONS)
+    populated = [
+        name for name in sorted(existing)
+        if not name.startswith("system.") and database[name].find_one({}, {"_id": 1}) is not None
+    ]
+    if populated:
+        raise ValueError(
+            "MongoDB seed refused: existing records in " + ", ".join(populated)
+            + ". Use an empty local demo instance; no records were changed."
+        )
+
+    database["mandi_locations"].create_index(
+        [("location", "2dsphere")], name="mandi_location_2dsphere"
+    )
+    database["agriculture_documents"].create_index(
+        [("content", "text"), ("document_title", "text")],
+        name="agriculture_document_text",
+        default_language="none",
+        language_override="text_search_language",
+    )
+
+    counts = {}
+    for name in COLLECTIONS:
+        collection = database[name]
+        records = all_records[name]
+        if records:
+            collection.insert_many([dict(record) for record in records])
+        count = collection.count_documents({})
+        if count != len(records):
+            raise RuntimeError(f"{name}: expected {len(records)} seeded records, found {count}")
+        counts[name] = count
+    return counts
+
+
 def main(argv=None):
     parser = argparse.ArgumentParser()
     parser.add_argument("--dump", default="db/dump")
     parser.add_argument("--sqlite", default="db/dump/agriagent.sqlite")
-    parser.add_argument("--validate-only", action="store_true")
+    mode = parser.add_mutually_exclusive_group()
+    mode.add_argument("--validate-only", action="store_true")
+    mode.add_argument("--mongo", action="store_true", help="Seed empty bihar_agriculture on local port 27017.")
     args = parser.parse_args(argv)
     folder = ROOT / args.dump
     all_records = {name: read_collection(folder, name) for name in COLLECTIONS}
     for name, records in all_records.items():
         print(f"{name}: {len(records)} valid records")
-    if not args.validate_only:
+    if args.mongo:
+        from pymongo import MongoClient
+        from pymongo.errors import PyMongoError
+
+        try:
+            with MongoClient(
+                "mongodb://127.0.0.1:27017/?directConnection=true",
+                serverSelectionTimeoutMS=5000,
+            ) as client:
+                counts = seed_mongo(all_records, client["bihar_agriculture"])
+        except ValueError as exc:
+            parser.exit(1, f"{exc}\n")
+        except (PyMongoError, RuntimeError) as exc:
+            parser.exit(1, f"MongoDB seed did not complete: {exc}\n"
+                        "Check whether a partial load exists before retrying. "
+                        "This command never clears existing data.\n")
+        for name, count in counts.items():
+            print(f"{name}: {count} MongoDB records verified")
+    elif not args.validate_only:
         destination = ROOT / args.sqlite
         load_sqlite(all_records, destination)
         print(f"SQLite mirror loaded: {destination.resolve()}")

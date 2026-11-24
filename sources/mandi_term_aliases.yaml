@@ -1,0 +1,23 @@
+schema_version: 1
+aliases:
+  - entity_type: crop
+    official_value: कुलथी
+    labels:
+      hi: कुलथी
+      en: Horse gram
+    aliases:
+      - kulthi
+    review_status: approved
+    review_source: phase2_round2_model_output_review
+    review_note: MarianMT produced an incorrect label; project review approved the standard agricultural English name.
+
+  - entity_type: crop
+    official_value: हल्दी
+    labels:
+      hi: हल्दी
+      en: Turmeric
+    aliases:
+      - haldi
+    review_status: approved
+    review_source: phase2_round2_model_output_review
+    review_note: Qwen proposed the correct agricultural label, but automatic validators were inconclusive; project review approved it.

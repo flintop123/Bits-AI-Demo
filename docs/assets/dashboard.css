@@ -121,6 +121,11 @@ svg { display: block; }
 .window-control { display: flex; gap: 3px; padding: 4px; border: 1px solid var(--line); background: rgba(255,255,255,.5); }
 .window-control button { border: 0; background: transparent; padding: 8px 14px; cursor: pointer; color: var(--ink-soft); font-size: 13px; font-weight: 900; }
 .window-control button.is-active { color: var(--white); background: var(--forest); }
+.coverage-controls { display: grid; justify-items: end; gap: 9px; }
+.frequency-control { display: flex; gap: 3px; padding: 4px; border: 1px solid var(--line); background: rgba(255,255,255,.66); }
+.frequency-control button { border: 0; padding: 8px 13px; color: var(--ink-soft); background: transparent; cursor: pointer; font-size: 12px; font-weight: 900; text-transform: uppercase; }
+.frequency-control button.is-active { color: var(--white); background: var(--saffron); }
+.window-control.is-disabled { opacity: .38; pointer-events: none; }
 
 .coverage-section { background: var(--cream); }
 .dashboard-grid { display: grid; grid-template-columns: minmax(0, 1.7fr) minmax(330px, .7fr); gap: 24px; }
@@ -157,11 +162,9 @@ svg { display: block; }
 .map-layout { display: grid; grid-template-columns: minmax(0, 1.55fr) minmax(280px, .45fr); gap: 24px; }
 .map-card { position: relative; min-height: 590px; overflow: hidden; border-radius: var(--radius); background: #e7eadc; border: 1px solid var(--line); }
 .market-map { min-height: 540px; }
-.market-map svg { width: 100%; height: 540px; }
-.market-map .latitude, .market-map .longitude { stroke: rgba(18,55,42,.09); stroke-width: 1; }
-.market-map .region { fill: #d9dfc9; stroke: #aebc9f; stroke-width: 2; }
-.market-map .market-point { fill: var(--saffron); stroke: var(--paper); stroke-width: 2; cursor: pointer; transition: r .15s ease, fill .15s ease; }
-.market-map .market-point:hover, .market-map .market-point:focus { fill: var(--forest); r: 8; outline: none; }
+.market-map.leaflet-container { height: 540px; background: #e7eadc; font-family: inherit; }
+.market-map .leaflet-popup-content strong { color: var(--forest); }
+.map-unavailable { display: grid; place-items: center; padding: 30px; color: var(--ink-soft); }
 .map-caption { display: flex; justify-content: space-between; padding: 14px 20px; color: var(--ink-soft); background: rgba(255,255,255,.6); border-top: 1px solid var(--line); font-size: 12px; }
 .map-tooltip { position: absolute; z-index: 5; max-width: 270px; padding: 13px 15px; color: var(--white); background: var(--forest); border-radius: 7px; box-shadow: 0 10px 30px rgba(0,0,0,.22); pointer-events: none; font-size: 13px; }
 .map-tooltip strong { display: block; font-size: 15px; }
@@ -175,6 +178,14 @@ svg { display: block; }
 .source-note { align-self: end; background: var(--forest); color: var(--white); }
 .source-note strong { display: block; margin: 9px 0 4px; font-size: 16px; }
 .source-note span, .source-note small { color: rgba(255,255,255,.65); }
+
+.district-section { background: var(--paper); }
+.district-toolbar { display: flex; align-items: end; justify-content: space-between; gap: 24px; margin-bottom: 22px; }
+.district-toolbar label span { display: block; margin-bottom: 7px; color: var(--ink-soft); font-size: 12px; font-weight: 900; letter-spacing: .08em; text-transform: uppercase; }
+.district-toolbar select { min-width: 260px; min-height: 46px; padding: 0 38px 0 13px; border: 1px solid var(--line); color: var(--ink); background: var(--white); font: inherit; }
+.district-trend-panel { padding: clamp(26px, 4vw, 48px); }
+.district-line { stroke: var(--saffron) !important; }
+.district-method { margin: 18px 0 0; color: var(--ink-soft); font-size: 13px; }
 
 .intelligence-section { background: #f0e7d8; }
 .intelligence-grid { display: grid; grid-template-columns: 1.1fr .9fr; gap: 24px; }
@@ -337,12 +348,15 @@ footer > a:last-child { color: var(--saffron-soft); text-decoration: none; font-
   .section-heading { display: block; }
   .section h2 { font-size: 43px; }
   .section-summary { margin-top: 24px; }
-  .window-control { width: max-content; margin-top: 24px; }
+  .coverage-controls { justify-items: start; margin-top: 24px; }
+  .window-control { width: max-content; }
+  .district-toolbar { align-items: stretch; flex-direction: column; }
+  .district-toolbar select { width: 100%; }
   .panel { padding: 24px; }
   .chart { min-height: 270px; }
   .chart svg { height: 270px; }
   .map-card { min-height: 500px; }
-  .market-map, .market-map svg { min-height: 450px; height: 450px; }
+  .market-map, .market-map.leaflet-container { min-height: 450px; height: 450px; }
   .location-stats { grid-template-columns: 1fr; }
   .source-note { grid-column: auto; }
   .insight-metrics { grid-template-columns: 1fr 1fr; }

@@ -52,13 +52,13 @@ agents:
 pending_sources:
   - source: Bihar State Data Lab
     intended_agent: structured_data_agent
-    status: pending source-specific access and schema study
+    status: pending live access and authentic export validation; local preflight available
   - source: Bihar Horticulture portal dynamic datasets
     intended_agent: horticulture_web_agent
-    status: pending endpoint mapping
+    status: pending endpoint mapping and authentic export validation; local preflight available
   - source: Bihar State Seed Certification reports
     intended_agent: seed_report_agent
-    status: pending report inventory and parsing tests
+    status: pending report inventory and authentic sample validation; local PDF preflight available
   - source: NASA AppEEARS and MODIS land-cover products
     intended_agent: satellite_data_agent
-    status: Phase 3 geospatial integration
+    status: pending spatial decoding and validation; local container signature check available
