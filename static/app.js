@@ -702,7 +702,7 @@ form.addEventListener("submit", async (event) => {
   if (!question || askButton.disabled) return;
   showLoading();
   try {
-    const localPath = {react: "react", document_chat: "document-chat"}[questionMode.value] || "ask";
+    const localPath = {react: "react", document_chat: "document-chat", milvus_demo: "milvus-demo"}[questionMode.value] || "ask";
     const response = await fetch(`/api/v1/viva/${localPath}`, {
       method: "POST",
       headers: { "Content-Type": "application/json", "X-Agri-Dashboard": "1" },
@@ -736,6 +736,14 @@ document.querySelectorAll("[data-question]").forEach((button) => {
 document.querySelector("#document-chat-example").addEventListener("click", () => {
   questionMode.value = "document_chat";
   questionInput.value = "What does the report say about Bihar’s organic farming corridor?";
+  questionInput.dispatchEvent(new Event("input"));
+  questionInput.focus();
+});
+
+document.querySelector("#milvus-demo-example")?.addEventListener("click", () => {
+  questionMode.value = "milvus_demo";
+  answerLanguage.value = "en";
+  questionInput.value = "What does the report say about the organic farming corridor?";
   questionInput.dispatchEvent(new Event("input"));
   questionInput.focus();
 });

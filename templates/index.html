@@ -495,6 +495,7 @@
                   <option value="direct">Direct QA</option>
                   <option value="react">ReAct agent</option>
                   <option value="document_chat">Document Chat · local reports</option>
+                  {% if milvus_demo_enabled %}<option value="milvus_demo">Milvus Vector RAG · public report demo</option>{% endif %}
                 </select></label>
                 <label for="answer-language">Answer language
                   <select id="answer-language" name="answer_language">
@@ -521,6 +522,7 @@
               <button type="button" data-question="पिछले 30 दिनों में अरवल में आलू के भाव में क्या बदलाव आया?">भाव का रुझान</button>
               <button type="button" data-question="What does the report say about the organic farming corridor?">Organic farming policy</button>
               <button type="button" id="document-chat-example">Document Chat: organic farming</button>
+              {% if milvus_demo_enabled %}<button type="button" id="milvus-demo-example">Milvus Vector RAG: organic farming</button>{% endif %}
               <button type="button" data-question="पीएमएफएमई मखाना पुस्तिका में प्रसंस्करण के बारे में क्या बताया गया है?">मखाना प्रसंस्करण</button>
             </div>
           </details>

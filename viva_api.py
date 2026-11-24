@@ -12,6 +12,7 @@ from pymongo.errors import PyMongoError
 from werkzeug.exceptions import RequestEntityTooLarge
 
 from services.dashboard_document_chat import DashboardDocumentChat, DocumentChatUnavailable
+from services.milvus_public_demo import DemoError
 from services.viva_dashboard import (
     COLLECTION, Drafts, MAX_PDF_BYTES, ReactDashboard, ReactNoEvidence,
     UploadReadbackError, VivaUploadStore, preview_pdf,
@@ -53,11 +54,12 @@ def dashboard_question():
     return question, language
 
 
-def viva_blueprint(qa, database, *, react=None, upload_store=None, document_chat=None):
+def viva_blueprint(qa, database, *, react=None, upload_store=None, document_chat=None, milvus_chat=None):
     bp = Blueprint("viva", __name__, url_prefix=VIVA_PREFIX)
     drafts, sources, worker = Drafts(), Drafts(), BoundedSemaphore(1)
     document_chat = document_chat if document_chat is not None else DashboardDocumentChat()
     chat_worker = BoundedSemaphore(1)
+    milvus_worker = BoundedSemaphore(1)
 
     def answer_document(question, language):
         # Also callable inside LangGraph's tool thread: no Flask context is
@@ -144,6 +146,24 @@ def viva_blueprint(qa, database, *, react=None, upload_store=None, document_chat
     @bp.post("/document-chat")
     def ask_document_chat():
         return jsonify(answer_document(*dashboard_question()))
+
+    @bp.post("/milvus-demo")
+    def ask_milvus_demo():
+        if milvus_chat is None:
+            return jsonify(error="Start the opt-in Milvus dashboard to use this mode."), 503
+        question, language = dashboard_question()
+        if not milvus_worker.acquire(blocking=False):
+            return jsonify(error="Milvus Vector RAG is busy. Retry shortly."), 429
+        try:
+            return jsonify(milvus_chat.ask(question, language))
+        except ValueError:
+            return jsonify(error="Milvus Vector RAG only accepts the supported public demo question in English."), 400
+        except DemoError as error:
+            return jsonify(error=str(error)), 503
+        except Exception:
+            return jsonify(error="Milvus Vector RAG did not complete. Check the approved collection and local Ollama. No other search was used."), 503
+        finally:
+            milvus_worker.release()
 
     def uploaded_pdf():
         request.max_content_length = MAX_PDF_BYTES + 64 * 1024
