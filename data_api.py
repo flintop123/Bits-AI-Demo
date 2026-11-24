@@ -91,7 +91,8 @@ def is_local_dashboard_origin(origin):
     )
 
 
-def create_app(service=None, qa_service=None, *, viva_react=None, viva_upload_store=None, viva_document_chat=None):
+def create_app(service=None, qa_service=None, *, viva_react=None, viva_upload_store=None,
+               viva_document_chat=None, viva_milvus_chat=None):
     app = Flask(__name__)
     query_service = service or AgricultureQueryService()
     if service is None:
@@ -100,6 +101,7 @@ def create_app(service=None, qa_service=None, *, viva_react=None, viva_upload_st
     app.register_blueprint(viva_blueprint(
         agriculture_qa, lambda: query_service.database,
         react=viva_react, upload_store=viva_upload_store, document_chat=viva_document_chat,
+        milvus_chat=viva_milvus_chat,
     ))
     app.register_blueprint(extractor_blueprint(database=lambda: query_service.database))
 
@@ -138,7 +140,7 @@ def create_app(service=None, qa_service=None, *, viva_react=None, viva_upload_st
     def demo():
         # Browser-scoped credentials only; never render a MapTiler service token.
         key = os.environ.get("AGRI_MAPTILER_PUBLIC_KEY", "").strip()
-        return render_template("index.html", maptiler_public_key=key)
+        return render_template("index.html", maptiler_public_key=key, milvus_demo_enabled=viva_milvus_chat is not None)
 
     @app.get("/market-explorer/<asset_name>")
     def market_explorer_asset(asset_name):
