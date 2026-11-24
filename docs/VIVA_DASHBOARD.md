@@ -28,7 +28,10 @@ For a new document, use the upload flow, not the ReAct question box.
    page. An **exact excerpt** is only a verified part of the passage.
    **Page only** means the app could not prove a location on the page;
    this is always the case for OCR-derived chunks. Preview writes nothing
-   to MongoDB.
+   to MongoDB. Optionally select **Run ReAct preview** to run the existing
+   document source agent in dry-run mode on those same staged bytes. The
+   result shows the actual tool call and extracted page, OCR and passage
+   counts. It does not save anything or replace the reviewed preview.
 3. Select **Save to MongoDB**. The page shows the verified read-back count.
    Expand **Run ID, fingerprints and audit details** for the run ID,
    collection, and source and read-back checksums. The server saves
@@ -50,6 +53,20 @@ For a new document, use the upload flow, not the ReAct question box.
    gone, **Verify and attach** accepts only the same original bytes.
    **Download verified evidence** exports the saved passages, coordinates,
    checksums, and table evidence as JSON; it does not include the PDF.
+
+## What ReAct preview calls
+
+The dashboard reuses Rishi’s LangChain factory. The bound preview tool calls
+the same `AgricultureDocumentsSourceAgent` as the ReAct CLI’s
+`ingest_agriculture_documents` tool, but not the CLI wrapper itself: that
+wrapper reads the official-source manifest and may fetch files even in dry
+run. Here the server supplies exactly one already validated local PDF from
+the current draft, verifies its SHA-256, stages that immutable file in a
+private temporary directory and forces `dry_run=True` in Python. The model
+receives no PDF text or filename and cannot choose a path, URL, source set
+or write mode. Ollama must be on loopback. The core extractor’s local
+Tesseract fallback still applies. No database or remote download is required
+for this action. Save remains a separate browser action after review.
 
 ## Show one exact table cell
 

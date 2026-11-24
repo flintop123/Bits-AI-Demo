@@ -117,6 +117,23 @@ def viva_blueprint(qa, database, *, react=None, upload_store=None):
         finally:
             worker.release()
 
+    @bp.post("/uploads/<uuid:run_id>/react-preview")
+    def react_ingestion_preview(run_id):
+        if request.get_data() or request.args:
+            raise ValueError("ReAct preview accepts only the reviewed upload run ID.")
+        key = str(run_id)
+        raw, draft = sources.get(key), drafts.get(key)
+        if raw is None or draft is None:
+            return jsonify(error="That upload preview expired. Upload the PDF again."), 404
+        if sha256(raw).hexdigest() != draft["source_sha256"]:
+            return jsonify(error="The cached PDF does not match the upload preview."), 409
+        if not worker.acquire(blocking=False):
+            return jsonify(error="The dashboard is busy. Retry the ReAct preview shortly."), 429
+        try:
+            return jsonify(react.preview_document_ingestion(raw, draft))
+        finally:
+            worker.release()
+
     @bp.post("/uploads/<uuid:run_id>/save")
     def save_upload(run_id):
         if request.content_length:

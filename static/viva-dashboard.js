@@ -5,6 +5,8 @@
   const evidence = byId("viva-evidence");
   const file = byId("viva-pdf");
   const save = byId("viva-save");
+  const reactPreview = byId("viva-react-preview");
+  const reactPreviewStatus = byId("viva-react-preview-status");
   const status = byId("viva-status");
   const reopen = byId("viva-reopen-form");
   const runInput = byId("viva-run-id");
@@ -48,6 +50,7 @@
     [...upload.elements, ...reopen.elements, ...attach.elements, ...ask.elements]
       .forEach((element) => { element.disabled = value; });
     save.disabled = value || active?.status !== "preview" || !active.valid_count;
+    reactPreview.disabled = value || active?.status !== "preview" || !active.source_available;
   }
   async function api(path, options) {
     const response = await fetch(`/api/v1/viva/uploads${path}`, {
@@ -241,6 +244,9 @@
     warnings.hidden = !warnings.childElementCount;
     runInput.value = result.run_id;
     save.hidden = verified;
+    reactPreview.hidden = verified;
+    reactPreviewStatus.textContent = "";
+    reactPreviewStatus.removeAttribute("data-tone");
     byId("viva-export").hidden = !verified;
     byId("viva-doc-qa").hidden = !verified;
     byId("viva-examples").hidden = !tables.some((table) => table.profile === "bihar_des_final_2024_25_crop_page3");
@@ -290,6 +296,26 @@
     save.disabled = true;
     setStep("upload");
     setStatus("");
+  });
+  reactPreview.addEventListener("click", async () => {
+    if (busy || active?.status !== "preview" || !active.source_available) return;
+    setBusy(true);
+    reactPreviewStatus.textContent = "Running ReAct on the staged PDF in dry-run mode…";
+    reactPreviewStatus.removeAttribute("data-tone");
+    try {
+      const observed = await api(`/${encodeURIComponent(active.run_id)}/react-preview`, { method: "POST" });
+      if (!observed.react?.tool_called || !observed.dry_run || observed.database_writes !== false
+          || observed.source_sha256 !== active.source_sha256) {
+        throw new Error("The preview did not confirm a dry run of this PDF.");
+      }
+      reactPreviewStatus.textContent = `Called ${observed.react.tool}. The document agent extracted ${observed.pages_extracted} of ${observed.pages_requested} pages (${observed.ocr_pages} OCR) and ${observed.chunks_processed} passages. Nothing saved.`;
+      reactPreviewStatus.dataset.tone = "success";
+    } catch (error) {
+      reactPreviewStatus.textContent = error.message;
+      reactPreviewStatus.dataset.tone = "error";
+    } finally {
+      setBusy(false);
+    }
   });
   save.addEventListener("click", async () => {
     if (busy || active?.status !== "preview" || !active.valid_count) return;

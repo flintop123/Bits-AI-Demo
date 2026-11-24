@@ -124,7 +124,7 @@ def preview_pdf(raw, filename, *, force_ocr=False):
         raise ValueError("The extracted text is too large for one demo run. Use a shorter excerpt.")
     return {
         "run_id": run_id, "source_file": filename, "source_sha256": source_hash,
-        "page_count": page_count,
+        "page_count": page_count, "force_ocr": bool(force_ocr),
         "extracted_pages": extracted.metrics.source_units_extracted,
         "candidate_count": len(extracted.records), "valid_count": len(valid),
         "rejected": rejected, "warnings": [*extracted.warnings, *table_warnings],
@@ -242,14 +242,59 @@ class ReactDashboard:
     def __init__(self, qa, llm=None):
         self.qa, self.llm = qa, llm
 
-    def ask(self, question, language):
+    def _invoke_tool(self, bound_tool, prompt, *, local_only=False):
         import httpx
-        from langchain_core.tools import tool
         from langgraph.errors import GraphRecursionError
         from agent import build_agent
         from agent_config import OLLAMA_MODEL, OLLAMA_URL
-        from agent_tools.capabilities import resolve_request
         from services.ollama_client import OllamaUnavailableError
+
+        llm = self.llm
+        unavailable = (httpx.HTTPError, ConnectionError)
+        if llm is None:
+            try:
+                from ollama import ResponseError
+                from langchain_ollama import ChatOllama
+
+                client_options = {"timeout": 75}
+                if local_only:
+                    from urllib.parse import urlsplit
+
+                    endpoint = urlsplit(OLLAMA_URL)
+                    if (
+                        endpoint.scheme not in {"http", "https"}
+                        or endpoint.hostname not in {"127.0.0.1", "localhost", "::1"}
+                        or endpoint.username or endpoint.password
+                        or endpoint.query or endpoint.fragment
+                    ):
+                        raise OllamaUnavailableError("This preview requires loopback Ollama.")
+                    client_options["trust_env"] = False
+                # Bound dashboard requests without changing Rishi's CLI configuration.
+                llm = ChatOllama(
+                    model=OLLAMA_MODEL, base_url=OLLAMA_URL, temperature=0,
+                    client_kwargs=client_options, reasoning=False,
+                )
+            except ImportError as exc:
+                raise OllamaUnavailableError(
+                    "ReAct could not initialize its Ollama client. Check the installation and loopback proxy settings."
+                ) from exc
+            unavailable += (ResponseError,)
+
+        controller = build_agent(llm=llm, tools=[bound_tool])
+        try:
+            controller.invoke(
+                {"messages": [{"role": "user", "content": prompt}]},
+                config={"recursion_limit": 5},
+            )
+        except unavailable as exc:
+            raise OllamaUnavailableError("The ReAct model is unavailable. Check local Ollama.") from exc
+        except GraphRecursionError:
+            return False
+        return True
+
+    def ask(self, question, language):
+        from langchain_core.tools import tool
+        from agent_tools.capabilities import resolve_request
 
         resolution = resolve_request(question)
         # Main's resolver predates these dashboard-only read-only request
@@ -276,42 +321,47 @@ class ReactDashboard:
                 observed = self.qa.ask(question, answer_language=language)
             return str(observed["answer"])
 
-        llm = self.llm
-        unavailable = (httpx.HTTPError, ConnectionError)
-        if llm is None:
-            try:
-                from ollama import ResponseError
-                from langchain_ollama import ChatOllama
-
-                # Bound dashboard requests without changing Rishi's CLI configuration.
-                llm = ChatOllama(
-                    model=OLLAMA_MODEL, base_url=OLLAMA_URL, temperature=0,
-                    client_kwargs={"timeout": 75}, reasoning=False,
-                )
-            except ImportError as exc:
-                raise OllamaUnavailableError(
-                    "ReAct could not initialize its Ollama client. Check the installation and loopback proxy settings."
-                ) from exc
-            unavailable += (ResponseError,)
-        controller = build_agent(llm=llm, tools=[grounded_lookup])
-        try:
-            controller.invoke(
-                {"messages": [{"role": "user", "content":
-                    "Call ask_agriculture_question once for the following stored-data question.\n" + question}]},
-                config={"recursion_limit": 5},
-            )
-        except unavailable as exc:
-            raise OllamaUnavailableError("The ReAct model is unavailable. Check local Ollama.") from exc
-        except GraphRecursionError as exc:
-            if observed is None:
-                raise ReactNoEvidence("ReAct did not reach the grounded tool within its step limit.") from exc
+        finished = self._invoke_tool(
+            grounded_lookup,
+            "Call ask_agriculture_question once for the following stored-data question.\n" + question,
+        )
         if observed is None:
+            if not finished:
+                raise ReactNoEvidence("ReAct did not reach the grounded tool within its step limit.")
             raise ReactNoEvidence("ReAct did not call the grounded tool. Retry or use Direct QA.")
         # Display the actual tool observation, not a possibly embellished rewrite.
         return {**observed, "react": {
             "resolution": resolution.reason, "tool": grounded_lookup.name,
             "tool_called": True,
         }}
+
+    def preview_document_ingestion(self, raw, draft):
+        """Bind the validated draft, not anything supplied in a model action."""
+        from langchain_core.tools import tool
+        from services.viva_ingestion_preview import run_document_ingestion_preview
+
+        observed = None
+        attempted = False
+        invocation_lock = Lock()
+
+        @tool("preview_uploaded_agriculture_document", return_direct=True)
+        def preview_document() -> str:
+            """Preview the currently uploaded PDF's extraction. No database writes or downloads."""
+            nonlocal observed, attempted
+            with invocation_lock:
+                if not attempted:
+                    attempted = True
+                    observed = run_document_ingestion_preview(raw, draft)
+                return "Local document preview completed." if observed else "Local preview not completed."
+
+        self._invoke_tool(
+            preview_document,
+            "Call preview_uploaded_agriculture_document once to preview the already uploaded PDF.",
+            local_only=True,
+        )
+        if observed is None:
+            raise ReactNoEvidence("ReAct did not run the document preview. Try again or use the existing preview.")
+        return {**observed, "react": {"tool": preview_document.name, "tool_called": True}}
 
 
 class ReactNoEvidence(RuntimeError):
