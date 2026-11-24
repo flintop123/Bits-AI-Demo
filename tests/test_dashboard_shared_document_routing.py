@@ -1,7 +1,7 @@
 """The three local dashboard routes must not synthesize competing report answers."""
 
 from contextlib import nullcontext
-from threading import Event, Thread
+from threading import Event, Thread, current_thread
 from unittest import TestCase
 from unittest.mock import Mock, patch
 
@@ -196,12 +196,17 @@ class DashboardSharedDocumentTests(TestCase):
     def test_active_direct_document_request_blocks_explicit_and_react_chat_not_legacy_fallback(self):
         started, release = Event(), Event()
         doc = Mock()
+        expected = {"answer": "Original evidence", "document_chat": {"status": "evidence_only"}}
 
         def hold(*_args):
+            # The held request must outlive the busy checks even when Windows
+            # starts the ReAct graph slowly. Only the test releases this event.
+            # A broken semaphore must fail, not block the competing request.
+            if current_thread() is not first:
+                raise AssertionError("A competing request reached the Document Chat backend")
             started.set()
-            if not release.wait(5):
-                raise TimeoutError("test did not release the first request")
-            return {"answer": "Original evidence", "document_chat": {"status": "evidence_only"}}
+            release.wait()
+            return expected
 
         doc.ask.side_effect = hold
         app = make_app(self.query, self.qa, doc)
@@ -209,15 +214,19 @@ class DashboardSharedDocumentTests(TestCase):
         first = Thread(target=lambda: responses.append(ask(app, "/ask")), daemon=True)
         first.start()
         try:
-            self.assertTrue(started.wait(4))
-            for route in ("/document-chat", "/react"):
-                busy = ask(app, route)
-                self.assertEqual(busy.status_code, 429, busy.json)
-                self.assertIn("busy", busy.json["error"].lower())
+            self.assertTrue(started.wait(30), "The first request did not reach Document Chat")
+            for route in ("/ask", "/document-chat", "/react"):
+                with self.subTest(route=route):
+                    busy = ask(app, route)
+                    self.assertEqual(busy.status_code, 429, busy.json)
+                    self.assertIn("busy", busy.json["error"].lower())
             doc.ask.assert_called_once()
             self.query.search_agriculture_documents.assert_not_called()
         finally:
             release.set()
-            first.join(5)
+            first.join(30)
+        self.assertFalse(first.is_alive(), "The first request did not finish after release")
         self.assertEqual([response.status_code for response in responses], [200])
+        doc.ask.side_effect = None
+        doc.ask.return_value = expected
         self.assertEqual(ask(app, "/react").status_code, 200)
