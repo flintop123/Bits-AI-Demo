@@ -290,6 +290,29 @@ textarea::placeholder { color: #8a948d; }
 .viva-reopen { margin-top: 18px; }
 .viva-reopen summary { cursor: pointer; font-weight: 700; }
 .viva-panel [hidden], #react-trace[hidden] { display: none; }
+.viva-workflow-actions, .viva-card-actions { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }
+.viva-card-actions { margin-top: 10px; }
+.viva-doc-qa, .viva-table-panel { border: 1px solid var(--line); background: #f5f8ec; border-radius: 12px; margin: 18px 0; padding: 16px; }
+.viva-doc-qa .section-kicker, .viva-doc-qa h3 { margin-bottom: 6px; }
+.viva-doc-qa form label { flex: 1 1 300px; }
+.viva-doc-qa .viva-records:not(:empty) { margin-top: 10px; }
+.viva-table-panel summary { cursor: pointer; font-weight: 780; }
+.viva-table-panel details, .viva-table-panel p { margin-top: 8px; }
+.viva-table-panel .viva-table-scroll { overflow-x: auto; }
+.viva-table-panel table { width: 100%; border-collapse: collapse; text-align: left; }
+.viva-table-panel th, .viva-table-panel td { border-bottom: 1px solid var(--line); padding: 8px; }
+.viva-proof { width: min(1100px, calc(100% - 24px)); max-height: 92vh; border: 1px solid var(--line); border-radius: 18px; color: var(--ink); background: var(--surface); padding: 18px; }
+.viva-proof::backdrop { background: rgba(12, 32, 21, .58); }
+.viva-proof-header { display: flex; align-items: center; justify-content: space-between; gap: 14px; }
+.viva-proof-header h2 { margin: 0; }
+.viva-proof-body { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.55fr); gap: 18px; margin-top: 14px; }
+.viva-proof-text { white-space: pre-wrap; overflow-wrap: anywhere; max-height: 55vh; overflow: auto; line-height: 1.6; }
+.viva-proof img { max-width: 100%; height: auto; border: 1px solid var(--line); }
+.viva-proof img[hidden] { display: none; }
+@media (max-width: 680px) {
+  .viva-proof-body { grid-template-columns: 1fr; }
+  .viva-proof-text { max-height: 24vh; }
+}
 .nearby-intro { max-width: 760px; margin: 14px 0 0; color: var(--muted); line-height: 1.55; }
 .nearby-form { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 14px; align-items: end; }
 .nearby-form label { display: grid; gap: 7px; color: var(--muted); font-size: .76rem; font-weight: 700; }

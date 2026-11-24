@@ -1,5 +1,7 @@
 import copy
+from hashlib import sha256
 from io import BytesIO
+from types import SimpleNamespace
 from unittest import TestCase
 from unittest.mock import Mock, patch
 from uuid import uuid4
@@ -10,7 +12,8 @@ from langchain_core.language_models.fake_chat_models import FakeMessagesListChat
 from langchain_core.messages import AIMessage
 
 from data_api import create_app
-from services.viva_dashboard import COLLECTION, ReactDashboard, ReactNoEvidence, VivaUploadStore
+from services.viva_dashboard import COLLECTION, ReactDashboard, ReactNoEvidence, VivaUploadStore, _record_bytes
+from services.viva_evidence import PageAnchors, answer_from_pdf
 
 
 HEADERS = {"X-Agri-Dashboard": "1"}
@@ -41,11 +44,16 @@ class CollectionDouble:
         self.writes += 1
         key = query["_id"]
         row = BSON.encode({"_id": key, **mutation["$setOnInsert"]}).decode()
+        inserted = key not in self.rows
         self.rows.setdefault(key, row)
+        return SimpleNamespace(upserted_id=key if inserted else None)
 
-    def find_one(self, query):
+    def find_one(self, query, *, sort=None):
         self.reads += 1
-        return copy.deepcopy(self.rows.get(query["_id"]))
+        if "_id" in query:
+            return copy.deepcopy(self.rows.get(query["_id"]))
+        return copy.deepcopy(next((row for row in self.rows.values()
+                                  if row["source_sha256"] == query["source_sha256"]), None))
 
 
 class DatabaseDouble:
@@ -79,7 +87,8 @@ class UploadTests(TestCase):
             self.assertIn(label, response.data)
 
     def test_actual_pdf_preview_save_verify_and_reopen(self):
-        response = self.preview()
+        raw = pdf_bytes()
+        response = self.preview(raw)
         self.assertEqual(response.status_code, 200, response.json)
         self.assertEqual(response.headers["Cache-Control"], "no-store")
         result = response.json
@@ -93,6 +102,17 @@ class UploadTests(TestCase):
         self.assertEqual(self.db.uploads.reads, 0)
 
         location = URL + "/uploads/" + result["run_id"]
+        self.assertEqual(result["records"][1]["source_anchor"]["kind"], "exact_passage")
+        page = self.client.get(location + "/evidence/2/0", headers=HEADERS)
+        self.assertEqual(page.status_code, 200)
+        self.assertEqual(page.headers["X-Source-Anchor"], "exact_passage")
+        self.assertTrue(page.data.startswith(b"\x89PNG"))
+        quote = self.client.get(location + "/evidence/2/0", headers=HEADERS,
+                                query_string={"quote": "documents drainage and seasonal crop planning."})
+        self.assertEqual(quote.headers["X-Source-Anchor"], "exact_quote")
+        wrong_quote = self.client.get(location + "/evidence/2/0", headers=HEADERS,
+                                      query_string={"quote": "There are 120 imaginary fields."})
+        self.assertEqual(wrong_quote.status_code, 400)
         failed = self.client.post(location + "/save", headers=HEADERS,
                                   json={"records": [{"content": "replacement"}]})
         self.assertEqual(failed.status_code, 400)
@@ -104,15 +124,68 @@ class UploadTests(TestCase):
         self.assertEqual(saved.json["saved_count"], 2)
         self.assertEqual(saved.json["records"], result["records"])
         self.assertEqual(saved.json["collection"], COLLECTION)
-        self.assertEqual(self.db.uploads.reads, 1)
-        self.assertEqual(self.client.post(location + "/save", headers=HEADERS).json, saved.json)
+        self.assertEqual(self.db.uploads.reads, 2)  # fingerprint lookup and MongoDB read-back
+        self.assertFalse(saved.json["already_saved"])
+        retry = self.client.post(location + "/save", headers=HEADERS).json
+        self.assertEqual(retry["run_id"], saved.json["run_id"])
+        self.assertTrue(retry["already_saved"])
+        duplicate_id = self.preview(raw, "Same bytes, renamed.pdf").json["run_id"]
+        repeated = self.client.post(f"{URL}/uploads/{duplicate_id}/save", headers=HEADERS).json
+        self.assertEqual(repeated["run_id"], saved.json["run_id"])
+        self.assertTrue(repeated["already_saved"])
+        self.assertFalse(repeated["preview_matches_saved_passages"])
         self.assertEqual(len(self.db.uploads.rows), 1)
+        self.assertEqual(self.db.uploads.writes, 1)
 
         # Reopening neither depends on the original browser nor an in-memory draft.
         reopened = create_app(Mock(), Mock(), viva_upload_store=self.store).test_client()
-        self.assertEqual(reopened.get(location, headers=HEADERS).json, saved.json)
-        self.db.uploads.rows[result["run_id"]]["records"][0]["content"] = "changed"
-        self.assertEqual(reopened.get(location, headers=HEADERS).status_code, 409)
+        saved_location = URL + "/uploads/" + saved.json["run_id"]
+        reopened_result = reopened.get(saved_location, headers=HEADERS).json
+        self.assertEqual(reopened_result["records"], saved.json["records"])
+        self.assertFalse(reopened_result["source_available"])
+        self.assertEqual(reopened.get(saved_location + "/evidence/1/0", headers=HEADERS).status_code, 404)
+        wrong = reopened.post(saved_location + "/attach", headers=HEADERS, data={
+            "document": (BytesIO(pdf_bytes(1)), "Original.pdf"),
+        })
+        self.assertEqual(wrong.status_code, 409)
+        right = reopened.post(saved_location + "/attach", headers=HEADERS, data={
+            "document": (BytesIO(raw), "Original.pdf"),
+        })
+        self.assertTrue(right.json["source_available"])
+        self.assertEqual(reopened.get(saved_location + "/evidence/1/0", headers=HEADERS).status_code, 200)
+        self.db.uploads.rows[saved.json["run_id"]]["records"][0]["content"] = "changed"
+        self.assertEqual(reopened.get(saved_location, headers=HEADERS).status_code, 409)
+
+    def test_ask_route_reads_only_the_verified_run(self):
+        draft = self.preview().json
+        path = f"{URL}/uploads/{draft['run_id']}"
+        question = {"question": "What does this document say about drainage?"}
+        self.assertEqual(self.client.post(path + "/ask", headers=HEADERS, json=question).status_code, 404)
+        saved = self.client.post(path + "/save", headers=HEADERS).json
+        with patch("viva_api.answer_from_pdf", return_value={"status": "answered"}) as ask:
+            answered = self.client.post(f"{URL}/uploads/{saved['run_id']}/ask", headers=HEADERS, json=question)
+        self.assertEqual(answered.status_code, 200)
+        self.assertEqual(ask.call_args.args[1]["records"], saved["records"])
+        self.assertEqual(self.db.uploads.writes, 1)
+
+    def test_duplicate_reuses_legacy_run_without_mutation(self):
+        preview = self.preview().json
+        previous_id = str(uuid4())
+        records = [{key: value for key, value in row.items() if key != "source_anchor"}
+                   for row in preview["records"]]
+        previous = {
+            **{key: value for key, value in preview.items()
+               if key not in {"tables", "status", "collection", "source_available"}},
+            "_id": previous_id, "run_id": previous_id, "records": records,
+            "records_sha256": sha256(_record_bytes(records)).hexdigest(), "saved_at": "2026-11-19",
+        }
+        self.db.uploads.rows[previous_id] = copy.deepcopy(previous)
+        result = self.client.post(f"{URL}/uploads/{preview['run_id']}/save", headers=HEADERS)
+        self.assertEqual(result.status_code, 200, result.json)
+        self.assertTrue(result.json["already_saved"])
+        self.assertEqual(result.json["run_id"], previous_id)
+        self.assertEqual(self.db.uploads.rows[previous_id], previous)
+        self.assertEqual(self.db.uploads.writes, 0)
 
     def test_invalid_extension_invalid_content_excess_pages_and_size(self):
         for raw, name, status in (
@@ -157,6 +230,45 @@ class ScriptedModel(FakeMessagesListChatModel):
     def bind_tools(self, tools, **kwargs):
         assert [tool.name for tool in tools] == ["ask_agriculture_question"]
         return self
+
+
+class SourceEvidenceTests(TestCase):
+    def test_ambiguous_text_never_gets_a_highlight(self):
+        with pymupdf.open() as document:
+            page = document.new_page()
+            page.insert_text((60, 70), "Repeated sentence with identical words.")
+            page.insert_text((60, 105), "Repeated sentence with identical words.")
+            result = PageAnchors(page).locate("Repeated sentence with identical words.")
+        self.assertEqual(result, {"kind": "page_only", "boxes": []})
+
+    def test_rotated_page_retains_valid_normalized_highlight_coordinates(self):
+        with pymupdf.open() as document:
+            page = document.new_page()
+            page.insert_text((70, 110), "An exact highlight on a rotated page.")
+            page.set_rotation(90)
+            result = PageAnchors(page).locate("An exact highlight on a rotated page.")
+        self.assertEqual(result["kind"], "exact_passage")
+        x0, y0, x1, y1 = result["boxes"][0]
+        self.assertTrue(0 <= x0 < x1 <= 1 and 0 <= y0 < y1 <= 1)
+
+    def test_answer_requires_real_quote_from_selected_passage(self):
+        record = {"page_number": 3, "chunk_index": 1,
+                  "content": "The documented drainage programme served 12 districts."}
+        saved = {"run_id": "test", "source_file": "report.pdf", "records": [record]}
+        question = "Which districts were covered by the drainage programme?"
+        model = Mock()
+        model.chat_json.return_value = {"citations": [
+            {"evidence_id": 1, "quote": "programme served 120 districts."},
+            {"evidence_id": 3, "quote": record["content"]},
+        ]}
+        self.assertEqual(answer_from_pdf(question, saved, llm=model)["status"], "unsupported")
+        model.chat_json.return_value = {"citations": [
+            {"evidence_id": 1, "quote": record["content"]},
+        ]}
+        result = answer_from_pdf(question, saved, llm=model)
+        self.assertEqual(result["status"], "answered")
+        self.assertEqual(result["citations"][0]["quote"], record["content"])
+        self.assertEqual(result["citations"][0]["page_number"], 3)
 
 
 class ReactTests(TestCase):

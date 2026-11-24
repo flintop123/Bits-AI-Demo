@@ -257,7 +257,10 @@ index inventory, provenance coverage and representative source-location fields.
 `viva_document_uploads` stores one document per confirmed browser run.
 MongoDB's built-in unique `_id` is the run ID. It stores the source filename
 and PDF SHA-256, extraction and validation counts, the saved passage array
-(including page, chunk, language, method, and text), its SHA-256, and the
-save time in UTC. The browser verifies the saved passage count and hash
-using a fresh read from this collection. The collection is not included
+(including page, chunk, language, method, text, and verified highlight when
+available), its SHA-256, optional independently verified table evidence and
+its SHA-256, and the save time in UTC. New run IDs are derived from the
+source's SHA-256; an existing run for the identical source is reused.
+The browser reports the checked hashes from a fresh read of this
+collection. The collection is not included
 in the curated query corpus, portable SQLite mirror, or committed dump.

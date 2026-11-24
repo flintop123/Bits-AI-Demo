@@ -429,7 +429,39 @@
         <section id="viva-evidence" aria-label="Upload evidence" hidden>
           <dl id="viva-facts" class="viva-facts"></dl>
           <ul id="viva-warnings" class="viva-warnings" hidden></ul>
-          <button type="button" id="viva-save" disabled>Save to MongoDB</button>
+          <div class="viva-workflow-actions">
+            <button type="button" id="viva-save" disabled>Save to MongoDB</button>
+            <button type="button" id="viva-export" class="secondary-button" hidden>Download verified evidence</button>
+          </div>
+          <form id="viva-attach" class="viva-controls" hidden>
+            <label for="viva-original">Reattach original PDF to see the page highlight
+              <input id="viva-original" name="document" type="file" accept=".pdf,application/pdf" required>
+            </label>
+            <button type="submit" class="secondary-button">Verify and attach</button>
+          </form>
+          <section id="viva-doc-qa" class="viva-doc-qa" aria-labelledby="viva-doc-qa-heading" hidden>
+            <p class="section-kicker">Saved document only</p>
+            <h3 id="viva-doc-qa-heading">Ask this PDF</h3>
+            <p>Get verified quotes from this saved upload. A question here never searches the curated reports.</p>
+            <form id="viva-doc-question-form" class="viva-controls">
+              <label for="viva-doc-question">Question in English or Hindi
+                <input id="viva-doc-question" name="question" maxlength="500" required placeholder="What does this report say about organic farming?">
+              </label>
+              <button type="submit">Ask this PDF</button>
+            </form>
+            <p id="viva-doc-qa-status" class="viva-note" role="status"></p>
+            <div id="viva-doc-citations" class="viva-records"></div>
+          </section>
+          <details id="viva-table-panel" class="viva-table-panel" hidden>
+            <summary>Verified table cells</summary>
+            <p>These cells match a reviewed layout and the fingerprint of this official PDF.</p>
+            <div id="viva-tables"></div>
+          </details>
+          <div id="viva-passage-filter" class="viva-controls" hidden>
+            <label for="viva-filter">Find text in extracted passages
+              <input id="viva-filter" type="search" maxlength="100" placeholder="For example: organic corridor">
+            </label>
+          </div>
           <div class="viva-record-nav" id="viva-record-nav" hidden>
             <button type="button" class="secondary-button" id="viva-previous">Previous passages</button>
             <span id="viva-record-count" aria-live="polite"></span>
@@ -447,6 +479,20 @@
           </form>
         </details>
       </section>
+      <dialog id="viva-proof" class="viva-proof" aria-labelledby="viva-proof-heading">
+        <div class="viva-proof-header">
+          <h2 id="viva-proof-heading">Source evidence</h2>
+          <form method="dialog"><button type="submit" class="secondary-button" autofocus>Close</button></form>
+        </div>
+        <p id="viva-proof-status" class="viva-note" role="status"></p>
+        <div class="viva-proof-body">
+          <div>
+            <h3>Selected evidence</h3>
+            <p id="viva-proof-text" class="viva-proof-text" dir="auto"></p>
+          </div>
+          <div><img id="viva-proof-image" hidden alt=""></div>
+        </div>
+      </dialog>
     </main>
 
     <footer>

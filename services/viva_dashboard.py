@@ -9,7 +9,9 @@ from pathlib import Path
 from tempfile import TemporaryDirectory
 from threading import Lock
 from time import monotonic
-from uuid import uuid4
+from uuid import NAMESPACE_URL, uuid4, uuid5
+
+from pymongo.errors import DuplicateKeyError
 
 from ingestion_v2.extraction import extract_supported_file, inspect_input_file
 from ingestion_v2.mapping import FIELD_TRANSFORMS, PLANNER_FIELDS, apply_mapping_plan
@@ -17,6 +19,7 @@ from ingestion_v2.models import (
     ExtractFileInput, FieldMapping, InspectFileInput, MappingPlan, MappingRequest,
     TargetCollection,
 )
+from services.viva_evidence import add_anchors, known_table_evidence
 
 
 MAX_PDF_BYTES = 10 * 1024 * 1024
@@ -71,6 +74,7 @@ def preview_pdf(raw, filename, *, force_ocr=False):
         extracted = extract_supported_file(
             ExtractFileInput(file_path=str(source), force_ocr=force_ocr)
         )
+        tables, table_warnings = known_table_evidence(source, source_hash)
     if len(extracted.records) > MAX_RECORDS:
         raise ValueError(f"This PDF has more than {MAX_RECORDS} passages. Use a shorter excerpt.")
     for item in extracted.records:
@@ -115,16 +119,17 @@ def preview_pdf(raw, filename, *, force_ocr=False):
                 "page_number": record["page_number"], "chunk_index": record["chunk_index"],
                 "errors": item.validation_errors or ["Missing or inconsistent source locator."],
             })
-    if len(_record_bytes(valid)) > MAX_RECORD_BYTES:
+    add_anchors(raw, valid)
+    if len(_record_bytes(valid)) + len(_record_bytes(tables)) > MAX_RECORD_BYTES:
         raise ValueError("The extracted text is too large for one demo run. Use a shorter excerpt.")
     return {
         "run_id": run_id, "source_file": filename, "source_sha256": source_hash,
         "page_count": page_count,
         "extracted_pages": extracted.metrics.source_units_extracted,
         "candidate_count": len(extracted.records), "valid_count": len(valid),
-        "rejected": rejected, "warnings": extracted.warnings,
+        "rejected": rejected, "warnings": [*extracted.warnings, *table_warnings],
         "schema": TARGET.value, "mapping": "fixed_pdf_passage_schema",
-        "records": valid,
+        "records": valid, "tables": tables,
     }
 
 
@@ -137,8 +142,12 @@ class Drafts:
         self.lock = Lock()
 
     def put(self, preview):
+        self.set(preview["run_id"], preview)
+
+    def set(self, key, value):
         with self.lock:
-            self.items[preview["run_id"]] = (monotonic() + self.ttl, preview)
+            self.items[key] = (monotonic() + self.ttl, value)
+            self.items.move_to_end(key)
             while len(self.items) > self.limit:
                 self.items.popitem(last=False)
 
@@ -164,28 +173,62 @@ class VivaUploadStore:
         if not preview["records"]:
             raise ValueError("There are no validated records to save.")
         digest = sha256(_record_bytes(preview["records"])).hexdigest()
-        self.collection.update_one(
-            {"_id": preview["run_id"]},
-            {"$setOnInsert": {
-                **preview, "records_sha256": digest,
-                "saved_at": datetime.now(timezone.utc).isoformat(),
-            }},
-            upsert=True,
+        source_hash = preview["source_sha256"]
+        saved = self.collection.find_one(
+            {"source_sha256": source_hash}, sort=[("saved_at", 1), ("_id", 1)],
         )
-        result = self.read(preview["run_id"])
-        if (not result or result["records_sha256"] != digest or
-                result["source_sha256"] != preview["source_sha256"]):
-            raise UploadReadbackError("The saved run did not match the reviewed records.")
-        return result
+        if saved is not None:
+            # Includes earlier random-ID uploads. Do not modify their data.
+            return self._reuse(self._verified(saved), digest)
+
+        # MongoDB's existing _id uniqueness also covers concurrent saves
+        # from separate processes without a migration or a new index.
+        saved_id = str(uuid5(NAMESPACE_URL, f"agriagent:viva:sha256:{source_hash}"))
+        tables = preview.get("tables", [])
+        table_digest = sha256(_record_bytes(tables)).hexdigest()
+        try:
+            update = self.collection.update_one(
+                {"_id": saved_id},
+                {"$setOnInsert": {
+                    **preview, "run_id": saved_id, "records_sha256": digest,
+                    "tables": tables, "tables_sha256": table_digest,
+                    "saved_at": datetime.now(timezone.utc).isoformat(),
+                }},
+                upsert=True,
+            )
+            inserted = update.upserted_id is not None
+        except DuplicateKeyError:
+            inserted = False
+        result = self.read(saved_id)
+        if not result or result["source_sha256"] != source_hash:
+            raise UploadReadbackError("MongoDB did not confirm the reviewed source.")
+        if not inserted:
+            return self._reuse(result, digest)
+        if result["records_sha256"] != digest or result["tables_sha256"] != table_digest:
+            raise UploadReadbackError("The saved run did not match the reviewed evidence.")
+        return {**result, "already_saved": False}
+
+    @staticmethod
+    def _reuse(result, digest):
+        return {
+            **result, "already_saved": True,
+            "preview_matches_saved_passages": result["records_sha256"] == digest,
+        }
 
     def read(self, run_id):
         stored = self.collection.find_one({"_id": run_id})
         if stored is None:
             return None
+        return self._verified(stored)
+
+    def _verified(self, stored):
         records = stored["records"]
         if (len(records) != stored["valid_count"] or
                 sha256(_record_bytes(records)).hexdigest() != stored["records_sha256"]):
             raise UploadReadbackError("MongoDB read-back did not match the saved record count or hash.")
+        if ("tables" in stored and
+                sha256(_record_bytes(stored["tables"])).hexdigest() != stored.get("tables_sha256")):
+            raise UploadReadbackError("MongoDB read-back did not match the saved table evidence hash.")
         return {
             **{key: value for key, value in stored.items() if key != "_id"},
             "status": "verified", "database": self.database.name,

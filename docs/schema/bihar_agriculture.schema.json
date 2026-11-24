@@ -290,6 +290,8 @@
           }
         },
         "records_sha256": {"bsonType": "string", "pattern": "^[a-f0-9]{64}$"},
+        "tables": {"bsonType": "array"},
+        "tables_sha256": {"bsonType": "string", "pattern": "^[a-f0-9]{64}$"},
         "saved_at": {"bsonType": "string"}
       },
       "indexes": [{"name": "_id_", "keys": ["_id"], "unique": true}]
