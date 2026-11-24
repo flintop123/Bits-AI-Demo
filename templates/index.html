@@ -439,9 +439,11 @@
           </details>
           <ul id="viva-warnings" class="viva-warnings" hidden></ul>
           <div class="viva-workflow-actions">
+            <button type="button" id="viva-react-preview" class="secondary-button" disabled>Run ReAct preview</button>
             <button type="button" id="viva-save" disabled>Save to MongoDB</button>
             <button type="button" id="viva-export" class="secondary-button" hidden>Download verified evidence</button>
           </div>
+          <p id="viva-react-preview-status" class="viva-note" role="status"></p>
           <form id="viva-attach" class="viva-controls" hidden>
             <label for="viva-original">Reattach original PDF to see the page highlight
               <input id="viva-original" name="document" type="file" accept=".pdf,application/pdf" required>
