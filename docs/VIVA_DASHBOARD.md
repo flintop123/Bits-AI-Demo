@@ -38,10 +38,15 @@ upload/ingestion controls keep their original behavior.
 A narrow named funding/upgrade question can start with exact keyword
 retrieval when a unique source passage matches its topic and amount
 types. This skips model search expansion, not the normal checks on a
-generated summary. If Ollama is unavailable in this mode, the dashboard
-shows the original matching excerpt and page locator, clearly labelled
-as a search result, not a verified answer. Broader or ambiguous queries
-still use bilingual model search and do not invent an offline answer.
+generated summary. A narrowly worded funding question with a recognized
+individual processing-upgrade clause can instead produce a source-derived
+English or Hindi answer without calling the Document Chat model. The same original
+excerpt must explicitly state credit linkage, the rate on eligible project
+cost, and a maximum rupee amount per unit. The UI labels that answer as
+source-derived and retains the original excerpt and page. Without these
+conditions, the dashboard only shows the matching excerpt as a search
+result, not an offline answer. Broader or ambiguous queries still use
+bilingual model search and do not invent an offline answer.
 
 The local model proposes English and Hindi search variants, including
 translations beyond the reviewed vocabulary list. Named schemes also get

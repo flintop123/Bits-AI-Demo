@@ -2,6 +2,7 @@
 
 from collections import Counter
 from contextlib import contextmanager
+from dataclasses import dataclass
 from decimal import Decimal
 from ipaddress import ip_address
 import logging
@@ -622,6 +623,103 @@ def _unique_local_excerpt(passages, required, question):
     return matches[0] if len(matches) == 1 else None
 
 
+# A source-derived answer is limited to a controlled, complete clause. The
+# rate, eligible basis, individual scope, credit linkage and per-unit maximum
+# must be attached to one another, not inferred from nearby numbers/headings.
+_CAP_MONEY = (
+    rf"(?:{_RUPEES}\s*{_NUMERIC_TOKEN}(?:\s*{_SCALE})?"
+    rf"|{_NUMERIC_TOKEN}(?:\s*{_SCALE})?\s*{_RUPEES})"
+)
+_UNIT_SUBSIDY_CLAUSE = re.compile(
+    r"(?:Support under the Scheme\s*:\s*)?"
+    r"(?:Upgrad(?:ation|e|ing) of (?:food )?processing units|(?:food )?processing unit upgrades?)"
+    r"\s*[:;,]?\s*Individual Category\s*:\s*"
+    r"Credit[-‐‑–\s]+linked capital subsidy\s*(?:@|at\s+)?"
+    rf"(?P<rate>{_NUMERIC_TOKEN})\s*(?:%|per\s*cent)\s+of (?:the )?eligible project cost"
+    r"\s+for\s+(?:expansion\s*(?:/|or)\s*)?(?:technology\s+)?upgrad(?:ation|es?|ing)"
+    r"\s*,?\s*(?:with\s+)?(?:a\s+)?maximum\s+(?:ceiling|cap|limit)\s+of\s+"
+    rf"(?P<cap>{_CAP_MONEY})\s+per unit[.]?", re.I,
+)
+_FUNDING_AMOUNT_QUESTION = re.compile(
+    r"\b(?:how much|amount|rate|maximum|cap|what (?:is the )?financial (?:support|assistance)"
+    r"|what (?:is the )?(?:subsidy|funding|grant))\b"
+    r"|कितनी|कितना|राशि|दर|अधिकतम|प्रतिशत", re.I,
+)
+# Only qualify the local deterministic answer when all meaningful question
+# terms are understood. A new place, applicant condition or requested field
+# stays on the usual model path rather than silently receiving a partial answer.
+_UNIT_SUBSIDY_QUERY_WORDS = frozenset((
+    "a an and amount are as assistance at available based brochure capital cap "
+    "category cost credit cited described does eligible financial food for "
+    "from funding grant has have how in individual investment is linked "
+    "limit maximum mentioned much of on payable per policy processing "
+    "project promotion proposal provides published rate report scheme shown "
+    "stated subsidy support technology the to under unit units upgrade "
+    "upgrades upgrading upgradation what was according "
+    "खाद्य प्रसंस्करण इकाई इकाइयों के की का को में इस लिए हेतु पर पुस्तिका "
+    "रिपोर्ट अनुसार तहत अंतर्गत नामक उल्लिखित दी जाती दिए जाता मिलता "
+    "मिलती उन्नयन अपग्रेड आधुनिकीकरण प्रौद्योगिकी कितनी कितना कितने "
+    "क्या है हैं तथा और वित्तीय सहायता अनुदान सब्सिडी पूंजीगत दर "
+    "राशि अधिकतम ऋण जुड़ी पात्र परियोजना लागत प्रति व्यक्तिगत श्रेणी"
+).split())
+
+
+def _simple_subsidy_question(question):
+    if not _FUNDING_AMOUNT_QUESTION.search(question):
+        return False
+    remaining = " " + " ".join(_TOKEN.findall(question.casefold())) + " "
+    for name in sorted(_identifier_names(question)):
+        for alias in sorted(_IDENTIFIER_ALIASES[name], key=len, reverse=True):
+            remaining = remaining.replace(" " + alias + " ", " ")
+    return set(remaining.split()) <= _UNIT_SUBSIDY_QUERY_WORDS
+
+
+def _display_decimal(value):
+    text = format(value, "f")
+    return text.rstrip("0").rstrip(".") if "." in text else text
+
+
+@dataclass(frozen=True)
+class _UnitSubsidy:
+    percent: Decimal
+    limit: Decimal
+    scale: str
+
+    def render(self, language):
+        percent, limit = map(_display_decimal, (self.percent, self.limit))
+        if language == "hi":
+            scale = {"lakh": " लाख", "crore": " करोड़", "": ""}[self.scale]
+            return (
+                f"व्यक्तिगत श्रेणी में प्रसंस्करण इकाई के उन्नयन के लिए ऋण से जुड़ी पूंजीगत "
+                f"सब्सिडी पात्र परियोजना लागत का {percent}% है, अधिकतम ₹{limit}{scale} प्रति इकाई।"
+            )
+        scale = f" {self.scale}" if self.scale else ""
+        return (
+            f"For processing-unit upgrades in the individual category, the credit-linked capital subsidy "
+            f"is {percent}% of the eligible project cost, capped at ₹{limit}{scale} per unit."
+        )
+
+
+def _extract_unit_subsidy(question, excerpt):
+    if not _simple_subsidy_question(question):
+        return None
+    text = _normalized_whitespace(excerpt).translate(_DIGITS)
+    clause = _UNIT_SUBSIDY_CLAUSE.fullmatch(text)
+    if not clause:
+        return None
+    rate = clause["rate"]
+    cap = _INR_CANDIDATE.fullmatch(clause["cap"])
+    if (not cap or not _INR_GROUPING.fullmatch(rate) or not _INR_GROUPING.fullmatch(cap["number"])):
+        return None
+    percent, amount = _decimal(rate), _decimal(cap["number"])
+    inr, _, malformed = _inr_amounts(clause["cap"])
+    scales = _INR_SCALE.findall(cap["scales"])
+    if malformed or len(inr) != 1 or not 0 < percent <= 100 or amount <= 0 or len(scales) > 1:
+        return None
+    scale = {0: "", 5: "lakh", 7: "crore"}[_INR_EXPONENT[scales[0].casefold()] if scales else 0]
+    return _UnitSubsidy(percent, amount, scale)
+
+
 class _AnswerModel:
     """Leave the graph's question expansion and synthesis wiring unchanged."""
 
@@ -729,11 +827,17 @@ class DashboardDocumentChat:
             try:
                 with self._query_context() as query, tracing_context(enabled=False):
                     retriever = MongoDocumentRetriever(query)
-                    fast = None
+                    fast, typed = None, None
                     if required := _fast_topic(question):
                         retriever.retrieve_documents({"question": question})
                         fast = _unique_local_excerpt(retriever.passages, required, question)
                     if fast is not None:
+                        typed = _extract_unit_subsidy(question, fast["content"])
+                    if typed is not None:
+                        trace["workflow"] = "local_identifier"
+                        trace["answer_method"] = "typed_source_clause"
+                        result = None
+                    elif fast is not None:
                         trace["workflow"] = "local_identifier"
                         try:
                             model = self._model_factory()
@@ -765,7 +869,11 @@ class DashboardDocumentChat:
                 ) from None
 
             trace["searches"] = retriever.searches
-            if result is None:
+            if typed is not None:
+                records = [fast]
+                status = "source_derived"
+                text = typed.render(language)
+            elif result is None:
                 records = [fast]
                 status = "excerpt_only"
                 text = (
@@ -812,6 +920,7 @@ class DashboardDocumentChat:
         return {
             "answer": text, "answer_language": language, "intent": "document_chat",
             "model": (
+                "Source-clause extraction · no model-generated summary" if status == "source_derived" else
                 "Local keyword index · no model answer" if status == "excerpt_only" else
                 "Local Ollama · targeted retrieval" if trace["workflow"] == "local_identifier" else
                 "Local Ollama · LangGraph"

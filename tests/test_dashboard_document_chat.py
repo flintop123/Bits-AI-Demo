@@ -11,7 +11,7 @@ from pymongo.errors import OperationFailure
 from data_api import create_app
 from services.dashboard_document_chat import (
     DashboardDocumentChat, DocumentChatUnavailable, MongoDocumentRetriever,
-    _GroundedAnswer, _LocalOllama, _RenderedSummary, _sentence_spans, _summary_status,
+    _GroundedAnswer, _LocalOllama, _RenderedSummary, _extract_unit_subsidy, _sentence_spans, _summary_status,
 )
 
 
@@ -31,6 +31,7 @@ def pinned_row(filename, page, chunk=0):
 SOURCE_EN = "bihar_horticulture_baipp_brochure.pdf"
 SOURCE_HI = "apeda_makhana_report_hindi.pdf"
 QUERY_HI = "बीएआईपीपी पुस्तिका के अनुसार पीएमएफएमई में खाद्य प्रसंस्करण इकाई के उन्नयन के लिए वित्तीय सहायता कितनी है?"
+MODEL_ONLY_QUERY = QUERY_HI.rstrip("?") + " और बैंक की शर्तें क्या हैं?"
 QUERY_EN = "Where does the APEDA report say makhana is mainly cultivated in Bihar?"
 QUOTE_EN = ("Credit-linked capital subsidy @35% of the eligible project cost for expansion/ "
             "technology upgradation with a maximum ceiling of Rs.10 lakh per unit.")
@@ -302,7 +303,7 @@ class DocumentChatTests(TestCase):
         model = ScriptedModel(suggestions, "परियोजना लागत पर 35% और अधिकतम ₹10 लाख प्रति इकाई।",
                               QUOTE_EN)
         chat = DashboardDocumentChat(lambda: nullcontext(query), lambda: model)
-        answer = chat.ask(QUERY_HI, "hi")
+        answer = chat.ask(MODEL_ONLY_QUERY, "hi")
         self.assertEqual(answer["document_chat"]["status"], "cited")
         self.assertIn(QUOTE_EN, answer["records"][0]["content"])
         self.assertEqual(answer["sources"][0]["page_number"], 11)
@@ -340,7 +341,7 @@ class DocumentChatTests(TestCase):
         chat, _, model = self.fixture(
             sample, "pmfme", "पात्र लागत पर 35% सहायता और अधिकतम Rs. 10 लाख।", QUOTE_EN, variants,
         )
-        result = chat.ask(QUERY_HI, "hi")
+        result = chat.ask(MODEL_ONLY_QUERY, "hi")
         self.assertEqual(result["document_chat"]["status"], "cited")
         self.assertIn("Rs. 10", result["answer"])
         offered = result["records"][0]["content"]
@@ -371,7 +372,7 @@ class DocumentChatTests(TestCase):
             ["PMFME coverage", "PMFME individual subsidy", "खाद्य इकाई सहायता", "पूंजी अनुदान"],
         )
         model.rendered_summary = "पात्र परियोजना लागत पर ३५ प्रतिशत सहायता है, अधिकतम १० लाख रुपये प्रति इकाई।"
-        result = chat.ask(QUERY_HI, "hi")
+        result = chat.ask(MODEL_ONLY_QUERY, "hi")
         self.assertEqual(result["document_chat"]["status"], "cited")
         self.assertEqual(result["document_chat"]["summary"], {"initial": "missing", "render": "accepted"})
         self.assertEqual(result["answer"], model.rendered_summary)
@@ -400,7 +401,7 @@ class DocumentChatTests(TestCase):
                 model.rendered_summary = (
                     f"पात्र परियोजना लागत पर 35% सहायता है, अधिकतम {same_amount} प्रति इकाई।"
                 )
-                result = chat.ask(QUERY_HI, "hi")
+                result = chat.ask(MODEL_ONLY_QUERY, "hi")
                 self.assertEqual(result["document_chat"]["status"], "cited")
                 self.assertEqual(result["answer"], model.rendered_summary)
                 self.assertEqual(result["document_chat"]["summary"],
@@ -428,7 +429,7 @@ class DocumentChatTests(TestCase):
         for draft in drafts:
             with self.subTest(draft=draft):
                 model.rendered_summary = draft
-                result = chat.ask(QUERY_HI, "hi")
+                result = chat.ask(MODEL_ONLY_QUERY, "hi")
                 self.assertEqual(result["document_chat"]["status"], "evidence_only")
                 self.assertIn(result["document_chat"]["summary"]["render"],
                               {"unsupported_number", "unsupported_amount_unit"})
@@ -448,7 +449,7 @@ class DocumentChatTests(TestCase):
                 self.assertNotEqual(_summary_status(draft, "en", source), "accepted")
 
     @patch("httpx.Client")
-    def test_fast_local_excerpt_survives_ollama_timeout_at_real_dashboard_endpoint(self, factory):
+    def test_typed_source_answer_needs_no_ollama_at_real_dashboard_endpoint(self, factory):
         target = pinned_row(SOURCE_EN, 11, 0)
         wrong = [
             pinned_row("pmfme_makhana_handbook_hindi.pdf", 1),
@@ -466,22 +467,21 @@ class DocumentChatTests(TestCase):
         result = client_app.post(URL, json={"question": QUERY_HI}, headers=HEADERS)
         self.assertEqual(result.status_code, 200, result.json)
         got = result.json
-        self.assertEqual(got["document_chat"]["status"], "excerpt_only")
-        self.assertEqual(got["document_chat"]["degradation"], "model_unavailable")
+        self.assertEqual(got["document_chat"]["status"], "source_derived")
+        self.assertEqual(got["document_chat"]["answer_method"], "typed_source_clause")
+        self.assertNotIn("degradation", got["document_chat"])
         self.assertEqual(got["document_chat"]["workflow"], "local_identifier")
-        self.assertEqual(got["model"], "Local keyword index · no model answer")
-        self.assertNotIn("35%", got["answer"])
+        self.assertEqual(got["model"], "Source-clause extraction · no model-generated summary")
+        for expected in ("व्यक्तिगत श्रेणी", "ऋण से जुड़ी", "पात्र परियोजना लागत का 35%", "अधिकतम ₹10 लाख प्रति इकाई"):
+            self.assertIn(expected, got["answer"])
         self.assertNotIn("internal details", got["answer"])
-        self.assertIn("सत्यापित उत्तर नहीं", got["answer"])
         record, = got["records"]
         self.assertIn(QUOTE_EN, record["content"])
         self.assertIn(record["content"], " ".join(target["content"].split()))
         self.assertEqual((record["page_number"], record["chunk_index"]), (11, 0))
-        # No planning or retries; the one synthesis attempt has a short budget.
-        factory.assert_called_once()
-        client.post.assert_called_once()
-        self.assertLessEqual(factory.call_args.kwargs["timeout"].read, 30)
-        self.assertIn("evidence", client.post.call_args.kwargs["json"]["format"]["properties"])
+        # The precise answer must be available even if no model can load.
+        factory.assert_not_called()
+        client.post.assert_not_called()
 
     def test_unavailable_model_never_publishes_ambiguous_wrong_or_out_of_scope_matches(self):
         target = pinned_row(SOURCE_EN, 11, 0)
@@ -517,11 +517,57 @@ class DocumentChatTests(TestCase):
         for selection in ([], [999]):
             with self.subTest(selection=selection):
                 model.evidence = selection
-                result = chat.ask(QUERY_HI)
+                result = chat.ask(MODEL_ONLY_QUERY)
                 self.assertEqual(result["document_chat"]["workflow"], "local_identifier")
                 self.assertEqual(result["document_chat"]["status"], "no_evidence")
                 self.assertEqual(result["records"], [])
                 self.assertNotIn("degradation", result["document_chat"])
+
+    def test_incomplete_source_clause_stays_original_excerpt_only(self):
+        sample = pinned_row(SOURCE_EN, 11)
+        updated = {**sample, "content": sample["content"].replace("eligible project cost", "total project cost")}
+        query = Mock()
+        query.search_agriculture_documents.return_value = [updated]
+        doc = DashboardDocumentChat(
+            lambda: nullcontext(query), Mock(side_effect=DocumentChatUnavailable("No local model.")),
+        )
+        result = doc.ask(QUERY_HI, "hi")
+        self.assertEqual(result["document_chat"]["status"], "excerpt_only")
+        self.assertIn("सत्यापित उत्तर नहीं", result["answer"])
+        self.assertNotIn("35%", result["answer"])
+        self.assertIn("total project cost", result["records"][0]["content"])
+
+    def test_generic_typed_source_uses_record_amounts_and_rejects_ambiguity_or_scope(self):
+        source = (
+            "Processing unit upgrades: Individual Category: Credit-linked capital subsidy at "
+            "27.5 percent of eligible project cost for technology upgrades with a maximum cap "
+            "of INR 2.5 crore per unit."
+        )
+        question = (
+            "What financial assistance is available under BAIPP for upgrading an individual food processing unit?"
+        )
+        result = _extract_unit_subsidy(question, source)
+        self.assertIsNotNone(result)
+        self.assertIn("27.5% of the eligible project cost", result.render("en"))
+        self.assertIn("₹2.5 crore per unit", result.render("en"))
+        self.assertIn("अधिकतम ₹2.5 करोड़ प्रति इकाई", result.render("hi"))
+        for bad in (
+            source.replace("27.5 percent", "27.5 or 28 percent"),
+            source.replace("27.5 percent", "127.5 percent"),
+            source.replace("Credit-linked ", ""),
+            source.replace("eligible project cost", "total project cost"),
+            source.replace("Individual Category", "Group Category"),
+            source.replace("INR 2.5 crore", "USD 2.5 crore"),
+            source.replace("INR 2.5 crore", "INR 2.5 lakh crore"),
+            source.replace("per unit", "per district"),
+            source.replace("with a maximum cap", "with a minimum"),
+            source + " Other units receive 13.5 percent.",
+        ):
+            with self.subTest(source=bad):
+                self.assertIsNone(_extract_unit_subsidy(question, bad))
+        for scoped in (question + " In Nalanda?", question + " And what is the collateral requirement?"):
+            self.assertIsNone(_extract_unit_subsidy(scoped, source))
+        self.assertIsNone(_extract_unit_subsidy(MODEL_ONLY_QUERY, source))
 
     def test_valid_initial_summary_has_no_render_call(self):
         sample = pinned_row(SOURCE_EN, 11)
@@ -529,7 +575,7 @@ class DocumentChatTests(TestCase):
             sample, "pmfme", "पात्र लागत पर 35% सहायता, अधिकतम ₹10 लाख प्रति इकाई।", QUOTE_EN,
             ["PMFME coverage", "PMFME individual subsidy", "खाद्य इकाई सहायता", "पूंजी अनुदान"],
         )
-        result = chat.ask(QUERY_HI)
+        result = chat.ask(MODEL_ONLY_QUERY)
         self.assertEqual(result["document_chat"]["summary"], {"initial": "accepted", "render": "not_attempted"})
         self.assertEqual([schema for schema, _ in model.calls], ["_GroundedAnswer"])
 
@@ -540,17 +586,17 @@ class DocumentChatTests(TestCase):
             ["PMFME coverage", "PMFME individual subsidy", "खाद्य इकाई सहायता", "पूंजी अनुदान"],
         )
         model.rendered_summary = "परियोजना लागत पर 35% सहायता और अधिकतम 10 करोड़ रुपये प्रति इकाई।"
-        result = chat.ask(QUERY_HI, "hi")
+        result = chat.ask(MODEL_ONLY_QUERY, "hi")
         self.assertEqual(result["document_chat"]["status"], "evidence_only")
         self.assertEqual(result["document_chat"]["summary"],
                          {"initial": "wrong_language", "render": "unsupported_amount_unit"})
         self.assertNotIn("करोड़", result["answer"])
         self.assertIn("Rs.10 lakh", result["records"][0]["content"])
         model.rendered_summary = "अधिकतम ₹35 लाख और 10 प्रतिशत सहायता मिलती है।"
-        result = chat.ask(QUERY_HI, "hi")
+        result = chat.ask(MODEL_ONLY_QUERY, "hi")
         self.assertEqual(result["document_chat"]["summary"]["render"], "unsupported_amount_unit")
         model.rendered_summary = "अधिकतम ₹99 लाख प्रति इकाई है।"
-        result = chat.ask(QUERY_HI, "hi")
+        result = chat.ask(MODEL_ONLY_QUERY, "hi")
         self.assertEqual(result["document_chat"]["summary"]["render"], "unsupported_number")
 
     def test_optional_render_timeout_cannot_take_away_verified_source(self):
@@ -560,7 +606,7 @@ class DocumentChatTests(TestCase):
             ["PMFME coverage", "PMFME individual subsidy", "खाद्य इकाई सहायता", "पूंजी अनुदान"],
         )
         model.render_error = DocumentChatUnavailable("Do not expose internals")
-        result = chat.ask(QUERY_HI, "hi")
+        result = chat.ask(MODEL_ONLY_QUERY, "hi")
         self.assertEqual(result["document_chat"]["status"], "evidence_only")
         self.assertEqual(result["document_chat"]["summary"], {"initial": "missing", "render": "unavailable"})
         self.assertIn(QUOTE_EN, result["records"][0]["content"])

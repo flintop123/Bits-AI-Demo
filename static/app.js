@@ -227,6 +227,7 @@ function showAnswer(data) {
   docTrace.hidden = !docChat;
   document.querySelector("#document-chat-outcome").textContent = {
     cited: "Generated summary. Verify it against the cited source excerpts below.",
+    source_derived: "This answer uses explicitly stated fields from the cited excerpt, without a model-generated summary.",
     evidence_only: "Exact source excerpts only. A generated summary was not verified.",
     excerpt_only: "The local model was unavailable. This is an original search excerpt, not a verified answer.",
     no_evidence: "No answer backed by an exact source excerpt.",

@@ -12,7 +12,7 @@ from services.agriculture_qa_service import AgricultureQAService
 from services.dashboard_document_chat import DashboardDocumentChat, DocumentChatUnavailable
 from services.viva_dashboard import ReactDashboard
 from test_dashboard_document_chat import (
-    HEADERS, QUERY_HI, QUOTE_EN, SOURCE_EN, ScriptedModel as DocumentModel, pinned_row,
+    HEADERS, QUERY_HI, QUOTE_EN, SOURCE_EN, pinned_row,
 )
 from test_viva_dashboard import ScriptedModel as ReactModel
 
@@ -62,15 +62,16 @@ class DashboardSharedDocumentTests(TestCase):
         retrieve.search_agriculture_documents.side_effect = (
             lambda terms, limit: [corpus_row] if "pmfme" in terms.lower() else []
         )
-        model = DocumentModel(["PMFME coverage", "PMFME individual subsidy", "खाद्य इकाई सहायता", "पूंजी अनुदान"], "", QUOTE_EN)
-        model.rendered_summary = "पात्र परियोजना लागत पर 35% सहायता है, अधिकतम 10,00,000 रुपये प्रति इकाई।"
-        chat = DashboardDocumentChat(lambda: nullcontext(retrieve), lambda: model)
+        no_model = Mock(side_effect=AssertionError("Typed answer must not load the chat model"))
+        chat = DashboardDocumentChat(lambda: nullcontext(retrieve), no_model)
         app = make_app(self.query, self.qa, chat)
         direct, react, explicit = [ask(app, route) for route in ("/ask", "/react", "/document-chat")]
         for response in (direct, react, explicit):
             self.assertEqual(response.status_code, 200, response.json)
-            self.assertEqual(response.json["document_chat"]["status"], "cited")
-            self.assertEqual(response.json["answer"], model.rendered_summary)
+            self.assertEqual(response.json["document_chat"]["status"], "source_derived")
+            self.assertEqual(response.json["document_chat"]["answer_method"], "typed_source_clause")
+            self.assertIn("पात्र परियोजना लागत का 35%", response.json["answer"])
+            self.assertIn("अधिकतम ₹10 लाख प्रति इकाई", response.json["answer"])
             self.assertIn(QUOTE_EN, response.json["records"][0]["content"])
             self.assertEqual((response.json["sources"][0]["page_number"],
                               response.json["sources"][0]["chunk_index"]), (11, 0))
@@ -79,6 +80,7 @@ class DashboardSharedDocumentTests(TestCase):
         self.assertTrue(react.json["react"]["tool_called"])
         self.assertEqual(react.json["react"]["tool"], "ask_agriculture_question")
         self.planner.chat_json.assert_not_called()
+        no_model.assert_not_called()
         self.query.search_agriculture_documents.assert_not_called()
 
     def test_explicit_bilingual_document_prompts_cannot_be_misrouted_by_planner(self):
