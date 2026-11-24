@@ -7,10 +7,12 @@ import tempfile
 from unittest import TestCase
 from unittest.mock import Mock, patch
 
+from langchain_core.messages import HumanMessage, SystemMessage
+
 from data_api import create_app
 from milvus_public_demo import main
 from services.milvus_public_demo import (
-    DemoError, PublicMilvusDemo, QUESTION, REPORT, SOURCE, Target, public_passages, seed,
+    DemoError, PublicMilvusDemo, QUESTION, REPORT, SOURCE, Target, _LoopbackChat, public_passages, seed,
 )
 
 ENDPOINT = "https://review.vectordb.zillizcloud.com"
@@ -77,6 +79,30 @@ class MilvusPublicDemoTests(TestCase):
             mutated.write_text("\n".join(json.dumps(record) for record in records), encoding="utf-8")
             with patch.object(package, "DUMP", mutated), self.assertRaisesRegex(DemoError, "differ"):
                 public_passages()
+
+    def test_legacy_gcp_serving_endpoint_is_narrowly_allowed(self):
+        prefix = "in03-0123456789abcde"
+        valid = [
+            f"https://{prefix}.serverless.gcp-us-west1.cloud.zilliz.com",
+            f"https://{prefix}.gcp-europe-west4.cloud.zilliz.com:443/",
+            f"https://{prefix}.serverless.gcp-us-west1.vectordb.zillizcloud.com",
+        ]
+        for endpoint in valid:
+            with self.subTest(endpoint=endpoint):
+                self.assertEqual(Target(endpoint, COLLECTION).endpoint, endpoint)
+        for endpoint in (
+            valid[0] + ".example.org", valid[0] + "@example.org",
+            valid[0] + "/v2/vectordb", valid[0] + "?secret", valid[0] + "?", valid[0] + "#",
+            valid[0].replace("https:", "http:"), valid[0].replace("in03-", "in03-\t"),
+            valid[0].replace("https://", "https://@"),
+            valid[0].replace("https://", "https://name:password@"),
+            valid[0].replace("cloud.zilliz.com", "cloud-zilliz.com"),
+            valid[0].replace(prefix, "other"), valid[0].replace("gcp-", "aws-"),
+            "https://api.cloud.zilliz.com", "https://cloud.zilliz.com",
+            valid[0] + ":8080", valid[0] + "\\other",
+        ):
+            with self.subTest(endpoint=endpoint), self.assertRaisesRegex(DemoError, "approved Zilliz"):
+                Target(endpoint, COLLECTION)
 
     def test_write_requires_explicit_new_collection_approval(self):
         prompt = Mock(side_effect=AssertionError("credential prompt must not run"))
@@ -155,6 +181,21 @@ class MilvusPublicDemoTests(TestCase):
         self.assertNotIn("keep-out-of-ai-and-browser", json.dumps(reply))
         self.client.load_collection.assert_not_called()
         self.client.insert.assert_not_called()
+
+    def test_real_local_model_adapter_does_not_use_proxy_or_redirects(self):
+        conn = Mock()
+        conn.__enter__ = Mock(return_value=conn)
+        conn.__exit__ = Mock(return_value=False)
+        conn.post.return_value.json.return_value = {"message": {"content": "Answer [1]"}}
+        with patch("httpx.Client", return_value=conn) as client:
+            output = _LoopbackChat().invoke([SystemMessage(content="Policy"), HumanMessage(content="Evidence")])
+        self.assertEqual(output, "Answer [1]")
+        self.assertEqual(conn.post.call_args.args, ("http://127.0.0.1:11434/api/chat",))
+        self.assertEqual(conn.post.call_args.kwargs["json"]["messages"], [
+            {"role": "system", "content": "Policy"}, {"role": "user", "content": "Evidence"},
+        ])
+        self.assertFalse(client.call_args.kwargs["trust_env"])
+        self.assertFalse(client.call_args.kwargs["follow_redirects"])
 
     def test_no_fallback_when_milvus_fails_or_returns_unapproved_rows(self):
         app = self.make_app(self.make_demo())

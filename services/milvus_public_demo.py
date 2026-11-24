@@ -25,6 +25,14 @@ REVIEWED_SHA256 = "25b5979a590e533c25f9bd1f024867c3c0a00cc0b0afb83608ecc96250a18
 DUMP = Path(__file__).resolve().parents[1] / "db" / "dump" / "agriculture_documents.jsonl"
 DEMO_COLLECTION = re.compile(r"agriagent_demo_[a-f0-9]{12}\Z")
 NAMED_COLLECTION = re.compile(r"[A-Za-z_][A-Za-z0-9_]{0,79}\Z")
+# Some existing GCP clusters still use the older Zilliz data-plane name.
+# Do not accept the control-plane api.cloud.zilliz.com or arbitrary siblings.
+_LEGACY_GCP_DATA_HOST = re.compile(
+    r"in[0-9]{2}-[a-f0-9]{12,24}\.(?:serverless\.)?"
+    r"gcp-[a-z]+(?:-[a-z]+)*[0-9]\.cloud\.zilliz\.com"
+)
+_DNS_LABEL = re.compile(r"[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?")
+_UNSAFE_URL_CHAR = re.compile(r"[\x00-\x20\x7f\\?#]")
 _DIMENSION = 1024
 _OLLAMA = "http://127.0.0.1:11434"
 
@@ -69,10 +77,11 @@ class Target:
             parsed = urlsplit(self.endpoint)
             host = parsed.hostname or ""
             allowed = (
-                parsed.scheme == "https" and host.endswith(".zillizcloud.com")
-                and all(re.fullmatch(r"[a-z0-9-]+", part) for part in host.split("."))
-                and not parsed.username and not parsed.password and not parsed.query
-                and not parsed.fragment and parsed.path in {"", "/"}
+                parsed.scheme == "https" and not _UNSAFE_URL_CHAR.search(self.endpoint)
+                and (host.endswith(".zillizcloud.com") or _LEGACY_GCP_DATA_HOST.fullmatch(host))
+                and all(_DNS_LABEL.fullmatch(part) for part in host.split("."))
+                and parsed.username is None and parsed.password is None
+                and not parsed.query and not parsed.fragment and parsed.path in {"", "/"}
                 and parsed.port in {None, 443, 19530}
             )
         except ValueError:
@@ -206,11 +215,31 @@ class _PinnedRetrieval:
         return results
 
 
-def _chat_model():
-    from langchain_ollama import ChatOllama
-    return ChatOllama(model="qwen3:4b", base_url=_OLLAMA, temperature=0, reasoning=False,
-                      num_ctx=4096, num_predict=250,
-                      client_kwargs={"timeout": 80, "trust_env": False, "follow_redirects": False})
+class _LoopbackChat:
+    """Provide the existing FinalAnswerNode a small, bounded local model adapter."""
+
+    def invoke(self, messages):
+        import httpx
+        # Explicit loopback, without generic auth/proxy settings or redirects.
+        payload = {
+            "model": "qwen3:4b", "stream": False, "think": False,
+            "options": {"temperature": 0, "num_ctx": 4096, "num_predict": 250},
+            "messages": [
+                {"role": "system" if msg.type == "system" else "user", "content": msg.content}
+                for msg in messages
+            ],
+        }
+        try:
+            with httpx.Client(timeout=httpx.Timeout(80, connect=4), trust_env=False,
+                              follow_redirects=False) as client:
+                result = client.post(_OLLAMA + "/api/chat", json=payload)
+                result.raise_for_status()
+                content = result.json()["message"]["content"]
+                if not isinstance(content, str) or not content.strip():
+                    raise ValueError("Empty answer")
+                return content
+        except (httpx.HTTPError, ValueError, KeyError, TypeError):
+            raise DemoError("Local Ollama could not generate a summary.") from None
 
 
 class PublicMilvusDemo:
@@ -220,7 +249,7 @@ class PublicMilvusDemo:
         self._rows = public_passages() if rows is None else _require_reviewed_passages(rows)
         self._embedder = embedder or _LoopbackEmbedder()
         self._client_factory = client_factory or _connect
-        self._model_factory = model_factory or _chat_model
+        self._model_factory = model_factory or _LoopbackChat
 
     def ask(self, question, language):
         if language not in {"auto", "en"} or " ".join(question.split()).casefold().rstrip("?.") != QUESTION.casefold().rstrip("?"):

@@ -26,7 +26,9 @@ older corpus is not silently supported. No load, write, or fallback is
 performed against a shared collection.
 
 From Windows CMD in the repository (replace the endpoint and collection
-placeholders with those explicitly approved by the owner):
+placeholders with those explicitly approved by the owner). Use the precise
+**Public Endpoint** shown in Zilliz Cloud; approved older GCP Serverless
+endpoints ending in `.serverless.gcp-<region>.cloud.zilliz.com` also work:
 
 ```bat
 .venv\Scripts\python.exe milvus_public_demo.py serve --endpoint "https://YOUR-APPROVED-ENDPOINT.zillizcloud.com" --collection "YOUR_APPROVED_COLLECTION" --shared-read-only
