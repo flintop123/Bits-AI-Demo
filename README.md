@@ -1,8 +1,24 @@
 # AgriAgent — CS F407 Artificial Intelligence, Group 17
 
+## Phase III handoff
+
+Start with the [Windows setup](#clean-clone-prerequisites-windows).
+The [ten-query rehearsal guide](eval/round2_demo_README.md) records the
+questions, expected answers, and source locators. Its offline check
+verifies a fixed snapshot; it is not a live product score.
+
+| Submission evidence | Location |
+|---|---|
+| Data inventory, schema, and portable dump | [Manifest](data/manifest.csv), [data dictionary](docs/DATABASE_SCHEMA.md), [JSONL dump](db/dump/) |
+| Evaluation methods and recorded results | [Agent evaluation](docs/PHASE2_AGENT_EVALUATION.md), [raw cases and results](eval/), [evidence](docs/evidence/) |
+| Base/adapter experiment | [Saved comparison](eval/adapter_comparison.csv), [training/evaluation script](eval/run_adapter_experiment.py); see [scope below](#evaluation-evidence) |
+| Team roles and Git evidence | [Contributions](CONTRIBUTIONS.md) |
+
+The Phase II numbers below are historical baselines.
+
 ## Academic Phase II evaluation submission
 
-This section maps the repository to the faculty's Phase II demonstration protocol. Older headings such as “Phase 4” or “Phase 7” below are internal engineering workstream names; they are not claims about the course evaluation stage. The current academic stage is **Phase II evaluation**.
+This section maps the repository to the faculty's Phase II demonstration protocol. Older headings such as “Phase 4” or “Phase 7” below are internal engineering workstream names; they are not claims about the course evaluation stage.
 
 Repository: <https://github.com/flintop123/Bits-AI-Demo>
 
@@ -61,13 +77,20 @@ docker run -d --name bihar-mongodb -p 127.0.0.1:27017:27017 mongo:7
 docker ps --filter "name=bihar-mongodb"
 ```
 
-Validate the portable database dump and load it into MongoDB when the database
-is empty:
+Validate the portable dump first. To seed a fresh, empty local MongoDB
+instance, keep the app and schedulers stopped and run:
 
 ```powershell
 python db\load_dump.py --validate-only
-python db\load_dump.py
+python db\load_dump.py --mongo
 ```
+
+`--mongo` only connects to loopback port 27017 and refuses existing records
+in `bihar_agriculture`. It creates the location and document text indexes
+needed by the demo, and prints read-back counts. Skip the seed if your
+database is already populated. If a seed is interrupted, use a fresh,
+disposable MongoDB instance rather than clearing an existing database.
+With neither flag, the loader builds a SQLite mirror instead.
 
 Install and start Ollama, then make both submitted local-model dependencies
 available. `qwen3:4b` performs grounded planning and answer generation;
@@ -350,6 +373,10 @@ never gaining any capability beyond those four fixed tools:
 python run_extractor.py "load last seven days of mandi data via api"
 python run_extractor.py "what was total rice production in 2024-25?"
 ```
+
+Ingestion previews by default. Only an explicit `--write` flag authorizes
+ingestion writes, and an original request saying "dry run" still takes
+precedence. Do not use `--write` for the rehearsal.
 
 Configure the Ollama model and MongoDB connection for this agent in one
 place via `.env` (copy `.env.example`); see `agent_config.py`. Run

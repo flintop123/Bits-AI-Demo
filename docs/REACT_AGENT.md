@@ -115,9 +115,9 @@ gains a capability that didn't already exist:
 
 | Tool | Wraps | Writes to MongoDB? |
 |---|---|---|
-| `ingest_mandi_prices` | `phase4.mandi_orchestrator.DailyMandiOrchestrator` — the official paginated API client, the same `daily_mandi_api_agent` that `docs/source_agent_map.csv` and `eval/phase2_metrics.csv` already treat as canonical | yes (unless the request says "dry run") |
-| `ingest_crop_statistics` | `phase2.agents.CropStatisticsSourceAgent` | yes (unless "dry run") |
-| `ingest_agriculture_documents` | `phase2.agents.AgricultureDocumentsSourceAgent` | yes (unless "dry run") |
+| `ingest_mandi_prices` | `phase4.mandi_orchestrator.DailyMandiOrchestrator` — official paginated API | only with explicit write permission |
+| `ingest_crop_statistics` | `phase2.agents.CropStatisticsSourceAgent` | only with explicit write permission |
+| `ingest_agriculture_documents` | `phase2.agents.AgricultureDocumentsSourceAgent` | only with explicit write permission |
 | `ask_agriculture_question` | `phase2.agents.GroundedQAAgent` | no — read-only |
 
 `ingest_mandi_prices` also understands a date range in the request —
@@ -135,10 +135,11 @@ support a request like "last seven days" regardless.
 The ReAct agent is only ever handed these four, fixed, already-validated
 tools — never arbitrary code execution. The model's decision is bounded to
 *which one of four known-safe actions to call, with what single text
-argument*. Whether a call actually writes to MongoDB is still decided by
-fixed code (`agent_tools/_shared.py:wants_dry_run`, a keyword check), not by
-the model's judgement — the model picks the tool, fixed code still gates
-the write.
+argument*. The CLI defaults to preview and only `--write` can authorize
+ingestion writes. If the original request says "dry run", it stays a dry
+run even with `--write`, regardless of how the model phrases the tool
+call. Library callers of `agent.run()` can explicitly pass
+`allow_write=True`; direct tool calls outside that scope remain dry.
 
 ### Which decisions are the model's, and which are fixed code's
 

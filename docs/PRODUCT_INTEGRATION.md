@@ -4,8 +4,9 @@ This patch is based on `anuj/round2-feedback-completion` at `18f91e4`. It brings
 forward Jitendra's API/PDF intake, Milvus indexing and LangGraph chatbot without
 bringing in the committed cloud credential or machine-specific paths. Your
 Round 2 CLI, baseline grounded QA, audit artifacts, and table validation
-remain available. Rishi's original ReAct CLI is unchanged; it should not be
-exposed as a product endpoint or used for write-authorized rehearsals.
+remain available. The separate [ReAct CLI](REACT_AGENT.md) integrates
+Rishi's routing and logging improvements from PR #24. It defaults to
+non-writing ingestion and is not exposed as a product endpoint.
 
 ## Dashboard and map
 

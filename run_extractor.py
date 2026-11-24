@@ -14,16 +14,7 @@ Phase2Supervisor, which remains the orchestrator used for scheduled
 ingestion and for the measured Phase 2 evaluation. See docs/REACT_AGENT.md.
 """
 
-import sys
-
-from agent import parse_cli, run
+from agent import main
 
 if __name__ == "__main__":
-    request, interactive = parse_cli(sys.argv[1:])
-    if not request:
-        print(
-            'Usage: python run_extractor.py [--non-interactive] '
-            '"<plain English request>"'
-        )
-        raise SystemExit(1)
-    run(request, interactive=interactive)
+    main()

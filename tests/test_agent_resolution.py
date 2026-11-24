@@ -329,9 +329,73 @@ class ParseCliTests(unittest.TestCase):
 
         self.assertEqual(
             parse_cli(["--non-interactive", "load", "mandi"]),
-            ("load mandi", False),
+            ("load mandi", False, False),
         )
-        self.assertEqual(parse_cli(["load", "mandi"]), ("load mandi", None))
+        self.assertEqual(parse_cli(["load", "mandi"]), ("load mandi", None, False))
+        self.assertEqual(parse_cli(["--write", "load mandi"]), ("load mandi", None, True))
+
+
+class PhaseThreeRegressionTests(unittest.TestCase):
+    def test_all_ten_demo_prompts_route_to_read_only_qa(self):
+        import re
+        from pathlib import Path
+
+        guide = Path(__file__).resolve().parents[1] / "eval" / "round2_demo_README.md"
+        prompts = re.findall(r"^\| (Q\d\d) \| [^|]+ \| ([^|]+) \|",
+                             guide.read_text(encoding="utf-8"), re.MULTILINE)
+        self.assertEqual(len(prompts), 10)
+        for case_id, prompt in prompts:
+            with self.subTest(case=case_id):
+                resolution = resolve_request(prompt)
+                self.assertEqual(resolution.status, "resolved")
+                self.assertEqual(resolution.capability.tool_name, "ask_agriculture_question")
+
+    def test_model_cannot_drop_user_dry_run_or_authorize_itself(self):
+        import agent
+
+        for original, allow_write, should_write in (
+            ("load mandi data via API", False, False),
+            ("load mandi data via API, dry run", True, False),
+            ("load mandi data via API", True, True),
+            ("load mandi data via API", False, False),
+        ):
+            with self.subTest(original=original, allow_write=allow_write):
+                fake_llm = ScriptedModel(responses=[
+                    AIMessage(content="", tool_calls=[{
+                        "name": "ingest_mandi_prices",
+                        "args": {"instruction": "fetch mandi prices"},
+                        "id": "call_1",
+                    }]),
+                    AIMessage(content="mock completed"),
+                ])
+                with patch.object(agent, "configure_logging", return_value=logging.getLogger("test")), \
+                        patch("conn.mandi_observations.MandiObservationMongo") as connect, \
+                        patch("agent_tools.mandi_ingestion.tool.BiharMandiApiClient"), \
+                        patch("agent_tools.mandi_ingestion.tool.DailyMandiOrchestrator") as factory:
+                    execute = factory.return_value.run
+                    execute.return_value = {"status": "completed", "metrics": {
+                        "dates_requested": 1, "dates_completed": 1,
+                        "records_processed": 0, "inserted": 0,
+                    }}
+                    agent.run(original, verbose=False, llm=fake_llm,
+                              interactive=False, allow_write=allow_write)
+                execute.assert_called_once()
+                self.assertIs(execute.call_args.kwargs["dry_run"], not should_write)
+                self.assertEqual(connect.called, should_write)
+
+    def test_excel_and_pdf_tools_default_to_dry_outside_agent(self):
+        from agent_tools import ingest_agriculture_documents, ingest_crop_statistics
+
+        for module, class_name, tool, request in (
+            ("crop_statistics_ingestion", "CropStatisticsSourceAgent",
+             ingest_crop_statistics, "load Excel"),
+            ("agriculture_documents_ingestion", "AgricultureDocumentsSourceAgent",
+             ingest_agriculture_documents, "load apeda report"),
+        ):
+            with self.subTest(tool=tool.name):
+                with patch(f"agent_tools.{module}.tool.{class_name}") as factory:
+                    tool.func(request)
+                self.assertTrue(factory.return_value.execute.call_args.kwargs["dry_run"])
 
 
 if __name__ == "__main__":
