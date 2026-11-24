@@ -41,8 +41,11 @@ The mode accepts only this public demo question, with English or Automatic
 language, to prevent sending arbitrary user prompts as cloud embeddings.
 The `ask` command can replace `serve` for a terminal test. If generation
 fails or does not have valid citations, the original retrieved passages are
-shown instead; a generated answer is not claimed. Verify any generated
-phrasing against the original source.
+shown instead; a generated answer is not claimed. The dashboard explains
+whether the local model failed or its summary was rejected, without exposing
+the draft or service details. In the terminal, `Generation check` shows the
+same status. Testing this mode does not change the collection or require
+reseeding. Verify any generated phrasing against the original source.
 
 ## Alternative: seed a new isolated collection (upload)
 

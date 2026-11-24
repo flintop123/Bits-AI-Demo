@@ -215,6 +215,55 @@ class _PinnedRetrieval:
         return results
 
 
+class _GenerationFailure(DemoError):
+    def __init__(self, code):
+        self.code = code
+        super().__init__("Local Ollama could not generate a summary.")
+
+
+_TOPIC = re.compile(r"\borganic(?:\s+farming)?\s+corridor\b", re.I)
+_CONTINUATION = re.compile(r"^this\s+corridor\b", re.I)
+
+
+def _focus_evidence(evidence):
+    """From returned vector hits only, pick the smallest complete topical excerpt."""
+    from services.dashboard_document_chat import _normalized_whitespace, _sentence_spans
+
+    candidates = []
+    for rank, hit in enumerate(evidence):
+        text = _normalized_whitespace(hit["text_content"])
+        sentences = list(_sentence_spans(text))
+        for position, sentence in enumerate(sentences):
+            if not _TOPIC.search(sentence) or not sentence.endswith("."):
+                continue
+            follow = sentences[position + 1] if position + 1 < len(sentences) else ""
+            pair = sentence + " " + follow
+            # Include the exact adjacent explanatory sentence, not facts from
+            # unrelated paragraphs or a locally stored row that Milvus did not return.
+            contiguous = (_CONTINUATION.search(follow) and follow.endswith(".")
+                          and len(pair) <= 420 and pair in text)
+            candidates.append((not bool(contiguous), rank, position, pair if contiguous else sentence))
+    if not candidates:
+        return None, None
+    _, rank, _, excerpt = min(candidates)
+    return rank, excerpt
+
+
+def _generate_answer(model, state, focus):
+    from langchain_core.prompts import ChatPromptTemplate
+    from node.final_answer import FinalAnswerNode
+
+    node = FinalAnswerNode(model)
+    node.prompt = ChatPromptTemplate.from_messages([
+        ("system", "Answer in English in one or two short sentences using only the single source excerpt. "
+         "Keep the source's wording and any numerical values unchanged; copy the directly relevant "
+         "sentences rather than substituting verbs, units, or numbers. End with the citation [1] and "
+         "do not cite anything else. Do not add URLs or a heading. If the excerpt cannot answer, say so."),
+        ("human", "Question: {question}\n\nRetrieved evidence:\n{context}"),
+    ])
+    return node.generate_final_answer({**state, "retrieved_documents": [focus]})["answer"]
+
+
 class _LoopbackChat:
     """Provide the existing FinalAnswerNode a small, bounded local model adapter."""
 
@@ -223,7 +272,7 @@ class _LoopbackChat:
         # Explicit loopback, without generic auth/proxy settings or redirects.
         payload = {
             "model": "qwen3:4b", "stream": False, "think": False,
-            "options": {"temperature": 0, "num_ctx": 4096, "num_predict": 250},
+            "options": {"temperature": 0, "num_ctx": 4096, "num_predict": 320},
             "messages": [
                 {"role": "system" if msg.type == "system" else "user", "content": msg.content}
                 for msg in messages
@@ -234,12 +283,23 @@ class _LoopbackChat:
                               follow_redirects=False) as client:
                 result = client.post(_OLLAMA + "/api/chat", json=payload)
                 result.raise_for_status()
-                content = result.json()["message"]["content"]
-                if not isinstance(content, str) or not content.strip():
-                    raise ValueError("Empty answer")
-                return content
-        except (httpx.HTTPError, ValueError, KeyError, TypeError):
-            raise DemoError("Local Ollama could not generate a summary.") from None
+        except httpx.TimeoutException:
+            raise _GenerationFailure("ollama_timeout") from None
+        except httpx.HTTPStatusError:
+            raise _GenerationFailure("ollama_http_error") from None
+        except httpx.RequestError:
+            raise _GenerationFailure("ollama_unreachable") from None
+
+        try:
+            reply = result.json()
+            content = reply["message"]["content"]
+        except (ValueError, KeyError, TypeError):
+            raise _GenerationFailure("ollama_invalid_response") from None
+        if reply.get("done_reason") == "length":
+            raise _GenerationFailure("ollama_truncated")
+        if not isinstance(content, str) or not content.strip():
+            raise _GenerationFailure("ollama_empty")
+        return content
 
 
 class PublicMilvusDemo:
@@ -255,7 +315,6 @@ class PublicMilvusDemo:
         if language not in {"auto", "en"} or " ".join(question.split()).casefold().rstrip("?.") != QUESTION.casefold().rstrip("?"):
             raise ValueError("Milvus demo supports this public report question in English only: " + QUESTION)
         from node.retrieve_documents import RetrieveDocumentsNode
-        from node.final_answer import FinalAnswerNode
         from services.dashboard_document_chat import _MARKER, _summary_status
 
         client = self._client_factory(self.target, self._token)
@@ -274,6 +333,11 @@ class PublicMilvusDemo:
         finally:
             client.close()
 
+        rank, excerpt = _focus_evidence(evidence)
+        if rank is not None:
+            # Citation [1] identifies the used passage, not the blind rank of
+            # an unrelated vector hit. The unchanged scores remain visible.
+            evidence = [evidence[rank], *evidence[:rank], *evidence[rank + 1:]]
         records = [{
             "citation_id": i, "source": SOURCE, "document_title": TITLE,
             **hit["metadata"], "content": hit["text_content"],
@@ -283,28 +347,40 @@ class PublicMilvusDemo:
             if type(score) in {int, float} and isfinite(score):
                 record["cosine_score"] = round(float(score), 4)
         text, status = "No allowlisted report passages were returned by this Milvus collection.", "no_evidence"
+        generation = "not_attempted"
         if records:
             text, status = ("Milvus returned the original passages below. No verified generated summary is available.",
                             "evidence_only")
+            generation = "topic_not_retrieved"
+        if excerpt is not None:
+            generation = "ollama_unavailable"
             try:
                 from langsmith import tracing_context
+                focus = {**evidence[0], "text_content": excerpt}
                 with tracing_context(enabled=False):
-                    generated = FinalAnswerNode(self._model_factory()).generate_final_answer({
-                        **state, "retrieved_documents": evidence,
-                    })["answer"]
+                    generated = _generate_answer(self._model_factory(), state, focus)
+            except _GenerationFailure as failure:
+                generation = failure.code
             except Exception:
-                generated = ""
-            cited = {int(v) for group in _MARKER.findall(generated) for v in group.split(",")}
-            support = [record for record in records if record["citation_id"] in cited]
-            if cited == {row["citation_id"] for row in support} and support and (
-                _summary_status(generated, "en", support) == "accepted"
-            ):
-                text, status = generated, "cited"
+                # Never include API error text, generated text, credentials or
+                # stack traces in the diagnosis.
+                pass
+            else:
+                cited = {int(v) for group in _MARKER.findall(generated) for v in group.split(",")}
+                if not cited:
+                    generation = "missing_citation"
+                elif cited != {1}:
+                    generation = "unknown_citation"
+                else:
+                    support = [{**records[0], "content": excerpt}]
+                    generation = _summary_status(generated, "en", support)
+                if generation == "accepted":
+                    text, status = generated, "cited"
         return {
             "answer": text, "answer_language": "en", "intent": "milvus_vector_rag",
             "model": "bge-m3 + local Ollama · public report only",
             "filters": {"collection": self.target.collection},
             "retrieval": {"mode": "milvus_dense_cosine"},
             "sources": [{k: v for k, v in record.items() if k != "content"} for record in records],
-            "records": records, "document_chat": {"status": status, "searches": [QUESTION]},
+            "records": records, "document_chat": {"status": status, "searches": [QUESTION], "generation": generation},
         }

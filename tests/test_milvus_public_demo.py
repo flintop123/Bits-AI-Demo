@@ -12,7 +12,8 @@ from langchain_core.messages import HumanMessage, SystemMessage
 from data_api import create_app
 from milvus_public_demo import main
 from services.milvus_public_demo import (
-    DemoError, PublicMilvusDemo, QUESTION, REPORT, SOURCE, Target, _LoopbackChat, public_passages, seed,
+    DemoError, PublicMilvusDemo, QUESTION, REPORT, SOURCE, Target, _GenerationFailure, _LoopbackChat,
+    public_passages, seed,
 )
 
 ENDPOINT = "https://review.vectordb.zillizcloud.com"
@@ -196,6 +197,60 @@ class MilvusPublicDemoTests(TestCase):
         ])
         self.assertFalse(client.call_args.kwargs["trust_env"])
         self.assertFalse(client.call_args.kwargs["follow_redirects"])
+
+    def test_generation_uses_small_exact_returned_passage_and_stable_citation(self):
+        self.client.search.return_value = [[
+            hit(self.rows[11, 0], metadata={"page_number": 11, "chunk_index": 0}, rank=.94),
+            hit(self.rows[14, 2], metadata={"page_number": 14, "chunk_index": 2}, rank=.87),
+            hit(self.rows[14, 0], rank=.82),
+        ]]
+        exact = (
+            "An organic corridor is established along both banks of river Ganga. "
+            "This corridor comprises 13 districts of Bihar."
+        )
+        self.model.invoke.return_value.content = exact + " [1]"
+        result = self.make_demo().ask(QUESTION, "en")
+        self.assertEqual(result["answer"], exact + " [1]")
+        self.assertEqual(result["document_chat"]["generation"], "accepted")
+        messages = self.model.invoke.call_args.args[0]
+        self.assertIn("End with the citation [1]", messages[0].content)
+        self.assertIn(exact, messages[-1].content)
+        self.assertNotIn("188 FPOs", messages[-1].content)
+        self.assertNotIn("[2]", messages[-1].content)
+        self.assertEqual(result["records"][0]["page_number"], 14)
+        self.assertEqual(result["records"][0]["chunk_index"], 0)
+        self.assertEqual(result["records"][0]["cosine_score"], .82)
+        self.assertEqual(len(result["records"]), 3)
+
+    def test_summary_diagnostics_do_not_reveal_rejected_output_or_fall_back(self):
+        app = self.make_app(self.make_demo())
+        for content, reason in (
+            ("The original numbers are here but I forgot the source.", "missing_citation"),
+            ("The corridor comprises 13 districts. [2]", "unknown_citation"),
+            ("The corridor comprises 99 districts. [1]", "unsupported_number"),
+            ("The corridor covers 13 districts. [1]", "unsupported_amount_unit"),
+        ):
+            with self.subTest(reason=reason):
+                self.model.invoke.return_value.content = content
+                response = self.request(app)
+                self.assertEqual(response.json["document_chat"]["generation"], reason)
+                self.assertEqual(response.json["document_chat"]["status"], "evidence_only")
+                self.assertNotIn(content, response.get_data(as_text=True))
+                self.assertEqual(response.json["records"][0]["content"], self.rows[14, 0])
+        self.model.invoke.side_effect = _GenerationFailure("ollama_timeout")
+        reply = self.request(app)
+        self.assertEqual(reply.json["document_chat"]["generation"], "ollama_timeout")
+        self.docs.ask.assert_not_called()
+
+    def test_no_local_passage_substitution_when_real_vector_hits_are_off_topic(self):
+        self.client.search.return_value = [[
+            hit(self.rows[11, 0], metadata={"page_number": 11, "chunk_index": 0})
+        ]]
+        result = self.make_demo().ask(QUESTION, "en")
+        self.assertEqual(result["document_chat"]["generation"], "topic_not_retrieved")
+        self.assertEqual(result["document_chat"]["status"], "evidence_only")
+        self.assertEqual([row["page_number"] for row in result["records"]], [11])
+        self.model_factory.assert_not_called()
 
     def test_no_fallback_when_milvus_fails_or_returns_unapproved_rows(self):
         app = self.make_app(self.make_demo())

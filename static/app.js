@@ -265,6 +265,30 @@ function showAnswer(data) {
   document.querySelector("#document-chat-answer-label").hidden = docChat?.status !== "cited";
   const docTrace = document.querySelector("#document-chat-trace");
   docTrace.hidden = !docChat;
+  const isMilvus = data.intent === "milvus_vector_rag";
+  document.querySelector("#document-chat-title").textContent = isMilvus
+    ? "Milvus Vector RAG · verified public report passages"
+    : "Document Chat · local MongoDB reports";
+  const generationNote = document.querySelector("#document-chat-generation");
+  const reason = {
+    ollama_timeout: "Local Ollama reached its time limit.",
+    ollama_http_error: "Local Ollama returned an HTTP error.",
+    ollama_unreachable: "Local Ollama could not be reached.",
+    ollama_invalid_response: "Local Ollama returned an invalid response.",
+    ollama_truncated: "Local Ollama reached its output limit.",
+    ollama_empty: "Local Ollama returned no answer text.",
+    ollama_unavailable: "Local Ollama did not complete the summary.",
+    topic_not_retrieved: "No returned excerpt directly matched the requested topic.",
+    missing_citation: "The summary did not include a source citation.",
+    unknown_citation: "The summary cited evidence outside the excerpt supplied to Ollama.",
+    wrong_language: "The summary did not meet the requested language check.",
+    untrusted_link: "The summary added an unverified link.",
+    unsupported_amount_unit: "The summary's quantities or wording did not pass the source check.",
+    unsupported_number: "The summary included a number not supported by its excerpt.",
+    missing: "No summary text was returned.",
+  }[docChat?.generation];
+  generationNote.hidden = !isMilvus || !reason;
+  generationNote.textContent = generationNote.hidden ? "" : reason;
   document.querySelector("#document-chat-outcome").textContent = {
     cited: "Generated summary. Verify it against the cited source excerpts below.",
     source_derived: "This answer uses explicitly stated fields from the cited excerpt, without a model-generated summary.",

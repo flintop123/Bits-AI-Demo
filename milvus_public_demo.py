@@ -67,6 +67,7 @@ def main(argv=None, *, token_reader=None):
             if args.command == "ask":
                 answer = demo.ask(QUESTION, "en")
                 print(answer["answer"])
+                print("Generation check:", answer["document_chat"]["generation"])
                 for row in answer["records"]:
                     print(f"\n[{row['citation_id']}] {row['source']}#page={row['page_number']} "
                           f"(chunk {row['chunk_index']})\n{row['content']}")
