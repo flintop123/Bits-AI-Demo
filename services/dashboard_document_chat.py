@@ -3,8 +3,10 @@
 from contextlib import contextmanager
 from decimal import Decimal
 from ipaddress import ip_address
+import logging
 import os
 import re
+from time import monotonic
 from urllib.parse import urlsplit
 from uuid import uuid4
 
@@ -16,6 +18,9 @@ from services.multilingual_query_expansion import expand_document_query
 MAX_SEARCHES = 5
 MAX_PASSAGES = 6
 MAX_PASSAGE_CHARS = 1400
+MODEL_READ_SECONDS = 90
+MODEL_BUDGET_SECONDS = 150
+_LOG = logging.getLogger(__name__)
 _TOKEN = re.compile(r"[A-Za-z0-9]+|[\u0900-\u097f]+")
 _STOP = set((
     "a an the do does did is are was were i you it in on at for and or about of "
@@ -76,12 +81,23 @@ class _LocalOllama:
 
     def __init__(self, base_url, model):
         self.base_url, self.model = base_url, model
+        self.deadline = monotonic() + MODEL_BUDGET_SECONDS
 
     def with_structured_output(self, schema):
         import httpx
+        from pydantic import ValidationError
+
+        stage = "answer synthesis" if schema is _GroundedAnswer else "bilingual search planning"
 
         class StructuredCall:
             def invoke(_, messages):
+                started = monotonic()
+                read_seconds = min(MODEL_READ_SECONDS, self.deadline - started)
+                if read_seconds <= 0:
+                    _LOG.warning("Document Chat %s: model time budget exhausted", stage)
+                    raise DocumentChatUnavailable(
+                        "Document Chat reached its local Ollama time limit. Please retry."
+                    )
                 payload = {
                     "model": self.model, "stream": False, "think": False,
                     "format": schema.model_json_schema(),
@@ -91,11 +107,54 @@ class _LocalOllama:
                         for msg in messages
                     ],
                 }
-                with httpx.Client(timeout=25, trust_env=False, follow_redirects=False) as client:
-                    response = client.post(self.base_url + "/api/chat", json=payload)
-                    response.raise_for_status()
-                    content = response.json().get("message", {}).get("content")
+                timeout = httpx.Timeout(
+                    read_seconds, connect=min(4, read_seconds), write=min(10, read_seconds),
+                    pool=min(4, read_seconds),
+                )
+                try:
+                    with httpx.Client(timeout=timeout, trust_env=False, follow_redirects=False) as client:
+                        response = client.post(self.base_url + "/api/chat", json=payload)
+                        response.raise_for_status()
+                except httpx.ReadTimeout:
+                    _LOG.warning("Document Chat %s: read timeout after %.1fs", stage, monotonic() - started)
+                    raise DocumentChatUnavailable(
+                        f"Local Ollama timed out during {stage} after waiting up to {read_seconds:.0f} seconds."
+                    ) from None
+                except httpx.TimeoutException:
+                    _LOG.warning("Document Chat %s: connection or write timeout after %.1fs",
+                                 stage, monotonic() - started)
+                    raise DocumentChatUnavailable(f"Local Ollama connection timed out during {stage}.") from None
+                except httpx.HTTPStatusError as error:
+                    code = error.response.status_code
+                    # Never log the provider's body, prompt, configured URL or credentials.
+                    _LOG.warning("Document Chat %s: Ollama HTTP %d after %.1fs",
+                                 stage, code, monotonic() - started)
+                    raise DocumentChatUnavailable(
+                        f"Local Ollama returned HTTP {code} during {stage}. Check its server log."
+                    ) from None
+                except httpx.RequestError:
+                    _LOG.warning("Document Chat %s: Ollama connection failed after %.1fs",
+                                 stage, monotonic() - started)
+                    raise DocumentChatUnavailable(
+                        f"Local Ollama could not be reached during {stage}. Check that it is running."
+                    ) from None
+
+                try:
+                    content = response.json()["message"]["content"]
+                except (ValueError, TypeError, KeyError, IndexError):
+                    _LOG.warning("Document Chat %s: malformed Ollama response after %.1fs",
+                                 stage, monotonic() - started)
+                    raise DocumentChatUnavailable(
+                        f"Local Ollama returned an invalid response during {stage}."
+                    ) from None
+                try:
                     return schema.model_validate_json(content)
+                except (ValidationError, TypeError):
+                    _LOG.warning("Document Chat %s: invalid structured JSON after %.1fs",
+                                 stage, monotonic() - started)
+                    raise DocumentChatUnavailable(
+                        f"Local Ollama returned invalid structured JSON during {stage}."
+                    ) from None
 
         return StructuredCall()
 

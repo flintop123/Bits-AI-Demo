@@ -8,7 +8,9 @@ import httpx
 from pymongo.errors import OperationFailure
 
 from data_api import create_app
-from services.dashboard_document_chat import DashboardDocumentChat, DocumentChatUnavailable
+from services.dashboard_document_chat import (
+    DashboardDocumentChat, DocumentChatUnavailable, _GroundedAnswer, _LocalOllama,
+)
 
 
 URL = "/api/v1/viva/document-chat"
@@ -198,4 +200,59 @@ class DocumentChatTests(TestCase):
         doc = DashboardDocumentChat(lambda: nullcontext(Mock()))
         with self.assertRaisesRegex(DocumentChatUnavailable, "Local Ollama"):
             doc.ask(QUERY_EN)
-        factory.assert_called_once_with(timeout=25, trust_env=False, follow_redirects=False)
+        factory.assert_called_once_with(
+            timeout=httpx.Timeout(90, connect=4, write=10, pool=4),
+            trust_env=False, follow_redirects=False,
+        )
+
+    @patch("services.dashboard_document_chat.monotonic", side_effect=[0, 0, 95])
+    @patch("httpx.Client")
+    def test_two_model_calls_share_time_budget_without_retry(self, factory, clock):
+        client = factory.return_value.__enter__.return_value
+        client.post.return_value = httpx.Response(
+            200, request=httpx.Request("POST", "http://127.0.0.1:11434/api/chat"),
+            json={"message": {"content": '{"summary":"","evidence":[]}'}},
+        )
+        run = _LocalOllama("http://127.0.0.1:11434", "test").with_structured_output(_GroundedAnswer)
+        self.assertEqual(run.invoke([]).evidence, [])
+        self.assertEqual(run.invoke([]).evidence, [])
+        self.assertEqual([call.kwargs["timeout"].read for call in factory.call_args_list], [90, 55])
+        self.assertEqual([call.kwargs["timeout"].connect for call in factory.call_args_list], [4, 4])
+        self.assertEqual(client.post.call_count, 2)
+
+    @patch("services.dashboard_document_chat.monotonic", side_effect=[0, 151])
+    @patch("httpx.Client")
+    def test_expired_shared_budget_stops_before_connection(self, factory, clock):
+        run = _LocalOllama("http://127.0.0.1:11434", "test").with_structured_output(_GroundedAnswer)
+        with self.assertRaisesRegex(DocumentChatUnavailable, "time limit"):
+            run.invoke([])
+        factory.assert_not_called()
+
+    @patch("httpx.Client")
+    def test_reports_safe_distinct_timeout_http_envelope_and_json_failures(self, factory):
+        client = factory.return_value.__enter__.return_value
+        request = httpx.Request("POST", "http://127.0.0.1:11434/api/chat")
+        cases = (
+            (httpx.ReadTimeout("private upstream details"), "timed out during answer synthesis", "read timeout"),
+            (httpx.ConnectTimeout("private upstream details"), "connection timed out", "connection or write timeout"),
+            (httpx.Response(500, request=request, text="private upstream details"), "HTTP 500", "Ollama HTTP 500"),
+            (httpx.Response(200, request=request, text="private upstream details"), "invalid response", "malformed Ollama response"),
+            (httpx.Response(200, request=request, json={"message": {"content": "private upstream details"}}),
+             "invalid structured JSON", "invalid structured JSON"),
+        )
+        for reply, error, log in cases:
+            with self.subTest(error=error):
+                client.reset_mock()
+                client.post.side_effect = None
+                if isinstance(reply, Exception):
+                    client.post.side_effect = reply
+                else:
+                    client.post.return_value = reply
+                run = _LocalOllama("http://127.0.0.1:11434", "test").with_structured_output(_GroundedAnswer)
+                with self.assertLogs("services.dashboard_document_chat", level="WARNING") as logs:
+                    with self.assertRaisesRegex(DocumentChatUnavailable, error) as caught:
+                        run.invoke([])
+                self.assertIn(log, logs.output[0])
+                self.assertNotIn("private upstream details", logs.output[0])
+                self.assertNotIn("private upstream details", str(caught.exception))
+                self.assertEqual(client.post.call_count, 1)
