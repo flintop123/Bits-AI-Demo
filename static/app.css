@@ -47,9 +47,11 @@ button { cursor: pointer; }
 .brand strong, .brand small { display: block; }
 .brand strong { font-family: Georgia, "Times New Roman", serif; font-size: 1.18rem; letter-spacing: -0.01em; }
 .brand small { color: var(--muted); margin-top: 2px; }
-.site-nav { display: flex; align-items: center; gap: 22px; margin-left: auto; }
+.site-nav { display: flex; flex-wrap: wrap; align-items: center; gap: 10px 22px; margin-left: auto; }
 .site-nav a { color: #43564a; text-decoration: none; font-size: .8rem; font-weight: 720; }
 .site-nav a:hover { color: var(--forest); }
+.site-nav .site-nav-shortcut { color: var(--forest); text-decoration: underline; text-underline-offset: 3px; }
+.site-nav a:focus-visible { outline: 3px solid #8a641d; outline-offset: 3px; }
 
 .system-state { display: flex; align-items: center; gap: 9px; color: var(--muted); font-size: 0.86rem; }
 .status-dot { width: 9px; height: 9px; border-radius: 50%; background: #a6aaa7; box-shadow: 0 0 0 5px rgba(166, 170, 167, 0.15); }

@@ -10,7 +10,8 @@ from data_api import create_app
 
 class LocalDashboardLayoutTests(TestCase):
     def setUp(self):
-        response = create_app(Mock(), Mock()).test_client().get("/")
+        self.client = create_app(Mock(), Mock()).test_client()
+        response = self.client.get("/")
         self.assertEqual(response.status_code, 200)
         self.page = BeautifulSoup(response.get_data(as_text=True), "html.parser")
 
@@ -39,7 +40,7 @@ class LocalDashboardLayoutTests(TestCase):
     def test_overview_exploration_and_intake_keep_their_real_tools(self):
         primary = self.page.select_one("nav[aria-label='Primary navigation']")
         self.assertEqual([link["href"] for link in primary.select("a")],
-                         ["#dashboard", "#explore", "#intake"])
+                         ["#dashboard", "#explore", "#intake", "/extractor/"])
         for selector in ("#daily-chart", ".coverage-details #run-history", ".coverage-details #quality-meters"):
             self.assertIsNotNone(self.page.select_one("#dashboard").select_one(selector))
         for selector in ("#market-map", "#intelligence-form", "#nearby-form", "#district-trends-form"):
@@ -50,6 +51,15 @@ class LocalDashboardLayoutTests(TestCase):
         for link in self.page.select("a[href^='#']"):
             if len(link["href"]) > 1:
                 self.assertIsNotNone(self.page.find(id=link["href"][1:]), link["href"])
+
+    def test_extractor_is_reachable_from_the_header_and_file_intake(self):
+        for nav_label in ("Primary navigation", "File intake tools"):
+            links = self.page.select(f"nav[aria-label='{nav_label}'] a[href='/extractor/']")
+            self.assertEqual([link.get_text(strip=True) for link in links], ["Extractor agent"])
+        page = self.client.get("/extractor/")
+        self.assertEqual(page.status_code, 200)
+        self.assertIn(b"Past runs", page.get_data())
+        page.close()
 
     def test_overview_has_six_collapsed_keyboard_reachable_drilldowns(self):
         buttons = self.page.select("#dashboard button[data-kpi]")
