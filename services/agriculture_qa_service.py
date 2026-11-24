@@ -1,6 +1,7 @@
 """Grounded natural-language questions over the agriculture collections."""
 
 import json
+import math
 import re
 from typing import Literal
 
@@ -14,6 +15,20 @@ from services.local_translation_service import (
 from services.multilingual_query_expansion import expand_document_query
 from services.mandi_term_normalizer import CROP_GROUPS
 from services.ollama_client import OllamaClient
+
+# These full-question patterns cover one crop, one named mandi and no date,
+# comparison, variety or other extra constraint. Other requests use the planner.
+# Bihar Krishi mandi records use अरवल for market code 1635.
+_PRICE_MARKET_ALIASES = (("अरवल", "Arwal"),)
+_SIMPLE_MANDI_PRICE = (
+    ("en", re.compile(
+        r"(?:what is|what's) (?:the )?(?P<crop>.+?) price "
+        r"(?:in|at) (?P<market>.+?) mandi[?.]?", re.IGNORECASE,
+    )),
+    ("hi", re.compile(
+        r"(?P<market>.+?) मंडी में (?P<crop>.+?) का भाव क्या है[?।]?",
+    )),
+)
 
 
 class QueryPlan(BaseModel):
@@ -79,7 +94,8 @@ class AgricultureQAService:
             raise ValueError("answer_language must be auto, en, or hi")
 
         catalog = self.query_service.list_values()
-        plan = self._create_plan(question, catalog)
+        exact_plan = self._exact_mandi_price_plan(question, catalog)
+        plan = exact_plan or self._create_plan(question, catalog)
         if answer_language in {"en", "hi"}:
             plan.language = answer_language
 
@@ -139,12 +155,22 @@ class AgricultureQAService:
                 semantic_query=semantic_query,
             )
 
+        if exact_plan is not None and records:
+            # find_mandi_prices orders newest first. Do not present older
+            # observations as the latest price or invent a missing value.
+            latest_date = records[0].get("date")
+            records = [record for record in records
+                       if record.get("date") == latest_date]
+            answer = self._format_latest_mandi_price(records, plan.language)
+        else:
+            answer = self._answer_from_records(question, plan, records)
         answer_records = self._records_for_answer(plan, records)
-        answer = self._answer_from_records(question, plan, records)
         return {
             "answer": answer,
             "intent": plan.intent,
             "metric": plan.metric,
+            **({"planning_method": "exact_catalog_lookup"}
+               if exact_plan is not None else {}),
             "filters": filters,
             "records": records,
             # Records expose the ranked retrieval candidates for auditability.
@@ -155,6 +181,70 @@ class AgricultureQAService:
             "answer_language": plan.language,
             "retrieval": self._retrieval_summary(records, plan.intent),
         }
+
+    @staticmethod
+    def _exact_catalog_match(value, choices, alias_groups):
+        def key(term):
+            return " ".join(str(term).casefold().split())
+
+        requested = key(value)
+        exact = {entry for entry in choices if key(entry) == requested}
+        if exact:
+            return next(iter(exact)) if len(exact) == 1 else None
+        equivalent = set()
+        for group in alias_groups:
+            aliases = {key(term) for term in group}
+            if requested in aliases:
+                equivalent.update(entry for entry in choices if key(entry) in aliases)
+        return next(iter(equivalent)) if len(equivalent) == 1 else None
+
+    @classmethod
+    def _exact_mandi_price_plan(cls, question, catalog):
+        """Resolve an unambiguous single-market price without trusting model JSON."""
+        normalized = " ".join(question.split())
+        for language, pattern in _SIMPLE_MANDI_PRICE:
+            match = pattern.fullmatch(normalized)
+            if match is None:
+                continue
+            crop = cls._exact_catalog_match(
+                match["crop"], catalog.get("mandi_crops", []), CROP_GROUPS,
+            )
+            # Match an actual market, never substitute a district filter.
+            market = cls._exact_catalog_match(
+                match["market"], catalog.get("markets", []), _PRICE_MARKET_ALIASES,
+            )
+            if crop is not None and market is not None:
+                return QueryPlan(
+                    intent="mandi_price", metric="price", crop=crop,
+                    market=market, language=language,
+                )
+        return None
+
+    @staticmethod
+    def _format_latest_mandi_price(records, language):
+        prices = []
+        for record in records:
+            price = record.get("price")
+            if type(price) not in {float, int} or not math.isfinite(price):
+                continue
+            unit = record.get("source_price_unit")
+            if not unit and record.get("unit"):
+                unit = (f"प्रति {record['unit']}" if language == "hi"
+                        else f"per {record['unit']}")
+            variety = f" ({record['variety']})" if record.get("variety") else ""
+            prices.append(f"{price}{' ' + unit if unit else ''}{variety}")
+        if not prices:
+            return ("मिले हुए रिकॉर्ड में उपयोग योग्य भाव दर्ज नहीं है।"
+                    if language == "hi"
+                    else "The matching records do not contain a usable price.")
+        first = records[0]
+        date = f" ({first['date']})" if first.get("date") else ""
+        values = "; ".join(dict.fromkeys(prices))
+        if language == "hi":
+            return (f"{first['market']} मंडी में {first['crop']} का "
+                    f"नवीनतम दर्ज भाव{date}: {values}।")
+        return (f"Latest recorded price for {first['crop']} at "
+                f"{first['market']} mandi{date}: {values}.")
 
     def _create_plan(self, question, catalog):
         schema = QueryPlan.model_json_schema()

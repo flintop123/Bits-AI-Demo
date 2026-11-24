@@ -12,7 +12,7 @@ class MandiCatalogLabelMongo:
 
     IDENTITY_FIELDS = ("entity_type", "official_value")
     SUPPORTED_FIELDS = ("crop", "district", "market")
-    LABEL_POLICY_VERSION = 3
+    LABEL_POLICY_VERSION = 6
 
     def __init__(self, database, normalizer=None):
         self.collection = database["mandi_catalog_labels"]
@@ -68,6 +68,25 @@ class MandiCatalogLabelMongo:
         for value in missing:
             en = english[value]
             hi = hindi[value]
+            previous = existing.get(value, {})
+            translation_history = list(
+                previous.get("translation_history", [])
+            )
+            previous_evidence = previous.get("translation_evidence")
+            if (
+                previous_evidence
+                and previous.get("label_policy_version")
+                != self.LABEL_POLICY_VERSION
+            ):
+                translation_history.append({
+                    "label_policy_version": previous.get(
+                        "label_policy_version"
+                    ),
+                    "labels": previous.get("labels", {}),
+                    "methods": previous.get("methods", {}),
+                    "translation_evidence": previous_evidence,
+                    "generated_at": previous.get("generated_at"),
+                })
             operations.append(UpdateOne(
                 {"entity_type": field, "official_value": value},
                 {"$set": {
@@ -80,6 +99,11 @@ class MandiCatalogLabelMongo:
                         "hi": hi["label_language"],
                     },
                     "methods": {"en": en["method"], "hi": hi["method"]},
+                    "translation_evidence": {
+                        "en": en.get("translation_evidence", {}),
+                        "hi": hi.get("translation_evidence", {}),
+                    },
+                    "translation_history": translation_history,
                     "source_collection": "mandi_prices",
                     "label_policy_version": self.LABEL_POLICY_VERSION,
                     "generated_at": generated_at,
@@ -117,10 +141,14 @@ class MandiCatalogLabelMongo:
                     "en": self.normalizer._language(value),
                     "hi": self.normalizer._language(value),
                 }
+                translation_evidence = {"en": {}, "hi": {}}
             else:
                 labels = item.get("labels", {})
                 methods = item.get("methods", {})
                 label_languages = item.get("label_languages", {})
+                translation_evidence = item.get(
+                    "translation_evidence", {}
+                )
             option = {
                 "value": value,
                 "labels": {
@@ -131,12 +159,19 @@ class MandiCatalogLabelMongo:
                     "en": methods.get("en", "cache_miss"),
                     "hi": methods.get("hi", "cache_miss"),
                 },
+                "translation_evidence": {
+                    "en": translation_evidence.get("en", {}),
+                    "hi": translation_evidence.get("hi", {}),
+                },
             }
             if language != "all":
                 option.update({
                     "label": option["labels"][language],
                     "label_language": label_languages.get(language, language),
                     "method": option["methods"][language],
+                    "selected_translation_evidence": option[
+                        "translation_evidence"
+                    ][language],
                 })
             options.append(option)
         label_key = (

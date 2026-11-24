@@ -1,0 +1,41 @@
+.market-explorer { min-width: 0; --map-ink: #173a2c; --map-line: #d5dfd3; }
+.market-explorer [hidden] { display: none !important; }
+.market-explorer-controls { display: flex; flex-wrap: wrap; align-items: end; gap: .65rem; padding: .85rem; color: var(--map-ink); background: #f1f5ee; border: 1px solid var(--map-line); border-radius: .75rem; margin: .65rem 0; }
+.market-explorer-field { display: grid; flex: 1 1 9rem; min-width: 0; gap: .28rem; font-size: .875rem; font-weight: 700; }
+.market-explorer-field:has(input[type="number"]) { flex: 0 1 6rem; }
+.market-explorer input, .market-explorer select, .market-explorer button { min-height: 44px; max-width: 100%; border: 1px solid #b7cbba; border-radius: .55rem; color: var(--map-ink); background: #fff; padding: .45rem .7rem; font: inherit; }
+.market-explorer button { cursor: pointer; font-size: .875rem; font-weight: 650; }
+.market-explorer button:hover, .market-explorer button[aria-pressed="true"] { background: #e0ecdd; }
+.market-explorer button:focus-visible, .market-explorer a:focus-visible, .market-explorer :is(input, select):focus-visible { outline: 3px solid #a35915; outline-offset: 2px; }
+.market-explorer .market-map { min-height: 3rem; border-radius: .7rem; margin-top: .5rem; background: #e8efe6; color: var(--map-ink); }
+.market-explorer .market-map:where(:not(.leaflet-container)) { display: grid; place-items: center; padding: 1rem; height: auto; }
+.market-explorer .market-map.leaflet-container { height: clamp(300px, 55vh, 510px); z-index: 0; isolation: isolate; }
+.market-explorer .market-map.map-choosing { cursor: crosshair; }
+.market-explorer .market-map.leaflet-container svg { width: auto; height: auto; }
+.market-explorer .market-explorer-zoom-hint { margin: .3rem 0; color: #35594b; font-size: .875rem; }
+.market-explorer-basemaps { display: flex; flex-wrap: wrap; align-items: center; gap: .45rem; margin: .55rem 0 .25rem; }
+.market-explorer-basemaps a { display: inline-flex; min-height: 44px; align-items: center; padding: .35rem .55rem; font-size: .875rem; color: #145b3b; }
+.market-explorer-basemap-notice { margin: .2rem 0 .45rem; color: #35594b; font-size: .875rem; }
+.market-explorer-satellite-logo { position: absolute; z-index: 500; left: .45rem; bottom: 2rem; padding: .15rem .28rem; background: #ffffffea; border-radius: .2rem; }
+.market-explorer-satellite-logo img { display: block; width: 74px; height: auto; }
+.market-explorer .market-explorer-status, .market-explorer .market-explorer-summary { margin: .55rem 0; color: #35594b; font-size: .875rem; }
+.market-explorer .market-explorer-summary { font-weight: 700; }
+.market-explorer-body { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: .75rem; margin: .65rem 0; }
+.market-explorer-directory { display: grid; align-content: start; gap: .25rem; min-height: 5rem; max-height: 13rem; overflow-y: auto; padding: .25rem; }
+.market-explorer-directory button { display: flex; text-align: left; align-items: center; flex-wrap: wrap; justify-content: space-between; gap: .28rem .65rem; }
+.market-explorer-directory button[aria-current="true"] { background: #e0ecdd; border-color: #427357; }
+.market-explorer-details { display: flex; align-items: start; align-content: start; flex-wrap: wrap; gap: .65rem; padding: .85rem; border: 1px solid var(--map-line); color: var(--map-ink); border-radius: .65rem; background: #f7faf5; overflow-wrap: anywhere; }
+.market-explorer-details :is(strong, span, small) { flex: 1 0 100%; }
+.market-explorer-details a { color: #145b3b; font-size: .875rem; align-self: center; }
+.market-explorer-origin { font-weight: 700; padding-top: .2rem; }
+.market-explorer-legend { display: flex; flex-wrap: wrap; gap: .6rem 1rem; color: #35594b; font-size: .875rem; }
+.market-explorer-legend span::before { display: inline-block; content: ""; width: .7rem; height: .7rem; margin-right: .35rem; border-radius: 50%; background: #186249; }
+.market-explorer-legend span:last-child::before { background: #a94b1b; }
+.market-pin { background: #186249; border: 3px solid #fff; border-radius: 50%; box-shadow: 0 0 0 1px #164b3a, 0 2px 5px #1b402f66; }
+.market-pin-nearby { background: #a94b1b; }
+.market-pin-active { box-shadow: 0 0 0 3px #173a2c, 0 1px 6px #1b402f99; }
+.map-card.market-explorer { padding: 1rem; }
+@media (max-width: 580px) {
+  .market-explorer-body { grid-template-columns: 1fr; }
+  .market-explorer .market-map.leaflet-container { height: 310px; }
+}

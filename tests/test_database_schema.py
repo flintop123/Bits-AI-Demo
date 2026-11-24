@@ -29,6 +29,7 @@ class DatabaseSchemaTests(unittest.TestCase):
                 "mandi_catalog_labels",
                 "crop_statistics",
                 "agriculture_documents",
+                "viva_document_uploads",
                 "agent_runs",
                 "mandi_ingestion_runs",
             },

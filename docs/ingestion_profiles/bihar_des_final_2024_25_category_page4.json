@@ -1,0 +1,21 @@
+{
+  "expected_sha256": "35f8bdb9d23baa6cfa663b04afa66748adc5458ded9b58fb92980abbb87a66aa",
+  "page": 4,
+  "strategy": "positioned",
+  "clip": [36, 69, 392, 152],
+  "x_edges": [36, 135, 224, 315, 392],
+  "header_rows": 2,
+  "row_label_header": "Category",
+  "rows": ["Cash Crop", "Cereals", "Oilseeds", "Pulses"],
+  "columns": [
+    {"key": "area", "header": "Area (Ha.)", "unit_text": "Ha."},
+    {"key": "production", "header": "Production (MT)", "unit_text": "MT"},
+    {"key": "yield", "header": "Yield (KG/Ha)", "unit_text": "KG/Ha"}
+  ],
+  "context": {
+    "report": {"page": 4, "text": "Crop Category- wise Total Area, Production and Yield Rate: Year 2024-25"},
+    "period": {"page": 4, "text": "Yield Rate: Year 2024-25"},
+    "estimate_stage": {"page": 3, "text": "Crop Wise Final Estimation: Year 2024-25"},
+    "geography": {"page": 2, "text": "Jurisdiction: Bihar"}
+  }
+}

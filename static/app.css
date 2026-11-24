@@ -119,6 +119,14 @@ h1 { max-width: 760px; margin-bottom: 22px; font-family: Georgia, "Times New Rom
 .rank-track span { display: block; height: 100%; border-radius: inherit; background: linear-gradient(90deg, var(--forest), #70a879); }
 .map-card { background: #f8f7ef; }
 .market-map { min-height: 280px; margin-top: 12px; }
+.market-map.has-live-map { height: clamp(280px, 50vh, 440px); border-radius: 14px; isolation: isolate; }
+.market-map.has-live-map svg { width: unset; height: unset; }
+.period-previews { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 345px), 1fr)); gap: 20px; }
+.period-preview { min-width: 0; }
+.period-status { overflow-wrap: anywhere; }
+.period-records { max-height: 24rem; overflow: auto; }
+.period-records table { border-collapse: collapse; text-align: left; }
+.period-records :is(td, th) { padding: .45rem; border-bottom: 1px solid #cbd3c8; vertical-align: top; }
 .map-background { fill: #edf2e5; stroke: #cdd8c8; }
 .map-gridline { stroke: #d8e1d3; stroke-width: 1; stroke-dasharray: 3 5; }
 .map-axis-label { fill: #7b887f; font-size: 10px; }
@@ -255,10 +263,151 @@ textarea::placeholder { color: #8a948d; }
 .record-content { grid-column: 1 / -1; }
 
 .nearby-panel { margin-top: 18px; padding: 34px; border: 1px solid var(--line); border-radius: 24px; background: rgba(255, 253, 247, 0.9); box-shadow: var(--shadow); }
+.viva-note { color: var(--muted); margin: 12px 0 0; line-height: 1.55; }
+.viva-note a, .viva-record a { color: var(--forest); font-weight: 700; }
+.viva-jumps { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 14px; }
+.viva-jumps a { background: var(--surface); border: 1px solid var(--line); border-radius: 9px; color: var(--forest-deep); font-weight: 750; padding: 9px 13px; text-decoration: none; }
+.viva-jumps a:hover { border-color: var(--forest); }
+.viva-trace { color: var(--forest-deep); background: #e6efd4; padding: 11px 14px; border-radius: 10px; overflow-wrap: anywhere; }
+.viva-controls { display: flex; flex-wrap: wrap; gap: 12px 16px; align-items: end; margin-top: 18px; }
+.viva-controls label { display: grid; gap: 5px; font-size: .9rem; font-weight: 700; }
+.viva-controls small { font-size: .82rem; color: var(--muted); font-weight: 400; }
+.viva-controls input:not([type="checkbox"]) { max-width: 100%; min-height: 40px; border: 1px solid var(--line); border-radius: 8px; padding: 7px; font: inherit; }
+.viva-controls .viva-checkbox { display: flex; align-items: center; padding: 8px 0; }
+.viva-panel button:not(.secondary-button) { background: var(--forest); color: white; border: none; border-radius: 10px; padding: 11px 14px; font-weight: 750; }
+.viva-panel button:disabled { opacity: .55; cursor: not-allowed; }
+.viva-facts { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(210px, 100%), 1fr)); gap: 10px; margin: 18px 0; }
+.viva-facts div, .viva-record { min-width: 0; background: white; border: 1px solid var(--line); border-radius: 12px; padding: 12px 15px; }
+.viva-facts dt { color: var(--muted); font-size: .85rem; font-weight: 700; }
+.viva-facts dd { margin: 5px 0 0; overflow-wrap: anywhere; }
+.viva-record-nav { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 12px; margin: 16px 0 10px; }
+.viva-records { display: grid; gap: 10px; }
+.viva-record h3 { margin: 0 0 6px; font-size: 1rem; }
+.viva-record small { color: var(--muted); }
+.viva-record a { margin-inline-start: 10px; }
+.viva-record p { margin: 8px 0 0; line-height: 1.5; white-space: pre-wrap; overflow-wrap: anywhere; }
+.viva-warnings { line-height: 1.5; }
+.viva-reopen { margin-top: 18px; }
+.viva-reopen summary { cursor: pointer; font-weight: 700; }
+.viva-panel [hidden], #react-trace[hidden] { display: none; }
+.viva-workflow-actions, .viva-card-actions { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }
+.viva-card-actions { margin-top: 10px; }
+.viva-doc-qa, .viva-table-panel { border: 1px solid var(--line); background: #f5f8ec; border-radius: 12px; margin: 18px 0; padding: 16px; }
+.viva-doc-qa .section-kicker, .viva-doc-qa h3 { margin-bottom: 6px; }
+.viva-doc-qa form label { flex: 1 1 300px; }
+.viva-doc-qa .viva-records:not(:empty) { margin-top: 10px; }
+.viva-table-panel summary { cursor: pointer; font-weight: 780; }
+.viva-table-panel details, .viva-table-panel p { margin-top: 8px; }
+.viva-table-panel .viva-table-scroll { overflow-x: auto; }
+.viva-table-panel table { width: 100%; border-collapse: collapse; text-align: left; }
+.viva-table-panel th, .viva-table-panel td { border-bottom: 1px solid var(--line); padding: 8px; }
+.viva-proof { width: min(1100px, calc(100% - 24px)); max-height: 92vh; border: 1px solid var(--line); border-radius: 18px; color: var(--ink); background: var(--surface); padding: 18px; }
+.viva-proof::backdrop { background: rgba(12, 32, 21, .58); }
+.viva-proof-header { display: flex; align-items: center; justify-content: space-between; gap: 14px; }
+.viva-proof-header h2 { margin: 0; }
+.viva-proof-body { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.55fr); gap: 18px; margin-top: 14px; }
+.viva-proof-text { white-space: pre-wrap; overflow-wrap: anywhere; max-height: 55vh; overflow: auto; line-height: 1.6; }
+.viva-proof img { max-width: 100%; height: auto; border: 1px solid var(--line); }
+.viva-proof img[hidden] { display: none; }
+.viva-panel { padding: clamp(17px, 4vw, 38px); background: #fdfefb; }
+.viva-panel .panel-heading { gap: 12px; flex-wrap: wrap; }
+.viva-steps {
+  display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px;
+  list-style: none; padding: 0; margin: 22px 0 0;
+}
+.viva-steps li {
+  display: flex; align-items: center; gap: 8px; padding: 10px 12px; border: 1px solid #dbe4d9;
+  border-radius: 11px; color: #4b6053; background: #f4f7f1; font-size: .9rem; font-weight: 650;
+}
+.viva-steps li span { font-variant-numeric: tabular-nums; color: #516859; }
+.viva-steps [aria-current="step"] { border-color: #286647; background: #e0f0e4; color: #12452d; }
+.viva-steps [aria-current="step"] span { color: #155638; }
+.viva-panel :is(button, input, select, summary):focus-visible,
+.viva-proof button:focus-visible { outline: 3px solid #437c59; outline-offset: 3px; }
+.viva-panel .viva-controls :is(input:not([type="checkbox"]), select) {
+  width: 100%; min-height: 44px; min-width: 0; padding: 9px 11px;
+  border-radius: 10px; border: 1px solid #b9c9bc; background: #fff; color: var(--ink);
+}
+.viva-panel input::file-selector-button {
+  margin-inline-end: 10px; padding: 4px 9px; border: 0; border-radius: 5px;
+  background: #e9f2e9; color: #1b4b33; font: inherit; cursor: pointer;
+}
+.viva-panel .viva-controls label { min-width: 0; }
+#viva-upload-form, #viva-attach {
+  padding: 15px; border: 1px solid #dde7db; border-radius: 14px; background: #f4f8f2;
+}
+#viva-upload-form > label:first-child, #viva-attach > label { flex: 1 1 245px; }
+.viva-panel input[type="checkbox"] { accent-color: var(--forest); width: 17px; height: 17px; }
+.viva-panel button, .viva-proof button { min-height: 40px; }
+.viva-panel button:not(.secondary-button):hover:not(:disabled) { background: var(--forest-deep); }
+.viva-panel button.secondary-button, .viva-proof button.secondary-button {
+  border: 1px solid #b8cbbd; border-radius: 9px; padding: 7px 12px;
+  background: #fff; color: #164c34; font-size: .9rem; font-weight: 720;
+}
+.viva-panel button.secondary-button:hover:not(:disabled), .viva-proof button.secondary-button:hover { background: #e8f3e9; border-color: #5f886b; }
+.viva-status:empty, .viva-doc-qa .viva-note:empty { display: none; }
+.viva-note[data-tone] { padding: 9px 12px; border-radius: 8px; background: #edf2ed; color: #354e40; }
+.viva-note[data-tone="success"] { background: #e3f3e7; color: #165433; }
+.viva-note[data-tone="error"] { background: #fff1ef; color: #932e25; }
+.viva-panel .viva-facts { grid-template-columns: minmax(0, 1.7fr) repeat(3, minmax(0, 1fr)); gap: 9px; margin-bottom: 12px; }
+.viva-panel .viva-facts > div { padding: 12px 14px; background: #fff; }
+#viva-facts dd { color: var(--forest-deep); font-size: clamp(1rem, 2vw, 1.3rem); font-weight: 740; font-variant-numeric: tabular-nums; }
+#viva-facts > div:first-child dd { font-size: 1rem; }
+.viva-audit, .viva-reopen {
+  margin: 12px 0; padding: 11px 14px; border: 1px solid #dbe4d9; border-radius: 10px; background: #f5f8f3;
+}
+.viva-audit summary { cursor: pointer; font-weight: 700; }
+.viva-audit .viva-facts { grid-template-columns: repeat(auto-fit, minmax(min(210px, 100%), 1fr)); }
+.viva-audit-code dd { font-family: ui-monospace, Consolas, monospace; font-size: .85rem; }
+.viva-doc-qa { padding: clamp(13px, 3vw, 23px); border-color: #c9dece; background: #f3f8f2; }
+.viva-doc-qa h3 { font-size: 1.35rem; margin-top: 0; }
+.viva-qa-intro { color: #415c4b; line-height: 1.55; margin: 7px 0 0; }
+.viva-doc-qa .viva-question-controls label { flex: 0 1 auto; }
+.viva-doc-qa .viva-question-controls label:first-child { flex: 1 1 270px; }
+.viva-examples { display: flex; align-items: center; flex-wrap: wrap; gap: 7px; margin-top: 10px; }
+.viva-examples > span { color: #475d50; font-size: .9rem; margin-inline-end: 2px; }
+.viva-panel .viva-examples button { min-height: 36px; border-radius: 99px; }
+.viva-table-answer {
+  padding: clamp(13px, 3vw, 22px); min-width: 0; border: 1px solid #a3c7ae; border-inline-start: 4px solid #277248;
+  background: #fff; border-radius: 13px;
+}
+.viva-table-answer :is(p, h4) { margin: 0 0 5px; }
+.viva-table-answer h4 { font-size: clamp(1.3rem, 3vw, 1.7rem); color: #123e2a; }
+.viva-answer-label { color: #216341; font-size: .82rem; font-weight: 800; }
+.viva-answer-facts { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(220px, 100%), 1fr)); gap: 9px; margin-top: 13px; }
+.viva-answer-facts > div { min-width: 0; padding: 12px; border-radius: 10px; background: #edf5ec; }
+.viva-answer-facts h5 { margin: 0 0 6px; font-size: .96rem; }
+.viva-answer-number { display: flex; align-items: baseline; flex-wrap: wrap; gap: 3px 8px; overflow-wrap: anywhere; }
+.viva-answer-number strong { color: #13462f; font-size: clamp(1.4rem, 4vw, 2.15rem); font-variant-numeric: tabular-nums; }
+.viva-answer-number span { color: #315641; }
+.viva-answer-facts small { color: #435e4d; font-size: .88rem; }
+.viva-table-panel { background: #f6f9f4; border-color: #d7e4d6; }
+.viva-table-panel details { margin-top: 10px; padding: 10px 11px; border-radius: 9px; background: #fff; border: 1px solid #dce6db; }
+.viva-table-panel details p { color: #4a6052; line-height: 1.45; font-size: .9rem; }
+.viva-table-scroll { max-width: 100%; margin-top: 8px; }
+.viva-table-panel thead { background: #e7f0e7; }
+.viva-table-panel tbody tr:nth-child(even) { background: #f6f9f5; }
+.viva-table-panel td:nth-child(3) { white-space: nowrap; font-weight: 750; font-variant-numeric: tabular-nums; }
+.viva-table-panel td:last-child button { white-space: nowrap; }
+.viva-proof { padding: clamp(13px, 3vw, 24px); background: #f7faf6; box-shadow: 0 25px 80px #071f19a0; }
+.viva-proof-header h2 { font-size: clamp(1.3rem, 4vw, 2rem); color: #123e2a; }
+.viva-proof-body { grid-template-columns: minmax(205px, 1fr) minmax(0, 2.2fr); }
+.viva-proof-detail { align-self: start; padding: 13px; border: 1px solid #dce5db; border-radius: 11px; background: #fff; }
+.viva-proof-detail h3 { margin: 0; font-size: 1rem; }
+.viva-proof-paper img { display: block; margin: auto; width: 100%; }
+@media (max-width: 760px) {
+  .viva-panel #viva-facts { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+@media (max-width: 680px) {
+  .viva-proof-body { grid-template-columns: 1fr; }
+  .viva-proof-text { max-height: 24vh; }
+  .viva-steps li { flex-direction: column; align-items: flex-start; gap: 2px; padding: 7px; font-size: .85rem; }
+}
+@media (max-width: 390px) { .viva-panel #viva-facts { grid-template-columns: 1fr; } }
 .nearby-intro { max-width: 760px; margin: 14px 0 0; color: var(--muted); line-height: 1.55; }
 .nearby-form { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 14px; align-items: end; }
 .nearby-form label { display: grid; gap: 7px; color: var(--muted); font-size: .76rem; font-weight: 700; }
-.nearby-form input { width: 100%; padding: 11px 12px; color: var(--ink); border: 1px solid #cbd3c8; border-radius: 10px; background: #fff; }
+.nearby-form :is(input, select) { width: 100%; padding: 11px 12px; color: var(--ink); border: 1px solid #cbd3c8; border-radius: 10px; background: #fff; }
 .nearby-actions { grid-column: 1 / -1; display: flex; gap: 10px; }
 .nearby-actions button { padding: 11px 15px; border: 1px solid var(--forest); border-radius: 10px; color: #fff; background: var(--forest); font-weight: 730; }
 .nearby-actions .secondary-button { color: var(--forest); background: transparent; }
