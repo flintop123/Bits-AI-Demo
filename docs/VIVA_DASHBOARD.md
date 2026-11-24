@@ -5,6 +5,17 @@ and Ollama available. Open the loopback URL printed by `data_api.py`.
 These features are not in the static GitHub Pages snapshot. During the
 demo, the following actions all take place in the dashboard.
 
+## Explore collection coverage
+
+In **Overview**, select a metric card to open one drill-down at a time:
+observation completeness, collection dates, observed market codes,
+verified coordinates, crop-statistics periods, or indexed report passages.
+Hover or focus a bar for its date and counts, then click or press Enter
+to inspect that date in the table. Left and right arrows move between
+chart dates. In the market list, search by name, district or code and
+filter by coordinate status. Unresolved markets can still have price
+records; the map shows matched, verified locality centroids, not gates.
+
 ## Show ReAct
 
 1. Open **Ask AgriAgent** at the bottom right, choose **ReAct agent** in **Workflow**, and

@@ -12,7 +12,7 @@ from werkzeug.exceptions import NotFound
 from werkzeug.exceptions import HTTPException
 
 from ingestion_v2.period_report import MAX_REPORT_BYTES, preview_period_report
-from services.agriculture_query_service import AgricultureQueryService
+from services.agriculture_query_service import AgricultureQueryService, DASHBOARD_DETAIL_SECTIONS
 from services.multilingual_query_expansion import expand_document_query
 from services.agriculture_qa_service import AgricultureQAService
 from services.ollama_client import OllamaUnavailableError
@@ -297,6 +297,14 @@ def create_app(service=None, qa_service=None, *, viva_react=None, viva_upload_st
     def dashboard():
         days = parse_days(request.args.get("days", "30"))
         return jsonify(query_service.dashboard_snapshot(days))
+
+    @app.get("/api/v1/dashboard/details")
+    def dashboard_details():
+        section = request.args.get("section", "")
+        if section not in DASHBOARD_DETAIL_SECTIONS:
+            raise ValueError("section must be dates, markets, crop_statistics or documents")
+        days = parse_days(request.args.get("days", "30"))
+        return jsonify(query_service.dashboard_details(section, days))
 
     @app.get("/api/v1/documents/search")
     def document_search():

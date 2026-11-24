@@ -45,6 +45,13 @@ function openChatAnchor() {
 window.addEventListener("hashchange", openChatAnchor);
 openChatAnchor();
 
+const dashboardDetails = new DashboardDetails(document.querySelector("#dashboard"), {
+  ask: (opener, mode) => {
+    questionMode.value = mode;
+    openChat(opener);
+  },
+});
+
 const formatNumber = (value) => new Intl.NumberFormat("en-IN").format(value || 0);
 const humanize = (value) => String(value || "").replaceAll("_", " ").replace(/\b\w/g, (letter) => letter.toUpperCase());
 
@@ -303,6 +310,8 @@ function renderDailyChart(records) {
   stage.replaceChildren();
   if (!records.length) {
     stage.append(textElement("p", "No daily collection records are available."));
+    setText("#daily-chart-total", "");
+    setText("#daily-insight", "There are no collection dates to explore.");
     return;
   }
   const width = 760;
@@ -313,7 +322,11 @@ function renderDailyChart(records) {
   const maximum = Math.max(...records.map((item) => item.records || 0), 1);
   const slot = innerWidth / records.length;
   const barWidth = Math.max(3, Math.min(22, slot * 0.68));
-  const svg = svgElement("svg", { viewBox: `0 0 ${width} ${height}`, "aria-hidden": "true" });
+  const svg = svgElement("svg", {
+    viewBox: `0 0 ${width} ${height}`, role: "group",
+    "aria-label": "Collection dates. Use arrow keys to move between dates; Enter opens details.",
+  });
+  const controls = [];
 
   [0, 0.25, 0.5, 0.75, 1].forEach((fraction) => {
     const y = margin.top + innerHeight * (1 - fraction);
@@ -329,12 +342,36 @@ function renderDailyChart(records) {
     const barHeight = value / maximum * innerHeight;
     const x = margin.left + slot * index + (slot - barWidth) / 2;
     const y = margin.top + innerHeight - barHeight;
-    const group = svgElement("g");
-    const bar = svgElement("rect", { x, y, width: barWidth, height: barHeight, rx: 3, class: "daily-bar" });
-    const title = svgElement("title");
-    title.textContent = `${item.date}: ${formatNumber(value)} records, ${item.market_count || 0} markets`;
-    bar.append(title);
-    group.append(bar);
+    const group = svgElement("g", {
+      role: "button", tabindex: index === 0 ? "0" : "-1", "data-chart-date": item.date,
+      "aria-label": dashboardDetails.dateLabel(item), "aria-pressed": "false", class: "daily-control",
+    });
+    const hit = svgElement("rect", {
+      x: margin.left + slot * index, y: margin.top, width: slot, height: innerHeight, class: "daily-hit",
+    });
+    const bar = svgElement("rect", {
+      x, y, width: barWidth, height: barHeight, rx: 3, class: "daily-bar", "aria-hidden": "true",
+    });
+    group.append(hit, bar);
+    group.addEventListener("pointerenter", () => dashboardDetails.previewDate(item));
+    group.addEventListener("pointerleave", () => dashboardDetails.previewDate(null));
+    group.addEventListener("focus", () => {
+      controls.forEach((control) => control.setAttribute("tabindex", control === group ? "0" : "-1"));
+      dashboardDetails.previewDate(item);
+    });
+    group.addEventListener("click", () => dashboardDetails.open("dates", group, item.date));
+    group.addEventListener("keydown", (event) => {
+      const movement = {ArrowLeft: index - 1, ArrowRight: index + 1,
+        Home: 0, End: controls.length - 1}[event.key];
+      if (movement != null) {
+        event.preventDefault();
+        controls[Math.max(0, Math.min(controls.length - 1, movement))]?.focus();
+      } else if (event.key === "Enter" || event.key === " ") {
+        event.preventDefault();
+        dashboardDetails.open("dates", group, item.date);
+      }
+    });
+    controls.push(group);
     if (index % labelEvery === 0 || index === records.length - 1) {
       const label = svgElement("text", { x: x + barWidth / 2, y: height - 15, class: "chart-axis-label", "text-anchor": "middle" });
       label.textContent = shortDate(item.date);
@@ -343,6 +380,7 @@ function renderDailyChart(records) {
     svg.append(group);
   });
   stage.append(svg);
+  dashboardDetails.updateDateSelection();
   const total = records.reduce((sum, item) => sum + (item.records || 0), 0);
   setText("#daily-chart-total", `${formatNumber(total)} records shown`);
 }
@@ -400,12 +438,12 @@ function renderMarketMap(geospatial) {
 }
 
 function renderCoverage(summary) {
-  const percent = summary.geospatial_coverage_percent || 0;
+  const percent = summary.geospatial_coverage_percent;
   const ring = document.querySelector("#coverage-ring");
-  ring.style.setProperty("--coverage", `${percent * 3.6}deg`);
-  setText("#coverage-percent", `${percent}%`);
-  setText("#coverage-verified", formatNumber(summary.verified_locations));
-  setText("#coverage-unresolved", formatNumber(summary.unresolved_locations));
+  ring.style.setProperty("--coverage", `${(Number.isFinite(percent) ? percent : 0) * 3.6}deg`);
+  setText("#coverage-percent", Number.isFinite(percent) ? `${percent}%` : "—");
+  setText("#coverage-verified", dashboardDetails.number(summary.verified_locations));
+  setText("#coverage-unresolved", dashboardDetails.number(summary.unresolved_locations));
 }
 
 function renderPipeline(pipeline) {
@@ -458,17 +496,18 @@ function renderQuality(quality, languages) {
 }
 
 function renderDashboard(data) {
+  dashboardDetails.update(data);
   const summary = data.summary || {};
-  setText("#kpi-observations", formatNumber(summary.mandi_records));
+  setText("#kpi-observations", dashboardDetails.number(summary.mandi_records));
   setText("#kpi-date-range", summary.earliest_date && summary.latest_date ? `${summary.earliest_date} to ${summary.latest_date}` : "Official daily records");
-  setText("#kpi-dates", formatNumber(summary.dates_covered));
+  setText("#kpi-dates", dashboardDetails.number(summary.dates_covered));
   setText("#kpi-latest-date", `Latest date ${summary.latest_date || "—"}`);
-  setText("#kpi-markets", formatNumber(summary.markets));
-  setText("#kpi-districts", `Across ${formatNumber(summary.districts)} districts · ${formatNumber(summary.crops)} crops`);
-  setText("#kpi-locations", formatNumber(summary.verified_locations));
-  setText("#kpi-unresolved", `${formatNumber(summary.unresolved_locations)} unresolved, not guessed`);
-  setText("#kpi-statistics", formatNumber(summary.crop_statistics));
-  setText("#kpi-documents", formatNumber(summary.document_chunks));
+  setText("#kpi-markets", dashboardDetails.number(summary.markets));
+  setText("#kpi-districts", `Across ${dashboardDetails.number(summary.districts)} districts · ${dashboardDetails.number(summary.crops)} crops`);
+  setText("#kpi-locations", dashboardDetails.number(summary.verified_locations));
+  setText("#kpi-unresolved", `${dashboardDetails.number(summary.unresolved_locations)} with unverified coordinates`);
+  setText("#kpi-statistics", dashboardDetails.number(summary.crop_statistics));
+  setText("#kpi-documents", dashboardDetails.number(summary.document_chunks));
   renderCoverage(summary);
   renderDailyChart((data.series || {}).daily_collection || []);
   renderRankBars("#crop-bars", (data.series || {}).top_crops || []);
@@ -478,18 +517,26 @@ function renderDashboard(data) {
   renderQuality(data.quality || {}, (data.series || {}).document_languages || []);
 }
 
+let dashboardLoad = null;
+
 async function loadDashboard() {
+  dashboardLoad?.abort();
+  const load = new AbortController();
+  dashboardLoad = load;
   const status = document.querySelector("#dashboard-status");
   const days = document.querySelector("#dashboard-window").value;
   status.textContent = "Loading current MongoDB statistics…";
   try {
-    const response = await fetch(`/api/v1/dashboard?days=${encodeURIComponent(days)}`);
+    const response = await fetch(`/api/v1/dashboard?days=${encodeURIComponent(days)}`, {signal: load.signal});
     const data = await response.json();
+    if (load.signal.aborted) return;
     if (!response.ok) throw new Error(data.error || "Dashboard request failed.");
     renderDashboard(data);
     status.textContent = `Updated from live collections · ${data.window_days} most recent data days shown`;
   } catch (error) {
-    status.textContent = error.message || "Dashboard data could not be loaded.";
+    if (!load.signal.aborted) status.textContent = error.message || "Dashboard data could not be loaded.";
+  } finally {
+    if (dashboardLoad === load) dashboardLoad = null;
   }
 }
 

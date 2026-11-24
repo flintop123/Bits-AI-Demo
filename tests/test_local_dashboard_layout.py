@@ -50,3 +50,17 @@ class LocalDashboardLayoutTests(TestCase):
         for link in self.page.select("a[href^='#']"):
             if len(link["href"]) > 1:
                 self.assertIsNotNone(self.page.find(id=link["href"][1:]), link["href"])
+
+    def test_overview_has_six_collapsed_keyboard_reachable_drilldowns(self):
+        buttons = self.page.select("#dashboard button[data-kpi]")
+        self.assertEqual([button["data-kpi"] for button in buttons],
+                         ["observations", "dates", "markets", "locations", "crop_statistics", "documents"])
+        for button in buttons:
+            self.assertEqual(button["aria-expanded"], "false")
+            self.assertEqual(button["aria-controls"], "kpi-details")
+        self.assertIn("hidden", self.page.select_one("#kpi-details").attrs)
+        self.assertIsNotNone(self.page.select_one("#open-date-details"))
+        self.assertIsNotNone(self.page.select_one("#daily-insight"))
+        art = self.page.select_one(".crop-illustration")
+        self.assertEqual(art["alt"], "")
+        self.assertTrue(art["src"].startswith("/static/"))

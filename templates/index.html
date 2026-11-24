@@ -48,7 +48,9 @@
             <a href="#ask-heading" id="open-react-demo" data-chat-open="react" aria-controls="agri-chat" aria-haspopup="dialog" aria-expanded="false">Try ReAct</a>
           </div>
         </div>
-        <div class="metrics" aria-label="Available data">
+        <div class="hero-evidence">
+          <img src="{{ url_for('static', filename='bihar-crops.svg') }}" alt="" class="crop-illustration" width="440" height="148">
+          <div class="metrics" aria-label="Available data">
           <article>
             <span class="metric-value" id="mandi-count">—</span>
             <span class="metric-label">Mandi prices</span>
@@ -61,6 +63,7 @@
             <span class="metric-value" id="documents-count">—</span>
             <span class="metric-label">Report passages</span>
           </article>
+          </div>
         </div>
       </section>
 
@@ -86,13 +89,39 @@
         <p id="dashboard-status" class="dashboard-status" aria-live="polite">Loading current statistics…</p>
 
         <div class="kpi-grid" aria-label="Collection summary">
-          <article class="kpi-card"><span class="kpi-label">Mandi observations</span><strong id="kpi-observations">—</strong><small id="kpi-date-range">Official daily records</small></article>
-          <article class="kpi-card"><span class="kpi-label">Dates covered</span><strong id="kpi-dates">—</strong><small id="kpi-latest-date">Latest date —</small></article>
-          <article class="kpi-card"><span class="kpi-label">Observed markets</span><strong id="kpi-markets">—</strong><small id="kpi-districts">Across — districts</small></article>
-          <article class="kpi-card accent"><span class="kpi-label">Verified locations</span><strong id="kpi-locations">—</strong><small id="kpi-unresolved">— unresolved, not guessed</small></article>
-          <article class="kpi-card"><span class="kpi-label">Crop statistics</span><strong id="kpi-statistics">—</strong><small>Historical structured records</small></article>
-          <article class="kpi-card"><span class="kpi-label">Report passages</span><strong id="kpi-documents">—</strong><small>English, Hindi and mixed</small></article>
+          <button type="button" class="kpi-card kpi-button" data-kpi="observations" aria-controls="kpi-details" aria-expanded="false">
+            <span class="kpi-label">Mandi observations <span class="kpi-arrow" aria-hidden="true">›</span></span>
+            <strong id="kpi-observations">—</strong><small id="kpi-date-range">Official daily records</small>
+          </button>
+          <button type="button" class="kpi-card kpi-button" data-kpi="dates" aria-controls="kpi-details" aria-expanded="false">
+            <span class="kpi-label">Dates covered <span class="kpi-arrow" aria-hidden="true">›</span></span>
+            <strong id="kpi-dates">—</strong><small id="kpi-latest-date">Latest date —</small>
+          </button>
+          <button type="button" class="kpi-card kpi-button" data-kpi="markets" aria-controls="kpi-details" aria-expanded="false">
+            <span class="kpi-label">Observed markets <span class="kpi-arrow" aria-hidden="true">›</span></span>
+            <strong id="kpi-markets">—</strong><small id="kpi-districts">Across — districts</small>
+          </button>
+          <button type="button" class="kpi-card kpi-button accent" data-kpi="locations" aria-controls="kpi-details" aria-expanded="false">
+            <span class="kpi-label">Verified locations <span class="kpi-arrow" aria-hidden="true">›</span></span>
+            <strong id="kpi-locations">—</strong><small id="kpi-unresolved">Unresolved coordinates checked separately</small>
+          </button>
+          <button type="button" class="kpi-card kpi-button" data-kpi="crop_statistics" aria-controls="kpi-details" aria-expanded="false">
+            <span class="kpi-label">Crop statistics <span class="kpi-arrow" aria-hidden="true">›</span></span>
+            <strong id="kpi-statistics">—</strong><small>Historical structured records</small>
+          </button>
+          <button type="button" class="kpi-card kpi-button" data-kpi="documents" aria-controls="kpi-details" aria-expanded="false">
+            <span class="kpi-label">Report passages <span class="kpi-arrow" aria-hidden="true">›</span></span>
+            <strong id="kpi-documents">—</strong><small>English, Hindi and mixed</small>
+          </button>
         </div>
+        <section id="kpi-details" class="kpi-details" aria-labelledby="kpi-detail-title" hidden>
+          <div class="kpi-detail-header">
+            <div><h3 id="kpi-detail-title" tabindex="-1"></h3><p id="kpi-detail-intro"></p></div>
+            <button type="button" id="kpi-detail-close" class="secondary-button">Close details</button>
+          </div>
+          <p id="kpi-detail-status" role="status"></p>
+          <div id="kpi-detail-content"></div>
+        </section>
 
         <div class="dashboard-grid">
           <article class="visual-card visual-wide">
@@ -100,7 +129,11 @@
               <div><span>Temporal coverage</span><h3>Daily observations collected</h3></div>
               <span id="daily-chart-total" class="chart-note"></span>
             </div>
-            <div id="daily-chart" class="chart-stage" role="img" aria-label="Daily mandi record counts"></div>
+            <div id="daily-chart" class="chart-stage"></div>
+            <div class="chart-detail-line">
+              <p id="daily-insight">Hover, tap or focus a bar to explore a collection date.</p>
+              <button type="button" id="open-date-details" class="secondary-button">View dates</button>
+            </div>
           </article>
 
           <article class="visual-card coverage-card">
@@ -549,6 +582,7 @@
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
           integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin="anonymous" defer></script>
   <script src="{{ url_for('market_explorer_asset', asset_name='market-explorer.js') }}" defer></script>
+  <script src="{{ url_for('static', filename='dashboard-details.js') }}" defer></script>
   <script src="{{ url_for('static', filename='app.js') }}" defer></script>
   <script src="{{ url_for('static', filename='viva-dashboard.js') }}" defer></script>
 </body>

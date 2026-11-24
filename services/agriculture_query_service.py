@@ -3,7 +3,7 @@
 import os
 import re
 from datetime import date, timedelta
-from math import sqrt
+from math import isfinite, sqrt
 
 from pymongo import MongoClient
 
@@ -13,6 +13,60 @@ from services.ollama_embedding_client import (
     OllamaEmbeddingUnavailableError,
 )
 from services.mandi_term_normalizer import MandiTermNormalizer
+
+
+_OFFICIAL_MANDI = {"source_type": "government_mandi_api"}
+_DASHBOARD_ISO_DATE = r"^[0-9]{4}-[0-9]{2}-[0-9]{2}$"
+_MAX_MARKET_CODE = (1 << 63) - 1
+_MARKET_CODE_WHITESPACE = " \t\r\n\v\f"
+DASHBOARD_DETAIL_SECTIONS = frozenset(("dates", "markets", "crop_statistics", "documents"))
+_DASHBOARD_DETAIL_LIMIT = 200
+
+
+def _market_code(value):
+    """Canonical positive code; leading zeroes and BSON integer widths are not identities."""
+    if isinstance(value, int) and not isinstance(value, bool):
+        return int(value) if 0 < value <= _MAX_MARKET_CODE else None
+    if isinstance(value, str):
+        value = value.strip(_MARKET_CODE_WHITESPACE)
+        if re.fullmatch(r"[0-9]+", value):
+            # Avoid converting arbitrarily large strings.
+            digits = value.lstrip("0")
+            if digits and len(digits) <= 19:
+                number = int(digits)
+                return number if number <= _MAX_MARKET_CODE else None
+    return None
+
+
+def _mongo_market_code():
+    """The aggregation-side equivalent used by daily and per-market groupings."""
+    return {"$let": {
+        "vars": {"raw": {"$switch": {
+            "branches": [
+                {"case": {"$eq": [{"$type": "$market_code"}, "string"]},
+                 "then": {"$trim": {"input": "$market_code", "chars": _MARKET_CODE_WHITESPACE}}},
+                {"case": {"$in": [{"$type": "$market_code"}, ["int", "long"]]},
+                 "then": {"$toString": "$market_code"}},
+            ],
+            "default": "",
+        }}},
+        "in": {"$cond": [
+            {"$regexMatch": {"input": "$$raw", "regex": "^[0-9]*[1-9][0-9]*$"}},
+            {"$convert": {"input": "$$raw", "to": "long", "onError": None, "onNull": None}},
+            None,
+        ]},
+    }}
+
+
+def _has_verified_point(row):
+    location = row.get("location")
+    if not isinstance(location, dict) or location.get("type") != "Point":
+        return False
+    point = location.get("coordinates")
+    return isinstance(point, (list, tuple)) and len(point) == 2 and all(
+        isinstance(v, (int, float)) and not isinstance(v, bool) and isfinite(v) and abs(v) <= limit
+        for v, limit in zip(point, (180, 90))
+    )
 
 
 class AgricultureQueryService:
@@ -80,22 +134,132 @@ class AgricultureQueryService:
             },
         }
 
+    def _dashboard_market_codes(self):
+        codes = self.mandi_prices.distinct("market_code", _OFFICIAL_MANDI)
+        return {code for value in codes if (code := _market_code(value)) is not None}
+
+    def _dashboard_verified_locations(self, observed):
+        if not observed:
+            return {}
+        locations = self.mandi_locations.find(
+            {"verification_status": "verified"},
+            {
+                "_id": 0,
+                "market_code": 1,
+                "market_name": 1,
+                "district_name": 1,
+                "location": 1,
+                "confidence": 1,
+                "location_precision": 1,
+                "coordinate_source_url": 1,
+            },
+        ).sort([("district_name", 1), ("market_name", 1)])
+        result = {}
+        for row in locations:
+            code = _market_code(row.get("market_code"))
+            if code in observed and code not in result and _has_verified_point(row):
+                result[code] = {**row, "market_code": code}
+        return result
+
+    def _dashboard_daily_series(self, days):
+        return list(self.mandi_prices.aggregate([
+            {"$match": {**_OFFICIAL_MANDI, "date": {"$regex": _DASHBOARD_ISO_DATE},
+                        "$expr": {"$ne": [{"$dateFromString": {
+                            "dateString": {"$convert": {"input": "$date", "to": "string",
+                                                       "onError": "", "onNull": ""}},
+                            "format": "%Y-%m-%d", "onError": None, "onNull": None,
+                        }}, None]}}},
+            {"$set": {"dashboard_market_code": _mongo_market_code()}},
+            {"$group": {
+                "_id": "$date",
+                "records": {"$sum": 1},
+                "markets": {"$addToSet": "$dashboard_market_code"},
+                "districts": {"$addToSet": "$district_code"},
+                "average_modal_price": {"$avg": "$price"},
+            }},
+            {"$sort": {"_id": -1}},
+            {"$limit": days},
+            {"$sort": {"_id": 1}},
+            {"$project": {
+                "_id": 0,
+                "date": "$_id",
+                "records": 1,
+                "market_count": {"$size": {"$setDifference": ["$markets", [None]]}},
+                "district_count": {"$size": "$districts"},
+                "average_modal_price": {
+                    "$round": ["$average_modal_price", 2]
+                },
+            }},
+        ]))
+
+    def dashboard_details(self, section, days=30):
+        """Bounded, read-only drill-downs; dates use the selected observed-day window."""
+        if section not in DASHBOARD_DETAIL_SECTIONS:
+            raise ValueError("Invalid dashboard detail section")
+        limit = _DASHBOARD_DETAIL_LIMIT
+        if section == "dates":
+            limit = min(days, 365)
+            rows = [
+                {key: row[key] for key in ("date", "records", "market_count")}
+                for row in self._dashboard_daily_series(limit)
+            ]
+        elif section == "markets":
+            rows = list(self.mandi_prices.aggregate([
+                {"$match": _OFFICIAL_MANDI},
+                {"$set": {"dashboard_market_code": _mongo_market_code()}},
+                {"$match": {"dashboard_market_code": {"$ne": None}}},
+                {"$sort": {"date": -1, "_id": 1}},
+                {"$group": {"_id": "$dashboard_market_code", "market": {"$first": "$market"},
+                            "district": {"$first": "$district"}, "records": {"$sum": 1}}},
+                {"$sort": {"records": -1, "_id": 1}},
+                {"$limit": limit + 1},
+                {"$project": {"_id": 0, "market_code": "$_id", "market": 1,
+                              "district": 1, "records": 1}},
+            ]))
+            verified = self._dashboard_verified_locations({row["market_code"] for row in rows[:limit]})
+            rows = [
+                {**row, "market_code": str(row["market_code"]),
+                 "verification_status": "verified" if row["market_code"] in verified else "unresolved"}
+                for row in rows
+            ]
+        elif section == "crop_statistics":
+            year = {"$cond": [
+                {"$regexMatch": {"input": {"$convert": {"input": "$year", "to": "string",
+                                                        "onError": "", "onNull": ""}},
+                                 "regex": "^[0-9]{4}-[0-9]{2}$"}},
+                "$year", None,
+            ]}
+            rows = list(self.crop_statistics.aggregate([
+                {"$group": {"_id": "$crop", "records": {"$sum": 1},
+                            "earliest_year": {"$min": year}, "latest_year": {"$max": year}}},
+                {"$sort": {"records": -1, "_id": 1}},
+                {"$limit": limit + 1},
+                {"$project": {"_id": 0, "crop": "$_id", "records": 1,
+                              "earliest_year": 1, "latest_year": 1}},
+            ]))
+        else:
+            rows = list(self.agriculture_documents.aggregate([
+                {"$group": {"_id": {"title": "$document_title", "language": "$language"},
+                            "records": {"$sum": 1}}},
+                {"$sort": {"records": -1, "_id": 1}},
+                {"$limit": limit + 1},
+                {"$project": {"_id": 0, "document_title": "$_id.title", "language": "$_id.language", "records": 1}},
+            ]))
+        return {"section": section, "rows": rows[:limit], "truncated": len(rows) > limit}
+
     def dashboard_snapshot(self, days=30):
         """Return one read-only snapshot for the visual analytics dashboard."""
-        official_query = {"source_type": "government_mandi_api"}
+        official_query = _OFFICIAL_MANDI
         mandi_records = self.mandi_prices.count_documents(official_query)
-        dates = sorted(
-            str(value)
-            for value in self.mandi_prices.distinct("date", official_query)
-            if value
-        )
-        market_codes = {
-            str(value)
-            for value in self.mandi_prices.distinct(
-                "market_code", official_query
-            )
-            if value is not None
-        }
+        dates = []
+        for value in self.mandi_prices.distinct("date", official_query):
+            if isinstance(value, str) and re.fullmatch(_DASHBOARD_ISO_DATE, value):
+                try:
+                    dates.append(date.fromisoformat(value).isoformat())
+                except ValueError:
+                    continue
+        dates = sorted(set(dates))
+        market_codes = self._dashboard_market_codes()
         district_codes = {
             str(value)
             for value in self.mandi_prices.distinct(
@@ -110,37 +274,15 @@ class AgricultureQueryService:
             )
             if value not in (None, "")
         }
-        verified_locations = self.mandi_locations.count_documents({
-            "verification_status": "verified",
-        })
+        verified = self._dashboard_verified_locations(market_codes)
+        verified_locations = len(verified)
+        locations = list(verified.values())[:200]
         coverage_percent = (
             round(verified_locations / len(market_codes) * 100, 1)
             if market_codes else 0.0
         )
 
-        daily_series = list(self.mandi_prices.aggregate([
-            {"$match": official_query},
-            {"$group": {
-                "_id": "$date",
-                "records": {"$sum": 1},
-                "markets": {"$addToSet": "$market_code"},
-                "districts": {"$addToSet": "$district_code"},
-                "average_modal_price": {"$avg": "$price"},
-            }},
-            {"$sort": {"_id": -1}},
-            {"$limit": days},
-            {"$sort": {"_id": 1}},
-            {"$project": {
-                "_id": 0,
-                "date": "$_id",
-                "records": 1,
-                "market_count": {"$size": "$markets"},
-                "district_count": {"$size": "$districts"},
-                "average_modal_price": {
-                    "$round": ["$average_modal_price", 2]
-                },
-            }},
-        ]))
+        daily_series = self._dashboard_daily_series(days)
         district_distribution = list(self.mandi_prices.aggregate([
             {"$match": official_query},
             {"$group": {
@@ -178,20 +320,6 @@ class AgricultureQueryService:
             {"$sort": {"records": -1, "_id": 1}},
             {"$project": {"_id": 0, "label": "$_id", "records": 1}},
         ]))
-        locations = list(self.mandi_locations.find(
-            {"verification_status": "verified"},
-            {
-                "_id": 0,
-                "market_code": 1,
-                "market_name": 1,
-                "district_name": 1,
-                "location": 1,
-                "confidence": 1,
-                "location_precision": 1,
-                "coordinate_source_url": 1,
-            },
-        ).sort([("district_name", 1), ("market_name", 1)]).limit(200))
-
         run_history = list(self.mandi_runs.find(
             {},
             {
@@ -237,9 +365,7 @@ class AgricultureQueryService:
                 "markets": len(market_codes),
                 "crops": len(crop_codes),
                 "verified_locations": verified_locations,
-                "unresolved_locations": max(
-                    len(market_codes) - verified_locations, 0
-                ),
+                "unresolved_locations": len(market_codes - verified.keys()),
                 "geospatial_coverage_percent": coverage_percent,
                 "crop_statistics": self.crop_statistics.count_documents({}),
                 "document_chunks": (

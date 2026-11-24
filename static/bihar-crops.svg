@@ -1,0 +1,28 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 440 148" fill="none">
+  <!-- Original decorative artwork: field contours, grain and makhana leaf. -->
+  <defs>
+    <linearGradient id="sky" x1="0" x2="440" y1="0" y2="148" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#edf1d9"/><stop offset="1" stop-color="#dce9ce"/>
+    </linearGradient>
+    <linearGradient id="field" x1="0" x2="0" y1="58" y2="148" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#bdd7ac"/><stop offset="1" stop-color="#84b287"/>
+    </linearGradient>
+  </defs>
+  <rect width="440" height="148" rx="18" fill="url(#sky)"/>
+  <path d="M0 92c44-30 96-28 148-12s109 26 176-7c41-20 78-22 116-15v72a18 18 0 0 1-18 18H18a18 18 0 0 1-18-18z" fill="url(#field)"/>
+  <path d="M0 114c85-34 130-11 192 1s121-6 160-25 65-23 88-23M0 127c83-29 131-8 204 4 66 11 119-15 162-35 28-13 50-19 74-20M25 147c56-15 116-13 175-4 71 10 141-20 180-38 19-9 43-17 60-19" stroke="#e1ebc7" stroke-width="1.5" opacity=".82"/>
+  <circle cx="355" cy="33" r="14" fill="#efd28a" opacity=".9"/>
+  <g stroke="#2d6949" stroke-width="2" stroke-linecap="round">
+    <path d="M85 130c9-22 7-67 16-101M87 128c-14-24-22-53-20-91M87 127c21-22 30-50 32-73"/>
+    <path d="M92 85c-13-11-18-16-21-27 12 6 18 13 21 27Zm3-14c3-12 13-20 26-22-7 11-15 16-26 22ZM76 103c-10-2-22-8-27-21 12 5 22 10 27 21Zm20 0c8-12 17-16 31-17-8 10-18 14-31 17Z" fill="#528959"/>
+  </g>
+  <g fill="#c49246">
+    <ellipse cx="102" cy="26" rx="3.8" ry="6.5" transform="rotate(17 102 26)"/><ellipse cx="94" cy="34" rx="3.5" ry="6.4" transform="rotate(-35 94 34)"/><ellipse cx="106" cy="37" rx="3.5" ry="6.4" transform="rotate(39 106 37)"/><ellipse cx="94" cy="45" rx="3.5" ry="6.4" transform="rotate(-36 94 45)"/><ellipse cx="105" cy="49" rx="3.5" ry="6.4" transform="rotate(36 105 49)"/><ellipse cx="69" cy="35" rx="3.2" ry="5.5" transform="rotate(12 69 35)"/><ellipse cx="63" cy="43" rx="3.2" ry="5.5" transform="rotate(-42 63 43)"/><ellipse cx="71" cy="47" rx="3.2" ry="5.5" transform="rotate(48 71 47)"/>
+  </g>
+  <g transform="translate(278 47)">
+    <path d="M1 48C-4 33 11 14 29 10c23-7 39 5 42 22 3 20-13 32-28 31-11 1-22-5-27-13L1 48Z" fill="#427d58"/>
+    <path d="M37 39 14 20m23 19 8-28m-8 28 29-10M37 39l17 17m-17-17-15 15m15-15L6 43" stroke="#b2d195" stroke-width="1.25" opacity=".75"/>
+    <path d="M36 36c-1 11 1 24 9 33" stroke="#295f45" stroke-width="2" stroke-linecap="round"/>
+    <circle cx="54" cy="75" r="7" fill="#e6cf89"/><circle cx="69" cy="67" r="6" fill="#f2dda4"/><circle cx="76" cy="79" r="5" fill="#e6cf89"/>
+  </g>
+</svg>
