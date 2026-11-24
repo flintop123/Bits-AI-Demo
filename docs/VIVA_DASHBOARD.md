@@ -29,7 +29,10 @@ market prices. Use **Ask this PDF** for a saved upload and **Direct QA**
 or **ReAct agent** for mandi prices.
 
 The local model proposes English and Hindi search variants, including
-translations beyond the reviewed vocabulary list. It then selects exact
+translations beyond the reviewed vocabulary list. Named schemes also get
+precise identifier searches, including reviewed acronym equivalents such
+as PMFME/पीएमएफएमई. Candidate passages are ranked together; a similar
+number in an unrelated scheme is not evidence. The model then selects exact
 quotes in their original language. The dashboard checks the quote and its
 page and chunk, and labels any generated summary separately. A number not
 present in the selected excerpts is withheld from the summary; a matched

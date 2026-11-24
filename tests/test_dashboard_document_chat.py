@@ -9,7 +9,8 @@ from pymongo.errors import OperationFailure
 
 from data_api import create_app
 from services.dashboard_document_chat import (
-    DashboardDocumentChat, DocumentChatUnavailable, _GroundedAnswer, _LocalOllama,
+    DashboardDocumentChat, DocumentChatUnavailable, MongoDocumentRetriever,
+    _GroundedAnswer, _LocalOllama,
 )
 
 
@@ -256,3 +257,59 @@ class DocumentChatTests(TestCase):
                 self.assertNotIn("private upstream details", logs.output[0])
                 self.assertNotIn("private upstream details", str(caught.exception))
                 self.assertEqual(client.post.call_count, 1)
+
+    def test_named_program_probe_and_ranking_rescue_real_pmfme_from_noisy_brochure(self):
+        correct = pinned_row(SOURCE_EN, 11, 0)
+        other_pmfme = [pinned_row(SOURCE_EN, 2, 1), pinned_row(SOURCE_EN, 12, 2)]
+        # Same BAIPP brochure, adjacent horticulture programs with subsidy
+        # terms and even the same percentage as PMFME; not the queried scheme.
+        distracting = [pinned_row(SOURCE_EN, page, chunk) for page, chunk in (
+            (16, 0), (16, 1), (8, 0), (8, 1), (9, 0), (9, 1), (17, 0),
+        )]
+        suggestions = ["BAIPP subsidy coverage for food processors", "Assistance for small processing units",
+                       "उद्यमों को वित्तीय सहायता कितनी है", "खाद्य उद्योग अनुदान प्रतिशत"]
+        query = Mock()
+        query.search_agriculture_documents.side_effect = (
+            lambda term, limit: [*other_pmfme, correct][:limit] if term == "pmfme"
+            else [*distracting, *other_pmfme, correct][:limit]
+        )
+        state = {"question": QUERY_HI, "subQuestions": suggestions}
+        retriever = MongoDocumentRetriever(query)
+        result = retriever.retrieve_documents(state)["retrieved_documents"]
+        self.assertEqual(retriever.searches[:2], ["baipp", "pmfme"])
+        self.assertLessEqual(len(retriever.searches), 7)
+        self.assertEqual((result[0]["metadata"]["page_number"], result[0]["metadata"]["chunk_index"]), (11, 0))
+        self.assertTrue(all(row["metadata"]["page_number"] != 16 for row in result))
+        self.assertTrue(all(call.kwargs == {"limit": 12}
+                            for call in query.search_agriculture_documents.call_args_list))
+        model = ScriptedModel(suggestions, "परियोजना लागत पर 35% और अधिकतम ₹10 लाख प्रति इकाई।",
+                              [{"passage": 1, "quote": QUOTE_EN}])
+        chat = DashboardDocumentChat(lambda: nullcontext(query), lambda: model)
+        answer = chat.ask(QUERY_HI, "hi")
+        self.assertEqual(answer["document_chat"]["status"], "cited")
+        self.assertEqual(answer["records"][0]["content"], QUOTE_EN)
+        self.assertEqual(answer["sources"][0]["page_number"], 11)
+
+    def test_named_program_never_uses_nearby_wrong_program_when_requested_evidence_absent(self):
+        wrong_program = [pinned_row(SOURCE_EN, 16, 0), pinned_row(SOURCE_EN, 16, 1)]
+        query = Mock()
+        query.search_agriculture_documents.return_value = wrong_program
+        model = ScriptedModel(
+            ["BAIPP financial assistance subsidy", "individual processing projects",
+             "खाद्य इकाई सहायता", "पूंजी सहायता"], "35%", [{"passage": 1, "quote": QUOTE_EN}],
+        )
+        chat = DashboardDocumentChat(lambda: nullcontext(query), lambda: model)
+        answer = chat.ask(QUERY_HI, "hi")
+        self.assertEqual(answer["document_chat"]["status"], "no_evidence")
+        self.assertEqual(answer["sources"], [])
+        self.assertEqual([name for name, _ in model.calls], ["QuestionSuggestions"])
+
+    def test_unknown_explicit_acronym_is_not_replaced_by_a_known_scheme(self):
+        row = pinned_row(SOURCE_EN, 11, 0)
+        query = Mock()
+        query.search_agriculture_documents.return_value = [row]
+        results = MongoDocumentRetriever(query).retrieve_documents({
+            "question": "What is the ZZQX processing subsidy in the BAIPP brochure?",
+            "subQuestions": ["PMFME processing grant", "PMFME credit subsidy", "प्रसंस्करण सहायता", "वित्तीय अनुदान"],
+        })
+        self.assertEqual(results["retrieved_documents"], [])
