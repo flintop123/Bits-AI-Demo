@@ -264,6 +264,47 @@ def _generate_answer(model, state, focus):
     return node.generate_final_answer({**state, "retrieved_documents": [focus]})["answer"]
 
 
+_THINK_TAG = re.compile(r"</?think\s*>", re.I)
+
+
+def _validate_final_answer(output, support):
+    """Accept only a final cited source sentence, never the model's drafting."""
+    from services.dashboard_document_chat import (
+        _MARKER, _normalized_whitespace, _sentence_spans, _summary_status,
+    )
+
+    trace = list(_THINK_TAG.finditer(output))
+    if trace:
+        closing = [match.group().startswith("</") for match in trace]
+        # Ollama may emit a pair, or a closing tag without its opening tag.
+        # Discard everything through that boundary. Don't try to recover
+        # malformed/unclosed markup or blindly strip arbitrary tags.
+        if closing not in ([True], [False, True]):
+            return None, "model_trace_incomplete"
+        output = output[trace[-1].end():]
+    output = output.strip()
+    cited = {int(v) for group in _MARKER.findall(output) for v in group.split(",")}
+    if not cited:
+        return None, "missing_citation"
+    if cited != {1}:
+        return None, "unknown_citation"
+    result = _summary_status(output, "en", [support])
+    if result != "accepted":
+        return None, result
+    body, suffix, tail = output.rpartition("[1]")
+    if not suffix or tail.strip():
+        return None, "source_wording_not_exact"
+    body = _normalized_whitespace(body)
+    excerpt = _normalized_whitespace(support["content"])
+    sentences = list(_sentence_spans(excerpt))
+    allowed = set(sentences)
+    if len(sentences) == 2 and " ".join(sentences) == excerpt:
+        allowed.add(excerpt)
+    if body not in allowed:
+        return None, "source_wording_not_exact"
+    return f"{body} [1]", "accepted"
+
+
 class _LoopbackChat:
     """Provide the existing FinalAnswerNode a small, bounded local model adapter."""
 
@@ -315,8 +356,6 @@ class PublicMilvusDemo:
         if language not in {"auto", "en"} or " ".join(question.split()).casefold().rstrip("?.") != QUESTION.casefold().rstrip("?"):
             raise ValueError("Milvus demo supports this public report question in English only: " + QUESTION)
         from node.retrieve_documents import RetrieveDocumentsNode
-        from services.dashboard_document_chat import _MARKER, _summary_status
-
         client = self._client_factory(self.target, self._token)
         try:
             if not client.has_collection(self.target.collection, timeout=12):
@@ -366,16 +405,9 @@ class PublicMilvusDemo:
                 # stack traces in the diagnosis.
                 pass
             else:
-                cited = {int(v) for group in _MARKER.findall(generated) for v in group.split(",")}
-                if not cited:
-                    generation = "missing_citation"
-                elif cited != {1}:
-                    generation = "unknown_citation"
-                else:
-                    support = [{**records[0], "content": excerpt}]
-                    generation = _summary_status(generated, "en", support)
-                if generation == "accepted":
-                    text, status = generated, "cited"
+                final, generation = _validate_final_answer(generated, {**records[0], "content": excerpt})
+                if final is not None:
+                    text, status = final, "cited"
         return {
             "answer": text, "answer_language": "en", "intent": "milvus_vector_rag",
             "model": "bge-m3 + local Ollama · public report only",

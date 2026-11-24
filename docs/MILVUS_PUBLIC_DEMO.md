@@ -44,8 +44,9 @@ fails or does not have valid citations, the original retrieved passages are
 shown instead; a generated answer is not claimed. The dashboard explains
 whether the local model failed or its summary was rejected, without exposing
 the draft or service details. In the terminal, `Generation check` shows the
-same status. Testing this mode does not change the collection or require
-reseeding. Verify any generated phrasing against the original source.
+same status. The displayed model answer must be one or two exact source
+sentences with the citation. Drafting or reasoning text never appears.
+Testing this mode does not change the collection or require reseeding.
 
 ## Alternative: seed a new isolated collection (upload)
 

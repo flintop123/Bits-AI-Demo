@@ -262,10 +262,12 @@ function showAnswer(data) {
   trace.hidden = !data.react?.tool_called;
   trace.textContent = trace.hidden ? "" : `ReAct tool: ${data.react.tool} · ${data.react.resolution}`;
   const docChat = data.document_chat;
-  document.querySelector("#document-chat-answer-label").hidden = docChat?.status !== "cited";
+  const isMilvus = data.intent === "milvus_vector_rag";
+  const answerLabel = document.querySelector("#document-chat-answer-label");
+  answerLabel.hidden = docChat?.status !== "cited";
+  answerLabel.textContent = isMilvus ? "Ollama-selected source text" : "Generated summary";
   const docTrace = document.querySelector("#document-chat-trace");
   docTrace.hidden = !docChat;
-  const isMilvus = data.intent === "milvus_vector_rag";
   document.querySelector("#document-chat-title").textContent = isMilvus
     ? "Milvus Vector RAG · verified public report passages"
     : "Document Chat · local MongoDB reports";
@@ -279,6 +281,8 @@ function showAnswer(data) {
     ollama_empty: "Local Ollama returned no answer text.",
     ollama_unavailable: "Local Ollama did not complete the summary.",
     topic_not_retrieved: "No returned excerpt directly matched the requested topic.",
+    model_trace_incomplete: "Ollama did not return a clean final answer.",
+    source_wording_not_exact: "The final answer did not match the cited source wording exactly.",
     missing_citation: "The summary did not include a source citation.",
     unknown_citation: "The summary cited evidence outside the excerpt supplied to Ollama.",
     wrong_language: "The summary did not meet the requested language check.",
@@ -290,7 +294,8 @@ function showAnswer(data) {
   generationNote.hidden = !isMilvus || !reason;
   generationNote.textContent = generationNote.hidden ? "" : reason;
   document.querySelector("#document-chat-outcome").textContent = {
-    cited: "Generated summary. Verify it against the cited source excerpts below.",
+    cited: isMilvus ? "Ollama selected exact wording from the cited Milvus passage."
+      : "Generated summary. Verify it against the cited source excerpts below.",
     source_derived: "This answer uses explicitly stated fields from the cited excerpt, without a model-generated summary.",
     evidence_only: "Exact source excerpts only. A generated summary was not verified.",
     excerpt_only: "The local model was unavailable. This is an original search excerpt, not a verified answer.",

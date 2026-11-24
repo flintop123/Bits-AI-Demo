@@ -40,7 +40,7 @@ class MilvusPublicDemoTests(TestCase):
         self.client.search.return_value = [[hit(self.rows[14, 0])]]
         self.connect = Mock(return_value=self.client)
         self.model = Mock()
-        self.model.invoke.return_value.content = "The report says the corridor comprises 13 districts of Bihar. [1]"
+        self.model.invoke.return_value.content = "This corridor comprises 13 districts of Bihar. [1]"
         self.model_factory = Mock(return_value=self.model)
         self.docs = Mock()
         self.docs.ask.return_value = {"answer": "Separate Mongo chat"}
@@ -221,6 +221,37 @@ class MilvusPublicDemoTests(TestCase):
         self.assertEqual(result["records"][0]["chunk_index"], 0)
         self.assertEqual(result["records"][0]["cosine_score"], .82)
         self.assertEqual(len(result["records"]), 3)
+
+    def test_reasoning_boundaries_remove_drafting_and_accept_only_source_wording(self):
+        app = self.make_app(self.make_demo())
+        final = "This corridor comprises 13 districts of Bihar. [1]"
+        trace = "Do not expose this draft. The claim first says 99 districts and [7]."
+        for prefix in ("", trace + "\n</think>\n", "<think>\n" + trace + "\n</think>\n"):
+            with self.subTest(prefix=prefix):
+                self.model.invoke.return_value.content = prefix + final
+                answer = self.request(app)
+                self.assertEqual(answer.status_code, 200)
+                self.assertEqual(answer.json["answer"], final)
+                self.assertEqual(answer.json["document_chat"]["generation"], "accepted")
+                self.assertNotIn(trace, answer.get_data(as_text=True))
+                self.assertNotIn("think>", answer.get_data(as_text=True))
+
+        for text, reason in (
+            ("Reasoning without a recognized boundary. " + final, "source_wording_not_exact"),
+            ("Answer: " + final, "source_wording_not_exact"),
+            ("<think>" + trace + final, "model_trace_incomplete"),
+            ("</think></think>" + final, "model_trace_incomplete"),
+            (final + " extra draft", "source_wording_not_exact"),
+            ("This corridor compriseS 13 districts of Bihar. [1]", "source_wording_not_exact"),
+            (trace + "</think>This corridor comprises 99 districts of Bihar. [1]", "unsupported_number"),
+        ):
+            with self.subTest(reason=reason, text=text):
+                self.model.invoke.return_value.content = text
+                answer = self.request(app)
+                self.assertEqual(answer.json["document_chat"]["status"], "evidence_only")
+                self.assertEqual(answer.json["document_chat"]["generation"], reason)
+                self.assertNotIn(text, answer.get_data(as_text=True))
+                self.assertEqual(answer.json["records"][0]["content"], self.rows[14, 0])
 
     def test_summary_diagnostics_do_not_reveal_rejected_output_or_fall_back(self):
         app = self.make_app(self.make_demo())
