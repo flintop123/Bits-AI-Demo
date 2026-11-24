@@ -18,6 +18,10 @@ from test_viva_dashboard import ScriptedModel as ReactModel
 
 
 PREFIX = "/api/v1/viva"
+WINDOWS_PMFME_HI = (
+    "PMFME योजना में किसी व्यक्तिगत सूक्ष्म खाद्य प्रसंस्करण इकाई के उन्नयन पर "
+    "कितने प्रतिशत की सब्सिडी मिलती है और प्रति इकाई अधिकतम राशि क्या है?"
+)
 DOC_CASES = (
     QUERY_HI,
     "What financial assistance is available under PMFME for upgrading an individual food processing unit?",
@@ -82,6 +86,50 @@ class DashboardSharedDocumentTests(TestCase):
         self.planner.chat_json.assert_not_called()
         no_model.assert_not_called()
         self.query.search_agriculture_documents.assert_not_called()
+
+    def test_exact_windows_hindi_question_gets_typed_answer_from_both_dashboard_routes(self):
+        corpus_row = pinned_row(SOURCE_EN, 11, 0)
+        wrong = [
+            pinned_row("pmfme_makhana_handbook_hindi.pdf", 1),
+            pinned_row(SOURCE_EN, 11, 1),
+            pinned_row(SOURCE_EN, 16),
+        ]
+        retrieve = Mock()
+        retrieve.search_agriculture_documents.return_value = [*wrong, corpus_row]
+        no_model = Mock(side_effect=AssertionError("The exact source should answer without Ollama"))
+        chat = DashboardDocumentChat(lambda: nullcontext(retrieve), no_model)
+        app = make_app(self.query, self.qa, chat)
+        for route in ("/ask", "/react"):
+            with self.subTest(route=route):
+                got = ask(app, route, WINDOWS_PMFME_HI)
+                self.assertEqual(got.status_code, 200, got.json)
+                self.assertEqual(got.json["document_chat"]["status"], "source_derived")
+                self.assertEqual(got.json["document_chat"]["answer_method"], "typed_source_clause")
+                for phrase in ("व्यक्तिगत श्रेणी", "सूक्ष्म खाद्य प्रसंस्करण", "पात्र परियोजना लागत का 35%",
+                               "अधिकतम ₹10 लाख प्रति इकाई"):
+                    self.assertIn(phrase, got.json["answer"])
+                (record,) = got.json["records"]
+                self.assertEqual((record["page_number"], record["chunk_index"]), (11, 0))
+                self.assertIn(QUOTE_EN, record["content"])
+                self.assertEqual(bool(got.json.get("react", {}).get("tool_called")), route == "/react")
+        no_model.assert_not_called()
+
+    def test_exact_windows_micro_scope_is_not_inferred_from_a_generic_subsidy_clause(self):
+        corpus_row = pinned_row(SOURCE_EN, 11, 0)
+        altered = {**corpus_row, "content": corpus_row["content"].replace(
+            "micro food\nprocessing", "food manufacturing",
+        )}
+        self.assertNotEqual(corpus_row["content"], altered["content"])
+        retrieve = Mock()
+        retrieve.search_agriculture_documents.return_value = [altered]
+        unavailable = Mock(side_effect=DocumentChatUnavailable("No local model."))
+        chat = DashboardDocumentChat(lambda: nullcontext(retrieve), unavailable)
+        app = make_app(self.query, self.qa, chat)
+        for route in ("/ask", "/react"):
+            got = ask(app, route, WINDOWS_PMFME_HI)
+            self.assertEqual(got.status_code, 503, got.json)
+            self.assertNotIn("answer", got.json)
+        self.assertEqual(unavailable.call_count, 2)
 
     def test_explicit_bilingual_document_prompts_cannot_be_misrouted_by_planner(self):
         self.planner.chat_json.return_value = {"intent": "mandi_price"}

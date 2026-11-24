@@ -588,6 +588,8 @@ _FUNDING = re.compile(r"\b(?:subsid(?:y|ies)|financial (?:support|assistance)|fu
 _PROCESSING = re.compile(r"\bprocessing\b|प्रसंस्करण", re.I)
 _UPGRADE = re.compile(r"\b(?:upgrad\w*|moderniz\w*|modernis\w*)\b|उन्नयन|अपग्रेड|आधुनिकीकरण", re.I)
 _INDIVIDUAL = re.compile(r"\bindividual\b|व्यक्तिगत|व्यक्ति", re.I)
+_MICRO_QUESTION = re.compile(r"सूक्ष्म")
+_MICRO_SOURCE = re.compile(r"\bmicro\s+food\s+processing\b|सूक्ष्म\s+खाद्य\s+प्रसंस्करण", re.I)
 _OTHER_SCOPE = re.compile(
     r"\b(?:not|without|except|only|versus|vs|compare|latest|current|revised|as of|when|eligibility|"
     r"seed capital|beneficiary contribution|group|shgs?|fpos?|cooperatives?|women|district|interest)\b"
@@ -606,6 +608,7 @@ def _fast_topic(question):
 
 def _unique_local_excerpt(passages, required, question):
     matches = []
+    needs_micro_scope = bool(_MICRO_QUESTION.search(question))
     for passage in passages:
         previous = ""
         for text in _sentence_spans(passage["text_content"]):
@@ -616,7 +619,8 @@ def _unique_local_excerpt(passages, required, question):
             if (actual_names & required and not actual_names - required and not malformed
                     and inr and _PERCENT.search(text.translate(_DIGITS))
                     and all(cue.search(text) for cue in (_FUNDING, _PROCESSING, _UPGRADE))
-                    and (not _INDIVIDUAL.search(question) or _INDIVIDUAL.search(text))):
+                    and (not _INDIVIDUAL.search(question) or _INDIVIDUAL.search(text))
+                    and (not needs_micro_scope or _MICRO_SOURCE.search(f"{previous} {text}"))):
                 matches.append({**passage["metadata"], "source": passage["source"],
                                 "citation_id": 1, "content": text})
             previous = text
@@ -660,7 +664,7 @@ _UNIT_SUBSIDY_QUERY_WORDS = frozenset((
     "रिपोर्ट अनुसार तहत अंतर्गत नामक उल्लिखित दी जाती दिए जाता मिलता "
     "मिलती उन्नयन अपग्रेड आधुनिकीकरण प्रौद्योगिकी कितनी कितना कितने "
     "क्या है हैं तथा और वित्तीय सहायता अनुदान सब्सिडी पूंजीगत दर "
-    "राशि अधिकतम ऋण जुड़ी पात्र परियोजना लागत प्रति व्यक्तिगत श्रेणी"
+    "राशि अधिकतम ऋण जुड़ी पात्र परियोजना लागत प्रति व्यक्तिगत श्रेणी किसी सूक्ष्म प्रतिशत योजना"
 ).split())
 
 
@@ -685,17 +689,18 @@ class _UnitSubsidy:
     limit: Decimal
     scale: str
 
-    def render(self, language):
+    def render(self, language, *, micro=False):
         percent, limit = map(_display_decimal, (self.percent, self.limit))
         if language == "hi":
             scale = {"lakh": " लाख", "crore": " करोड़", "": ""}[self.scale]
             return (
-                f"व्यक्तिगत श्रेणी में प्रसंस्करण इकाई के उन्नयन के लिए ऋण से जुड़ी पूंजीगत "
+                f"व्यक्तिगत श्रेणी में {'सूक्ष्म खाद्य ' if micro else ''}प्रसंस्करण इकाई के उन्नयन के लिए ऋण से जुड़ी पूंजीगत "
                 f"सब्सिडी पात्र परियोजना लागत का {percent}% है, अधिकतम ₹{limit}{scale} प्रति इकाई।"
             )
         scale = f" {self.scale}" if self.scale else ""
         return (
-            f"For processing-unit upgrades in the individual category, the credit-linked capital subsidy "
+            f"For {'micro food ' if micro else ''}processing-unit upgrades in the individual category, "
+            f"the credit-linked capital subsidy "
             f"is {percent}% of the eligible project cost, capped at ₹{limit}{scale} per unit."
         )
 
@@ -872,7 +877,7 @@ class DashboardDocumentChat:
             if typed is not None:
                 records = [fast]
                 status = "source_derived"
-                text = typed.render(language)
+                text = typed.render(language, micro=bool(_MICRO_QUESTION.search(question)))
             elif result is None:
                 records = [fast]
                 status = "excerpt_only"
