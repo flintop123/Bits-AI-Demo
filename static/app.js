@@ -2,10 +2,15 @@ const form = document.querySelector("#question-form");
 const questionInput = document.querySelector("#question");
 const askButton = document.querySelector("#ask-button");
 const answerLanguage = document.querySelector("#answer-language");
+const questionMode = document.querySelector("#question-mode");
 const resultSection = document.querySelector("#result-section");
 const loadingState = document.querySelector("#loading-state");
 const errorState = document.querySelector("#error-state");
 const answerState = document.querySelector("#answer-state");
+
+document.querySelector("#open-react-demo")?.addEventListener("click", () => {
+  questionMode.value = "react";
+});
 
 const formatNumber = (value) => new Intl.NumberFormat("en-IN").format(value || 0);
 const humanize = (value) => String(value || "").replaceAll("_", " ").replace(/\b\w/g, (letter) => letter.toUpperCase());
@@ -146,9 +151,10 @@ function renderSources(sources) {
   document.querySelector("#source-count").textContent = `${sources.length} cited`;
 
   sources.forEach((source) => {
-    const card = document.createElement(source.source ? "a" : "div");
+    const safeSource = typeof source.source === "string" && /^https?:\/\//i.test(source.source);
+    const card = document.createElement(safeSource ? "a" : "div");
     card.className = "source-card";
-    if (source.source) {
+    if (safeSource) {
       const pageSuffix = source.page_number ? `#page=${source.page_number}` : "";
       card.href = `${source.source}${pageSuffix}`;
       card.target = "_blank";
@@ -211,6 +217,9 @@ function showAnswer(data) {
   const retrieval = data.retrieval || {};
   document.querySelector("#retrieval-badge").textContent = `${humanize(retrieval.mode || "none")} retrieval`;
   document.querySelector("#model-badge").textContent = data.model || "Local model";
+  const trace = document.querySelector("#react-trace");
+  trace.hidden = !data.react?.tool_called;
+  trace.textContent = trace.hidden ? "" : `ReAct tool: ${data.react.tool} · ${data.react.resolution}`;
   renderFilters(data.filters || {});
   renderSources(data.sources || []);
   renderRecords(data.records || []);
@@ -594,9 +603,10 @@ form.addEventListener("submit", async (event) => {
   if (!question) return;
   showLoading();
   try {
-    const response = await fetch("/api/v1/ask", {
+    const react = questionMode.value === "react";
+    const response = await fetch(react ? "/api/v1/viva/react" : "/api/v1/ask", {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
+      headers: { "Content-Type": "application/json", ...(react ? { "X-Agri-Dashboard": "1" } : {}) },
       body: JSON.stringify({
         question,
         answer_language: answerLanguage.value,

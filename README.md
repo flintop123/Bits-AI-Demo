@@ -3,6 +3,8 @@
 ## Phase III handoff
 
 Start with the [Windows setup](#clean-clone-prerequisites-windows).
+Use the [dashboard-only viva workflow](docs/VIVA_DASHBOARD.md) to demonstrate
+ReAct, upload an unseen PDF, and show the passages saved in MongoDB.
 The [ten-query rehearsal guide](eval/round2_demo_README.md) records the
 questions, expected answers, and source locators. Its offline check
 verifies a fixed snapshot; it is not a live product score.

@@ -1,4 +1,4 @@
-"""Read-only HTTP API for Bihar agriculture data."""
+"""Bihar agriculture dashboard and its separate local viva workflow."""
 
 import atexit
 import csv
@@ -16,6 +16,7 @@ from services.agriculture_query_service import AgricultureQueryService
 from services.multilingual_query_expansion import expand_document_query
 from services.agriculture_qa_service import AgricultureQAService
 from services.ollama_client import OllamaUnavailableError
+from viva_api import VIVA_PREFIX, viva_blueprint
 
 
 def parse_limit(raw_limit):
@@ -89,17 +90,21 @@ def is_local_dashboard_origin(origin):
     )
 
 
-def create_app(service=None, qa_service=None):
+def create_app(service=None, qa_service=None, *, viva_react=None, viva_upload_store=None):
     app = Flask(__name__)
     query_service = service or AgricultureQueryService()
     if service is None:
         atexit.register(query_service.close)
     agriculture_qa = qa_service or AgricultureQAService(query_service)
+    app.register_blueprint(viva_blueprint(
+        agriculture_qa, lambda: query_service.database,
+        react=viva_react, upload_store=viva_upload_store,
+    ))
 
     @app.after_request
     def allow_local_static_dashboard(response):
         origin = request.headers.get("Origin", "")
-        if is_local_dashboard_origin(origin):
+        if not request.path.startswith(VIVA_PREFIX + "/") and is_local_dashboard_origin(origin):
             response.headers["Access-Control-Allow-Origin"] = origin
             response.headers["Access-Control-Allow-Headers"] = "Content-Type"
             response.headers["Access-Control-Allow-Methods"] = (

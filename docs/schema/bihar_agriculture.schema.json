@@ -261,6 +261,39 @@
         }
       ]
     },
+    "viva_document_uploads": {
+      "description": "A confirmed dashboard upload; isolated from the curated search corpus.",
+      "identity_fields": ["_id"],
+      "required": [
+        "_id", "run_id", "source_file", "source_sha256", "page_count",
+        "extracted_pages", "candidate_count", "valid_count", "rejected",
+        "warnings", "schema", "mapping", "records", "records_sha256", "saved_at"
+      ],
+      "properties": {
+        "_id": {"bsonType": "string"},
+        "run_id": {"bsonType": "string"},
+        "source_file": {"bsonType": "string"},
+        "source_sha256": {"bsonType": "string", "pattern": "^[a-f0-9]{64}$"},
+        "page_count": {"bsonType": "int", "minimum": 1, "maximum": 25},
+        "extracted_pages": {"bsonType": "int", "minimum": 0},
+        "candidate_count": {"bsonType": "int", "minimum": 1},
+        "valid_count": {"bsonType": "int", "minimum": 1},
+        "rejected": {"bsonType": "array"},
+        "warnings": {"bsonType": "array"},
+        "schema": {"bsonType": "string"},
+        "mapping": {"bsonType": "string"},
+        "records": {
+          "bsonType": "array",
+          "items": {
+            "bsonType": "object",
+            "required": ["content", "page_number", "chunk_index", "language", "extraction_method", "content_hash"]
+          }
+        },
+        "records_sha256": {"bsonType": "string", "pattern": "^[a-f0-9]{64}$"},
+        "saved_at": {"bsonType": "string"}
+      },
+      "indexes": [{"name": "_id_", "keys": ["_id"], "unique": true}]
+    },
     "agent_runs": {
       "description": "One auditable Phase 2 supervisor execution.",
       "identity_fields": ["run_id"],

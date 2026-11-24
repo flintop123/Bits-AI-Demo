@@ -251,3 +251,13 @@ After the run, provenance coverage was:
 Run `python export_database_evidence.py --run-id
 5d062f9d-6f69-42bd-bedb-f7a6b521071f` to reproduce the collection counts,
 index inventory, provenance coverage and representative source-location fields.
+
+## 8. Isolated Phase III viva uploads
+
+`viva_document_uploads` stores one document per confirmed browser run.
+MongoDB's built-in unique `_id` is the run ID. It stores the source filename
+and PDF SHA-256, extraction and validation counts, the saved passage array
+(including page, chunk, language, method, and text), its SHA-256, and the
+save time in UTC. The browser verifies the saved passage count and hash
+using a fresh read from this collection. The collection is not included
+in the curated query corpus, portable SQLite mirror, or committed dump.

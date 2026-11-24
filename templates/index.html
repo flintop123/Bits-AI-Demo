@@ -33,6 +33,7 @@
         <a href="#district-trends-heading">District trends</a>
         <a href="#period-reports-heading">Period reports</a>
         <a href="#ask-heading">Ask the data</a>
+        <a href="#viva-upload-heading">PDF upload</a>
       </nav>
       <div class="system-state" id="system-state" aria-live="polite">
         <span class="status-dot"></span>
@@ -49,6 +50,10 @@
             Monitor daily mandi collection, geographic coverage and market-price
             movement, then ask grounded questions in English or Hindi.
           </p>
+          <div class="viva-jumps" aria-label="Viva shortcuts">
+            <a href="#ask-heading" id="open-react-demo">Try ReAct</a>
+            <a href="#viva-upload-heading">Upload a PDF</a>
+          </div>
         </div>
         <div class="metrics" aria-label="Available data">
           <article>
@@ -238,6 +243,11 @@
             <div class="form-actions">
               <div class="answer-controls">
                 <span class="character-count"><span id="character-count">0</span>/500</span>
+                <label for="question-mode">Workflow</label>
+                <select id="question-mode" name="question_mode">
+                  <option value="direct">Direct QA</option>
+                  <option value="react">ReAct agent</option>
+                </select>
                 <label for="answer-language">Answer</label>
                 <select id="answer-language" name="answer_language">
                   <option value="auto">Automatic language</option>
@@ -251,6 +261,7 @@
               </button>
             </div>
           </form>
+          <p class="viva-note">ReAct shows which tool answered. To ingest a new document, <a href="#viva-upload-heading">upload a PDF</a>.</p>
 
           <div class="examples">
             <span>Try a question</span>
@@ -376,6 +387,7 @@
             </div>
           </div>
           <p id="answer-text" class="answer-text"></p>
+          <p id="react-trace" class="viva-trace" hidden></p>
 
           <div id="filter-block" class="filter-block" hidden>
             <span>Applied query</span>
@@ -396,6 +408,45 @@
           </details>
         </div>
       </section>
+
+      <section class="nearby-panel viva-panel" aria-labelledby="viva-upload-heading">
+        <div class="panel-heading">
+          <div>
+            <p class="section-kicker">Viva document intake</p>
+            <h2 id="viva-upload-heading">Upload and verify a PDF</h2>
+          </div>
+          <span class="local-badge">Separate demo collection</span>
+        </div>
+        <p class="nearby-intro">Review extracted passages before saving them. Then inspect the actual MongoDB read-back, including page and chunk. The original PDF is not stored, and saved passages do not enter the curated search corpus.</p>
+        <form id="viva-upload-form" class="viva-controls">
+          <label for="viva-pdf">PDF <small>Up to 10 MiB and 25 pages</small>
+            <input id="viva-pdf" name="document" type="file" accept=".pdf,application/pdf" required>
+          </label>
+          <label class="viva-checkbox"><input id="viva-force-ocr" name="force_ocr" type="checkbox" value="1"> Force OCR for a scan</label>
+          <button type="submit" id="viva-preview">Extract and preview</button>
+        </form>
+        <p id="viva-status" class="viva-note" role="status"></p>
+        <section id="viva-evidence" aria-label="Upload evidence" hidden>
+          <dl id="viva-facts" class="viva-facts"></dl>
+          <ul id="viva-warnings" class="viva-warnings" hidden></ul>
+          <button type="button" id="viva-save" disabled>Save to MongoDB</button>
+          <div class="viva-record-nav" id="viva-record-nav" hidden>
+            <button type="button" class="secondary-button" id="viva-previous">Previous passages</button>
+            <span id="viva-record-count" aria-live="polite"></span>
+            <button type="button" class="secondary-button" id="viva-next">Next passages</button>
+          </div>
+          <div id="viva-records" class="viva-records"></div>
+        </section>
+        <details class="viva-reopen">
+          <summary>Reopen a saved upload</summary>
+          <form id="viva-reopen-form" class="viva-controls">
+            <label for="viva-run-id">Run ID
+              <input id="viva-run-id" autocomplete="off" required pattern="[0-9a-fA-F\-]{36}" maxlength="36" spellcheck="false">
+            </label>
+            <button type="submit" class="secondary-button">Read from MongoDB</button>
+          </form>
+        </details>
+      </section>
     </main>
 
     <footer>
@@ -407,5 +458,6 @@
           integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin="anonymous" defer></script>
   <script src="{{ url_for('market_explorer_asset', asset_name='market-explorer.js') }}" defer></script>
   <script src="{{ url_for('static', filename='app.js') }}" defer></script>
+  <script src="{{ url_for('static', filename='viva-dashboard.js') }}" defer></script>
 </body>
 </html>
