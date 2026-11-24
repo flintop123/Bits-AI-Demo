@@ -26,7 +26,14 @@ text index instead of its cloud-backed Milvus connector. This mode uses
 loopback MongoDB and Ollama only; it does not use a cloud token, modify an
 index, or sync data. It does not search new PDF uploads or report live
 market prices. Use **Ask this PDF** for a saved upload and **Direct QA**
-or **ReAct agent** for mandi prices.
+or **ReAct agent** for mandi prices and structured crop statistics.
+
+When **Direct QA** or the dashboard’s **ReAct agent** handles an indexed
+report question, it uses the same Document Chat evidence workflow. ReAct
+still has to call its read-only tool before showing an answer. If the
+document lookup has no verified evidence or is unavailable, it does not
+substitute a legacy report answer. The standalone CLI, legacy API, and
+upload/ingestion controls keep their original behavior.
 
 The local model proposes English and Hindi search variants, including
 translations beyond the reviewed vocabulary list. Named schemes also get

@@ -312,14 +312,25 @@ class ReactDashboard:
             )
 
         observed = None
+        lookup_failure = None
+        lookup_lock = Lock()
 
         @tool("ask_agriculture_question", return_direct=True)
         def grounded_lookup() -> str:
             """Run grounded retrieval on the original question and return its answer."""
-            nonlocal observed
-            if observed is None:
-                observed = self.qa.ask(question, answer_language=language)
-            return str(observed["answer"])
+            nonlocal observed, lookup_failure
+            # A malformed model turn can contain two calls to this same tool.
+            # Read once; do not retry a failed local lookup in this request.
+            with lookup_lock:
+                if lookup_failure is not None:
+                    raise lookup_failure
+                if observed is None:
+                    try:
+                        observed = self.qa.ask(question, answer_language=language)
+                    except Exception as error:
+                        lookup_failure = error
+                        raise
+                return str(observed["answer"])
 
         finished = self._invoke_tool(
             grounded_lookup,

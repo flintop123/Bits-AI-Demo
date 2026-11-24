@@ -31,6 +31,36 @@ _SIMPLE_MANDI_PRICE = (
 )
 
 
+# Only source-attributed questions and strongly identified policy questions
+# outrank the model planner. Terms such as "production", "yield" or "organic"
+# on their own must not divert structured crop or price requests.
+_DOCUMENT_REFERENCE = re.compile(
+    r"\b(?:according to|as (?:stated|described|reported) in|what does|"
+    r"what (?:is|was) (?:stated|written|mentioned) in)\b"
+    r"[^?।]{0,130}\b(?:reports?|brochures?|handbooks?|documents?|guidelines?|polic(?:y|ies)|schemes?)\b"
+    r"|\b(?:what|which|where|how (?:much|many))\b[^?।]{0,130}\b(?:in|from|per) (?:the |a )?"
+    r"[^?।]{0,75}\b(?:reports?|brochures?|handbooks?|guidelines?)\b"
+    r"|(?:रिपोर्ट|प्रतिवेदन|पुस्तिका|दस्तावेज़?|दिशानिर्देश|नीति|योजना)"
+    r"\s*(?:के\s*(?:अनुसार|मुताबिक)|में)"
+    r"|\.(?:pdf)\b", re.I,
+)
+_NAMED_POLICY = re.compile(
+    r"\b(?:pm\s*fme|baipp|(?:government|state|central) (?:agriculture )?scheme)\b"
+    r"|पी\s*एम\s*एफ\s*एम\s*ई|बी\s*ए\s*आई\s*पी\s*पी|सरकारी\s+योजना", re.I,
+)
+_POLICY_QUESTION = re.compile(
+    r"\b(?:subsid(?:y|ies)|eligibility|eligible|grant(?:s)?|financial (?:support|assistance)|"
+    r"funding|benefits?)\b|सब्सिडी|पात्रता|पात्र|अनुदान|वित्तीय\s+सहायता|लाभ", re.I,
+)
+
+
+def _explicit_document_question(question):
+    return bool(
+        _DOCUMENT_REFERENCE.search(question)
+        or (_NAMED_POLICY.search(question) and _POLICY_QUESTION.search(question))
+    )
+
+
 class QueryPlan(BaseModel):
     intent: Literal[
         "mandi_price",
@@ -83,7 +113,7 @@ class AgricultureQAService:
             if close is not None:
                 close()
 
-    def ask(self, question, answer_language="auto"):
+    def ask(self, question, answer_language="auto", *, document_answer=None):
         question = str(question or "").strip()
         if not question:
             raise ValueError("question is required")
@@ -93,9 +123,23 @@ class AgricultureQAService:
         if answer_language not in {"auto", "en", "hi"}:
             raise ValueError("answer_language must be auto, en, or hi")
 
+        explicit_document = document_answer is not None and _explicit_document_question(question)
+        if explicit_document and not any(
+            pattern.fullmatch(" ".join(question.split())) for _, pattern in _SIMPLE_MANDI_PRICE
+        ):
+            # An explicitly attributed report question need not connect to
+            # unrelated structured collections or ask the legacy planner.
+            return document_answer(question, answer_language)
+
         catalog = self.query_service.list_values()
         exact_plan = self._exact_mandi_price_plan(question, catalog)
+        if explicit_document and exact_plan is None:
+            return document_answer(question, answer_language)
         plan = exact_plan or self._create_plan(question, catalog)
+        if document_answer is not None and plan.intent == "document_search":
+            # The dashboard shares one cited document workflow. Its no-evidence
+            # and dependency failures must not fall back to legacy synthesis.
+            return document_answer(question, answer_language)
         if answer_language in {"en", "hi"}:
             plan.language = answer_language
 

@@ -620,10 +620,10 @@ form.addEventListener("submit", async (event) => {
   if (!question) return;
   showLoading();
   try {
-    const localPath = {react: "react", document_chat: "document-chat"}[questionMode.value];
-    const response = await fetch(localPath ? `/api/v1/viva/${localPath}` : "/api/v1/ask", {
+    const localPath = {react: "react", document_chat: "document-chat"}[questionMode.value] || "ask";
+    const response = await fetch(`/api/v1/viva/${localPath}`, {
       method: "POST",
-      headers: { "Content-Type": "application/json", ...(localPath ? { "X-Agri-Dashboard": "1" } : {}) },
+      headers: { "Content-Type": "application/json", "X-Agri-Dashboard": "1" },
       body: JSON.stringify({
         question,
         answer_language: answerLanguage.value,
