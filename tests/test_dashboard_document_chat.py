@@ -219,7 +219,7 @@ class DocumentChatTests(TestCase):
         with self.assertRaisesRegex(DocumentChatUnavailable, "Local Ollama"):
             doc.ask(QUERY_EN)
         factory.assert_called_once_with(
-            timeout=httpx.Timeout(90, connect=4, write=10, pool=4),
+            timeout=httpx.Timeout(35, connect=4, write=10, pool=4),
             trust_env=False, follow_redirects=False,
         )
 
@@ -378,10 +378,11 @@ class DocumentChatTests(TestCase):
         self.assertIn(QUOTE_EN, result["records"][0]["content"])
         self.assertEqual(result["records"][0]["page_number"], 11)
         self.assertEqual([schema for schema, _ in model.calls],
-                         ["QuestionSuggestions", "_GroundedAnswer", "_RenderedSummary"])
-        selection_input = model.calls[1][1][-1].content
+                         ["_GroundedAnswer", "_RenderedSummary"])
+        self.assertEqual(result["document_chat"]["workflow"], "local_identifier")
+        selection_input = model.calls[0][1][-1].content
         render_input = model.calls[-1][1][-1].content
-        self.assertIn("Key Objective of PMFME", selection_input)
+        self.assertNotIn("Key Objective of PMFME", selection_input)
         self.assertNotIn("Key Objective of PMFME", render_input)
         self.assertIn("Selected excerpts:", render_input)
         self.assertIn(QUOTE_EN, render_input)
@@ -446,6 +447,82 @@ class DocumentChatTests(TestCase):
             with self.subTest(draft=draft):
                 self.assertNotEqual(_summary_status(draft, "en", source), "accepted")
 
+    @patch("httpx.Client")
+    def test_fast_local_excerpt_survives_ollama_timeout_at_real_dashboard_endpoint(self, factory):
+        target = pinned_row(SOURCE_EN, 11, 0)
+        wrong = [
+            pinned_row("pmfme_makhana_handbook_hindi.pdf", 1),
+            pinned_row(SOURCE_EN, 16, 0),
+            pinned_row(SOURCE_EN, 11, 1),
+        ]
+        query = Mock()
+        query.search_agriculture_documents.return_value = [*wrong, target]
+        client = factory.return_value.__enter__.return_value
+        client.post.side_effect = httpx.ReadTimeout("internal details")
+        doc = DashboardDocumentChat(
+            lambda: nullcontext(query), lambda: _LocalOllama("http://127.0.0.1:11434", "offline"),
+        )
+        client_app = create_app(Mock(), Mock(), viva_document_chat=doc).test_client()
+        result = client_app.post(URL, json={"question": QUERY_HI}, headers=HEADERS)
+        self.assertEqual(result.status_code, 200, result.json)
+        got = result.json
+        self.assertEqual(got["document_chat"]["status"], "excerpt_only")
+        self.assertEqual(got["document_chat"]["degradation"], "model_unavailable")
+        self.assertEqual(got["document_chat"]["workflow"], "local_identifier")
+        self.assertEqual(got["model"], "Local keyword index · no model answer")
+        self.assertNotIn("35%", got["answer"])
+        self.assertNotIn("internal details", got["answer"])
+        self.assertIn("सत्यापित उत्तर नहीं", got["answer"])
+        record, = got["records"]
+        self.assertIn(QUOTE_EN, record["content"])
+        self.assertIn(record["content"], " ".join(target["content"].split()))
+        self.assertEqual((record["page_number"], record["chunk_index"]), (11, 0))
+        # No planning or retries; the one synthesis attempt has a short budget.
+        factory.assert_called_once()
+        client.post.assert_called_once()
+        self.assertLessEqual(factory.call_args.kwargs["timeout"].read, 30)
+        self.assertIn("evidence", client.post.call_args.kwargs["json"]["format"]["properties"])
+
+    def test_unavailable_model_never_publishes_ambiguous_wrong_or_out_of_scope_matches(self):
+        target = pinned_row(SOURCE_EN, 11, 0)
+        wrong = [
+            pinned_row("pmfme_makhana_handbook_hindi.pdf", 1),
+            pinned_row(SOURCE_EN, 16, 0),
+            pinned_row(SOURCE_EN, 11, 1),
+        ]
+        query = Mock()
+        model_factory = Mock(side_effect=DocumentChatUnavailable("No local model."))
+        cases = (
+            (QUERY_HI, wrong),
+            (QUERY_HI, [target, {**target, "page_number": 12}]),
+            (QUERY_HI.rstrip("?") + " for SHGs?", [target]),
+            (QUERY_HI.rstrip("?") + " in 2024?", [target]),
+            (QUERY_HI.rstrip("?") + " without a bank loan?", [target]),
+            (QUERY_HI.replace("पीएमएफएमई", "ZZQX"), [target]),
+        )
+        for question, rows in cases:
+            with self.subTest(question=question, count=len(rows)):
+                query.search_agriculture_documents.return_value = rows
+                doc = DashboardDocumentChat(lambda: nullcontext(query), model_factory)
+                app = create_app(Mock(), Mock(), viva_document_chat=doc).test_client()
+                result = app.post(URL, json={"question": question}, headers=HEADERS)
+                self.assertEqual(result.status_code, 503, result.json)
+                self.assertNotIn("records", result.json)
+
+    def test_targeted_model_abstention_never_becomes_an_offline_excerpt(self):
+        chat, _, model = self.fixture(
+            pinned_row(SOURCE_EN, 11), "pmfme", "", QUOTE_EN,
+            ["PMFME coverage", "PMFME individual subsidy", "खाद्य इकाई सहायता", "पूंजी अनुदान"],
+        )
+        for selection in ([], [999]):
+            with self.subTest(selection=selection):
+                model.evidence = selection
+                result = chat.ask(QUERY_HI)
+                self.assertEqual(result["document_chat"]["workflow"], "local_identifier")
+                self.assertEqual(result["document_chat"]["status"], "no_evidence")
+                self.assertEqual(result["records"], [])
+                self.assertNotIn("degradation", result["document_chat"])
+
     def test_valid_initial_summary_has_no_render_call(self):
         sample = pinned_row(SOURCE_EN, 11)
         chat, _, model = self.fixture(
@@ -454,7 +531,7 @@ class DocumentChatTests(TestCase):
         )
         result = chat.ask(QUERY_HI)
         self.assertEqual(result["document_chat"]["summary"], {"initial": "accepted", "render": "not_attempted"})
-        self.assertEqual([schema for schema, _ in model.calls], ["QuestionSuggestions", "_GroundedAnswer"])
+        self.assertEqual([schema for schema, _ in model.calls], ["_GroundedAnswer"])
 
     def test_rejected_initial_summary_reports_reason_and_render_keeps_numbers_and_units(self):
         sample = pinned_row(SOURCE_EN, 11)

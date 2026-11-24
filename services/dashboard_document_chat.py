@@ -26,6 +26,8 @@ MIN_SPAN_CHARS = 12
 MAX_SPAN_CHARS = 400
 MAX_SPANS_PER_PASSAGE = 4
 MODEL_READ_SECONDS = 90
+SEARCH_PLANNING_READ_SECONDS = 35
+FAST_MODEL_BUDGET_SECONDS = 30
 SUMMARY_READ_SECONDS = 45
 SUMMARY_MIN_BUDGET_SECONDS = 3
 MODEL_BUDGET_SECONDS = 150
@@ -120,7 +122,8 @@ class _LocalOllama:
         class StructuredCall:
             def invoke(_, messages):
                 started = monotonic()
-                read_limit = SUMMARY_READ_SECONDS if render else MODEL_READ_SECONDS
+                read_limit = (SUMMARY_READ_SECONDS if render else MODEL_READ_SECONDS
+                              if schema is _GroundedAnswer else SEARCH_PLANNING_READ_SECONDS)
                 read_seconds = min(read_limit, self.deadline - started)
                 if read_seconds <= 0 or (render and read_seconds < SUMMARY_MIN_BUDGET_SECONDS):
                     _LOG.warning("Document Chat %s: model time budget exhausted", stage)
@@ -271,6 +274,7 @@ class MongoDocumentRetriever:
         self.query = query
         self.searches = []
         self.passages = []
+        self._search_cache = {}
 
     def retrieve_documents(self, state):
         from pymongo import timeout
@@ -298,11 +302,14 @@ class MongoDocumentRetriever:
             return {"retrieved_documents": []}
         with timeout(8):
             for term in terms:
-                self.searches.append(term)
-                # Keyword-only search over the existing local index.
-                rows = self.query.search_agriculture_documents(
-                    term, limit=CANDIDATES_PER_SEARCH,
-                )[:CANDIDATES_PER_SEARCH]
+                if term not in self._search_cache:
+                    self.searches.append(term)
+                    # Keyword-only search over the existing local index. A
+                    # local preflight and the graph reuse the same probes.
+                    self._search_cache[term] = self.query.search_agriculture_documents(
+                        term, limit=CANDIDATES_PER_SEARCH,
+                    )[:CANDIDATES_PER_SEARCH]
+                rows = self._search_cache[term]
                 for provider_rank, row in enumerate(rows):
                     source = _source_url(row.get("source_url") or row.get("source"))
                     page, chunk = row.get("page_number"), row.get("chunk_index")
@@ -572,13 +579,57 @@ def _evidence_choices(passages, question, searches):
     return choices
 
 
+# Only a tightly specified, named funding/upgrade lookup can bypass model
+# search expansion. These vocabulary tests are not a substitute for document
+# QA on broader or differently qualified requests.
+_FUNDING = re.compile(r"\b(?:subsid(?:y|ies)|financial (?:support|assistance)|funding|grants?)\b"
+                      r"|वित्तीय\s+सहायता|सब्सिडी|अनुदान", re.I)
+_PROCESSING = re.compile(r"\bprocessing\b|प्रसंस्करण", re.I)
+_UPGRADE = re.compile(r"\b(?:upgrad\w*|moderniz\w*|modernis\w*)\b|उन्नयन|अपग्रेड|आधुनिकीकरण", re.I)
+_INDIVIDUAL = re.compile(r"\bindividual\b|व्यक्तिगत|व्यक्ति", re.I)
+_OTHER_SCOPE = re.compile(
+    r"\b(?:not|without|except|only|versus|vs|compare|latest|current|revised|as of|when|eligibility|"
+    r"seed capital|beneficiary contribution|group|shgs?|fpos?|cooperatives?|women|district|interest)\b"
+    r"|नहीं|बिना|अलावा|केवल|तुलना|नवीनतम|वर्तमान|संशोधित|कब|पात्रता|समूह|महिला|जिला|ब्याज", re.I,
+)
+
+
+def _fast_topic(question):
+    required = _requested_identifiers(question)
+    if (not required or not required <= _IDENTIFIER_ALIASES.keys() or _numbers(question)
+            or _OTHER_SCOPE.search(question)
+            or not all(cue.search(question) for cue in (_FUNDING, _PROCESSING, _UPGRADE))):
+        return set()
+    return required
+
+
+def _unique_local_excerpt(passages, required, question):
+    matches = []
+    for passage in passages:
+        previous = ""
+        for text in _sentence_spans(passage["text_content"]):
+            # Require an actual nearby program mention in the body; a
+            # generic amount in a matching brochure is not enough.
+            actual_names = _identifier_names(text) | _identifier_names(previous)
+            inr, _, malformed = _inr_amounts(text)
+            if (actual_names & required and not actual_names - required and not malformed
+                    and inr and _PERCENT.search(text.translate(_DIGITS))
+                    and all(cue.search(text) for cue in (_FUNDING, _PROCESSING, _UPGRADE))
+                    and (not _INDIVIDUAL.search(question) or _INDIVIDUAL.search(text))):
+                matches.append({**passage["metadata"], "source": passage["source"],
+                                "citation_id": 1, "content": text})
+            previous = text
+    return matches[0] if len(matches) == 1 else None
+
+
 class _AnswerModel:
     """Leave the graph's question expansion and synthesis wiring unchanged."""
 
-    def __init__(self, model, language, question, retriever):
+    def __init__(self, model, language, question, retriever, *, offered_choices=None):
         self.model, self.language = model, language
         self.question, self.retriever = question, retriever
         self.choices = {}
+        self.offered_choices = offered_choices
 
     def with_structured_output(self, *args, **kwargs):
         from langchain_core.messages import SystemMessage
@@ -601,7 +652,7 @@ class _AnswerModel:
     def invoke(self, _messages):
         from langchain_core.messages import AIMessage, HumanMessage, SystemMessage
 
-        self.choices = _evidence_choices(
+        self.choices = self.offered_choices if self.offered_choices is not None else _evidence_choices(
             self.retriever.passages, self.question, self.retriever.searches,
         )
         if not self.choices:
@@ -678,12 +729,32 @@ class DashboardDocumentChat:
             try:
                 with self._query_context() as query, tracing_context(enabled=False):
                     retriever = MongoDocumentRetriever(query)
-                    answer_model = _AnswerModel(self._model_factory(), language, question, retriever)
-                    graph = RagModel({}, model=answer_model, retriever_node=retriever)
-                    result = graph.runnable.invoke(
-                        {"question": question},
-                        config={"configurable": {"thread_id": str(uuid4())}, "recursion_limit": 8},
-                    )
+                    fast = None
+                    if required := _fast_topic(question):
+                        retriever.retrieve_documents({"question": question})
+                        fast = _unique_local_excerpt(retriever.passages, required, question)
+                    if fast is not None:
+                        trace["workflow"] = "local_identifier"
+                        try:
+                            model = self._model_factory()
+                            if isinstance(model, _LocalOllama):
+                                model.deadline = min(model.deadline, monotonic() + FAST_MODEL_BUDGET_SECONDS)
+                            answer_model = _AnswerModel(
+                                model, language, question, retriever, offered_choices={fast["citation_id"]: fast},
+                            )
+                            result = {"answer": answer_model.invoke([]).content}
+                        except (DocumentChatUnavailable, httpx.HTTPError, ValidationError, ConnectionError, ValueError):
+                            # Mongo already returned a uniquely matched
+                            # source excerpt. Never make up a model answer.
+                            trace["degradation"] = "model_unavailable"
+                            result = None
+                    else:
+                        answer_model = _AnswerModel(self._model_factory(), language, question, retriever)
+                        graph = RagModel({}, model=answer_model, retriever_node=retriever)
+                        result = graph.runnable.invoke(
+                            {"question": question},
+                            config={"configurable": {"thread_id": str(uuid4())}, "recursion_limit": 8},
+                        )
             except (httpx.HTTPError, ValidationError, ConnectionError, ValueError):
                 raise DocumentChatUnavailable(
                     "Local Ollama could not complete Document Chat. Check the configured model and retry."
@@ -694,7 +765,15 @@ class DashboardDocumentChat:
                 ) from None
 
             trace["searches"] = retriever.searches
-            if answer_model.choices:
+            if result is None:
+                records = [fast]
+                status = "excerpt_only"
+                text = (
+                    "स्थानीय मॉडल उपलब्ध नहीं है। नीचे खोज से मिला मूल अंश है, सत्यापित उत्तर नहीं।"
+                    if language == "hi" else
+                    "The local model was unavailable. The original search excerpt below is not a verified answer."
+                )
+            elif answer_model.choices:
                 try:
                     choice = _GroundedAnswer.model_validate_json(result.get("answer", ""))
                 except ValidationError:
@@ -732,7 +811,11 @@ class DashboardDocumentChat:
 
         return {
             "answer": text, "answer_language": language, "intent": "document_chat",
-            "model": "Local Ollama · LangGraph", "filters": {},
+            "model": (
+                "Local keyword index · no model answer" if status == "excerpt_only" else
+                "Local Ollama · targeted retrieval" if trace["workflow"] == "local_identifier" else
+                "Local Ollama · LangGraph"
+            ), "filters": {},
             "retrieval": {"mode": "mongodb_keyword" if trace["searches"] else "none"},
             "sources": [{key: value for key, value in row.items() if key != "content"} for row in records],
             "records": records, "document_chat": {**trace, "status": status},

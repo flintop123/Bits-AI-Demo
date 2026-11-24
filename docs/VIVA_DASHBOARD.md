@@ -35,6 +35,14 @@ document lookup has no verified evidence or is unavailable, it does not
 substitute a legacy report answer. The standalone CLI, legacy API, and
 upload/ingestion controls keep their original behavior.
 
+A narrow named funding/upgrade question can start with exact keyword
+retrieval when a unique source passage matches its topic and amount
+types. This skips model search expansion, not the normal checks on a
+generated summary. If Ollama is unavailable in this mode, the dashboard
+shows the original matching excerpt and page locator, clearly labelled
+as a search result, not a verified answer. Broader or ambiguous queries
+still use bilingual model search and do not invent an offline answer.
+
 The local model proposes English and Hindi search variants, including
 translations beyond the reviewed vocabulary list. Named schemes also get
 precise identifier searches, including reviewed acronym equivalents such

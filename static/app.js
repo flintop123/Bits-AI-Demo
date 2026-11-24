@@ -228,6 +228,7 @@ function showAnswer(data) {
   document.querySelector("#document-chat-outcome").textContent = {
     cited: "Generated summary. Verify it against the cited source excerpts below.",
     evidence_only: "Exact source excerpts only. A generated summary was not verified.",
+    excerpt_only: "The local model was unavailable. This is an original search excerpt, not a verified answer.",
     no_evidence: "No answer backed by an exact source excerpt.",
     greeting: "No retrieval needed.",
   }[docChat?.status] || "";
