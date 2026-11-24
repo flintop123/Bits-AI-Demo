@@ -5,9 +5,20 @@ and Ollama available. Open the loopback URL printed by `data_api.py`.
 These features are not in the static GitHub Pages snapshot. During the
 demo, the following actions all take place in the dashboard.
 
+## Explore collection coverage
+
+In **Overview**, select a metric card to open one drill-down at a time:
+observation completeness, collection dates, observed market codes,
+verified coordinates, crop-statistics periods, or indexed report passages.
+Hover or focus a bar for its date and counts, then click or press Enter
+to inspect that date in the table. Left and right arrows move between
+chart dates. In the market list, search by name, district or code and
+filter by coordinate status. Unresolved markets can still have price
+records; the map shows matched, verified locality centroids, not gates.
+
 ## Show ReAct
 
-1. Open **Ask the data**, choose **ReAct agent** in **Workflow**, and
+1. Open **Ask AgriAgent** at the bottom right, choose **ReAct agent** in **Workflow**, and
    enter a question about stored evidence in English or Hindi.
 2. Show the actual tool invocation next to the grounded response. Open a
    citation and, if needed, inspect the retrieved evidence.
@@ -18,9 +29,69 @@ ReAct declines or does not call it, the UI reports that outcome rather
 than inventing a tool invocation. **Direct QA** remains a separate mode.
 For a new document, use the upload flow, not the ReAct question box.
 
+## Ask Document Chat about indexed reports
+
+Choose **Ask AgriAgent → Document Chat · local reports**. The existing
+Jeetendra LangGraph workflow is reused with the dashboard’s local MongoDB
+text index instead of its cloud-backed Milvus connector. This mode uses
+loopback MongoDB and Ollama only; it does not use a cloud token, modify an
+index, or sync data. It does not search new PDF uploads or report live
+market prices. Use **Ask this PDF** for a saved upload and **Direct QA**
+or **ReAct agent** for mandi prices and structured crop statistics.
+
+When **Direct QA** or the dashboard’s **ReAct agent** handles an indexed
+report question, it uses the same Document Chat evidence workflow. ReAct
+still has to call its read-only tool before showing an answer. If the
+document lookup has no verified evidence or is unavailable, it does not
+substitute a legacy report answer. The standalone CLI, legacy API, and
+upload/ingestion controls keep their original behavior.
+
+A narrow named funding/upgrade question can start with exact keyword
+retrieval when a unique source passage matches its topic and amount
+types. This skips model search expansion, not the normal checks on a
+generated summary. A narrowly worded funding question with a recognized
+individual processing-upgrade clause can instead produce a source-derived
+English or Hindi answer without calling the Document Chat model. The same original
+excerpt must explicitly state credit linkage, the rate on eligible project
+cost, and a maximum rupee amount per unit. The UI labels that answer as
+source-derived and retains the original excerpt and page. Without these
+conditions, the dashboard only shows the matching excerpt as a search
+result, not an offline answer. Broader or ambiguous queries still use
+bilingual model search and do not invent an offline answer.
+
+The local model proposes English and Hindi search variants, including
+translations beyond the reviewed vocabulary list. Named schemes also get
+precise identifier searches, including reviewed acronym equivalents such
+as PMFME/पीएमएफएमई. Candidate passages are ranked together; a similar
+number in an unrelated scheme is not evidence. The dashboard creates
+numbered excerpts from the top passages; the model selects IDs rather than
+transcribing quotations. The dashboard validates those IDs and shows the
+source text in its original language with page and chunk locators.
+Generated summaries are labeled separately. If the first pass does not
+produce a publishable summary, one optional local call can render only the
+selected excerpts in the requested language within the existing time
+budget. If that fails, the original citations still appear. Unsupported
+numbers or recognized amount-unit changes are withheld. An explicitly
+stated INR amount may use different digit grouping or lakh/crore notation
+if its exact rupee value matches the selected source; plain numbers and
+percentages cannot borrow that equivalence. These checks do
+not establish that every statement in a generated explanation follows from
+the source.
+
+Try **“How many districts are in the organic farming corridor in the
+Bihar Annual Scheme report?”**. In the stored 2022–23 report, physical PDF
+page 14 describes 13 districts. Ask **“बीएआईपीपी पुस्तिका के अनुसार
+पीएमएफएमई में खाद्य प्रसंस्करण इकाई के उन्नयन के लिए वित्तीय सहायता
+कितनी है?”** and select Hindi for a Hindi explanation with an unchanged
+English source excerpt (physical PDF page 11). **“Where does the APEDA
+report say makhana is mainly cultivated in Bihar?”** is the reverse
+English-to-Hindi-source check (physical PDF page 11). Verify the cited
+pages. Search omissions or unavailable services are not a reason to run
+an ingestion job, rebuild an index, or use a cloud credential.
+
 ## Examiner walkthrough: unseen PDF to verified evidence
 
-1. Open **PDF upload**. Select the examiner's PDF, up to 10 MiB and
+1. Open **File intake → PDF preview and verification**. Select the examiner's PDF, up to 10 MiB and
    25 pages. Use **Force OCR for a scan** if you need to demonstrate OCR.
 2. Select **Extract and preview**. Show the page and
    chunk, extraction method, and validation counts. Select **Inspect

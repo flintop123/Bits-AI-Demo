@@ -18,6 +18,7 @@ class FakeQueryService:
         self.district_trends_call = None
         self.nearby_call = None
         self.dashboard_call = None
+        self.dashboard_detail_call = None
         self.intelligence_call = None
         self.catalog_language = None
 
@@ -89,6 +90,10 @@ class FakeQueryService:
             "window_days": days,
             "summary": {"mandi_records": 6899},
         }
+
+    def dashboard_details(self, section, days):
+        self.dashboard_detail_call = (section, days)
+        return {"section": section, "rows": [], "truncated": False}
 
     def market_intelligence(
         self, filters, days, latitude=None, longitude=None, radius_km=75,
@@ -255,6 +260,18 @@ class DataApiTests(unittest.TestCase):
         response = self.client.get("/api/v1/dashboard?days=500")
         self.assertEqual(response.status_code, 400)
         self.assertIn("between 1 and 365", response.json["error"])
+
+    def test_dashboard_details_passes_section_and_window(self):
+        for section in ("dates", "markets", "crop_statistics", "documents"):
+            response = self.client.get(f"/api/v1/dashboard/details?section={section}&days=14")
+            self.assertEqual(response.status_code, 200)
+            self.assertEqual(self.service.dashboard_detail_call, (section, 14))
+            self.assertEqual(response.json, {"section": section, "rows": [], "truncated": False})
+
+    def test_dashboard_details_rejects_unknown_section_and_invalid_window(self):
+        for query in ("section=embedding", "section=markets&days=366", "section=dates&days=abc"):
+            self.assertEqual(self.client.get(f"/api/v1/dashboard/details?{query}").status_code, 400)
+        self.assertIsNone(self.service.dashboard_detail_call)
 
     def test_intelligence_endpoint_passes_locality_window_and_coordinates(self):
         response = self.client.get(

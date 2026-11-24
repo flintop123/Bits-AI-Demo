@@ -8,8 +8,48 @@ const loadingState = document.querySelector("#loading-state");
 const errorState = document.querySelector("#error-state");
 const answerState = document.querySelector("#answer-state");
 
-document.querySelector("#open-react-demo")?.addEventListener("click", () => {
-  questionMode.value = "react";
+const chatDialog = document.querySelector("#agri-chat");
+const chatLauncher = document.querySelector("#ask-agriagent");
+const chatOpeners = document.querySelectorAll("[data-chat-open]");
+let chatReturnFocus = null;
+
+function openChat(opener) {
+  if (opener?.dataset.chatOpen === "react") questionMode.value = "react";
+  if (chatDialog.open) return;
+  chatReturnFocus = opener || chatLauncher;
+  chatDialog.showModal();
+  chatOpeners.forEach((trigger) => trigger.setAttribute("aria-expanded", "true"));
+}
+
+chatOpeners.forEach((trigger) => {
+  trigger.addEventListener("click", (event) => {
+    if (event.ctrlKey || event.metaKey || event.shiftKey || event.altKey) return;
+    event.preventDefault();
+    openChat(trigger);
+  });
+});
+chatDialog.querySelector("[data-chat-close]").addEventListener("click", () => chatDialog.close());
+chatDialog.querySelector("[data-chat-intake]").addEventListener("click", () => {
+  chatReturnFocus = document.querySelector("#viva-upload-heading");
+  chatDialog.close();
+});
+chatDialog.addEventListener("close", () => {
+  chatOpeners.forEach((trigger) => trigger.setAttribute("aria-expanded", "false"));
+  chatReturnFocus?.focus({ preventScroll: true });
+  chatReturnFocus = null;
+});
+
+function openChatAnchor() {
+  if (location.hash === "#ask-heading") openChat(chatLauncher);
+}
+window.addEventListener("hashchange", openChatAnchor);
+openChatAnchor();
+
+const dashboardDetails = new DashboardDetails(document.querySelector("#dashboard"), {
+  ask: (opener, mode) => {
+    questionMode.value = mode;
+    openChat(opener);
+  },
 });
 
 const formatNumber = (value) => new Intl.NumberFormat("en-IN").format(value || 0);
@@ -160,7 +200,8 @@ function renderSources(sources) {
       card.target = "_blank";
       card.rel = "noopener noreferrer";
     }
-    card.append(textElement("strong", source.document_title || source.source_file || "Data source"));
+    const title = source.document_title || source.source_file || "Data source";
+    card.append(textElement("strong", source.citation_id ? `[${source.citation_id}] ${title}` : title));
     const detail = source.page_number ? `Page ${source.page_number}` : (source.source_file || "Source record");
     card.append(textElement("small", detail));
     list.append(card);
@@ -198,7 +239,7 @@ function showLoading() {
   errorState.hidden = true;
   answerState.hidden = true;
   askButton.disabled = true;
-  resultSection.scrollIntoView({ behavior: "smooth", block: "start" });
+  resultSection.scrollIntoView({ block: "start" });
 }
 
 function showError(message) {
@@ -220,9 +261,27 @@ function showAnswer(data) {
   const trace = document.querySelector("#react-trace");
   trace.hidden = !data.react?.tool_called;
   trace.textContent = trace.hidden ? "" : `ReAct tool: ${data.react.tool} · ${data.react.resolution}`;
+  const docChat = data.document_chat;
+  document.querySelector("#document-chat-answer-label").hidden = docChat?.status !== "cited";
+  const docTrace = document.querySelector("#document-chat-trace");
+  docTrace.hidden = !docChat;
+  document.querySelector("#document-chat-outcome").textContent = {
+    cited: "Generated summary. Verify it against the cited source excerpts below.",
+    source_derived: "This answer uses explicitly stated fields from the cited excerpt, without a model-generated summary.",
+    evidence_only: "Exact source excerpts only. A generated summary was not verified.",
+    excerpt_only: "The local model was unavailable. This is an original search excerpt, not a verified answer.",
+    no_evidence: "No answer backed by an exact source excerpt.",
+    greeting: "No retrieval needed.",
+  }[docChat?.status] || "";
+  document.querySelector("#document-chat-queries").replaceChildren(...(docChat?.searches || []).map((search) => {
+    const item = textElement("li", search);
+    item.dir = "auto";
+    return item;
+  }));
   renderFilters(data.filters || {});
   renderSources(data.sources || []);
   renderRecords(data.records || []);
+  if (docChat && data.records?.length) document.querySelector("#records-block").open = true;
 }
 
 const svgNamespace = "http://www.w3.org/2000/svg";
@@ -251,6 +310,8 @@ function renderDailyChart(records) {
   stage.replaceChildren();
   if (!records.length) {
     stage.append(textElement("p", "No daily collection records are available."));
+    setText("#daily-chart-total", "");
+    setText("#daily-insight", "There are no collection dates to explore.");
     return;
   }
   const width = 760;
@@ -261,7 +322,11 @@ function renderDailyChart(records) {
   const maximum = Math.max(...records.map((item) => item.records || 0), 1);
   const slot = innerWidth / records.length;
   const barWidth = Math.max(3, Math.min(22, slot * 0.68));
-  const svg = svgElement("svg", { viewBox: `0 0 ${width} ${height}`, "aria-hidden": "true" });
+  const svg = svgElement("svg", {
+    viewBox: `0 0 ${width} ${height}`, role: "group",
+    "aria-label": "Collection dates. Use arrow keys to move between dates; Enter opens details.",
+  });
+  const controls = [];
 
   [0, 0.25, 0.5, 0.75, 1].forEach((fraction) => {
     const y = margin.top + innerHeight * (1 - fraction);
@@ -277,12 +342,36 @@ function renderDailyChart(records) {
     const barHeight = value / maximum * innerHeight;
     const x = margin.left + slot * index + (slot - barWidth) / 2;
     const y = margin.top + innerHeight - barHeight;
-    const group = svgElement("g");
-    const bar = svgElement("rect", { x, y, width: barWidth, height: barHeight, rx: 3, class: "daily-bar" });
-    const title = svgElement("title");
-    title.textContent = `${item.date}: ${formatNumber(value)} records, ${item.market_count || 0} markets`;
-    bar.append(title);
-    group.append(bar);
+    const group = svgElement("g", {
+      role: "button", tabindex: index === 0 ? "0" : "-1", "data-chart-date": item.date,
+      "aria-label": dashboardDetails.dateLabel(item), "aria-pressed": "false", class: "daily-control",
+    });
+    const hit = svgElement("rect", {
+      x: margin.left + slot * index, y: margin.top, width: slot, height: innerHeight, class: "daily-hit",
+    });
+    const bar = svgElement("rect", {
+      x, y, width: barWidth, height: barHeight, rx: 3, class: "daily-bar", "aria-hidden": "true",
+    });
+    group.append(hit, bar);
+    group.addEventListener("pointerenter", () => dashboardDetails.previewDate(item));
+    group.addEventListener("pointerleave", () => dashboardDetails.previewDate(null));
+    group.addEventListener("focus", () => {
+      controls.forEach((control) => control.setAttribute("tabindex", control === group ? "0" : "-1"));
+      dashboardDetails.previewDate(item);
+    });
+    group.addEventListener("click", () => dashboardDetails.open("dates", group, item.date));
+    group.addEventListener("keydown", (event) => {
+      const movement = {ArrowLeft: index - 1, ArrowRight: index + 1,
+        Home: 0, End: controls.length - 1}[event.key];
+      if (movement != null) {
+        event.preventDefault();
+        controls[Math.max(0, Math.min(controls.length - 1, movement))]?.focus();
+      } else if (event.key === "Enter" || event.key === " ") {
+        event.preventDefault();
+        dashboardDetails.open("dates", group, item.date);
+      }
+    });
+    controls.push(group);
     if (index % labelEvery === 0 || index === records.length - 1) {
       const label = svgElement("text", { x: x + barWidth / 2, y: height - 15, class: "chart-axis-label", "text-anchor": "middle" });
       label.textContent = shortDate(item.date);
@@ -291,6 +380,7 @@ function renderDailyChart(records) {
     svg.append(group);
   });
   stage.append(svg);
+  dashboardDetails.updateDateSelection();
   const total = records.reduce((sum, item) => sum + (item.records || 0), 0);
   setText("#daily-chart-total", `${formatNumber(total)} records shown`);
 }
@@ -348,12 +438,12 @@ function renderMarketMap(geospatial) {
 }
 
 function renderCoverage(summary) {
-  const percent = summary.geospatial_coverage_percent || 0;
+  const percent = summary.geospatial_coverage_percent;
   const ring = document.querySelector("#coverage-ring");
-  ring.style.setProperty("--coverage", `${percent * 3.6}deg`);
-  setText("#coverage-percent", `${percent}%`);
-  setText("#coverage-verified", formatNumber(summary.verified_locations));
-  setText("#coverage-unresolved", formatNumber(summary.unresolved_locations));
+  ring.style.setProperty("--coverage", `${(Number.isFinite(percent) ? percent : 0) * 3.6}deg`);
+  setText("#coverage-percent", Number.isFinite(percent) ? `${percent}%` : "—");
+  setText("#coverage-verified", dashboardDetails.number(summary.verified_locations));
+  setText("#coverage-unresolved", dashboardDetails.number(summary.unresolved_locations));
 }
 
 function renderPipeline(pipeline) {
@@ -406,17 +496,18 @@ function renderQuality(quality, languages) {
 }
 
 function renderDashboard(data) {
+  dashboardDetails.update(data);
   const summary = data.summary || {};
-  setText("#kpi-observations", formatNumber(summary.mandi_records));
+  setText("#kpi-observations", dashboardDetails.number(summary.mandi_records));
   setText("#kpi-date-range", summary.earliest_date && summary.latest_date ? `${summary.earliest_date} to ${summary.latest_date}` : "Official daily records");
-  setText("#kpi-dates", formatNumber(summary.dates_covered));
+  setText("#kpi-dates", dashboardDetails.number(summary.dates_covered));
   setText("#kpi-latest-date", `Latest date ${summary.latest_date || "—"}`);
-  setText("#kpi-markets", formatNumber(summary.markets));
-  setText("#kpi-districts", `Across ${formatNumber(summary.districts)} districts · ${formatNumber(summary.crops)} crops`);
-  setText("#kpi-locations", formatNumber(summary.verified_locations));
-  setText("#kpi-unresolved", `${formatNumber(summary.unresolved_locations)} unresolved, not guessed`);
-  setText("#kpi-statistics", formatNumber(summary.crop_statistics));
-  setText("#kpi-documents", formatNumber(summary.document_chunks));
+  setText("#kpi-markets", dashboardDetails.number(summary.markets));
+  setText("#kpi-districts", `Across ${dashboardDetails.number(summary.districts)} districts · ${dashboardDetails.number(summary.crops)} crops`);
+  setText("#kpi-locations", dashboardDetails.number(summary.verified_locations));
+  setText("#kpi-unresolved", `${dashboardDetails.number(summary.unresolved_locations)} with unverified coordinates`);
+  setText("#kpi-statistics", dashboardDetails.number(summary.crop_statistics));
+  setText("#kpi-documents", dashboardDetails.number(summary.document_chunks));
   renderCoverage(summary);
   renderDailyChart((data.series || {}).daily_collection || []);
   renderRankBars("#crop-bars", (data.series || {}).top_crops || []);
@@ -426,18 +517,26 @@ function renderDashboard(data) {
   renderQuality(data.quality || {}, (data.series || {}).document_languages || []);
 }
 
+let dashboardLoad = null;
+
 async function loadDashboard() {
+  dashboardLoad?.abort();
+  const load = new AbortController();
+  dashboardLoad = load;
   const status = document.querySelector("#dashboard-status");
   const days = document.querySelector("#dashboard-window").value;
   status.textContent = "Loading current MongoDB statistics…";
   try {
-    const response = await fetch(`/api/v1/dashboard?days=${encodeURIComponent(days)}`);
+    const response = await fetch(`/api/v1/dashboard?days=${encodeURIComponent(days)}`, {signal: load.signal});
     const data = await response.json();
+    if (load.signal.aborted) return;
     if (!response.ok) throw new Error(data.error || "Dashboard request failed.");
     renderDashboard(data);
     status.textContent = `Updated from live collections · ${data.window_days} most recent data days shown`;
   } catch (error) {
-    status.textContent = error.message || "Dashboard data could not be loaded.";
+    if (!load.signal.aborted) status.textContent = error.message || "Dashboard data could not be loaded.";
+  } finally {
+    if (dashboardLoad === load) dashboardLoad = null;
   }
 }
 
@@ -600,13 +699,13 @@ intelligenceCatalogLanguage.addEventListener("change", applyIntelligenceCatalogL
 form.addEventListener("submit", async (event) => {
   event.preventDefault();
   const question = questionInput.value.trim();
-  if (!question) return;
+  if (!question || askButton.disabled) return;
   showLoading();
   try {
-    const react = questionMode.value === "react";
-    const response = await fetch(react ? "/api/v1/viva/react" : "/api/v1/ask", {
+    const localPath = {react: "react", document_chat: "document-chat"}[questionMode.value] || "ask";
+    const response = await fetch(`/api/v1/viva/${localPath}`, {
       method: "POST",
-      headers: { "Content-Type": "application/json", ...(react ? { "X-Agri-Dashboard": "1" } : {}) },
+      headers: { "Content-Type": "application/json", "X-Agri-Dashboard": "1" },
       body: JSON.stringify({
         question,
         answer_language: answerLanguage.value,
@@ -632,6 +731,13 @@ document.querySelectorAll("[data-question]").forEach((button) => {
     questionInput.dispatchEvent(new Event("input"));
     questionInput.focus();
   });
+});
+
+document.querySelector("#document-chat-example").addEventListener("click", () => {
+  questionMode.value = "document_chat";
+  questionInput.value = "What does the report say about Bihar’s organic farming corridor?";
+  questionInput.dispatchEvent(new Event("input"));
+  questionInput.focus();
 });
 
 loadHealth();
