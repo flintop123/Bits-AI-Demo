@@ -1,6 +1,7 @@
 from contextlib import nullcontext
 import json
 from pathlib import Path
+import re
 from unittest import TestCase
 from unittest.mock import Mock, patch
 
@@ -10,7 +11,7 @@ from pymongo.errors import OperationFailure
 from data_api import create_app
 from services.dashboard_document_chat import (
     DashboardDocumentChat, DocumentChatUnavailable, MongoDocumentRetriever,
-    _GroundedAnswer, _LocalOllama,
+    _GroundedAnswer, _LocalOllama, _sentence_spans,
 )
 
 
@@ -38,8 +39,9 @@ QUOTE_HI = ("यह मुख्य रूप से बिहार के म�
 
 
 class ScriptedModel:
-    def __init__(self, phrases, summary, quotes):
-        self.phrases, self.summary, self.quotes = phrases, summary, quotes
+    def __init__(self, phrases, summary, target_quote=None):
+        self.phrases, self.summary, self.target_quote = phrases, summary, target_quote
+        self.evidence = None
         self.calls = []
 
     def with_structured_output(self, schema):
@@ -47,7 +49,15 @@ class ScriptedModel:
             self.calls.append((schema.__name__, messages))
             if schema.__name__ == "QuestionSuggestions":
                 return {"questions": self.phrases}
-            return {"summary": self.summary, "evidence": self.quotes}
+            evidence = self.evidence
+            if evidence is None:
+                evidence = [
+                    int(match[1]) for match in re.finditer(
+                        r"(?m)^\[([0-9]+)\] [^\n]+\n((?s:.*?))(?=\n\n\[[0-9]+\] |\Z)",
+                        messages[-1].content,
+                    ) if self.target_quote and self.target_quote in match[2]
+                ][:1]
+            return {"summary": self.summary, "evidence": evidence}
         return Mock(invoke=invoke)
 
 
@@ -57,7 +67,7 @@ class DocumentChatTests(TestCase):
         query.search_agriculture_documents.side_effect = (
             lambda term, limit: [row] if matching in term else []
         )
-        model = ScriptedModel(phrases, summary, [{"passage": 1, "quote": quote}])
+        model = ScriptedModel(phrases, summary, quote)
         return DashboardDocumentChat(lambda: nullcontext(query), lambda: model), query, model
 
     @patch("conn.milvusDbConnector.RecZillizVector.connect",
@@ -82,7 +92,7 @@ class DocumentChatTests(TestCase):
         self.assertEqual(got.json["document_chat"]["provider"], "mongodb_keyword")
         self.assertIn("35%", got.json["answer"])
         self.assertIn("₹10 लाख", got.json["answer"])
-        self.assertEqual(got.json["records"][0]["content"], QUOTE_EN)
+        self.assertIn(QUOTE_EN, got.json["records"][0]["content"])
         self.assertEqual(got.json["sources"][0]["source"], sample["source_url"])
         self.assertEqual(got.json["sources"][0]["page_number"], 11)
         self.assertEqual(got.json["sources"][0]["chunk_index"], 0)
@@ -105,13 +115,13 @@ class DocumentChatTests(TestCase):
         got = chat.ask(QUERY_EN, "en")
         self.assertEqual(got["document_chat"]["status"], "cited")
         self.assertIn("Mithila", got["answer"])
-        self.assertEqual(got["records"][0]["content"], QUOTE_HI)
+        self.assertIn(QUOTE_HI, got["records"][0]["content"])
         self.assertEqual(got["sources"][0]["source"], sample["source_url"])
 
     def test_matches_public_annual_scheme_saved_citation(self):
         sample = pinned_row("bihar_annual_scheme_2022_23.pdf", 14)
         chat, _, _ = self.fixture(
-            sample, "organic", "The report says the corridor comprises 13 districts [1].",
+            sample, "organic", "The report says the corridor comprises 13 districts.",
             "This corridor comprises 13 districts of Bihar.",
             ["Organic corridor districts", "Bihar organic corridor", "जैविक गलियारा जिले", "जैविक कॉरिडोर बिहार"],
         )
@@ -120,7 +130,7 @@ class DocumentChatTests(TestCase):
         self.assertEqual(got["sources"][0]["page_number"], 14)
         self.assertIn("13 districts", got["answer"])
 
-    def test_suppresses_unverified_numeric_summary_and_refuses_invented_quote(self):
+    def test_suppresses_unverified_numeric_summary_and_refuses_unknown_id(self):
         sample = pinned_row(SOURCE_EN, 11)
         chat, _, model = self.fixture(
             sample, "PMFME".casefold(), "Maximum is ₹99 lakh.", QUOTE_EN,
@@ -129,16 +139,17 @@ class DocumentChatTests(TestCase):
         got = chat.ask("What support does PMFME provide?")
         self.assertEqual(got["document_chat"]["status"], "evidence_only")
         self.assertNotIn("99", got["answer"])
-        self.assertEqual(got["records"][0]["content"], QUOTE_EN)
+        self.assertIn(QUOTE_EN, got["records"][0]["content"])
         model.summary = "The source is https://example.test/model-invented."
         got = chat.ask("What support does PMFME provide?")
         self.assertEqual(got["document_chat"]["status"], "evidence_only")
         self.assertNotIn("model-invented", got["answer"])
-        model.quotes = [{"passage": 1, "quote": "The scheme gives everyone ₹99 lakh."}]
+        accepted_id = got["sources"][0]["citation_id"]
+        model.evidence = [accepted_id, 999]
         got = chat.ask("What support does PMFME provide?")
         self.assertEqual(got["document_chat"]["status"], "no_evidence")
         self.assertEqual(got["sources"], [])
-        model.quotes = [{"passage": 2, "quote": QUOTE_EN}]
+        model.evidence = []
         got = chat.ask("What support does PMFME provide?")
         self.assertEqual(got["document_chat"]["status"], "no_evidence")
 
@@ -283,11 +294,11 @@ class DocumentChatTests(TestCase):
         self.assertTrue(all(call.kwargs == {"limit": 12}
                             for call in query.search_agriculture_documents.call_args_list))
         model = ScriptedModel(suggestions, "परियोजना लागत पर 35% और अधिकतम ₹10 लाख प्रति इकाई।",
-                              [{"passage": 1, "quote": QUOTE_EN}])
+                              QUOTE_EN)
         chat = DashboardDocumentChat(lambda: nullcontext(query), lambda: model)
         answer = chat.ask(QUERY_HI, "hi")
         self.assertEqual(answer["document_chat"]["status"], "cited")
-        self.assertEqual(answer["records"][0]["content"], QUOTE_EN)
+        self.assertIn(QUOTE_EN, answer["records"][0]["content"])
         self.assertEqual(answer["sources"][0]["page_number"], 11)
 
     def test_named_program_never_uses_nearby_wrong_program_when_requested_evidence_absent(self):
@@ -296,7 +307,7 @@ class DocumentChatTests(TestCase):
         query.search_agriculture_documents.return_value = wrong_program
         model = ScriptedModel(
             ["BAIPP financial assistance subsidy", "individual processing projects",
-             "खाद्य इकाई सहायता", "पूंजी सहायता"], "35%", [{"passage": 1, "quote": QUOTE_EN}],
+             "खाद्य इकाई सहायता", "पूंजी सहायता"], "35%", QUOTE_EN,
         )
         chat = DashboardDocumentChat(lambda: nullcontext(query), lambda: model)
         answer = chat.ask(QUERY_HI, "hi")
@@ -313,3 +324,36 @@ class DocumentChatTests(TestCase):
             "subQuestions": ["PMFME processing grant", "PMFME credit subsidy", "प्रसंस्करण सहायता", "वित्तीय अनुदान"],
         })
         self.assertEqual(results["retrieved_documents"], [])
+
+    def test_span_selection_copies_real_source_punctuation_not_model_paraphrase(self):
+        from pydantic import ValidationError
+
+        sample = pinned_row(SOURCE_EN, 11)
+        variants = ["PMFME subsidy cost maximum", "PMFME credit-linked subsidy units",
+                    "पीएमएफएमई योजना राशि", "खाद्य सहायता"]
+        chat, _, model = self.fixture(
+            sample, "pmfme", "पात्र लागत पर 35% सहायता और अधिकतम Rs. 10 लाख।", QUOTE_EN, variants,
+        )
+        result = chat.ask(QUERY_HI, "hi")
+        self.assertEqual(result["document_chat"]["status"], "cited")
+        self.assertIn("Rs. 10", result["answer"])
+        offered = result["records"][0]["content"]
+        self.assertIn("Rs.10", offered)
+        self.assertIn("35%", offered)
+        self.assertNotIn("Rs. 10", offered)
+        self.assertIn(offered, " ".join(sample["content"].split()))
+        self.assertEqual(result["records"][0]["page_number"], 11)
+        self.assertEqual(result["records"][0]["chunk_index"], 0)
+        self.assertEqual(_GroundedAnswer.model_json_schema()["properties"]["evidence"]["items"]["type"], "integer")
+        with self.assertRaises(ValidationError):
+            _GroundedAnswer.model_validate({"evidence": [{"passage": 1, "quote": offered}]})
+        with self.assertRaises(ValidationError):
+            _GroundedAnswer.model_validate({"evidence": ["1"]})
+
+    def test_source_span_split_keeps_decimal_and_currency_abbreviation_intact(self):
+        source = ("A long setup sentence. Rate was 4.5%. Assistance per unit is Rs. 10 lakh "
+                  "where applicable. पात्रता लागू है। अगली सूचना स्पष्ट है।")
+        spans = list(_sentence_spans(source))
+        self.assertTrue(any("Rs. 10 lakh where applicable." in item for item in spans))
+        self.assertTrue(any("4.5%" in item for item in spans))
+        self.assertTrue(all(item in source and len(item) <= 400 for item in spans))
