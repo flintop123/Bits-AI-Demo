@@ -25,7 +25,7 @@ OLLAMA_MODEL = os.getenv("OLLAMA_MODEL", "qwen3:4b")
 MONGODB_URI = os.getenv("MONGODB_URI", "mongodb://localhost:27017/")
 
 
-def get_chat_model(temperature=0.0):
+def get_chat_model(temperature=0.0, *, timeout=None, reasoning=None):
     """Return the shared Ollama chat model used by the ReAct agent.
 
     Imported lazily so that modules which only need the plain config
@@ -34,4 +34,7 @@ def get_chat_model(temperature=0.0):
     """
     from langchain_ollama import ChatOllama
 
-    return ChatOllama(model=OLLAMA_MODEL, base_url=OLLAMA_URL, temperature=temperature)
+    options = {} if timeout is None else {"client_kwargs": {"timeout": timeout}}
+    if reasoning is not None:
+        options["reasoning"] = reasoning
+    return ChatOllama(model=OLLAMA_MODEL, base_url=OLLAMA_URL, temperature=temperature, **options)

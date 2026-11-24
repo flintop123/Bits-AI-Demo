@@ -407,6 +407,4499 @@
       "records": 16
     }
   ],
+  "reporting_series": {
+    "daily": [
+      {
+        "period_start": "2026-07-21",
+        "records": 99,
+        "frequency": "daily"
+      },
+      {
+        "period_start": "2026-07-22",
+        "records": 113,
+        "frequency": "daily"
+      },
+      {
+        "period_start": "2026-07-23",
+        "records": 107,
+        "frequency": "daily"
+      },
+      {
+        "period_start": "2026-07-24",
+        "records": 95,
+        "frequency": "daily"
+      },
+      {
+        "period_start": "2026-07-25",
+        "records": 102,
+        "frequency": "daily"
+      },
+      {
+        "period_start": "2026-07-26",
+        "records": 82,
+        "frequency": "daily"
+      },
+      {
+        "period_start": "2026-07-27",
+        "records": 115,
+        "frequency": "daily"
+      },
+      {
+        "period_start": "2026-07-28",
+        "records": 111,
+        "frequency": "daily"
+      },
+      {
+        "period_start": "2026-07-29",
+        "records": 116,
+        "frequency": "daily"
+      },
+      {
+        "period_start": "2026-07-30",
+        "records": 112,
+        "frequency": "daily"
+      },
+      {
+        "period_start": "2026-07-31",
+        "records": 110,
+        "frequency": "daily"
+      },
+      {
+        "period_start": "2026-08-01",
+        "records": 115,
+        "frequency": "daily"
+      },
+      {
+        "period_start": "2026-08-02",
+        "records": 89,
+        "frequency": "daily"
+      },
+      {
+        "period_start": "2026-08-03",
+        "records": 94,
+        "frequency": "daily"
+      },
+      {
+        "period_start": "2026-08-04",
+        "records": 85,
+        "frequency": "daily"
+      },
+      {
+        "period_start": "2026-08-05",
+        "records": 119,
+        "frequency": "daily"
+      },
+      {
+        "period_start": "2026-08-06",
+        "records": 120,
+        "frequency": "daily"
+      },
+      {
+        "period_start": "2026-08-07",
+        "records": 101,
+        "frequency": "daily"
+      },
+      {
+        "period_start": "2026-08-08",
+        "records": 125,
+        "frequency": "daily"
+      },
+      {
+        "period_start": "2026-08-09",
+        "records": 67,
+        "frequency": "daily"
+      },
+      {
+        "period_start": "2026-08-10",
+        "records": 107,
+        "frequency": "daily"
+      },
+      {
+        "period_start": "2026-08-11",
+        "records": 107,
+        "frequency": "daily"
+      },
+      {
+        "period_start": "2026-08-12",
+        "records": 123,
+        "frequency": "daily"
+      },
+      {
+        "period_start": "2026-08-13",
+        "records": 95,
+        "frequency": "daily"
+      },
+      {
+        "period_start": "2026-08-14",
+        "records": 62,
+        "frequency": "daily"
+      },
+      {
+        "period_start": "2026-08-15",
+        "records": 65,
+        "frequency": "daily"
+      },
+      {
+        "period_start": "2026-08-16",
+        "records": 58,
+        "frequency": "daily"
+      },
+      {
+        "period_start": "2026-08-17",
+        "records": 102,
+        "frequency": "daily"
+      },
+      {
+        "period_start": "2026-08-18",
+        "records": 104,
+        "frequency": "daily"
+      },
+      {
+        "period_start": "2026-08-19",
+        "records": 82,
+        "frequency": "daily"
+      },
+      {
+        "period_start": "2026-08-20",
+        "records": 102,
+        "frequency": "daily"
+      },
+      {
+        "period_start": "2026-08-21",
+        "records": 85,
+        "frequency": "daily"
+      },
+      {
+        "period_start": "2026-08-22",
+        "records": 97,
+        "frequency": "daily"
+      },
+      {
+        "period_start": "2026-08-23",
+        "records": 77,
+        "frequency": "daily"
+      },
+      {
+        "period_start": "2026-08-24",
+        "records": 89,
+        "frequency": "daily"
+      },
+      {
+        "period_start": "2026-08-25",
+        "records": 75,
+        "frequency": "daily"
+      },
+      {
+        "period_start": "2026-08-26",
+        "records": 69,
+        "frequency": "daily"
+      },
+      {
+        "period_start": "2026-08-27",
+        "records": 89,
+        "frequency": "daily"
+      },
+      {
+        "period_start": "2026-08-28",
+        "records": 83,
+        "frequency": "daily"
+      },
+      {
+        "period_start": "2026-08-29",
+        "records": 84,
+        "frequency": "daily"
+      },
+      {
+        "period_start": "2026-08-30",
+        "records": 53,
+        "frequency": "daily"
+      },
+      {
+        "period_start": "2026-08-31",
+        "records": 88,
+        "frequency": "daily"
+      },
+      {
+        "period_start": "2026-09-01",
+        "records": 102,
+        "frequency": "daily"
+      },
+      {
+        "period_start": "2026-09-02",
+        "records": 71,
+        "frequency": "daily"
+      },
+      {
+        "period_start": "2026-09-03",
+        "records": 70,
+        "frequency": "daily"
+      },
+      {
+        "period_start": "2026-09-04",
+        "records": 57,
+        "frequency": "daily"
+      },
+      {
+        "period_start": "2026-09-05",
+        "records": 66,
+        "frequency": "daily"
+      },
+      {
+        "period_start": "2026-09-06",
+        "records": 89,
+        "frequency": "daily"
+      },
+      {
+        "period_start": "2026-09-07",
+        "records": 98,
+        "frequency": "daily"
+      },
+      {
+        "period_start": "2026-09-08",
+        "records": 71,
+        "frequency": "daily"
+      },
+      {
+        "period_start": "2026-09-09",
+        "records": 74,
+        "frequency": "daily"
+      },
+      {
+        "period_start": "2026-09-10",
+        "records": 84,
+        "frequency": "daily"
+      },
+      {
+        "period_start": "2026-09-11",
+        "records": 88,
+        "frequency": "daily"
+      },
+      {
+        "period_start": "2026-09-12",
+        "records": 86,
+        "frequency": "daily"
+      },
+      {
+        "period_start": "2026-09-13",
+        "records": 55,
+        "frequency": "daily"
+      },
+      {
+        "period_start": "2026-09-14",
+        "records": 92,
+        "frequency": "daily"
+      },
+      {
+        "period_start": "2026-09-15",
+        "records": 100,
+        "frequency": "daily"
+      },
+      {
+        "period_start": "2026-09-16",
+        "records": 96,
+        "frequency": "daily"
+      },
+      {
+        "period_start": "2026-09-17",
+        "records": 88,
+        "frequency": "daily"
+      },
+      {
+        "period_start": "2026-09-18",
+        "records": 96,
+        "frequency": "daily"
+      },
+      {
+        "period_start": "2026-09-19",
+        "records": 58,
+        "frequency": "daily"
+      },
+      {
+        "period_start": "2026-09-20",
+        "records": 67,
+        "frequency": "daily"
+      },
+      {
+        "period_start": "2026-09-21",
+        "records": 91,
+        "frequency": "daily"
+      },
+      {
+        "period_start": "2026-09-22",
+        "records": 81,
+        "frequency": "daily"
+      },
+      {
+        "period_start": "2026-09-23",
+        "records": 77,
+        "frequency": "daily"
+      },
+      {
+        "period_start": "2026-09-24",
+        "records": 75,
+        "frequency": "daily"
+      },
+      {
+        "period_start": "2026-09-25",
+        "records": 79,
+        "frequency": "daily"
+      },
+      {
+        "period_start": "2026-09-26",
+        "records": 75,
+        "frequency": "daily"
+      },
+      {
+        "period_start": "2026-09-27",
+        "records": 67,
+        "frequency": "daily"
+      },
+      {
+        "period_start": "2026-09-28",
+        "records": 68,
+        "frequency": "daily"
+      },
+      {
+        "period_start": "2026-09-29",
+        "records": 56,
+        "frequency": "daily"
+      },
+      {
+        "period_start": "2026-09-30",
+        "records": 63,
+        "frequency": "daily"
+      },
+      {
+        "period_start": "2026-10-01",
+        "records": 28,
+        "frequency": "daily"
+      },
+      {
+        "period_start": "2026-10-02",
+        "records": 13,
+        "frequency": "daily"
+      },
+      {
+        "period_start": "2026-10-03",
+        "records": 14,
+        "frequency": "daily"
+      },
+      {
+        "period_start": "2026-10-04",
+        "records": 16,
+        "frequency": "daily"
+      },
+      {
+        "period_start": "2026-10-05",
+        "records": 60,
+        "frequency": "daily"
+      },
+      {
+        "period_start": "2026-10-06",
+        "records": 51,
+        "frequency": "daily"
+      },
+      {
+        "period_start": "2026-10-07",
+        "records": 42,
+        "frequency": "daily"
+      },
+      {
+        "period_start": "2026-10-08",
+        "records": 49,
+        "frequency": "daily"
+      },
+      {
+        "period_start": "2026-10-09",
+        "records": 49,
+        "frequency": "daily"
+      },
+      {
+        "period_start": "2026-10-10",
+        "records": 74,
+        "frequency": "daily"
+      },
+      {
+        "period_start": "2026-10-11",
+        "records": 22,
+        "frequency": "daily"
+      },
+      {
+        "period_start": "2026-10-12",
+        "records": 69,
+        "frequency": "daily"
+      },
+      {
+        "period_start": "2026-10-13",
+        "records": 133,
+        "frequency": "daily"
+      },
+      {
+        "period_start": "2026-10-14",
+        "records": 121,
+        "frequency": "daily"
+      },
+      {
+        "period_start": "2026-10-15",
+        "records": 101,
+        "frequency": "daily"
+      },
+      {
+        "period_start": "2026-10-16",
+        "records": 132,
+        "frequency": "daily"
+      },
+      {
+        "period_start": "2026-10-17",
+        "records": 42,
+        "frequency": "daily"
+      },
+      {
+        "period_start": "2026-10-18",
+        "records": 16,
+        "frequency": "daily"
+      }
+    ],
+    "weekly": [
+      {
+        "period_start": "2026-07-20",
+        "records": 598,
+        "frequency": "weekly"
+      },
+      {
+        "period_start": "2026-07-27",
+        "records": 768,
+        "frequency": "weekly"
+      },
+      {
+        "period_start": "2026-08-03",
+        "records": 711,
+        "frequency": "weekly"
+      },
+      {
+        "period_start": "2026-08-10",
+        "records": 617,
+        "frequency": "weekly"
+      },
+      {
+        "period_start": "2026-08-17",
+        "records": 649,
+        "frequency": "weekly"
+      },
+      {
+        "period_start": "2026-08-24",
+        "records": 542,
+        "frequency": "weekly"
+      },
+      {
+        "period_start": "2026-08-31",
+        "records": 543,
+        "frequency": "weekly"
+      },
+      {
+        "period_start": "2026-09-07",
+        "records": 556,
+        "frequency": "weekly"
+      },
+      {
+        "period_start": "2026-09-14",
+        "records": 597,
+        "frequency": "weekly"
+      },
+      {
+        "period_start": "2026-09-21",
+        "records": 545,
+        "frequency": "weekly"
+      },
+      {
+        "period_start": "2026-09-28",
+        "records": 258,
+        "frequency": "weekly"
+      },
+      {
+        "period_start": "2026-10-05",
+        "records": 347,
+        "frequency": "weekly"
+      },
+      {
+        "period_start": "2026-10-12",
+        "records": 614,
+        "frequency": "weekly"
+      }
+    ],
+    "monthly": [
+      {
+        "period_start": "2026-07-01",
+        "records": 1162,
+        "frequency": "monthly"
+      },
+      {
+        "period_start": "2026-08-01",
+        "records": 2811,
+        "frequency": "monthly"
+      },
+      {
+        "period_start": "2026-09-01",
+        "records": 2340,
+        "frequency": "monthly"
+      },
+      {
+        "period_start": "2026-10-01",
+        "records": 1032,
+        "frequency": "monthly"
+      }
+    ]
+  },
+  "district_trends": {
+    "crop": "आलू",
+    "unit": "quintal",
+    "districts": [
+      "पूर्वी चंपारण",
+      "बेगूसराय",
+      "मधुबनी",
+      "मुजफ्फरपुर",
+      "सुपौल",
+      "सारण"
+    ],
+    "frequencies": {
+      "daily": [
+        {
+          "district": "पूर्वी चंपारण",
+          "period_start": "2026-07-21",
+          "average_modal_price": 1166.67,
+          "observation_count": 3,
+          "frequency": "daily"
+        },
+        {
+          "district": "पूर्वी चंपारण",
+          "period_start": "2026-07-22",
+          "average_modal_price": 1250.0,
+          "observation_count": 4,
+          "frequency": "daily"
+        },
+        {
+          "district": "पूर्वी चंपारण",
+          "period_start": "2026-07-23",
+          "average_modal_price": 1300.0,
+          "observation_count": 3,
+          "frequency": "daily"
+        },
+        {
+          "district": "पूर्वी चंपारण",
+          "period_start": "2026-07-24",
+          "average_modal_price": 1275.0,
+          "observation_count": 4,
+          "frequency": "daily"
+        },
+        {
+          "district": "पूर्वी चंपारण",
+          "period_start": "2026-07-25",
+          "average_modal_price": 1250.0,
+          "observation_count": 4,
+          "frequency": "daily"
+        },
+        {
+          "district": "पूर्वी चंपारण",
+          "period_start": "2026-07-26",
+          "average_modal_price": 1250.0,
+          "observation_count": 4,
+          "frequency": "daily"
+        },
+        {
+          "district": "पूर्वी चंपारण",
+          "period_start": "2026-07-27",
+          "average_modal_price": 1225.0,
+          "observation_count": 4,
+          "frequency": "daily"
+        },
+        {
+          "district": "पूर्वी चंपारण",
+          "period_start": "2026-07-28",
+          "average_modal_price": 1250.0,
+          "observation_count": 4,
+          "frequency": "daily"
+        },
+        {
+          "district": "पूर्वी चंपारण",
+          "period_start": "2026-07-29",
+          "average_modal_price": 1250.0,
+          "observation_count": 4,
+          "frequency": "daily"
+        },
+        {
+          "district": "पूर्वी चंपारण",
+          "period_start": "2026-07-30",
+          "average_modal_price": 1266.67,
+          "observation_count": 3,
+          "frequency": "daily"
+        },
+        {
+          "district": "पूर्वी चंपारण",
+          "period_start": "2026-07-31",
+          "average_modal_price": 1250.0,
+          "observation_count": 4,
+          "frequency": "daily"
+        },
+        {
+          "district": "पूर्वी चंपारण",
+          "period_start": "2026-08-01",
+          "average_modal_price": 1400.0,
+          "observation_count": 1,
+          "frequency": "daily"
+        },
+        {
+          "district": "पूर्वी चंपारण",
+          "period_start": "2026-08-02",
+          "average_modal_price": 1300.0,
+          "observation_count": 2,
+          "frequency": "daily"
+        },
+        {
+          "district": "पूर्वी चंपारण",
+          "period_start": "2026-08-03",
+          "average_modal_price": 1266.67,
+          "observation_count": 3,
+          "frequency": "daily"
+        },
+        {
+          "district": "पूर्वी चंपारण",
+          "period_start": "2026-08-04",
+          "average_modal_price": 1266.67,
+          "observation_count": 3,
+          "frequency": "daily"
+        },
+        {
+          "district": "पूर्वी चंपारण",
+          "period_start": "2026-08-05",
+          "average_modal_price": 1266.67,
+          "observation_count": 3,
+          "frequency": "daily"
+        },
+        {
+          "district": "पूर्वी चंपारण",
+          "period_start": "2026-08-06",
+          "average_modal_price": 1225.0,
+          "observation_count": 4,
+          "frequency": "daily"
+        },
+        {
+          "district": "पूर्वी चंपारण",
+          "period_start": "2026-08-07",
+          "average_modal_price": 1266.67,
+          "observation_count": 3,
+          "frequency": "daily"
+        },
+        {
+          "district": "पूर्वी चंपारण",
+          "period_start": "2026-08-08",
+          "average_modal_price": 1166.67,
+          "observation_count": 3,
+          "frequency": "daily"
+        },
+        {
+          "district": "पूर्वी चंपारण",
+          "period_start": "2026-08-09",
+          "average_modal_price": 1225.0,
+          "observation_count": 4,
+          "frequency": "daily"
+        },
+        {
+          "district": "पूर्वी चंपारण",
+          "period_start": "2026-08-10",
+          "average_modal_price": 1300.0,
+          "observation_count": 3,
+          "frequency": "daily"
+        },
+        {
+          "district": "पूर्वी चंपारण",
+          "period_start": "2026-08-11",
+          "average_modal_price": 1350.0,
+          "observation_count": 2,
+          "frequency": "daily"
+        },
+        {
+          "district": "पूर्वी चंपारण",
+          "period_start": "2026-08-12",
+          "average_modal_price": 1300.0,
+          "observation_count": 3,
+          "frequency": "daily"
+        },
+        {
+          "district": "पूर्वी चंपारण",
+          "period_start": "2026-08-13",
+          "average_modal_price": 1300.0,
+          "observation_count": 3,
+          "frequency": "daily"
+        },
+        {
+          "district": "पूर्वी चंपारण",
+          "period_start": "2026-08-14",
+          "average_modal_price": 1450.0,
+          "observation_count": 1,
+          "frequency": "daily"
+        },
+        {
+          "district": "पूर्वी चंपारण",
+          "period_start": "2026-08-15",
+          "average_modal_price": 1200.0,
+          "observation_count": 3,
+          "frequency": "daily"
+        },
+        {
+          "district": "पूर्वी चंपारण",
+          "period_start": "2026-08-16",
+          "average_modal_price": 1200.0,
+          "observation_count": 2,
+          "frequency": "daily"
+        },
+        {
+          "district": "पूर्वी चंपारण",
+          "period_start": "2026-08-17",
+          "average_modal_price": 1250.0,
+          "observation_count": 4,
+          "frequency": "daily"
+        },
+        {
+          "district": "पूर्वी चंपारण",
+          "period_start": "2026-08-18",
+          "average_modal_price": 1250.0,
+          "observation_count": 4,
+          "frequency": "daily"
+        },
+        {
+          "district": "पूर्वी चंपारण",
+          "period_start": "2026-08-19",
+          "average_modal_price": 1300.0,
+          "observation_count": 3,
+          "frequency": "daily"
+        },
+        {
+          "district": "पूर्वी चंपारण",
+          "period_start": "2026-08-20",
+          "average_modal_price": 1275.0,
+          "observation_count": 4,
+          "frequency": "daily"
+        },
+        {
+          "district": "पूर्वी चंपारण",
+          "period_start": "2026-08-21",
+          "average_modal_price": 1275.0,
+          "observation_count": 4,
+          "frequency": "daily"
+        },
+        {
+          "district": "पूर्वी चंपारण",
+          "period_start": "2026-08-22",
+          "average_modal_price": 1275.0,
+          "observation_count": 4,
+          "frequency": "daily"
+        },
+        {
+          "district": "पूर्वी चंपारण",
+          "period_start": "2026-08-23",
+          "average_modal_price": 1200.0,
+          "observation_count": 3,
+          "frequency": "daily"
+        },
+        {
+          "district": "पूर्वी चंपारण",
+          "period_start": "2026-08-24",
+          "average_modal_price": 1300.0,
+          "observation_count": 3,
+          "frequency": "daily"
+        },
+        {
+          "district": "पूर्वी चंपारण",
+          "period_start": "2026-08-25",
+          "average_modal_price": 1250.0,
+          "observation_count": 4,
+          "frequency": "daily"
+        },
+        {
+          "district": "पूर्वी चंपारण",
+          "period_start": "2026-08-26",
+          "average_modal_price": 1250.0,
+          "observation_count": 2,
+          "frequency": "daily"
+        },
+        {
+          "district": "पूर्वी चंपारण",
+          "period_start": "2026-08-27",
+          "average_modal_price": 1250.0,
+          "observation_count": 3,
+          "frequency": "daily"
+        },
+        {
+          "district": "पूर्वी चंपारण",
+          "period_start": "2026-08-28",
+          "average_modal_price": 1225.0,
+          "observation_count": 4,
+          "frequency": "daily"
+        },
+        {
+          "district": "पूर्वी चंपारण",
+          "period_start": "2026-08-29",
+          "average_modal_price": 1266.67,
+          "observation_count": 3,
+          "frequency": "daily"
+        },
+        {
+          "district": "पूर्वी चंपारण",
+          "period_start": "2026-08-30",
+          "average_modal_price": 1200.0,
+          "observation_count": 2,
+          "frequency": "daily"
+        },
+        {
+          "district": "पूर्वी चंपारण",
+          "period_start": "2026-08-31",
+          "average_modal_price": 1283.33,
+          "observation_count": 3,
+          "frequency": "daily"
+        },
+        {
+          "district": "पूर्वी चंपारण",
+          "period_start": "2026-09-01",
+          "average_modal_price": 1233.33,
+          "observation_count": 3,
+          "frequency": "daily"
+        },
+        {
+          "district": "पूर्वी चंपारण",
+          "period_start": "2026-09-02",
+          "average_modal_price": 1266.67,
+          "observation_count": 3,
+          "frequency": "daily"
+        },
+        {
+          "district": "पूर्वी चंपारण",
+          "period_start": "2026-09-03",
+          "average_modal_price": 1200.0,
+          "observation_count": 1,
+          "frequency": "daily"
+        },
+        {
+          "district": "पूर्वी चंपारण",
+          "period_start": "2026-09-04",
+          "average_modal_price": 1300.0,
+          "observation_count": 3,
+          "frequency": "daily"
+        },
+        {
+          "district": "पूर्वी चंपारण",
+          "period_start": "2026-09-05",
+          "average_modal_price": 1300.0,
+          "observation_count": 3,
+          "frequency": "daily"
+        },
+        {
+          "district": "पूर्वी चंपारण",
+          "period_start": "2026-09-06",
+          "average_modal_price": 1200.0,
+          "observation_count": 2,
+          "frequency": "daily"
+        },
+        {
+          "district": "पूर्वी चंपारण",
+          "period_start": "2026-09-07",
+          "average_modal_price": 1300.0,
+          "observation_count": 3,
+          "frequency": "daily"
+        },
+        {
+          "district": "पूर्वी चंपारण",
+          "period_start": "2026-09-08",
+          "average_modal_price": 1300.0,
+          "observation_count": 3,
+          "frequency": "daily"
+        },
+        {
+          "district": "पूर्वी चंपारण",
+          "period_start": "2026-09-09",
+          "average_modal_price": 1266.67,
+          "observation_count": 3,
+          "frequency": "daily"
+        },
+        {
+          "district": "पूर्वी चंपारण",
+          "period_start": "2026-09-10",
+          "average_modal_price": 1266.67,
+          "observation_count": 3,
+          "frequency": "daily"
+        },
+        {
+          "district": "पूर्वी चंपारण",
+          "period_start": "2026-09-11",
+          "average_modal_price": 1350.0,
+          "observation_count": 2,
+          "frequency": "daily"
+        },
+        {
+          "district": "पूर्वी चंपारण",
+          "period_start": "2026-09-12",
+          "average_modal_price": 1350.0,
+          "observation_count": 2,
+          "frequency": "daily"
+        },
+        {
+          "district": "पूर्वी चंपारण",
+          "period_start": "2026-09-13",
+          "average_modal_price": 1200.0,
+          "observation_count": 1,
+          "frequency": "daily"
+        },
+        {
+          "district": "पूर्वी चंपारण",
+          "period_start": "2026-09-14",
+          "average_modal_price": 1300.0,
+          "observation_count": 3,
+          "frequency": "daily"
+        },
+        {
+          "district": "पूर्वी चंपारण",
+          "period_start": "2026-09-15",
+          "average_modal_price": 1300.0,
+          "observation_count": 3,
+          "frequency": "daily"
+        },
+        {
+          "district": "पूर्वी चंपारण",
+          "period_start": "2026-09-16",
+          "average_modal_price": 1300.0,
+          "observation_count": 3,
+          "frequency": "daily"
+        },
+        {
+          "district": "पूर्वी चंपारण",
+          "period_start": "2026-09-17",
+          "average_modal_price": 1266.67,
+          "observation_count": 3,
+          "frequency": "daily"
+        },
+        {
+          "district": "पूर्वी चंपारण",
+          "period_start": "2026-09-18",
+          "average_modal_price": 1300.0,
+          "observation_count": 3,
+          "frequency": "daily"
+        },
+        {
+          "district": "पूर्वी चंपारण",
+          "period_start": "2026-09-19",
+          "average_modal_price": 1300.0,
+          "observation_count": 3,
+          "frequency": "daily"
+        },
+        {
+          "district": "पूर्वी चंपारण",
+          "period_start": "2026-09-20",
+          "average_modal_price": 1200.0,
+          "observation_count": 1,
+          "frequency": "daily"
+        },
+        {
+          "district": "पूर्वी चंपारण",
+          "period_start": "2026-09-21",
+          "average_modal_price": 1350.0,
+          "observation_count": 2,
+          "frequency": "daily"
+        },
+        {
+          "district": "पूर्वी चंपारण",
+          "period_start": "2026-09-22",
+          "average_modal_price": 1300.0,
+          "observation_count": 3,
+          "frequency": "daily"
+        },
+        {
+          "district": "पूर्वी चंपारण",
+          "period_start": "2026-09-23",
+          "average_modal_price": 1300.0,
+          "observation_count": 3,
+          "frequency": "daily"
+        },
+        {
+          "district": "पूर्वी चंपारण",
+          "period_start": "2026-09-24",
+          "average_modal_price": 1300.0,
+          "observation_count": 3,
+          "frequency": "daily"
+        },
+        {
+          "district": "पूर्वी चंपारण",
+          "period_start": "2026-09-25",
+          "average_modal_price": 1350.0,
+          "observation_count": 2,
+          "frequency": "daily"
+        },
+        {
+          "district": "पूर्वी चंपारण",
+          "period_start": "2026-09-26",
+          "average_modal_price": 1300.0,
+          "observation_count": 3,
+          "frequency": "daily"
+        },
+        {
+          "district": "पूर्वी चंपारण",
+          "period_start": "2026-09-27",
+          "average_modal_price": 1200.0,
+          "observation_count": 2,
+          "frequency": "daily"
+        },
+        {
+          "district": "पूर्वी चंपारण",
+          "period_start": "2026-09-28",
+          "average_modal_price": 1300.0,
+          "observation_count": 2,
+          "frequency": "daily"
+        },
+        {
+          "district": "पूर्वी चंपारण",
+          "period_start": "2026-09-29",
+          "average_modal_price": 1500.0,
+          "observation_count": 1,
+          "frequency": "daily"
+        },
+        {
+          "district": "पूर्वी चंपारण",
+          "period_start": "2026-09-30",
+          "average_modal_price": 1500.0,
+          "observation_count": 1,
+          "frequency": "daily"
+        },
+        {
+          "district": "पूर्वी चंपारण",
+          "period_start": "2026-10-01",
+          "average_modal_price": 1300.0,
+          "observation_count": 2,
+          "frequency": "daily"
+        },
+        {
+          "district": "पूर्वी चंपारण",
+          "period_start": "2026-10-02",
+          "average_modal_price": 1350.0,
+          "observation_count": 2,
+          "frequency": "daily"
+        },
+        {
+          "district": "पूर्वी चंपारण",
+          "period_start": "2026-10-03",
+          "average_modal_price": 1500.0,
+          "observation_count": 1,
+          "frequency": "daily"
+        },
+        {
+          "district": "पूर्वी चंपारण",
+          "period_start": "2026-10-05",
+          "average_modal_price": 1500.0,
+          "observation_count": 1,
+          "frequency": "daily"
+        },
+        {
+          "district": "पूर्वी चंपारण",
+          "period_start": "2026-10-06",
+          "average_modal_price": 1350.0,
+          "observation_count": 2,
+          "frequency": "daily"
+        },
+        {
+          "district": "पूर्वी चंपारण",
+          "period_start": "2026-10-07",
+          "average_modal_price": 1300.0,
+          "observation_count": 2,
+          "frequency": "daily"
+        },
+        {
+          "district": "पूर्वी चंपारण",
+          "period_start": "2026-10-08",
+          "average_modal_price": 1300.0,
+          "observation_count": 2,
+          "frequency": "daily"
+        },
+        {
+          "district": "पूर्वी चंपारण",
+          "period_start": "2026-10-09",
+          "average_modal_price": 1500.0,
+          "observation_count": 1,
+          "frequency": "daily"
+        },
+        {
+          "district": "पूर्वी चंपारण",
+          "period_start": "2026-10-10",
+          "average_modal_price": 1300.0,
+          "observation_count": 2,
+          "frequency": "daily"
+        },
+        {
+          "district": "पूर्वी चंपारण",
+          "period_start": "2026-10-12",
+          "average_modal_price": 1325.0,
+          "observation_count": 2,
+          "frequency": "daily"
+        },
+        {
+          "district": "पूर्वी चंपारण",
+          "period_start": "2026-10-13",
+          "average_modal_price": 1325.0,
+          "observation_count": 2,
+          "frequency": "daily"
+        },
+        {
+          "district": "पूर्वी चंपारण",
+          "period_start": "2026-10-14",
+          "average_modal_price": 1400.0,
+          "observation_count": 1,
+          "frequency": "daily"
+        },
+        {
+          "district": "पूर्वी चंपारण",
+          "period_start": "2026-10-15",
+          "average_modal_price": 1400.0,
+          "observation_count": 1,
+          "frequency": "daily"
+        },
+        {
+          "district": "पूर्वी चंपारण",
+          "period_start": "2026-10-16",
+          "average_modal_price": 1233.33,
+          "observation_count": 3,
+          "frequency": "daily"
+        },
+        {
+          "district": "पूर्वी चंपारण",
+          "period_start": "2026-10-17",
+          "average_modal_price": 1300.0,
+          "observation_count": 2,
+          "frequency": "daily"
+        },
+        {
+          "district": "पूर्वी चंपारण",
+          "period_start": "2026-10-19",
+          "average_modal_price": 1300.0,
+          "observation_count": 2,
+          "frequency": "daily"
+        },
+        {
+          "district": "पूर्वी चंपारण",
+          "period_start": "2026-10-20",
+          "average_modal_price": 1300.0,
+          "observation_count": 2,
+          "frequency": "daily"
+        },
+        {
+          "district": "पूर्वी चंपारण",
+          "period_start": "2026-10-21",
+          "average_modal_price": 1300.0,
+          "observation_count": 2,
+          "frequency": "daily"
+        },
+        {
+          "district": "पूर्वी चंपारण",
+          "period_start": "2026-10-22",
+          "average_modal_price": 1266.67,
+          "observation_count": 3,
+          "frequency": "daily"
+        },
+        {
+          "district": "पूर्वी चंपारण",
+          "period_start": "2026-10-23",
+          "average_modal_price": 1266.67,
+          "observation_count": 3,
+          "frequency": "daily"
+        },
+        {
+          "district": "पूर्वी चंपारण",
+          "period_start": "2026-10-24",
+          "average_modal_price": 1400.0,
+          "observation_count": 1,
+          "frequency": "daily"
+        },
+        {
+          "district": "पूर्वी चंपारण",
+          "period_start": "2026-10-25",
+          "average_modal_price": 1400.0,
+          "observation_count": 1,
+          "frequency": "daily"
+        },
+        {
+          "district": "बेगूसराय",
+          "period_start": "2026-07-21",
+          "average_modal_price": 1200.0,
+          "observation_count": 3,
+          "frequency": "daily"
+        },
+        {
+          "district": "बेगूसराय",
+          "period_start": "2026-07-22",
+          "average_modal_price": 1100.0,
+          "observation_count": 3,
+          "frequency": "daily"
+        },
+        {
+          "district": "बेगूसराय",
+          "period_start": "2026-07-23",
+          "average_modal_price": 1200.0,
+          "observation_count": 3,
+          "frequency": "daily"
+        },
+        {
+          "district": "बेगूसराय",
+          "period_start": "2026-07-24",
+          "average_modal_price": 1200.0,
+          "observation_count": 3,
+          "frequency": "daily"
+        },
+        {
+          "district": "बेगूसराय",
+          "period_start": "2026-07-25",
+          "average_modal_price": 1100.0,
+          "observation_count": 3,
+          "frequency": "daily"
+        },
+        {
+          "district": "बेगूसराय",
+          "period_start": "2026-07-26",
+          "average_modal_price": 1200.0,
+          "observation_count": 3,
+          "frequency": "daily"
+        },
+        {
+          "district": "बेगूसराय",
+          "period_start": "2026-07-27",
+          "average_modal_price": 1200.0,
+          "observation_count": 3,
+          "frequency": "daily"
+        },
+        {
+          "district": "बेगूसराय",
+          "period_start": "2026-07-28",
+          "average_modal_price": 1200.0,
+          "observation_count": 3,
+          "frequency": "daily"
+        },
+        {
+          "district": "बेगूसराय",
+          "period_start": "2026-07-29",
+          "average_modal_price": 1200.0,
+          "observation_count": 3,
+          "frequency": "daily"
+        },
+        {
+          "district": "बेगूसराय",
+          "period_start": "2026-07-30",
+          "average_modal_price": 1200.0,
+          "observation_count": 3,
+          "frequency": "daily"
+        },
+        {
+          "district": "बेगूसराय",
+          "period_start": "2026-07-31",
+          "average_modal_price": 1200.0,
+          "observation_count": 3,
+          "frequency": "daily"
+        },
+        {
+          "district": "बेगूसराय",
+          "period_start": "2026-08-01",
+          "average_modal_price": 1200.0,
+          "observation_count": 3,
+          "frequency": "daily"
+        },
+        {
+          "district": "बेगूसराय",
+          "period_start": "2026-08-03",
+          "average_modal_price": 1200.0,
+          "observation_count": 1,
+          "frequency": "daily"
+        },
+        {
+          "district": "बेगूसराय",
+          "period_start": "2026-08-04",
+          "average_modal_price": 1200.0,
+          "observation_count": 3,
+          "frequency": "daily"
+        },
+        {
+          "district": "बेगूसराय",
+          "period_start": "2026-08-05",
+          "average_modal_price": 1125.0,
+          "observation_count": 4,
+          "frequency": "daily"
+        },
+        {
+          "district": "बेगूसराय",
+          "period_start": "2026-08-06",
+          "average_modal_price": 1100.0,
+          "observation_count": 3,
+          "frequency": "daily"
+        },
+        {
+          "district": "बेगूसराय",
+          "period_start": "2026-08-07",
+          "average_modal_price": 1100.0,
+          "observation_count": 3,
+          "frequency": "daily"
+        },
+        {
+          "district": "बेगूसराय",
+          "period_start": "2026-08-08",
+          "average_modal_price": 1000.0,
+          "observation_count": 3,
+          "frequency": "daily"
+        },
+        {
+          "district": "बेगूसराय",
+          "period_start": "2026-08-10",
+          "average_modal_price": 1200.0,
+          "observation_count": 3,
+          "frequency": "daily"
+        },
+        {
+          "district": "बेगूसराय",
+          "period_start": "2026-08-11",
+          "average_modal_price": 1200.0,
+          "observation_count": 3,
+          "frequency": "daily"
+        },
+        {
+          "district": "बेगूसराय",
+          "period_start": "2026-08-12",
+          "average_modal_price": 1200.0,
+          "observation_count": 3,
+          "frequency": "daily"
+        },
+        {
+          "district": "बेगूसराय",
+          "period_start": "2026-08-14",
+          "average_modal_price": 1200.0,
+          "observation_count": 3,
+          "frequency": "daily"
+        },
+        {
+          "district": "बेगूसराय",
+          "period_start": "2026-08-15",
+          "average_modal_price": 1100.0,
+          "observation_count": 3,
+          "frequency": "daily"
+        },
+        {
+          "district": "बेगूसराय",
+          "period_start": "2026-08-17",
+          "average_modal_price": 1100.0,
+          "observation_count": 3,
+          "frequency": "daily"
+        },
+        {
+          "district": "बेगूसराय",
+          "period_start": "2026-08-18",
+          "average_modal_price": 1100.0,
+          "observation_count": 3,
+          "frequency": "daily"
+        },
+        {
+          "district": "बेगूसराय",
+          "period_start": "2026-08-19",
+          "average_modal_price": 1100.0,
+          "observation_count": 3,
+          "frequency": "daily"
+        },
+        {
+          "district": "बेगूसराय",
+          "period_start": "2026-08-20",
+          "average_modal_price": 1100.0,
+          "observation_count": 3,
+          "frequency": "daily"
+        },
+        {
+          "district": "बेगूसराय",
+          "period_start": "2026-08-21",
+          "average_modal_price": 1100.0,
+          "observation_count": 3,
+          "frequency": "daily"
+        },
+        {
+          "district": "बेगूसराय",
+          "period_start": "2026-08-22",
+          "average_modal_price": 1100.0,
+          "observation_count": 3,
+          "frequency": "daily"
+        },
+        {
+          "district": "बेगूसराय",
+          "period_start": "2026-08-27",
+          "average_modal_price": 1100.0,
+          "observation_count": 3,
+          "frequency": "daily"
+        },
+        {
+          "district": "बेगूसराय",
+          "period_start": "2026-08-28",
+          "average_modal_price": 1100.0,
+          "observation_count": 3,
+          "frequency": "daily"
+        },
+        {
+          "district": "बेगूसराय",
+          "period_start": "2026-08-29",
+          "average_modal_price": 1200.0,
+          "observation_count": 3,
+          "frequency": "daily"
+        },
+        {
+          "district": "बेगूसराय",
+          "period_start": "2026-08-30",
+          "average_modal_price": 1000.0,
+          "observation_count": 3,
+          "frequency": "daily"
+        },
+        {
+          "district": "बेगूसराय",
+          "period_start": "2026-08-31",
+          "average_modal_price": 1000.0,
+          "observation_count": 3,
+          "frequency": "daily"
+        },
+        {
+          "district": "बेगूसराय",
+          "period_start": "2026-09-01",
+          "average_modal_price": 1200.0,
+          "observation_count": 3,
+          "frequency": "daily"
+        },
+        {
+          "district": "बेगूसराय",
+          "period_start": "2026-09-02",
+          "average_modal_price": 1200.0,
+          "observation_count": 3,
+          "frequency": "daily"
+        },
+        {
+          "district": "बेगूसराय",
+          "period_start": "2026-09-03",
+          "average_modal_price": 1200.0,
+          "observation_count": 3,
+          "frequency": "daily"
+        },
+        {
+          "district": "बेगूसराय",
+          "period_start": "2026-09-04",
+          "average_modal_price": 1100.0,
+          "observation_count": 3,
+          "frequency": "daily"
+        },
+        {
+          "district": "बेगूसराय",
+          "period_start": "2026-09-05",
+          "average_modal_price": 1100.0,
+          "observation_count": 3,
+          "frequency": "daily"
+        },
+        {
+          "district": "बेगूसराय",
+          "period_start": "2026-09-06",
+          "average_modal_price": 1200.0,
+          "observation_count": 3,
+          "frequency": "daily"
+        },
+        {
+          "district": "बेगूसराय",
+          "period_start": "2026-09-07",
+          "average_modal_price": 1200.0,
+          "observation_count": 3,
+          "frequency": "daily"
+        },
+        {
+          "district": "बेगूसराय",
+          "period_start": "2026-09-08",
+          "average_modal_price": 1400.0,
+          "observation_count": 3,
+          "frequency": "daily"
+        },
+        {
+          "district": "बेगूसराय",
+          "period_start": "2026-09-09",
+          "average_modal_price": 900.0,
+          "observation_count": 3,
+          "frequency": "daily"
+        },
+        {
+          "district": "बेगूसराय",
+          "period_start": "2026-09-10",
+          "average_modal_price": 1000.0,
+          "observation_count": 3,
+          "frequency": "daily"
+        },
+        {
+          "district": "बेगूसराय",
+          "period_start": "2026-09-11",
+          "average_modal_price": 1100.0,
+          "observation_count": 3,
+          "frequency": "daily"
+        },
+        {
+          "district": "बेगूसराय",
+          "period_start": "2026-09-12",
+          "average_modal_price": 1100.0,
+          "observation_count": 3,
+          "frequency": "daily"
+        },
+        {
+          "district": "बेगूसराय",
+          "period_start": "2026-09-14",
+          "average_modal_price": 1200.0,
+          "observation_count": 3,
+          "frequency": "daily"
+        },
+        {
+          "district": "बेगूसराय",
+          "period_start": "2026-09-15",
+          "average_modal_price": 1200.0,
+          "observation_count": 3,
+          "frequency": "daily"
+        },
+        {
+          "district": "बेगूसराय",
+          "period_start": "2026-09-16",
+          "average_modal_price": 1300.0,
+          "observation_count": 3,
+          "frequency": "daily"
+        },
+        {
+          "district": "बेगूसराय",
+          "period_start": "2026-09-17",
+          "average_modal_price": 1300.0,
+          "observation_count": 3,
+          "frequency": "daily"
+        },
+        {
+          "district": "बेगूसराय",
+          "period_start": "2026-09-18",
+          "average_modal_price": 1300.0,
+          "observation_count": 3,
+          "frequency": "daily"
+        },
+        {
+          "district": "बेगूसराय",
+          "period_start": "2026-09-19",
+          "average_modal_price": 1300.0,
+          "observation_count": 3,
+          "frequency": "daily"
+        },
+        {
+          "district": "बेगूसराय",
+          "period_start": "2026-09-20",
+          "average_modal_price": 1300.0,
+          "observation_count": 3,
+          "frequency": "daily"
+        },
+        {
+          "district": "बेगूसराय",
+          "period_start": "2026-09-21",
+          "average_modal_price": 1300.0,
+          "observation_count": 3,
+          "frequency": "daily"
+        },
+        {
+          "district": "बेगूसराय",
+          "period_start": "2026-09-22",
+          "average_modal_price": 1300.0,
+          "observation_count": 3,
+          "frequency": "daily"
+        },
+        {
+          "district": "बेगूसराय",
+          "period_start": "2026-09-23",
+          "average_modal_price": 1300.0,
+          "observation_count": 3,
+          "frequency": "daily"
+        },
+        {
+          "district": "बेगूसराय",
+          "period_start": "2026-09-24",
+          "average_modal_price": 1300.0,
+          "observation_count": 3,
+          "frequency": "daily"
+        },
+        {
+          "district": "बेगूसराय",
+          "period_start": "2026-09-25",
+          "average_modal_price": 1300.0,
+          "observation_count": 3,
+          "frequency": "daily"
+        },
+        {
+          "district": "बेगूसराय",
+          "period_start": "2026-09-26",
+          "average_modal_price": 1300.0,
+          "observation_count": 3,
+          "frequency": "daily"
+        },
+        {
+          "district": "बेगूसराय",
+          "period_start": "2026-09-27",
+          "average_modal_price": 1300.0,
+          "observation_count": 3,
+          "frequency": "daily"
+        },
+        {
+          "district": "बेगूसराय",
+          "period_start": "2026-09-28",
+          "average_modal_price": 1300.0,
+          "observation_count": 3,
+          "frequency": "daily"
+        },
+        {
+          "district": "बेगूसराय",
+          "period_start": "2026-09-29",
+          "average_modal_price": 1300.0,
+          "observation_count": 3,
+          "frequency": "daily"
+        },
+        {
+          "district": "बेगूसराय",
+          "period_start": "2026-09-30",
+          "average_modal_price": 1250.0,
+          "observation_count": 4,
+          "frequency": "daily"
+        },
+        {
+          "district": "बेगूसराय",
+          "period_start": "2026-10-02",
+          "average_modal_price": 1100.0,
+          "observation_count": 3,
+          "frequency": "daily"
+        },
+        {
+          "district": "बेगूसराय",
+          "period_start": "2026-10-07",
+          "average_modal_price": 1100.0,
+          "observation_count": 3,
+          "frequency": "daily"
+        },
+        {
+          "district": "बेगूसराय",
+          "period_start": "2026-10-12",
+          "average_modal_price": 1050.0,
+          "observation_count": 4,
+          "frequency": "daily"
+        },
+        {
+          "district": "बेगूसराय",
+          "period_start": "2026-10-13",
+          "average_modal_price": 1050.0,
+          "observation_count": 4,
+          "frequency": "daily"
+        },
+        {
+          "district": "बेगूसराय",
+          "period_start": "2026-10-14",
+          "average_modal_price": 1050.0,
+          "observation_count": 4,
+          "frequency": "daily"
+        },
+        {
+          "district": "बेगूसराय",
+          "period_start": "2026-10-15",
+          "average_modal_price": 1050.0,
+          "observation_count": 4,
+          "frequency": "daily"
+        },
+        {
+          "district": "बेगूसराय",
+          "period_start": "2026-10-16",
+          "average_modal_price": 1100.0,
+          "observation_count": 3,
+          "frequency": "daily"
+        },
+        {
+          "district": "बेगूसराय",
+          "period_start": "2026-10-17",
+          "average_modal_price": 1100.0,
+          "observation_count": 3,
+          "frequency": "daily"
+        },
+        {
+          "district": "बेगूसराय",
+          "period_start": "2026-10-23",
+          "average_modal_price": 1100.0,
+          "observation_count": 3,
+          "frequency": "daily"
+        },
+        {
+          "district": "बेगूसराय",
+          "period_start": "2026-10-24",
+          "average_modal_price": 1100.0,
+          "observation_count": 3,
+          "frequency": "daily"
+        },
+        {
+          "district": "मधुबनी",
+          "period_start": "2026-07-21",
+          "average_modal_price": 1160.0,
+          "observation_count": 3,
+          "frequency": "daily"
+        },
+        {
+          "district": "मधुबनी",
+          "period_start": "2026-07-22",
+          "average_modal_price": 1166.67,
+          "observation_count": 3,
+          "frequency": "daily"
+        },
+        {
+          "district": "मधुबनी",
+          "period_start": "2026-07-23",
+          "average_modal_price": 1166.67,
+          "observation_count": 3,
+          "frequency": "daily"
+        },
+        {
+          "district": "मधुबनी",
+          "period_start": "2026-07-24",
+          "average_modal_price": 1225.0,
+          "observation_count": 2,
+          "frequency": "daily"
+        },
+        {
+          "district": "मधुबनी",
+          "period_start": "2026-07-25",
+          "average_modal_price": 1166.67,
+          "observation_count": 3,
+          "frequency": "daily"
+        },
+        {
+          "district": "मधुबनी",
+          "period_start": "2026-07-26",
+          "average_modal_price": 1150.0,
+          "observation_count": 2,
+          "frequency": "daily"
+        },
+        {
+          "district": "मधुबनी",
+          "period_start": "2026-07-27",
+          "average_modal_price": 1153.33,
+          "observation_count": 3,
+          "frequency": "daily"
+        },
+        {
+          "district": "मधुबनी",
+          "period_start": "2026-07-28",
+          "average_modal_price": 1116.67,
+          "observation_count": 3,
+          "frequency": "daily"
+        },
+        {
+          "district": "मधुबनी",
+          "period_start": "2026-07-29",
+          "average_modal_price": 1150.0,
+          "observation_count": 2,
+          "frequency": "daily"
+        },
+        {
+          "district": "मधुबनी",
+          "period_start": "2026-07-30",
+          "average_modal_price": 1237.5,
+          "observation_count": 4,
+          "frequency": "daily"
+        },
+        {
+          "district": "मधुबनी",
+          "period_start": "2026-07-31",
+          "average_modal_price": 1150.0,
+          "observation_count": 3,
+          "frequency": "daily"
+        },
+        {
+          "district": "मधुबनी",
+          "period_start": "2026-08-01",
+          "average_modal_price": 1200.0,
+          "observation_count": 2,
+          "frequency": "daily"
+        },
+        {
+          "district": "मधुबनी",
+          "period_start": "2026-08-02",
+          "average_modal_price": 1100.0,
+          "observation_count": 1,
+          "frequency": "daily"
+        },
+        {
+          "district": "मधुबनी",
+          "period_start": "2026-08-03",
+          "average_modal_price": 1175.0,
+          "observation_count": 2,
+          "frequency": "daily"
+        },
+        {
+          "district": "मधुबनी",
+          "period_start": "2026-08-04",
+          "average_modal_price": 1200.0,
+          "observation_count": 2,
+          "frequency": "daily"
+        },
+        {
+          "district": "मधुबनी",
+          "period_start": "2026-08-05",
+          "average_modal_price": 1150.0,
+          "observation_count": 3,
+          "frequency": "daily"
+        },
+        {
+          "district": "मधुबनी",
+          "period_start": "2026-08-06",
+          "average_modal_price": 1150.0,
+          "observation_count": 2,
+          "frequency": "daily"
+        },
+        {
+          "district": "मधुबनी",
+          "period_start": "2026-08-07",
+          "average_modal_price": 1216.67,
+          "observation_count": 3,
+          "frequency": "daily"
+        },
+        {
+          "district": "मधुबनी",
+          "period_start": "2026-08-08",
+          "average_modal_price": 1207.5,
+          "observation_count": 4,
+          "frequency": "daily"
+        },
+        {
+          "district": "मधुबनी",
+          "period_start": "2026-08-09",
+          "average_modal_price": 1150.0,
+          "observation_count": 2,
+          "frequency": "daily"
+        },
+        {
+          "district": "मधुबनी",
+          "period_start": "2026-08-10",
+          "average_modal_price": 1240.0,
+          "observation_count": 3,
+          "frequency": "daily"
+        },
+        {
+          "district": "मधुबनी",
+          "period_start": "2026-08-11",
+          "average_modal_price": 1260.0,
+          "observation_count": 3,
+          "frequency": "daily"
+        },
+        {
+          "district": "मधुबनी",
+          "period_start": "2026-08-12",
+          "average_modal_price": 1183.33,
+          "observation_count": 3,
+          "frequency": "daily"
+        },
+        {
+          "district": "मधुबनी",
+          "period_start": "2026-08-13",
+          "average_modal_price": 1175.0,
+          "observation_count": 2,
+          "frequency": "daily"
+        },
+        {
+          "district": "मधुबनी",
+          "period_start": "2026-08-14",
+          "average_modal_price": 1175.0,
+          "observation_count": 2,
+          "frequency": "daily"
+        },
+        {
+          "district": "मधुबनी",
+          "period_start": "2026-08-15",
+          "average_modal_price": 1100.0,
+          "observation_count": 1,
+          "frequency": "daily"
+        },
+        {
+          "district": "मधुबनी",
+          "period_start": "2026-08-17",
+          "average_modal_price": 1200.0,
+          "observation_count": 1,
+          "frequency": "daily"
+        },
+        {
+          "district": "मधुबनी",
+          "period_start": "2026-08-18",
+          "average_modal_price": 1175.0,
+          "observation_count": 2,
+          "frequency": "daily"
+        },
+        {
+          "district": "मधुबनी",
+          "period_start": "2026-08-19",
+          "average_modal_price": 1193.33,
+          "observation_count": 3,
+          "frequency": "daily"
+        },
+        {
+          "district": "मधुबनी",
+          "period_start": "2026-08-20",
+          "average_modal_price": 1175.0,
+          "observation_count": 2,
+          "frequency": "daily"
+        },
+        {
+          "district": "मधुबनी",
+          "period_start": "2026-08-21",
+          "average_modal_price": 1150.0,
+          "observation_count": 2,
+          "frequency": "daily"
+        },
+        {
+          "district": "मधुबनी",
+          "period_start": "2026-08-22",
+          "average_modal_price": 1125.0,
+          "observation_count": 2,
+          "frequency": "daily"
+        },
+        {
+          "district": "मधुबनी",
+          "period_start": "2026-08-23",
+          "average_modal_price": 1125.0,
+          "observation_count": 2,
+          "frequency": "daily"
+        },
+        {
+          "district": "मधुबनी",
+          "period_start": "2026-08-24",
+          "average_modal_price": 1075.0,
+          "observation_count": 2,
+          "frequency": "daily"
+        },
+        {
+          "district": "मधुबनी",
+          "period_start": "2026-08-25",
+          "average_modal_price": 1200.0,
+          "observation_count": 1,
+          "frequency": "daily"
+        },
+        {
+          "district": "मधुबनी",
+          "period_start": "2026-08-26",
+          "average_modal_price": 1125.0,
+          "observation_count": 2,
+          "frequency": "daily"
+        },
+        {
+          "district": "मधुबनी",
+          "period_start": "2026-08-27",
+          "average_modal_price": 1100.0,
+          "observation_count": 1,
+          "frequency": "daily"
+        },
+        {
+          "district": "मधुबनी",
+          "period_start": "2026-08-28",
+          "average_modal_price": 1125.0,
+          "observation_count": 2,
+          "frequency": "daily"
+        },
+        {
+          "district": "मधुबनी",
+          "period_start": "2026-08-29",
+          "average_modal_price": 1090.0,
+          "observation_count": 2,
+          "frequency": "daily"
+        },
+        {
+          "district": "मधुबनी",
+          "period_start": "2026-08-30",
+          "average_modal_price": 1125.0,
+          "observation_count": 2,
+          "frequency": "daily"
+        },
+        {
+          "district": "मधुबनी",
+          "period_start": "2026-08-31",
+          "average_modal_price": 1125.0,
+          "observation_count": 2,
+          "frequency": "daily"
+        },
+        {
+          "district": "मधुबनी",
+          "period_start": "2026-09-01",
+          "average_modal_price": 1125.0,
+          "observation_count": 2,
+          "frequency": "daily"
+        },
+        {
+          "district": "मधुबनी",
+          "period_start": "2026-09-02",
+          "average_modal_price": 1100.0,
+          "observation_count": 1,
+          "frequency": "daily"
+        },
+        {
+          "district": "मधुबनी",
+          "period_start": "2026-09-03",
+          "average_modal_price": 1125.0,
+          "observation_count": 2,
+          "frequency": "daily"
+        },
+        {
+          "district": "मधुबनी",
+          "period_start": "2026-09-04",
+          "average_modal_price": 1200.0,
+          "observation_count": 1,
+          "frequency": "daily"
+        },
+        {
+          "district": "मधुबनी",
+          "period_start": "2026-09-05",
+          "average_modal_price": 1200.0,
+          "observation_count": 1,
+          "frequency": "daily"
+        },
+        {
+          "district": "मधुबनी",
+          "period_start": "2026-09-06",
+          "average_modal_price": 1200.0,
+          "observation_count": 1,
+          "frequency": "daily"
+        },
+        {
+          "district": "मधुबनी",
+          "period_start": "2026-09-07",
+          "average_modal_price": 1200.0,
+          "observation_count": 2,
+          "frequency": "daily"
+        },
+        {
+          "district": "मधुबनी",
+          "period_start": "2026-09-08",
+          "average_modal_price": 1200.0,
+          "observation_count": 2,
+          "frequency": "daily"
+        },
+        {
+          "district": "मधुबनी",
+          "period_start": "2026-09-09",
+          "average_modal_price": 1200.0,
+          "observation_count": 2,
+          "frequency": "daily"
+        },
+        {
+          "district": "मधुबनी",
+          "period_start": "2026-09-10",
+          "average_modal_price": 1200.0,
+          "observation_count": 1,
+          "frequency": "daily"
+        },
+        {
+          "district": "मधुबनी",
+          "period_start": "2026-09-11",
+          "average_modal_price": 1200.0,
+          "observation_count": 2,
+          "frequency": "daily"
+        },
+        {
+          "district": "मधुबनी",
+          "period_start": "2026-09-12",
+          "average_modal_price": 1200.0,
+          "observation_count": 1,
+          "frequency": "daily"
+        },
+        {
+          "district": "मधुबनी",
+          "period_start": "2026-09-13",
+          "average_modal_price": 1200.0,
+          "observation_count": 1,
+          "frequency": "daily"
+        },
+        {
+          "district": "मधुबनी",
+          "period_start": "2026-09-14",
+          "average_modal_price": 1200.0,
+          "observation_count": 2,
+          "frequency": "daily"
+        },
+        {
+          "district": "मधुबनी",
+          "period_start": "2026-09-15",
+          "average_modal_price": 1200.0,
+          "observation_count": 2,
+          "frequency": "daily"
+        },
+        {
+          "district": "मधुबनी",
+          "period_start": "2026-09-16",
+          "average_modal_price": 1100.0,
+          "observation_count": 1,
+          "frequency": "daily"
+        },
+        {
+          "district": "मधुबनी",
+          "period_start": "2026-09-17",
+          "average_modal_price": 1100.0,
+          "observation_count": 1,
+          "frequency": "daily"
+        },
+        {
+          "district": "मधुबनी",
+          "period_start": "2026-09-18",
+          "average_modal_price": 1150.0,
+          "observation_count": 2,
+          "frequency": "daily"
+        },
+        {
+          "district": "मधुबनी",
+          "period_start": "2026-09-19",
+          "average_modal_price": 1100.0,
+          "observation_count": 1,
+          "frequency": "daily"
+        },
+        {
+          "district": "मधुबनी",
+          "period_start": "2026-09-20",
+          "average_modal_price": 1100.0,
+          "observation_count": 1,
+          "frequency": "daily"
+        },
+        {
+          "district": "मधुबनी",
+          "period_start": "2026-09-21",
+          "average_modal_price": 1150.0,
+          "observation_count": 2,
+          "frequency": "daily"
+        },
+        {
+          "district": "मधुबनी",
+          "period_start": "2026-09-22",
+          "average_modal_price": 1150.0,
+          "observation_count": 2,
+          "frequency": "daily"
+        },
+        {
+          "district": "मधुबनी",
+          "period_start": "2026-09-23",
+          "average_modal_price": 1100.0,
+          "observation_count": 1,
+          "frequency": "daily"
+        },
+        {
+          "district": "मधुबनी",
+          "period_start": "2026-09-24",
+          "average_modal_price": 1100.0,
+          "observation_count": 1,
+          "frequency": "daily"
+        },
+        {
+          "district": "मधुबनी",
+          "period_start": "2026-09-25",
+          "average_modal_price": 1100.0,
+          "observation_count": 1,
+          "frequency": "daily"
+        },
+        {
+          "district": "मधुबनी",
+          "period_start": "2026-09-26",
+          "average_modal_price": 1200.0,
+          "observation_count": 1,
+          "frequency": "daily"
+        },
+        {
+          "district": "मधुबनी",
+          "period_start": "2026-09-27",
+          "average_modal_price": 1100.0,
+          "observation_count": 1,
+          "frequency": "daily"
+        },
+        {
+          "district": "मधुबनी",
+          "period_start": "2026-09-28",
+          "average_modal_price": 1150.0,
+          "observation_count": 2,
+          "frequency": "daily"
+        },
+        {
+          "district": "मधुबनी",
+          "period_start": "2026-09-29",
+          "average_modal_price": 1150.0,
+          "observation_count": 2,
+          "frequency": "daily"
+        },
+        {
+          "district": "मधुबनी",
+          "period_start": "2026-09-30",
+          "average_modal_price": 1150.0,
+          "observation_count": 2,
+          "frequency": "daily"
+        },
+        {
+          "district": "मधुबनी",
+          "period_start": "2026-10-05",
+          "average_modal_price": 1125.0,
+          "observation_count": 2,
+          "frequency": "daily"
+        },
+        {
+          "district": "मधुबनी",
+          "period_start": "2026-10-06",
+          "average_modal_price": 1100.0,
+          "observation_count": 1,
+          "frequency": "daily"
+        },
+        {
+          "district": "मधुबनी",
+          "period_start": "2026-10-07",
+          "average_modal_price": 1100.0,
+          "observation_count": 1,
+          "frequency": "daily"
+        },
+        {
+          "district": "मधुबनी",
+          "period_start": "2026-10-08",
+          "average_modal_price": 1100.0,
+          "observation_count": 2,
+          "frequency": "daily"
+        },
+        {
+          "district": "मधुबनी",
+          "period_start": "2026-10-09",
+          "average_modal_price": 1100.0,
+          "observation_count": 1,
+          "frequency": "daily"
+        },
+        {
+          "district": "मधुबनी",
+          "period_start": "2026-10-10",
+          "average_modal_price": 1100.0,
+          "observation_count": 2,
+          "frequency": "daily"
+        },
+        {
+          "district": "मधुबनी",
+          "period_start": "2026-10-12",
+          "average_modal_price": 1100.0,
+          "observation_count": 2,
+          "frequency": "daily"
+        },
+        {
+          "district": "मधुबनी",
+          "period_start": "2026-10-13",
+          "average_modal_price": 1100.0,
+          "observation_count": 3,
+          "frequency": "daily"
+        },
+        {
+          "district": "मधुबनी",
+          "period_start": "2026-10-14",
+          "average_modal_price": 1125.0,
+          "observation_count": 2,
+          "frequency": "daily"
+        },
+        {
+          "district": "मधुबनी",
+          "period_start": "2026-10-15",
+          "average_modal_price": 1300.0,
+          "observation_count": 1,
+          "frequency": "daily"
+        },
+        {
+          "district": "मधुबनी",
+          "period_start": "2026-10-16",
+          "average_modal_price": 1125.0,
+          "observation_count": 2,
+          "frequency": "daily"
+        },
+        {
+          "district": "मधुबनी",
+          "period_start": "2026-10-19",
+          "average_modal_price": 1175.0,
+          "observation_count": 2,
+          "frequency": "daily"
+        },
+        {
+          "district": "मधुबनी",
+          "period_start": "2026-10-21",
+          "average_modal_price": 1150.0,
+          "observation_count": 2,
+          "frequency": "daily"
+        },
+        {
+          "district": "मधुबनी",
+          "period_start": "2026-10-23",
+          "average_modal_price": 1200.0,
+          "observation_count": 1,
+          "frequency": "daily"
+        },
+        {
+          "district": "मधुबनी",
+          "period_start": "2026-10-24",
+          "average_modal_price": 1150.0,
+          "observation_count": 2,
+          "frequency": "daily"
+        },
+        {
+          "district": "मुजफ्फरपुर",
+          "period_start": "2026-07-21",
+          "average_modal_price": 1000.0,
+          "observation_count": 4,
+          "frequency": "daily"
+        },
+        {
+          "district": "मुजफ्फरपुर",
+          "period_start": "2026-07-22",
+          "average_modal_price": 1040.8,
+          "observation_count": 5,
+          "frequency": "daily"
+        },
+        {
+          "district": "मुजफ्फरपुर",
+          "period_start": "2026-07-23",
+          "average_modal_price": 1018.0,
+          "observation_count": 3,
+          "frequency": "daily"
+        },
+        {
+          "district": "मुजफ्फरपुर",
+          "period_start": "2026-07-24",
+          "average_modal_price": 1050.0,
+          "observation_count": 1,
+          "frequency": "daily"
+        },
+        {
+          "district": "मुजफ्फरपुर",
+          "period_start": "2026-07-25",
+          "average_modal_price": 1000.0,
+          "observation_count": 2,
+          "frequency": "daily"
+        },
+        {
+          "district": "मुजफ्फरपुर",
+          "period_start": "2026-07-26",
+          "average_modal_price": 1030.0,
+          "observation_count": 3,
+          "frequency": "daily"
+        },
+        {
+          "district": "मुजफ्फरपुर",
+          "period_start": "2026-07-27",
+          "average_modal_price": 1025.0,
+          "observation_count": 2,
+          "frequency": "daily"
+        },
+        {
+          "district": "मुजफ्फरपुर",
+          "period_start": "2026-07-28",
+          "average_modal_price": 880.0,
+          "observation_count": 3,
+          "frequency": "daily"
+        },
+        {
+          "district": "मुजफ्फरपुर",
+          "period_start": "2026-07-29",
+          "average_modal_price": 1014.0,
+          "observation_count": 2,
+          "frequency": "daily"
+        },
+        {
+          "district": "मुजफ्फरपुर",
+          "period_start": "2026-07-30",
+          "average_modal_price": 1132.33,
+          "observation_count": 3,
+          "frequency": "daily"
+        },
+        {
+          "district": "मुजफ्फरपुर",
+          "period_start": "2026-07-31",
+          "average_modal_price": 1250.0,
+          "observation_count": 2,
+          "frequency": "daily"
+        },
+        {
+          "district": "मुजफ्फरपुर",
+          "period_start": "2026-08-01",
+          "average_modal_price": 1225.0,
+          "observation_count": 2,
+          "frequency": "daily"
+        },
+        {
+          "district": "मुजफ्फरपुर",
+          "period_start": "2026-08-02",
+          "average_modal_price": 1225.0,
+          "observation_count": 4,
+          "frequency": "daily"
+        },
+        {
+          "district": "मुजफ्फरपुर",
+          "period_start": "2026-08-03",
+          "average_modal_price": 1200.0,
+          "observation_count": 2,
+          "frequency": "daily"
+        },
+        {
+          "district": "मुजफ्फरपुर",
+          "period_start": "2026-08-05",
+          "average_modal_price": 1225.0,
+          "observation_count": 2,
+          "frequency": "daily"
+        },
+        {
+          "district": "मुजफ्फरपुर",
+          "period_start": "2026-08-06",
+          "average_modal_price": 1200.0,
+          "observation_count": 1,
+          "frequency": "daily"
+        },
+        {
+          "district": "मुजफ्फरपुर",
+          "period_start": "2026-08-07",
+          "average_modal_price": 1200.0,
+          "observation_count": 2,
+          "frequency": "daily"
+        },
+        {
+          "district": "मुजफ्फरपुर",
+          "period_start": "2026-08-08",
+          "average_modal_price": 1233.33,
+          "observation_count": 3,
+          "frequency": "daily"
+        },
+        {
+          "district": "मुजफ्फरपुर",
+          "period_start": "2026-08-10",
+          "average_modal_price": 1133.33,
+          "observation_count": 3,
+          "frequency": "daily"
+        },
+        {
+          "district": "मुजफ्फरपुर",
+          "period_start": "2026-08-11",
+          "average_modal_price": 1150.0,
+          "observation_count": 1,
+          "frequency": "daily"
+        },
+        {
+          "district": "मुजफ्फरपुर",
+          "period_start": "2026-08-12",
+          "average_modal_price": 1159.67,
+          "observation_count": 3,
+          "frequency": "daily"
+        },
+        {
+          "district": "मुजफ्फरपुर",
+          "period_start": "2026-08-13",
+          "average_modal_price": 1162.0,
+          "observation_count": 2,
+          "frequency": "daily"
+        },
+        {
+          "district": "मुजफ्फरपुर",
+          "period_start": "2026-08-15",
+          "average_modal_price": 1125.0,
+          "observation_count": 2,
+          "frequency": "daily"
+        },
+        {
+          "district": "मुजफ्फरपुर",
+          "period_start": "2026-08-16",
+          "average_modal_price": 1100.0,
+          "observation_count": 1,
+          "frequency": "daily"
+        },
+        {
+          "district": "मुजफ्फरपुर",
+          "period_start": "2026-08-17",
+          "average_modal_price": 1140.0,
+          "observation_count": 5,
+          "frequency": "daily"
+        },
+        {
+          "district": "मुजफ्फरपुर",
+          "period_start": "2026-08-18",
+          "average_modal_price": 1160.0,
+          "observation_count": 4,
+          "frequency": "daily"
+        },
+        {
+          "district": "मुजफ्फरपुर",
+          "period_start": "2026-08-19",
+          "average_modal_price": 1050.0,
+          "observation_count": 2,
+          "frequency": "daily"
+        },
+        {
+          "district": "मुजफ्फरपुर",
+          "period_start": "2026-08-20",
+          "average_modal_price": 1056.33,
+          "observation_count": 3,
+          "frequency": "daily"
+        },
+        {
+          "district": "मुजफ्फरपुर",
+          "period_start": "2026-08-21",
+          "average_modal_price": 1037.5,
+          "observation_count": 4,
+          "frequency": "daily"
+        },
+        {
+          "district": "मुजफ्फरपुर",
+          "period_start": "2026-08-22",
+          "average_modal_price": 1083.33,
+          "observation_count": 3,
+          "frequency": "daily"
+        },
+        {
+          "district": "मुजफ्फरपुर",
+          "period_start": "2026-08-23",
+          "average_modal_price": 1100.0,
+          "observation_count": 1,
+          "frequency": "daily"
+        },
+        {
+          "district": "मुजफ्फरपुर",
+          "period_start": "2026-08-25",
+          "average_modal_price": 1100.0,
+          "observation_count": 3,
+          "frequency": "daily"
+        },
+        {
+          "district": "मुजफ्फरपुर",
+          "period_start": "2026-08-26",
+          "average_modal_price": 1200.0,
+          "observation_count": 1,
+          "frequency": "daily"
+        },
+        {
+          "district": "मुजफ्फरपुर",
+          "period_start": "2026-08-27",
+          "average_modal_price": 1175.0,
+          "observation_count": 2,
+          "frequency": "daily"
+        },
+        {
+          "district": "मुजफ्फरपुर",
+          "period_start": "2026-08-28",
+          "average_modal_price": 1075.0,
+          "observation_count": 2,
+          "frequency": "daily"
+        },
+        {
+          "district": "मुजफ्फरपुर",
+          "period_start": "2026-08-29",
+          "average_modal_price": 1075.0,
+          "observation_count": 2,
+          "frequency": "daily"
+        },
+        {
+          "district": "मुजफ्फरपुर",
+          "period_start": "2026-08-30",
+          "average_modal_price": 1000.0,
+          "observation_count": 1,
+          "frequency": "daily"
+        },
+        {
+          "district": "मुजफ्फरपुर",
+          "period_start": "2026-08-31",
+          "average_modal_price": 1050.0,
+          "observation_count": 2,
+          "frequency": "daily"
+        },
+        {
+          "district": "मुजफ्फरपुर",
+          "period_start": "2026-09-01",
+          "average_modal_price": 1083.33,
+          "observation_count": 3,
+          "frequency": "daily"
+        },
+        {
+          "district": "मुजफ्फरपुर",
+          "period_start": "2026-09-02",
+          "average_modal_price": 1050.0,
+          "observation_count": 2,
+          "frequency": "daily"
+        },
+        {
+          "district": "मुजफ्फरपुर",
+          "period_start": "2026-09-03",
+          "average_modal_price": 1109.0,
+          "observation_count": 2,
+          "frequency": "daily"
+        },
+        {
+          "district": "मुजफ्फरपुर",
+          "period_start": "2026-09-05",
+          "average_modal_price": 1250.0,
+          "observation_count": 1,
+          "frequency": "daily"
+        },
+        {
+          "district": "मुजफ्फरपुर",
+          "period_start": "2026-09-06",
+          "average_modal_price": 1300.0,
+          "observation_count": 1,
+          "frequency": "daily"
+        },
+        {
+          "district": "मुजफ्फरपुर",
+          "period_start": "2026-09-07",
+          "average_modal_price": 1400.0,
+          "observation_count": 1,
+          "frequency": "daily"
+        },
+        {
+          "district": "मुजफ्फरपुर",
+          "period_start": "2026-09-09",
+          "average_modal_price": 1320.0,
+          "observation_count": 1,
+          "frequency": "daily"
+        },
+        {
+          "district": "मुजफ्फरपुर",
+          "period_start": "2026-09-10",
+          "average_modal_price": 1300.0,
+          "observation_count": 1,
+          "frequency": "daily"
+        },
+        {
+          "district": "मुजफ्फरपुर",
+          "period_start": "2026-09-11",
+          "average_modal_price": 1375.0,
+          "observation_count": 2,
+          "frequency": "daily"
+        },
+        {
+          "district": "मुजफ्फरपुर",
+          "period_start": "2026-09-12",
+          "average_modal_price": 1200.0,
+          "observation_count": 2,
+          "frequency": "daily"
+        },
+        {
+          "district": "मुजफ्फरपुर",
+          "period_start": "2026-09-14",
+          "average_modal_price": 1150.0,
+          "observation_count": 2,
+          "frequency": "daily"
+        },
+        {
+          "district": "मुजफ्फरपुर",
+          "period_start": "2026-09-15",
+          "average_modal_price": 1300.0,
+          "observation_count": 2,
+          "frequency": "daily"
+        },
+        {
+          "district": "मुजफ्फरपुर",
+          "period_start": "2026-09-16",
+          "average_modal_price": 1400.0,
+          "observation_count": 1,
+          "frequency": "daily"
+        },
+        {
+          "district": "मुजफ्फरपुर",
+          "period_start": "2026-09-20",
+          "average_modal_price": 1300.0,
+          "observation_count": 1,
+          "frequency": "daily"
+        },
+        {
+          "district": "मुजफ्फरपुर",
+          "period_start": "2026-09-21",
+          "average_modal_price": 1250.0,
+          "observation_count": 2,
+          "frequency": "daily"
+        },
+        {
+          "district": "मुजफ्फरपुर",
+          "period_start": "2026-09-23",
+          "average_modal_price": 1300.0,
+          "observation_count": 1,
+          "frequency": "daily"
+        },
+        {
+          "district": "मुजफ्फरपुर",
+          "period_start": "2026-09-24",
+          "average_modal_price": 1300.0,
+          "observation_count": 1,
+          "frequency": "daily"
+        },
+        {
+          "district": "मुजफ्फरपुर",
+          "period_start": "2026-09-25",
+          "average_modal_price": 1250.0,
+          "observation_count": 2,
+          "frequency": "daily"
+        },
+        {
+          "district": "मुजफ्फरपुर",
+          "period_start": "2026-09-27",
+          "average_modal_price": 1250.0,
+          "observation_count": 2,
+          "frequency": "daily"
+        },
+        {
+          "district": "मुजफ्फरपुर",
+          "period_start": "2026-09-30",
+          "average_modal_price": 1200.0,
+          "observation_count": 1,
+          "frequency": "daily"
+        },
+        {
+          "district": "मुजफ्फरपुर",
+          "period_start": "2026-10-04",
+          "average_modal_price": 1225.0,
+          "observation_count": 2,
+          "frequency": "daily"
+        },
+        {
+          "district": "मुजफ्फरपुर",
+          "period_start": "2026-10-14",
+          "average_modal_price": 1120.0,
+          "observation_count": 5,
+          "frequency": "daily"
+        },
+        {
+          "district": "मुजफ्फरपुर",
+          "period_start": "2026-10-16",
+          "average_modal_price": 1066.67,
+          "observation_count": 3,
+          "frequency": "daily"
+        },
+        {
+          "district": "सारण",
+          "period_start": "2026-07-21",
+          "average_modal_price": 1200.0,
+          "observation_count": 1,
+          "frequency": "daily"
+        },
+        {
+          "district": "सारण",
+          "period_start": "2026-07-22",
+          "average_modal_price": 1400.0,
+          "observation_count": 1,
+          "frequency": "daily"
+        },
+        {
+          "district": "सारण",
+          "period_start": "2026-07-23",
+          "average_modal_price": 1300.0,
+          "observation_count": 1,
+          "frequency": "daily"
+        },
+        {
+          "district": "सारण",
+          "period_start": "2026-07-24",
+          "average_modal_price": 1200.0,
+          "observation_count": 1,
+          "frequency": "daily"
+        },
+        {
+          "district": "सारण",
+          "period_start": "2026-07-26",
+          "average_modal_price": 1200.0,
+          "observation_count": 1,
+          "frequency": "daily"
+        },
+        {
+          "district": "सारण",
+          "period_start": "2026-07-27",
+          "average_modal_price": 1200.0,
+          "observation_count": 1,
+          "frequency": "daily"
+        },
+        {
+          "district": "सारण",
+          "period_start": "2026-07-28",
+          "average_modal_price": 1200.0,
+          "observation_count": 1,
+          "frequency": "daily"
+        },
+        {
+          "district": "सारण",
+          "period_start": "2026-07-29",
+          "average_modal_price": 1200.0,
+          "observation_count": 1,
+          "frequency": "daily"
+        },
+        {
+          "district": "सारण",
+          "period_start": "2026-07-30",
+          "average_modal_price": 1200.0,
+          "observation_count": 1,
+          "frequency": "daily"
+        },
+        {
+          "district": "सारण",
+          "period_start": "2026-08-01",
+          "average_modal_price": 1200.0,
+          "observation_count": 1,
+          "frequency": "daily"
+        },
+        {
+          "district": "सारण",
+          "period_start": "2026-08-02",
+          "average_modal_price": 1200.0,
+          "observation_count": 1,
+          "frequency": "daily"
+        },
+        {
+          "district": "सारण",
+          "period_start": "2026-08-03",
+          "average_modal_price": 1200.0,
+          "observation_count": 1,
+          "frequency": "daily"
+        },
+        {
+          "district": "सारण",
+          "period_start": "2026-08-05",
+          "average_modal_price": 1200.0,
+          "observation_count": 1,
+          "frequency": "daily"
+        },
+        {
+          "district": "सारण",
+          "period_start": "2026-08-06",
+          "average_modal_price": 1200.0,
+          "observation_count": 1,
+          "frequency": "daily"
+        },
+        {
+          "district": "सारण",
+          "period_start": "2026-08-07",
+          "average_modal_price": 1200.0,
+          "observation_count": 1,
+          "frequency": "daily"
+        },
+        {
+          "district": "सारण",
+          "period_start": "2026-08-08",
+          "average_modal_price": 1200.0,
+          "observation_count": 1,
+          "frequency": "daily"
+        },
+        {
+          "district": "सारण",
+          "period_start": "2026-08-09",
+          "average_modal_price": 1200.0,
+          "observation_count": 1,
+          "frequency": "daily"
+        },
+        {
+          "district": "सारण",
+          "period_start": "2026-08-10",
+          "average_modal_price": 1200.0,
+          "observation_count": 1,
+          "frequency": "daily"
+        },
+        {
+          "district": "सारण",
+          "period_start": "2026-08-11",
+          "average_modal_price": 1200.0,
+          "observation_count": 1,
+          "frequency": "daily"
+        },
+        {
+          "district": "सारण",
+          "period_start": "2026-08-12",
+          "average_modal_price": 1200.0,
+          "observation_count": 1,
+          "frequency": "daily"
+        },
+        {
+          "district": "सारण",
+          "period_start": "2026-08-13",
+          "average_modal_price": 1200.0,
+          "observation_count": 1,
+          "frequency": "daily"
+        },
+        {
+          "district": "सारण",
+          "period_start": "2026-08-14",
+          "average_modal_price": 1200.0,
+          "observation_count": 1,
+          "frequency": "daily"
+        },
+        {
+          "district": "सारण",
+          "period_start": "2026-08-15",
+          "average_modal_price": 1200.0,
+          "observation_count": 1,
+          "frequency": "daily"
+        },
+        {
+          "district": "सारण",
+          "period_start": "2026-08-16",
+          "average_modal_price": 1200.0,
+          "observation_count": 1,
+          "frequency": "daily"
+        },
+        {
+          "district": "सारण",
+          "period_start": "2026-08-17",
+          "average_modal_price": 1200.0,
+          "observation_count": 1,
+          "frequency": "daily"
+        },
+        {
+          "district": "सारण",
+          "period_start": "2026-08-18",
+          "average_modal_price": 1200.0,
+          "observation_count": 1,
+          "frequency": "daily"
+        },
+        {
+          "district": "सारण",
+          "period_start": "2026-08-19",
+          "average_modal_price": 1300.0,
+          "observation_count": 1,
+          "frequency": "daily"
+        },
+        {
+          "district": "सारण",
+          "period_start": "2026-08-20",
+          "average_modal_price": 1200.0,
+          "observation_count": 1,
+          "frequency": "daily"
+        },
+        {
+          "district": "सारण",
+          "period_start": "2026-08-21",
+          "average_modal_price": 1200.0,
+          "observation_count": 1,
+          "frequency": "daily"
+        },
+        {
+          "district": "सारण",
+          "period_start": "2026-08-22",
+          "average_modal_price": 1200.0,
+          "observation_count": 1,
+          "frequency": "daily"
+        },
+        {
+          "district": "सारण",
+          "period_start": "2026-08-23",
+          "average_modal_price": 1200.0,
+          "observation_count": 1,
+          "frequency": "daily"
+        },
+        {
+          "district": "सारण",
+          "period_start": "2026-08-24",
+          "average_modal_price": 1200.0,
+          "observation_count": 1,
+          "frequency": "daily"
+        },
+        {
+          "district": "सारण",
+          "period_start": "2026-08-25",
+          "average_modal_price": 1200.0,
+          "observation_count": 1,
+          "frequency": "daily"
+        },
+        {
+          "district": "सारण",
+          "period_start": "2026-08-26",
+          "average_modal_price": 1200.0,
+          "observation_count": 1,
+          "frequency": "daily"
+        },
+        {
+          "district": "सारण",
+          "period_start": "2026-08-29",
+          "average_modal_price": 1200.0,
+          "observation_count": 1,
+          "frequency": "daily"
+        },
+        {
+          "district": "सारण",
+          "period_start": "2026-08-31",
+          "average_modal_price": 1100.0,
+          "observation_count": 1,
+          "frequency": "daily"
+        },
+        {
+          "district": "सारण",
+          "period_start": "2026-09-01",
+          "average_modal_price": 1200.0,
+          "observation_count": 1,
+          "frequency": "daily"
+        },
+        {
+          "district": "सारण",
+          "period_start": "2026-09-02",
+          "average_modal_price": 1200.0,
+          "observation_count": 1,
+          "frequency": "daily"
+        },
+        {
+          "district": "सारण",
+          "period_start": "2026-09-03",
+          "average_modal_price": 1200.0,
+          "observation_count": 1,
+          "frequency": "daily"
+        },
+        {
+          "district": "सारण",
+          "period_start": "2026-09-04",
+          "average_modal_price": 1200.0,
+          "observation_count": 1,
+          "frequency": "daily"
+        },
+        {
+          "district": "सारण",
+          "period_start": "2026-09-05",
+          "average_modal_price": 1200.0,
+          "observation_count": 1,
+          "frequency": "daily"
+        },
+        {
+          "district": "सारण",
+          "period_start": "2026-09-06",
+          "average_modal_price": 1400.0,
+          "observation_count": 1,
+          "frequency": "daily"
+        },
+        {
+          "district": "सारण",
+          "period_start": "2026-09-07",
+          "average_modal_price": 1200.0,
+          "observation_count": 1,
+          "frequency": "daily"
+        },
+        {
+          "district": "सारण",
+          "period_start": "2026-09-08",
+          "average_modal_price": 1200.0,
+          "observation_count": 1,
+          "frequency": "daily"
+        },
+        {
+          "district": "सारण",
+          "period_start": "2026-09-09",
+          "average_modal_price": 1200.0,
+          "observation_count": 1,
+          "frequency": "daily"
+        },
+        {
+          "district": "सारण",
+          "period_start": "2026-09-10",
+          "average_modal_price": 1200.0,
+          "observation_count": 1,
+          "frequency": "daily"
+        },
+        {
+          "district": "सारण",
+          "period_start": "2026-09-11",
+          "average_modal_price": 1200.0,
+          "observation_count": 1,
+          "frequency": "daily"
+        },
+        {
+          "district": "सारण",
+          "period_start": "2026-09-12",
+          "average_modal_price": 1200.0,
+          "observation_count": 1,
+          "frequency": "daily"
+        },
+        {
+          "district": "सारण",
+          "period_start": "2026-09-13",
+          "average_modal_price": 1200.0,
+          "observation_count": 1,
+          "frequency": "daily"
+        },
+        {
+          "district": "सारण",
+          "period_start": "2026-09-14",
+          "average_modal_price": 1200.0,
+          "observation_count": 1,
+          "frequency": "daily"
+        },
+        {
+          "district": "सारण",
+          "period_start": "2026-09-15",
+          "average_modal_price": 1200.0,
+          "observation_count": 1,
+          "frequency": "daily"
+        },
+        {
+          "district": "सारण",
+          "period_start": "2026-09-16",
+          "average_modal_price": 1200.0,
+          "observation_count": 1,
+          "frequency": "daily"
+        },
+        {
+          "district": "सारण",
+          "period_start": "2026-09-17",
+          "average_modal_price": 1200.0,
+          "observation_count": 2,
+          "frequency": "daily"
+        },
+        {
+          "district": "सारण",
+          "period_start": "2026-09-18",
+          "average_modal_price": 1200.0,
+          "observation_count": 1,
+          "frequency": "daily"
+        },
+        {
+          "district": "सारण",
+          "period_start": "2026-09-19",
+          "average_modal_price": 1210.0,
+          "observation_count": 1,
+          "frequency": "daily"
+        },
+        {
+          "district": "सारण",
+          "period_start": "2026-09-20",
+          "average_modal_price": 1210.0,
+          "observation_count": 1,
+          "frequency": "daily"
+        },
+        {
+          "district": "सारण",
+          "period_start": "2026-09-21",
+          "average_modal_price": 1200.0,
+          "observation_count": 1,
+          "frequency": "daily"
+        },
+        {
+          "district": "सारण",
+          "period_start": "2026-09-22",
+          "average_modal_price": 1200.0,
+          "observation_count": 1,
+          "frequency": "daily"
+        },
+        {
+          "district": "सारण",
+          "period_start": "2026-09-23",
+          "average_modal_price": 1210.0,
+          "observation_count": 1,
+          "frequency": "daily"
+        },
+        {
+          "district": "सारण",
+          "period_start": "2026-09-24",
+          "average_modal_price": 1200.0,
+          "observation_count": 1,
+          "frequency": "daily"
+        },
+        {
+          "district": "सारण",
+          "period_start": "2026-09-25",
+          "average_modal_price": 1200.0,
+          "observation_count": 1,
+          "frequency": "daily"
+        },
+        {
+          "district": "सारण",
+          "period_start": "2026-09-26",
+          "average_modal_price": 1200.0,
+          "observation_count": 1,
+          "frequency": "daily"
+        },
+        {
+          "district": "सारण",
+          "period_start": "2026-09-27",
+          "average_modal_price": 1200.0,
+          "observation_count": 1,
+          "frequency": "daily"
+        },
+        {
+          "district": "सारण",
+          "period_start": "2026-09-28",
+          "average_modal_price": 1200.0,
+          "observation_count": 1,
+          "frequency": "daily"
+        },
+        {
+          "district": "सारण",
+          "period_start": "2026-09-29",
+          "average_modal_price": 1200.0,
+          "observation_count": 1,
+          "frequency": "daily"
+        },
+        {
+          "district": "सारण",
+          "period_start": "2026-10-06",
+          "average_modal_price": 1200.0,
+          "observation_count": 1,
+          "frequency": "daily"
+        },
+        {
+          "district": "सारण",
+          "period_start": "2026-10-09",
+          "average_modal_price": 1200.0,
+          "observation_count": 1,
+          "frequency": "daily"
+        },
+        {
+          "district": "सारण",
+          "period_start": "2026-10-10",
+          "average_modal_price": 1450.0,
+          "observation_count": 1,
+          "frequency": "daily"
+        },
+        {
+          "district": "सारण",
+          "period_start": "2026-10-11",
+          "average_modal_price": 1200.0,
+          "observation_count": 1,
+          "frequency": "daily"
+        },
+        {
+          "district": "सारण",
+          "period_start": "2026-10-12",
+          "average_modal_price": 1200.0,
+          "observation_count": 1,
+          "frequency": "daily"
+        },
+        {
+          "district": "सारण",
+          "period_start": "2026-10-13",
+          "average_modal_price": 1200.0,
+          "observation_count": 1,
+          "frequency": "daily"
+        },
+        {
+          "district": "सारण",
+          "period_start": "2026-10-15",
+          "average_modal_price": 1275.0,
+          "observation_count": 2,
+          "frequency": "daily"
+        },
+        {
+          "district": "सारण",
+          "period_start": "2026-10-19",
+          "average_modal_price": 1210.0,
+          "observation_count": 1,
+          "frequency": "daily"
+        },
+        {
+          "district": "सारण",
+          "period_start": "2026-10-22",
+          "average_modal_price": 1200.0,
+          "observation_count": 1,
+          "frequency": "daily"
+        },
+        {
+          "district": "सारण",
+          "period_start": "2026-10-23",
+          "average_modal_price": 1200.0,
+          "observation_count": 1,
+          "frequency": "daily"
+        },
+        {
+          "district": "सारण",
+          "period_start": "2026-10-24",
+          "average_modal_price": 1200.0,
+          "observation_count": 1,
+          "frequency": "daily"
+        },
+        {
+          "district": "सुपौल",
+          "period_start": "2026-07-21",
+          "average_modal_price": 1500.0,
+          "observation_count": 1,
+          "frequency": "daily"
+        },
+        {
+          "district": "सुपौल",
+          "period_start": "2026-07-22",
+          "average_modal_price": 1400.0,
+          "observation_count": 2,
+          "frequency": "daily"
+        },
+        {
+          "district": "सुपौल",
+          "period_start": "2026-07-23",
+          "average_modal_price": 1600.0,
+          "observation_count": 3,
+          "frequency": "daily"
+        },
+        {
+          "district": "सुपौल",
+          "period_start": "2026-07-25",
+          "average_modal_price": 1300.0,
+          "observation_count": 1,
+          "frequency": "daily"
+        },
+        {
+          "district": "सुपौल",
+          "period_start": "2026-07-27",
+          "average_modal_price": 1400.0,
+          "observation_count": 2,
+          "frequency": "daily"
+        },
+        {
+          "district": "सुपौल",
+          "period_start": "2026-07-28",
+          "average_modal_price": 1800.0,
+          "observation_count": 2,
+          "frequency": "daily"
+        },
+        {
+          "district": "सुपौल",
+          "period_start": "2026-07-29",
+          "average_modal_price": 1375.0,
+          "observation_count": 2,
+          "frequency": "daily"
+        },
+        {
+          "district": "सुपौल",
+          "period_start": "2026-07-30",
+          "average_modal_price": 1300.0,
+          "observation_count": 1,
+          "frequency": "daily"
+        },
+        {
+          "district": "सुपौल",
+          "period_start": "2026-07-31",
+          "average_modal_price": 1350.0,
+          "observation_count": 1,
+          "frequency": "daily"
+        },
+        {
+          "district": "सुपौल",
+          "period_start": "2026-08-01",
+          "average_modal_price": 1275.0,
+          "observation_count": 2,
+          "frequency": "daily"
+        },
+        {
+          "district": "सुपौल",
+          "period_start": "2026-08-02",
+          "average_modal_price": 1275.0,
+          "observation_count": 2,
+          "frequency": "daily"
+        },
+        {
+          "district": "सुपौल",
+          "period_start": "2026-08-05",
+          "average_modal_price": 1683.33,
+          "observation_count": 3,
+          "frequency": "daily"
+        },
+        {
+          "district": "सुपौल",
+          "period_start": "2026-08-06",
+          "average_modal_price": 1200.0,
+          "observation_count": 1,
+          "frequency": "daily"
+        },
+        {
+          "district": "सुपौल",
+          "period_start": "2026-08-07",
+          "average_modal_price": 1275.0,
+          "observation_count": 2,
+          "frequency": "daily"
+        },
+        {
+          "district": "सुपौल",
+          "period_start": "2026-08-08",
+          "average_modal_price": 2200.0,
+          "observation_count": 1,
+          "frequency": "daily"
+        },
+        {
+          "district": "सुपौल",
+          "period_start": "2026-08-10",
+          "average_modal_price": 1300.0,
+          "observation_count": 2,
+          "frequency": "daily"
+        },
+        {
+          "district": "सुपौल",
+          "period_start": "2026-08-11",
+          "average_modal_price": 1400.0,
+          "observation_count": 1,
+          "frequency": "daily"
+        },
+        {
+          "district": "सुपौल",
+          "period_start": "2026-08-12",
+          "average_modal_price": 1800.0,
+          "observation_count": 2,
+          "frequency": "daily"
+        },
+        {
+          "district": "सुपौल",
+          "period_start": "2026-08-13",
+          "average_modal_price": 1250.0,
+          "observation_count": 2,
+          "frequency": "daily"
+        },
+        {
+          "district": "सुपौल",
+          "period_start": "2026-08-14",
+          "average_modal_price": 1700.0,
+          "observation_count": 2,
+          "frequency": "daily"
+        },
+        {
+          "district": "सुपौल",
+          "period_start": "2026-08-17",
+          "average_modal_price": 1100.0,
+          "observation_count": 1,
+          "frequency": "daily"
+        },
+        {
+          "district": "सुपौल",
+          "period_start": "2026-08-21",
+          "average_modal_price": 1100.0,
+          "observation_count": 1,
+          "frequency": "daily"
+        },
+        {
+          "district": "सुपौल",
+          "period_start": "2026-08-24",
+          "average_modal_price": 1400.0,
+          "observation_count": 1,
+          "frequency": "daily"
+        },
+        {
+          "district": "सुपौल",
+          "period_start": "2026-08-25",
+          "average_modal_price": 2000.0,
+          "observation_count": 1,
+          "frequency": "daily"
+        },
+        {
+          "district": "सुपौल",
+          "period_start": "2026-08-27",
+          "average_modal_price": 1400.0,
+          "observation_count": 1,
+          "frequency": "daily"
+        },
+        {
+          "district": "सुपौल",
+          "period_start": "2026-08-28",
+          "average_modal_price": 1400.0,
+          "observation_count": 1,
+          "frequency": "daily"
+        },
+        {
+          "district": "सुपौल",
+          "period_start": "2026-08-29",
+          "average_modal_price": 1550.0,
+          "observation_count": 1,
+          "frequency": "daily"
+        },
+        {
+          "district": "सुपौल",
+          "period_start": "2026-08-31",
+          "average_modal_price": 1600.0,
+          "observation_count": 1,
+          "frequency": "daily"
+        },
+        {
+          "district": "सुपौल",
+          "period_start": "2026-09-01",
+          "average_modal_price": 2200.0,
+          "observation_count": 1,
+          "frequency": "daily"
+        },
+        {
+          "district": "सुपौल",
+          "period_start": "2026-09-02",
+          "average_modal_price": 1200.0,
+          "observation_count": 1,
+          "frequency": "daily"
+        },
+        {
+          "district": "सुपौल",
+          "period_start": "2026-09-03",
+          "average_modal_price": 1500.0,
+          "observation_count": 1,
+          "frequency": "daily"
+        },
+        {
+          "district": "सुपौल",
+          "period_start": "2026-09-05",
+          "average_modal_price": 1500.0,
+          "observation_count": 1,
+          "frequency": "daily"
+        },
+        {
+          "district": "सुपौल",
+          "period_start": "2026-09-06",
+          "average_modal_price": 1500.0,
+          "observation_count": 1,
+          "frequency": "daily"
+        },
+        {
+          "district": "सुपौल",
+          "period_start": "2026-09-07",
+          "average_modal_price": 1800.0,
+          "observation_count": 1,
+          "frequency": "daily"
+        },
+        {
+          "district": "सुपौल",
+          "period_start": "2026-09-09",
+          "average_modal_price": 1600.0,
+          "observation_count": 1,
+          "frequency": "daily"
+        },
+        {
+          "district": "सुपौल",
+          "period_start": "2026-09-11",
+          "average_modal_price": 1550.0,
+          "observation_count": 1,
+          "frequency": "daily"
+        },
+        {
+          "district": "सुपौल",
+          "period_start": "2026-09-12",
+          "average_modal_price": 1471.5,
+          "observation_count": 2,
+          "frequency": "daily"
+        },
+        {
+          "district": "सुपौल",
+          "period_start": "2026-09-14",
+          "average_modal_price": 2200.0,
+          "observation_count": 1,
+          "frequency": "daily"
+        },
+        {
+          "district": "सुपौल",
+          "period_start": "2026-09-15",
+          "average_modal_price": 1500.0,
+          "observation_count": 1,
+          "frequency": "daily"
+        },
+        {
+          "district": "सुपौल",
+          "period_start": "2026-09-16",
+          "average_modal_price": 1400.0,
+          "observation_count": 1,
+          "frequency": "daily"
+        },
+        {
+          "district": "सुपौल",
+          "period_start": "2026-09-18",
+          "average_modal_price": 1600.0,
+          "observation_count": 1,
+          "frequency": "daily"
+        },
+        {
+          "district": "सुपौल",
+          "period_start": "2026-09-19",
+          "average_modal_price": 1550.0,
+          "observation_count": 2,
+          "frequency": "daily"
+        },
+        {
+          "district": "सुपौल",
+          "period_start": "2026-09-21",
+          "average_modal_price": 1750.0,
+          "observation_count": 2,
+          "frequency": "daily"
+        },
+        {
+          "district": "सुपौल",
+          "period_start": "2026-09-22",
+          "average_modal_price": 1578.0,
+          "observation_count": 1,
+          "frequency": "daily"
+        },
+        {
+          "district": "सुपौल",
+          "period_start": "2026-09-23",
+          "average_modal_price": 1600.0,
+          "observation_count": 1,
+          "frequency": "daily"
+        },
+        {
+          "district": "सुपौल",
+          "period_start": "2026-09-24",
+          "average_modal_price": 1585.0,
+          "observation_count": 1,
+          "frequency": "daily"
+        },
+        {
+          "district": "सुपौल",
+          "period_start": "2026-09-25",
+          "average_modal_price": 1550.0,
+          "observation_count": 2,
+          "frequency": "daily"
+        },
+        {
+          "district": "सुपौल",
+          "period_start": "2026-09-26",
+          "average_modal_price": 2000.0,
+          "observation_count": 1,
+          "frequency": "daily"
+        },
+        {
+          "district": "सुपौल",
+          "period_start": "2026-09-29",
+          "average_modal_price": 1600.0,
+          "observation_count": 1,
+          "frequency": "daily"
+        },
+        {
+          "district": "सुपौल",
+          "period_start": "2026-09-30",
+          "average_modal_price": 1700.0,
+          "observation_count": 3,
+          "frequency": "daily"
+        },
+        {
+          "district": "सुपौल",
+          "period_start": "2026-10-01",
+          "average_modal_price": 1600.0,
+          "observation_count": 1,
+          "frequency": "daily"
+        },
+        {
+          "district": "सुपौल",
+          "period_start": "2026-10-05",
+          "average_modal_price": 2000.0,
+          "observation_count": 1,
+          "frequency": "daily"
+        },
+        {
+          "district": "सुपौल",
+          "period_start": "2026-10-06",
+          "average_modal_price": 1600.0,
+          "observation_count": 1,
+          "frequency": "daily"
+        },
+        {
+          "district": "सुपौल",
+          "period_start": "2026-10-07",
+          "average_modal_price": 1766.67,
+          "observation_count": 3,
+          "frequency": "daily"
+        },
+        {
+          "district": "सुपौल",
+          "period_start": "2026-10-08",
+          "average_modal_price": 1600.0,
+          "observation_count": 1,
+          "frequency": "daily"
+        },
+        {
+          "district": "सुपौल",
+          "period_start": "2026-10-09",
+          "average_modal_price": 1500.0,
+          "observation_count": 1,
+          "frequency": "daily"
+        },
+        {
+          "district": "सुपौल",
+          "period_start": "2026-10-10",
+          "average_modal_price": 1600.0,
+          "observation_count": 1,
+          "frequency": "daily"
+        },
+        {
+          "district": "सुपौल",
+          "period_start": "2026-10-12",
+          "average_modal_price": 1600.0,
+          "observation_count": 1,
+          "frequency": "daily"
+        },
+        {
+          "district": "सुपौल",
+          "period_start": "2026-10-13",
+          "average_modal_price": 1800.0,
+          "observation_count": 2,
+          "frequency": "daily"
+        },
+        {
+          "district": "सुपौल",
+          "period_start": "2026-10-14",
+          "average_modal_price": 1600.0,
+          "observation_count": 1,
+          "frequency": "daily"
+        },
+        {
+          "district": "सुपौल",
+          "period_start": "2026-10-16",
+          "average_modal_price": 1700.0,
+          "observation_count": 2,
+          "frequency": "daily"
+        },
+        {
+          "district": "सुपौल",
+          "period_start": "2026-10-18",
+          "average_modal_price": 1600.0,
+          "observation_count": 1,
+          "frequency": "daily"
+        },
+        {
+          "district": "सुपौल",
+          "period_start": "2026-10-21",
+          "average_modal_price": 1700.0,
+          "observation_count": 2,
+          "frequency": "daily"
+        },
+        {
+          "district": "सुपौल",
+          "period_start": "2026-10-22",
+          "average_modal_price": 1600.0,
+          "observation_count": 1,
+          "frequency": "daily"
+        },
+        {
+          "district": "सुपौल",
+          "period_start": "2026-10-23",
+          "average_modal_price": 1650.0,
+          "observation_count": 2,
+          "frequency": "daily"
+        }
+      ],
+      "weekly": [
+        {
+          "district": "पूर्वी चंपारण",
+          "period_start": "2026-07-20",
+          "average_modal_price": 1250.0,
+          "observation_count": 22,
+          "frequency": "weekly"
+        },
+        {
+          "district": "पूर्वी चंपारण",
+          "period_start": "2026-07-27",
+          "average_modal_price": 1259.09,
+          "observation_count": 22,
+          "frequency": "weekly"
+        },
+        {
+          "district": "पूर्वी चंपारण",
+          "period_start": "2026-08-03",
+          "average_modal_price": 1239.13,
+          "observation_count": 23,
+          "frequency": "weekly"
+        },
+        {
+          "district": "पूर्वी चंपारण",
+          "period_start": "2026-08-10",
+          "average_modal_price": 1285.29,
+          "observation_count": 17,
+          "frequency": "weekly"
+        },
+        {
+          "district": "पूर्वी चंपारण",
+          "period_start": "2026-08-17",
+          "average_modal_price": 1261.54,
+          "observation_count": 26,
+          "frequency": "weekly"
+        },
+        {
+          "district": "पूर्वी चंपारण",
+          "period_start": "2026-08-24",
+          "average_modal_price": 1250.0,
+          "observation_count": 21,
+          "frequency": "weekly"
+        },
+        {
+          "district": "पूर्वी चंपारण",
+          "period_start": "2026-08-31",
+          "average_modal_price": 1263.89,
+          "observation_count": 18,
+          "frequency": "weekly"
+        },
+        {
+          "district": "पूर्वी चंपारण",
+          "period_start": "2026-09-07",
+          "average_modal_price": 1294.12,
+          "observation_count": 17,
+          "frequency": "weekly"
+        },
+        {
+          "district": "पूर्वी चंपारण",
+          "period_start": "2026-09-14",
+          "average_modal_price": 1289.47,
+          "observation_count": 19,
+          "frequency": "weekly"
+        },
+        {
+          "district": "पूर्वी चंपारण",
+          "period_start": "2026-09-21",
+          "average_modal_price": 1300.0,
+          "observation_count": 18,
+          "frequency": "weekly"
+        },
+        {
+          "district": "पूर्वी चंपारण",
+          "period_start": "2026-09-28",
+          "average_modal_price": 1377.78,
+          "observation_count": 9,
+          "frequency": "weekly"
+        },
+        {
+          "district": "पूर्वी चंपारण",
+          "period_start": "2026-10-05",
+          "average_modal_price": 1350.0,
+          "observation_count": 10,
+          "frequency": "weekly"
+        },
+        {
+          "district": "पूर्वी चंपारण",
+          "period_start": "2026-10-12",
+          "average_modal_price": 1309.09,
+          "observation_count": 11,
+          "frequency": "weekly"
+        },
+        {
+          "district": "पूर्वी चंपारण",
+          "period_start": "2026-10-19",
+          "average_modal_price": 1300.0,
+          "observation_count": 14,
+          "frequency": "weekly"
+        },
+        {
+          "district": "बेगूसराय",
+          "period_start": "2026-07-20",
+          "average_modal_price": 1166.67,
+          "observation_count": 18,
+          "frequency": "weekly"
+        },
+        {
+          "district": "बेगूसराय",
+          "period_start": "2026-07-27",
+          "average_modal_price": 1200.0,
+          "observation_count": 18,
+          "frequency": "weekly"
+        },
+        {
+          "district": "बेगूसराय",
+          "period_start": "2026-08-03",
+          "average_modal_price": 1111.76,
+          "observation_count": 17,
+          "frequency": "weekly"
+        },
+        {
+          "district": "बेगूसराय",
+          "period_start": "2026-08-10",
+          "average_modal_price": 1180.0,
+          "observation_count": 15,
+          "frequency": "weekly"
+        },
+        {
+          "district": "बेगूसराय",
+          "period_start": "2026-08-17",
+          "average_modal_price": 1100.0,
+          "observation_count": 18,
+          "frequency": "weekly"
+        },
+        {
+          "district": "बेगूसराय",
+          "period_start": "2026-08-24",
+          "average_modal_price": 1100.0,
+          "observation_count": 12,
+          "frequency": "weekly"
+        },
+        {
+          "district": "बेगूसराय",
+          "period_start": "2026-08-31",
+          "average_modal_price": 1142.86,
+          "observation_count": 21,
+          "frequency": "weekly"
+        },
+        {
+          "district": "बेगूसराय",
+          "period_start": "2026-09-07",
+          "average_modal_price": 1116.67,
+          "observation_count": 18,
+          "frequency": "weekly"
+        },
+        {
+          "district": "बेगूसराय",
+          "period_start": "2026-09-14",
+          "average_modal_price": 1271.43,
+          "observation_count": 21,
+          "frequency": "weekly"
+        },
+        {
+          "district": "बेगूसराय",
+          "period_start": "2026-09-21",
+          "average_modal_price": 1300.0,
+          "observation_count": 21,
+          "frequency": "weekly"
+        },
+        {
+          "district": "बेगूसराय",
+          "period_start": "2026-09-28",
+          "average_modal_price": 1238.46,
+          "observation_count": 13,
+          "frequency": "weekly"
+        },
+        {
+          "district": "बेगूसराय",
+          "period_start": "2026-10-05",
+          "average_modal_price": 1100.0,
+          "observation_count": 3,
+          "frequency": "weekly"
+        },
+        {
+          "district": "बेगूसराय",
+          "period_start": "2026-10-12",
+          "average_modal_price": 1063.64,
+          "observation_count": 22,
+          "frequency": "weekly"
+        },
+        {
+          "district": "बेगूसराय",
+          "period_start": "2026-10-19",
+          "average_modal_price": 1100.0,
+          "observation_count": 6,
+          "frequency": "weekly"
+        },
+        {
+          "district": "मधुबनी",
+          "period_start": "2026-07-20",
+          "average_modal_price": 1170.62,
+          "observation_count": 16,
+          "frequency": "weekly"
+        },
+        {
+          "district": "मधुबनी",
+          "period_start": "2026-07-27",
+          "average_modal_price": 1167.22,
+          "observation_count": 18,
+          "frequency": "weekly"
+        },
+        {
+          "district": "मधुबनी",
+          "period_start": "2026-08-03",
+          "average_modal_price": 1182.22,
+          "observation_count": 18,
+          "frequency": "weekly"
+        },
+        {
+          "district": "मधुबनी",
+          "period_start": "2026-08-10",
+          "average_modal_price": 1203.57,
+          "observation_count": 14,
+          "frequency": "weekly"
+        },
+        {
+          "district": "मधुबनी",
+          "period_start": "2026-08-17",
+          "average_modal_price": 1162.86,
+          "observation_count": 14,
+          "frequency": "weekly"
+        },
+        {
+          "district": "मधुबनी",
+          "period_start": "2026-08-24",
+          "average_modal_price": 1115.0,
+          "observation_count": 12,
+          "frequency": "weekly"
+        },
+        {
+          "district": "मधुबनी",
+          "period_start": "2026-08-31",
+          "average_modal_price": 1145.0,
+          "observation_count": 10,
+          "frequency": "weekly"
+        },
+        {
+          "district": "मधुबनी",
+          "period_start": "2026-09-07",
+          "average_modal_price": 1200.0,
+          "observation_count": 11,
+          "frequency": "weekly"
+        },
+        {
+          "district": "मधुबनी",
+          "period_start": "2026-09-14",
+          "average_modal_price": 1150.0,
+          "observation_count": 10,
+          "frequency": "weekly"
+        },
+        {
+          "district": "मधुबनी",
+          "period_start": "2026-09-21",
+          "average_modal_price": 1133.33,
+          "observation_count": 9,
+          "frequency": "weekly"
+        },
+        {
+          "district": "मधुबनी",
+          "period_start": "2026-09-28",
+          "average_modal_price": 1150.0,
+          "observation_count": 6,
+          "frequency": "weekly"
+        },
+        {
+          "district": "मधुबनी",
+          "period_start": "2026-10-05",
+          "average_modal_price": 1105.56,
+          "observation_count": 9,
+          "frequency": "weekly"
+        },
+        {
+          "district": "मधुबनी",
+          "period_start": "2026-10-12",
+          "average_modal_price": 1130.0,
+          "observation_count": 10,
+          "frequency": "weekly"
+        },
+        {
+          "district": "मधुबनी",
+          "period_start": "2026-10-19",
+          "average_modal_price": 1164.29,
+          "observation_count": 7,
+          "frequency": "weekly"
+        },
+        {
+          "district": "मुजफ्फरपुर",
+          "period_start": "2026-07-20",
+          "average_modal_price": 1022.11,
+          "observation_count": 18,
+          "frequency": "weekly"
+        },
+        {
+          "district": "मुजफ्फरपुर",
+          "period_start": "2026-07-27",
+          "average_modal_price": 1109.17,
+          "observation_count": 18,
+          "frequency": "weekly"
+        },
+        {
+          "district": "मुजफ्फरपुर",
+          "period_start": "2026-08-03",
+          "average_modal_price": 1215.0,
+          "observation_count": 10,
+          "frequency": "weekly"
+        },
+        {
+          "district": "मुजफ्फरपुर",
+          "period_start": "2026-08-10",
+          "average_modal_price": 1141.92,
+          "observation_count": 12,
+          "frequency": "weekly"
+        },
+        {
+          "district": "मुजफ्फरपुर",
+          "period_start": "2026-08-17",
+          "average_modal_price": 1095.86,
+          "observation_count": 22,
+          "frequency": "weekly"
+        },
+        {
+          "district": "मुजफ्फरपुर",
+          "period_start": "2026-08-24",
+          "average_modal_price": 1104.55,
+          "observation_count": 11,
+          "frequency": "weekly"
+        },
+        {
+          "district": "मुजफ्फरपुर",
+          "period_start": "2026-08-31",
+          "average_modal_price": 1110.73,
+          "observation_count": 11,
+          "frequency": "weekly"
+        },
+        {
+          "district": "मुजफ्फरपुर",
+          "period_start": "2026-09-07",
+          "average_modal_price": 1310.0,
+          "observation_count": 7,
+          "frequency": "weekly"
+        },
+        {
+          "district": "मुजफ्फरपुर",
+          "period_start": "2026-09-14",
+          "average_modal_price": 1266.67,
+          "observation_count": 6,
+          "frequency": "weekly"
+        },
+        {
+          "district": "मुजफ्फरपुर",
+          "period_start": "2026-09-21",
+          "average_modal_price": 1262.5,
+          "observation_count": 8,
+          "frequency": "weekly"
+        },
+        {
+          "district": "मुजफ्फरपुर",
+          "period_start": "2026-09-28",
+          "average_modal_price": 1216.67,
+          "observation_count": 3,
+          "frequency": "weekly"
+        },
+        {
+          "district": "मुजफ्फरपुर",
+          "period_start": "2026-10-12",
+          "average_modal_price": 1100.0,
+          "observation_count": 8,
+          "frequency": "weekly"
+        },
+        {
+          "district": "सारण",
+          "period_start": "2026-07-20",
+          "average_modal_price": 1260.0,
+          "observation_count": 5,
+          "frequency": "weekly"
+        },
+        {
+          "district": "सारण",
+          "period_start": "2026-07-27",
+          "average_modal_price": 1200.0,
+          "observation_count": 6,
+          "frequency": "weekly"
+        },
+        {
+          "district": "सारण",
+          "period_start": "2026-08-03",
+          "average_modal_price": 1200.0,
+          "observation_count": 6,
+          "frequency": "weekly"
+        },
+        {
+          "district": "सारण",
+          "period_start": "2026-08-10",
+          "average_modal_price": 1200.0,
+          "observation_count": 7,
+          "frequency": "weekly"
+        },
+        {
+          "district": "सारण",
+          "period_start": "2026-08-17",
+          "average_modal_price": 1214.29,
+          "observation_count": 7,
+          "frequency": "weekly"
+        },
+        {
+          "district": "सारण",
+          "period_start": "2026-08-24",
+          "average_modal_price": 1200.0,
+          "observation_count": 4,
+          "frequency": "weekly"
+        },
+        {
+          "district": "सारण",
+          "period_start": "2026-08-31",
+          "average_modal_price": 1214.29,
+          "observation_count": 7,
+          "frequency": "weekly"
+        },
+        {
+          "district": "सारण",
+          "period_start": "2026-09-07",
+          "average_modal_price": 1200.0,
+          "observation_count": 7,
+          "frequency": "weekly"
+        },
+        {
+          "district": "सारण",
+          "period_start": "2026-09-14",
+          "average_modal_price": 1202.5,
+          "observation_count": 8,
+          "frequency": "weekly"
+        },
+        {
+          "district": "सारण",
+          "period_start": "2026-09-21",
+          "average_modal_price": 1201.43,
+          "observation_count": 7,
+          "frequency": "weekly"
+        },
+        {
+          "district": "सारण",
+          "period_start": "2026-09-28",
+          "average_modal_price": 1200.0,
+          "observation_count": 2,
+          "frequency": "weekly"
+        },
+        {
+          "district": "सारण",
+          "period_start": "2026-10-05",
+          "average_modal_price": 1262.5,
+          "observation_count": 4,
+          "frequency": "weekly"
+        },
+        {
+          "district": "सारण",
+          "period_start": "2026-10-12",
+          "average_modal_price": 1237.5,
+          "observation_count": 4,
+          "frequency": "weekly"
+        },
+        {
+          "district": "सारण",
+          "period_start": "2026-10-19",
+          "average_modal_price": 1202.5,
+          "observation_count": 4,
+          "frequency": "weekly"
+        },
+        {
+          "district": "सुपौल",
+          "period_start": "2026-07-20",
+          "average_modal_price": 1485.71,
+          "observation_count": 7,
+          "frequency": "weekly"
+        },
+        {
+          "district": "सुपौल",
+          "period_start": "2026-07-27",
+          "average_modal_price": 1408.33,
+          "observation_count": 12,
+          "frequency": "weekly"
+        },
+        {
+          "district": "सुपौल",
+          "period_start": "2026-08-03",
+          "average_modal_price": 1571.43,
+          "observation_count": 7,
+          "frequency": "weekly"
+        },
+        {
+          "district": "सुपौल",
+          "period_start": "2026-08-10",
+          "average_modal_price": 1500.0,
+          "observation_count": 9,
+          "frequency": "weekly"
+        },
+        {
+          "district": "सुपौल",
+          "period_start": "2026-08-17",
+          "average_modal_price": 1100.0,
+          "observation_count": 2,
+          "frequency": "weekly"
+        },
+        {
+          "district": "सुपौल",
+          "period_start": "2026-08-24",
+          "average_modal_price": 1550.0,
+          "observation_count": 5,
+          "frequency": "weekly"
+        },
+        {
+          "district": "सुपौल",
+          "period_start": "2026-08-31",
+          "average_modal_price": 1583.33,
+          "observation_count": 6,
+          "frequency": "weekly"
+        },
+        {
+          "district": "सुपौल",
+          "period_start": "2026-09-07",
+          "average_modal_price": 1578.6,
+          "observation_count": 5,
+          "frequency": "weekly"
+        },
+        {
+          "district": "सुपौल",
+          "period_start": "2026-09-14",
+          "average_modal_price": 1633.33,
+          "observation_count": 6,
+          "frequency": "weekly"
+        },
+        {
+          "district": "सुपौल",
+          "period_start": "2026-09-21",
+          "average_modal_price": 1670.38,
+          "observation_count": 8,
+          "frequency": "weekly"
+        },
+        {
+          "district": "सुपौल",
+          "period_start": "2026-09-28",
+          "average_modal_price": 1660.0,
+          "observation_count": 5,
+          "frequency": "weekly"
+        },
+        {
+          "district": "सुपौल",
+          "period_start": "2026-10-05",
+          "average_modal_price": 1700.0,
+          "observation_count": 8,
+          "frequency": "weekly"
+        },
+        {
+          "district": "सुपौल",
+          "period_start": "2026-10-12",
+          "average_modal_price": 1685.71,
+          "observation_count": 7,
+          "frequency": "weekly"
+        },
+        {
+          "district": "सुपौल",
+          "period_start": "2026-10-19",
+          "average_modal_price": 1660.0,
+          "observation_count": 5,
+          "frequency": "weekly"
+        }
+      ],
+      "monthly": [
+        {
+          "district": "पूर्वी चंपारण",
+          "period_start": "2026-07-01",
+          "average_modal_price": 1248.78,
+          "observation_count": 41,
+          "frequency": "monthly"
+        },
+        {
+          "district": "पूर्वी चंपारण",
+          "period_start": "2026-08-01",
+          "average_modal_price": 1260.75,
+          "observation_count": 93,
+          "frequency": "monthly"
+        },
+        {
+          "district": "पूर्वी चंपारण",
+          "period_start": "2026-09-01",
+          "average_modal_price": 1293.15,
+          "observation_count": 73,
+          "frequency": "monthly"
+        },
+        {
+          "district": "पूर्वी चंपारण",
+          "period_start": "2026-10-01",
+          "average_modal_price": 1322.5,
+          "observation_count": 40,
+          "frequency": "monthly"
+        },
+        {
+          "district": "बेगूसराय",
+          "period_start": "2026-07-01",
+          "average_modal_price": 1181.82,
+          "observation_count": 33,
+          "frequency": "monthly"
+        },
+        {
+          "district": "बेगूसराय",
+          "period_start": "2026-08-01",
+          "average_modal_price": 1120.59,
+          "observation_count": 68,
+          "frequency": "monthly"
+        },
+        {
+          "district": "बेगूसराय",
+          "period_start": "2026-09-01",
+          "average_modal_price": 1226.14,
+          "observation_count": 88,
+          "frequency": "monthly"
+        },
+        {
+          "district": "बेगूसराय",
+          "period_start": "2026-10-01",
+          "average_modal_price": 1076.47,
+          "observation_count": 34,
+          "frequency": "monthly"
+        },
+        {
+          "district": "मधुबनी",
+          "period_start": "2026-07-01",
+          "average_modal_price": 1169.03,
+          "observation_count": 31,
+          "frequency": "monthly"
+        },
+        {
+          "district": "मधुबनी",
+          "period_start": "2026-08-01",
+          "average_modal_price": 1167.3,
+          "observation_count": 63,
+          "frequency": "monthly"
+        },
+        {
+          "district": "मधुबनी",
+          "period_start": "2026-09-01",
+          "average_modal_price": 1159.09,
+          "observation_count": 44,
+          "frequency": "monthly"
+        },
+        {
+          "district": "मधुबनी",
+          "period_start": "2026-10-01",
+          "average_modal_price": 1130.77,
+          "observation_count": 26,
+          "frequency": "monthly"
+        },
+        {
+          "district": "मुजफ्फरपुर",
+          "period_start": "2026-07-01",
+          "average_modal_price": 1033.77,
+          "observation_count": 30,
+          "frequency": "monthly"
+        },
+        {
+          "district": "मुजफ्फरपुर",
+          "period_start": "2026-08-01",
+          "average_modal_price": 1135.9,
+          "observation_count": 63,
+          "frequency": "monthly"
+        },
+        {
+          "district": "मुजफ्फरपुर",
+          "period_start": "2026-09-01",
+          "average_modal_price": 1231.87,
+          "observation_count": 31,
+          "frequency": "monthly"
+        },
+        {
+          "district": "मुजफ्फरपुर",
+          "period_start": "2026-10-01",
+          "average_modal_price": 1125.0,
+          "observation_count": 10,
+          "frequency": "monthly"
+        },
+        {
+          "district": "सारण",
+          "period_start": "2026-07-01",
+          "average_modal_price": 1233.33,
+          "observation_count": 9,
+          "frequency": "monthly"
+        },
+        {
+          "district": "सारण",
+          "period_start": "2026-08-01",
+          "average_modal_price": 1200.0,
+          "observation_count": 27,
+          "frequency": "monthly"
+        },
+        {
+          "district": "सारण",
+          "period_start": "2026-09-01",
+          "average_modal_price": 1207.67,
+          "observation_count": 30,
+          "frequency": "monthly"
+        },
+        {
+          "district": "सारण",
+          "period_start": "2026-10-01",
+          "average_modal_price": 1234.17,
+          "observation_count": 12,
+          "frequency": "monthly"
+        },
+        {
+          "district": "सुपौल",
+          "period_start": "2026-07-01",
+          "average_modal_price": 1480.0,
+          "observation_count": 15,
+          "frequency": "monthly"
+        },
+        {
+          "district": "सुपौल",
+          "period_start": "2026-08-01",
+          "average_modal_price": 1469.64,
+          "observation_count": 28,
+          "frequency": "monthly"
+        },
+        {
+          "district": "सुपौल",
+          "period_start": "2026-09-01",
+          "average_modal_price": 1630.57,
+          "observation_count": 28,
+          "frequency": "monthly"
+        },
+        {
+          "district": "सुपौल",
+          "period_start": "2026-10-01",
+          "average_modal_price": 1680.95,
+          "observation_count": 21,
+          "frequency": "monthly"
+        }
+      ]
+    },
+    "source": "db/dump/mandi_prices.jsonl",
+    "latest_observation_date": "2026-10-25",
+    "method": "Calendar aggregation of committed observations"
+  },
   "locations": [
     {
       "market_code": 1635,
@@ -979,8 +5472,8 @@
       "total": 40
     },
     "automated_tests": {
-      "passed": 198,
-      "total": 198
+      "passed": 222,
+      "total": 222
     },
     "rehearsal_checks": {
       "passed": 21,

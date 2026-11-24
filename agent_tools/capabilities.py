@@ -95,8 +95,10 @@ _INGEST_VERBS = (
 )
 _QUESTION_STARTS = (
     "what", "which", "how", "why", "when", "who", "where", "is", "are",
-    "was", "were", "does", "did", "compare", "क्या", "कितना", "कितनी", "कौन",
+    "was", "were", "does", "did", "compare", "show", "list", "trace", "find",
+    "क्या", "कितना", "कितनी", "कौन",
 )
+_HINDI_QUERY_ENDINGS = ("दिखाएँ", "दिखाएं", "दिखाइए", "बताएँ", "बताएं", "बताइए")
 
 
 def capability_for_tool(tool_name):
@@ -123,8 +125,11 @@ def _contains(text, keyword):
 
 
 def _detect_intent(text):
-    first_word = re.split(r"\s+", text.strip(), maxsplit=1)[0] if text.strip() else ""
+    words = text.split()
+    first_word = words[0].strip(".,!?।") if words else ""
     if first_word in _QUESTION_STARTS:
+        return QUESTION
+    if words and words[-1].rstrip(".,!?।") in _HINDI_QUERY_ENDINGS:
         return QUESTION
     if any(re.search(rf"\b{verb}\b", text) for verb in _INGEST_VERBS):
         return INGEST

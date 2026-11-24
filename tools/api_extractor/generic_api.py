@@ -1,13 +1,18 @@
 """Read JSON, HTML-table, and text responses from HTTP API endpoints."""
 
-import asyncio
+import hashlib
+import ipaddress
 import json
+from urllib.parse import urlsplit
+from urllib.request import HTTPRedirectHandler, ProxyHandler, Request, build_opener
 
 from bs4 import BeautifulSoup
-from playwright.async_api import async_playwright
 
 
 _RECORD_KEYS = ("data", "records", "results", "items")
+MAX_BODY_BYTES = 2 * 1024 * 1024
+MAX_RECORDS = 1000
+MAX_URLS = 5
 
 
 def _json_records(payload):
@@ -41,23 +46,34 @@ def _json_records(payload):
 def _html_table_records(soup):
     records = []
     for table_index, table in enumerate(soup.find_all("table")):
+        if table.find("table") or any(
+            cell.get("colspan", "1") != "1" or cell.get("rowspan", "1") != "1"
+            for cell in table.find_all(["th", "td"])
+        ):
+            raise ValueError("Nested tables and merged HTML cells require a reviewed mapping")
         rows = []
-        for row in table.find_all("tr"):
+        for row_index, row in enumerate(table.find_all("tr"), 1):
             cells = row.find_all(["th", "td"])
             values = [cell.get_text(" ", strip=True) for cell in cells]
             if values and any(values):
-                rows.append((values, any(cell.name == "th" for cell in cells)))
+                rows.append((values, any(cell.name == "th" for cell in cells), row_index))
         if not rows:
             continue
 
-        headers, has_header = rows[0]
+        headers, has_header, _ = rows[0]
         if has_header:
             data_rows = rows[1:]
+            if not all(headers) or len({h.casefold() for h in headers}) != len(headers):
+                raise ValueError("Blank or duplicate HTML headers require a reviewed mapping")
+            if set(headers) & {"_table_index", "_table_row"}:
+                raise ValueError("HTML headers conflict with reserved evidence columns")
         else:
             headers = [f"column_{index + 1}" for index in range(len(headers))]
             data_rows = rows
 
-        for values, _ in data_rows:
+        for values, subsequent_header, row_index in data_rows:
+            if len(values) != len(headers) or subsequent_header:
+                raise ValueError("Irregular HTML rows require a reviewed mapping")
             record = {
                 headers[index] if index < len(headers) and headers[index]
                 else f"column_{index + 1}": value
@@ -65,6 +81,7 @@ def _html_table_records(soup):
             }
             if record:
                 record["_table_index"] = table_index
+                record["_table_row"] = row_index
                 records.append(record)
     return records
 
@@ -102,58 +119,76 @@ def parse_api_response(body, content_type=""):
     return "text", [{"text": text}]
 
 
-class PlaywrightApiReader:
-    def __init__(self, *, headers=None, timeout_ms=60000, render_wait_ms=2000):
-        if timeout_ms < 1:
-            raise ValueError("timeout_ms must be at least 1")
-        if render_wait_ms < 0:
-            raise ValueError("render_wait_ms cannot be negative")
-        self.headers = headers or {}
-        self.timeout_ms = timeout_ms
-        self.render_wait_ms = render_wait_ms
+class NoRedirect(HTTPRedirectHandler):
+    def redirect_request(self, req, fp, code, msg, headers, newurl):
+        raise ValueError("Redirect refused; review and submit the final HTTPS URL")
+
+
+class BoundedApiReader:
+    """Fetch explicitly allowlisted public hosts without scripts or credentials."""
+
+    def __init__(self, *, allowed_hosts=(), timeout=15, opener=None):
+        self.allowed_hosts = {str(host).strip().lower() for host in allowed_hosts}
+        self.timeout = timeout
+        self.opener = opener or build_opener(ProxyHandler({}), NoRedirect())
+
+    def _validate(self, url):
+        parsed = urlsplit(url)
+        host = parsed.hostname
+        if (
+            parsed.scheme != "https" or not host or host not in self.allowed_hosts
+            or parsed.username or parsed.password or parsed.fragment
+            or parsed.port not in (None, 443) or host == "localhost"
+            or "." not in host
+        ):
+            raise ValueError("Use an allowlisted HTTPS host with no credentials or fragment")
+        try:
+            ipaddress.ip_address(host)
+        except ValueError:
+            return
+        raise ValueError("IP-literal API endpoints are not accepted")
 
     def load(self, urls):
-        return asyncio.run(self._load(urls))
-
-    async def _load(self, urls):
+        if not 1 <= len(urls) <= MAX_URLS:
+            raise ValueError(f"Supply 1–{MAX_URLS} API URLs")
+        for url in urls:
+            self._validate(url)
         responses = []
-        async with async_playwright() as playwright:
-            browser = await playwright.chromium.launch(headless=True)
-            try:
-                context = await browser.new_context(
-                    locale="hi-IN",
-                    extra_http_headers=self.headers,
-                )
-                page = await context.new_page()
-                for url in urls:
-                    response = await page.goto(
-                        url,
-                        wait_until="domcontentloaded",
-                        timeout=self.timeout_ms,
-                    )
-                    if response is None:
-                        raise RuntimeError(
-                            f"Playwright received no response from {url}"
-                        )
-                    if not response.ok:
-                        raise RuntimeError(
-                            f"Request to {url} failed with HTTP "
-                            f"{response.status}"
-                        )
-
-                    content_type = response.headers.get("content-type", "")
-                    if "html" in content_type.lower():
-                        await page.wait_for_timeout(self.render_wait_ms)
-                        body = await page.content()
-                    else:
-                        body = await response.text()
-
-                    kind, records = parse_api_response(body, content_type)
-                    responses.append({
-                        "source_url": url,
-                        "response_kind": kind,
-                        "records": records,
-                    })
-            finally:
-                await browser.close()
+        for url in urls:
+            request = Request(url, headers={
+                "Accept": "application/json, text/html, text/plain",
+                "Accept-Encoding": "identity",
+                "User-Agent": "AgriAgent-SourceReview/1.0",
+            })
+            with self.opener.open(request, timeout=self.timeout) as response:
+                media_type = response.headers.get_content_type()
+                if not (media_type in {"application/json", "text/html", "text/plain"}
+                        or media_type.endswith("+json")):
+                    raise ValueError("Unsupported response type; use JSON, HTML or plain text")
+                raw = response.read(MAX_BODY_BYTES + 1)
+                if len(raw) > MAX_BODY_BYTES:
+                    raise ValueError("Response exceeds the 2 MiB preview limit")
+                body = raw.decode(response.headers.get_content_charset() or "utf-8-sig")
+            kind, records = parse_api_response(body, media_type)
+            if len(records) > MAX_RECORDS:
+                raise ValueError("Response exceeds the 1,000-record limit; supply a bounded page")
+            if kind == "html_table":
+                locators = [
+                    {"table": row["_table_index"] + 1, "row": row["_table_row"]}
+                    for row in records
+                ]
+            elif kind == "json":
+                payload = json.loads(body)
+                key = next((key for key in _RECORD_KEYS if isinstance(payload, dict)
+                            and isinstance(payload.get(key), list)), None)
+                locators = [
+                    {"json_path": f"$.{key}[{i}]" if key else f"$[{i}]"}
+                    for i in range(len(records))
+                ] if isinstance(payload, list) or key else [{"json_path": "$"}]
+            else:
+                locators = [{"scope": "response_body"}]
+            responses.append({
+                "source_url": url, "response_kind": kind, "records": records,
+                "source_sha256": hashlib.sha256(raw).hexdigest(), "locators": locators,
+            })
         return responses

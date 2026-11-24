@@ -26,14 +26,16 @@ class ApiDocumentsMongo:
             name="unique_api_source_record",
         )
 
-    def upsert_records(self, source_url, response_kind, records):
+    def upsert_records(self, source_url, response_kind, records, *, source_sha256=None, locators=None):
         if not records:
             return {"inserted": 0, "matched": 0, "modified": 0}
 
         received_at = datetime.now(timezone.utc)
         operations = []
         seen_hashes = set()
-        for record in records:
+        if locators is not None and len(locators) != len(records):
+            raise ValueError("Expected one locator per API record")
+        for index, record in enumerate(records):
             serialized = json.dumps(
                 record,
                 ensure_ascii=False,
@@ -59,6 +61,8 @@ class ApiDocumentsMongo:
                             "record_hash": record_hash,
                             "payload": record,
                             "received_at": received_at,
+                            "source_sha256": source_sha256,
+                            "source_locator": locators[index] if locators is not None else None,
                         }
                     },
                     upsert=True,

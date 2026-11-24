@@ -1,4 +1,5 @@
 import json
+import os
 import re
 from datetime import datetime
 
@@ -19,10 +20,10 @@ class BiharCropMongo:
     )
 
     def __init__(self):
-        self.client = MongoClient("mongodb://localhost:27017/")
+        self.client = MongoClient(os.getenv("MONGODB_URI", "mongodb://localhost:27017/"))
         self.db = self.client["bihar_agriculture"]
         self.collection = self.db["mandi_prices"]
-        #ensure_mandi_identity_indexes(self.collection)
+        ensure_mandi_identity_indexes(self.collection)
 
     def insert_records(self, records):
         if not records:

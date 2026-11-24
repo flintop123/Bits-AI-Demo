@@ -6,6 +6,11 @@ for a single-string ReAct action input, not configuration.
 
 import re
 import uuid
+from contextlib import contextmanager
+from contextvars import ContextVar
+
+
+_WRITE_ALLOWED = ContextVar("react_ingestion_write_allowed", default=False)
 
 _WORD_TO_NUMBER = {
     "one": 1, "two": 2, "three": 3, "four": 4, "five": 5, "six": 6,
@@ -23,19 +28,28 @@ def new_run_id():
 
 
 def wants_dry_run(instruction):
-    """Heuristic: treat the free-text instruction as a dry run if it asks
-    to validate/test rather than actually write data.
-
-    This is fixed code, not a model decision — the LLM only decides *which*
-    tool to call; whether that call writes to MongoDB is controlled by this
-    explicit, auditable keyword check, not by the model's judgement.
-    """
+    """Recognize an explicit request to validate without persisting."""
     text = str(instruction or "").lower()
     dry_run_markers = (
         "dry run", "dry-run", "validate", "without writing",
         "no write", "don't write", "do not write", "test only",
     )
     return any(marker in text for marker in dry_run_markers)
+
+
+@contextmanager
+def ingestion_write_scope(*, allow_write):
+    """Bound write permission to the caller's run, not the model's text."""
+    token = _WRITE_ALLOWED.set(allow_write)
+    try:
+        yield
+    finally:
+        _WRITE_ALLOWED.reset(token)
+
+
+def ingestion_is_dry_run(instruction):
+    """Fail closed outside an explicitly authorized run."""
+    return not _WRITE_ALLOWED.get() or wants_dry_run(instruction)
 
 
 def extract_days(instruction, default=1):

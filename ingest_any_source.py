@@ -1,9 +1,10 @@
 """PDF/API ingestion helpers used by the main application."""
 
+import hashlib
 from pathlib import Path
 
 from conn.api_documents_mongodb import ApiDocumentsMongo
-from tools.api_extractor.generic_api import PlaywrightApiReader
+from tools.api_extractor.generic_api import BoundedApiReader
 
 
 def translate_hindi_chunks(records, translator_factory=None):
@@ -32,9 +33,10 @@ def translate_hindi_chunks(records, translator_factory=None):
                     f"page {record.get('page_number')}, "
                     f"chunk {record.get('chunk_index')}"
                 )
-            translated_record["original_content"] = original
-            translated_record["content"] = translated.strip()
+            translated_record["translated_content"] = translated.strip()
             translated_record["translation_language"] = "en"
+            translated_record["translation_model"] = getattr(translator, "model_name", "custom")
+            translated_record["translation_status"] = "machine_translation_unverified"
         translated_records.append(translated_record)
     return translated_records
 
@@ -46,6 +48,8 @@ def ingest_pdf(
     translator_factory=None,
     force_ocr=False,
     ocr_enabled=True,
+    translate=False,
+    write=False,
 ):
     from tools.pdf_extractor.agriculture_pdf_extractor import (
         AgriculturePDFExtractor,
@@ -54,7 +58,11 @@ def ingest_pdf(
     path = Path(pdf_path).resolve()
     if not path.is_file():
         raise FileNotFoundError(f"PDF file not found: {path}")
+    if force_ocr and not ocr_enabled:
+        raise ValueError("Forced OCR cannot be used when OCR is disabled")
 
+    with path.open("rb") as source:
+        digest = hashlib.file_digest(source, "sha256").hexdigest()
     extractor = AgriculturePDFExtractor(ocr_enabled=ocr_enabled)
     records = extractor.load(
         path,
@@ -62,10 +70,22 @@ def ingest_pdf(
         document_title=path.stem,
         force_ocr=force_ocr,
     )
-    records = translate_hindi_chunks(
-        records,
-        translator_factory=translator_factory,
-    )
+    with path.open("rb") as source:
+        if hashlib.file_digest(source, "sha256").hexdigest() != digest:
+            raise ValueError("PDF bytes changed during extraction; no data was saved")
+    for record in records:
+        record["source_hash"] = digest
+    if translate or translator_factory is not None:
+        records = translate_hindi_chunks(records, translator_factory=translator_factory)
+    report = {
+        "source": str(path), "source_sha256": digest,
+        "detected_languages": extractor.last_report["language_counts"],
+        "chunks_processed": len(records), "saved": write,
+    }
+    if not records:
+        raise ValueError("No source text was extracted; review the PDF/OCR configuration")
+    if not write:
+        return {**report, "sample_chunks": records[:3]}
 
     owns_database = database is None
     if database is None:
@@ -85,9 +105,7 @@ def ingest_pdf(
             database.client.close()
 
     return {
-        "source": str(path),
-        "detected_languages": extractor.last_report["language_counts"],
-        "chunks_processed": len(records),
+        **report,
         "count_before": count_before,
         "count_after": count_after,
         **write_result,
@@ -99,8 +117,8 @@ def ingest_api_urls(
     *,
     database=None,
     reader=None,
-    headers=None,
-    timeout_ms=60000,
+    allowed_hosts=(),
+    write=False,
 ):
     if not urls:
         return {
@@ -111,11 +129,27 @@ def ingest_api_urls(
             "modified": 0,
         }
     if reader is None:
-        reader = PlaywrightApiReader(
-            headers=headers,
-            timeout_ms=timeout_ms,
-        )
+        reader = BoundedApiReader(allowed_hosts=allowed_hosts)
     responses = reader.load(urls)
+    if not write:
+        return {
+            "saved": False, "sources_processed": len(responses),
+            "records_processed": sum(len(response["records"]) for response in responses),
+            "sources": [
+                {
+                    "source_url": response["source_url"],
+                    "source_sha256": response.get("source_sha256"),
+                    "response_kind": response["response_kind"],
+                    "record_count": len(response["records"]),
+                    "sample": [
+                        {"record": record, "locator": locator}
+                        for record, locator in zip(
+                            response["records"][:5], response.get("locators", [])[:5],
+                        )
+                    ],
+                } for response in responses
+            ],
+        }
     owns_database = database is None
     if database is None:
         database = ApiDocumentsMongo()
@@ -131,6 +165,8 @@ def ingest_api_urls(
                 response["source_url"],
                 response["response_kind"],
                 records,
+                source_sha256=response.get("source_sha256"),
+                locators=response.get("locators"),
             )
             records_processed += len(records)
             for key in totals:
@@ -141,7 +177,7 @@ def ingest_api_urls(
             database.close()
 
     return {
-        "sources_processed": len(responses),
+        "saved": True, "sources_processed": len(responses),
         "records_processed": records_processed,
         "count_before": count_before,
         "count_after": count_after,

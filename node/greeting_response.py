@@ -21,5 +21,6 @@ class GreetingResponseNode:
             "answer": answer,
             "subQuestions": [],
             "source": [],
+            "citations": [],
             "title": "",
         }

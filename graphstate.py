@@ -17,3 +17,4 @@ class ChatState(TypedDict, total=False):
     documents: list[Documents]
     intent: str
     retrieved_documents: list[dict[str, object]]
+    citations: list[dict[str, object]]

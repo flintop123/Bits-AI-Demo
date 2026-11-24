@@ -73,8 +73,8 @@ class PdfTranslationTests(unittest.TestCase):
         )
 
         self.assertEqual(translator.inputs, ["हिंदी पाठ"])
-        self.assertEqual(translated[0]["content"], "English translation")
-        self.assertEqual(translated[0]["original_content"], "हिंदी पाठ")
+        self.assertEqual(translated[0]["content"], "हिंदी पाठ")
+        self.assertEqual(translated[0]["translated_content"], "English translation")
         self.assertEqual(translated[0]["translation_language"], "en")
         self.assertEqual(translated[1], records[1])
 
@@ -128,11 +128,12 @@ class PdfTranslationTests(unittest.TestCase):
                     path,
                     database=database,
                     translator_factory=FakeTranslator,
+                    write=True,
                 )
 
         persisted = database.upsert_records.call_args.args[0]
-        self.assertEqual(persisted[0]["content"], "English translation")
-        self.assertEqual(persisted[0]["original_content"], "हिंदी पाठ")
+        self.assertEqual(persisted[0]["content"], "हिंदी पाठ")
+        self.assertEqual(persisted[0]["translated_content"], "English translation")
         self.assertEqual(summary["detected_languages"], {"hi": 1})
         self.assertEqual(summary["inserted"], 1)
 
@@ -158,12 +159,15 @@ class GenericApiIngestionTests(unittest.TestCase):
             [response["source_url"]],
             database=database,
             reader=reader,
+            write=True,
         )
 
         database.upsert_records.assert_called_once_with(
             response["source_url"],
             "json",
             [{"id": 1}],
+            source_sha256=None,
+            locators=None,
         )
         self.assertEqual(summary["sources_processed"], 1)
         self.assertEqual(summary["records_processed"], 1)

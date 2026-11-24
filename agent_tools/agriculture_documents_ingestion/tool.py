@@ -10,7 +10,7 @@ matches the existing ingest_agriculture_sources.py CLI with no filter.
 
 from langchain_core.tools import tool
 
-from agent_tools._shared import new_run_id, wants_dry_run
+from agent_tools._shared import ingestion_is_dry_run, new_run_id
 from agent_tools.agent_logging import get_logger
 from agent_tools.agriculture_documents_ingestion.selection import (
     select_pdf_sources,
@@ -52,7 +52,7 @@ def ingest_agriculture_documents(instruction: str = "") -> str:
                 source["filename"], source["language"], source["url"],
             )
         agent = AgricultureDocumentsSourceAgent(source_ids=selected_ids)
-        result = agent.execute(new_run_id(), dry_run=wants_dry_run(instruction))
+        result = agent.execute(new_run_id(), dry_run=ingestion_is_dry_run(instruction))
     except Exception as exc:  # noqa: BLE001 - surfaced as an Observation, not a crash
         return f"ERROR: agriculture document ingestion failed: {exc}"
 

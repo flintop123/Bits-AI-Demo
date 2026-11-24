@@ -27,6 +27,7 @@ Usage:
     python agent.py "what was total rice production in 2024-25?"
 """
 
+import argparse
 import sys
 
 from langchain.agents import create_agent
@@ -38,6 +39,7 @@ from agent_tools import (
     ingest_crop_statistics,
     ingest_mandi_prices,
 )
+from agent_tools._shared import ingestion_write_scope, wants_dry_run
 from agent_tools.agent_logging import (
     AgentLogCallback,
     configure_logging,
@@ -125,6 +127,7 @@ def run(
     interactive=None,
     input_fn=input,
     output_fn=print,
+    allow_write=False,
 ):
     """Resolve the request to one capability, then run the ReAct loop over
     just that capability's tool. Returns the final answer text, or a short
@@ -154,30 +157,35 @@ def run(
     agent = build_agent(llm=llm, tools=[tools_by_name[capability.tool_name]])
 
     final_state = None
-    for state in agent.stream(
-        {"messages": [{"role": "user", "content": agent_request}]},
-        config={"callbacks": [AgentLogCallback(logger)]},
-        stream_mode="values",
+    with ingestion_write_scope(
+        allow_write=allow_write and not wants_dry_run(request),
     ):
-        final_state = state
-        if verbose:
-            state["messages"][-1].pretty_print()
+        for state in agent.stream(
+            {"messages": [{"role": "user", "content": agent_request}]},
+            config={"callbacks": [AgentLogCallback(logger)]},
+            stream_mode="values",
+        ):
+            final_state = state
+            if verbose:
+                state["messages"][-1].pretty_print()
     answer = final_state["messages"][-1].content
     logger.info("Final answer: %s", " ".join(str(answer).split())[:300])
     return answer
 
 
-def parse_cli(argv):
-    """Split argv into (request, interactive). --non-interactive makes an
-    unresolvable request list its options and exit instead of prompting."""
-    args = [a for a in argv if a != "--non-interactive"]
-    interactive = None if len(args) == len(argv) else False
-    return " ".join(args), interactive
+def parse_cli(argv, *, prog=None):
+    parser = argparse.ArgumentParser(prog=prog, description="Run the Bihar ReAct agent.")
+    parser.add_argument("--non-interactive", action="store_true", help="Do not prompt for clarification.")
+    parser.add_argument("--write", action="store_true", help="Allow ingestion writes; default is dry run.")
+    parser.add_argument("request", nargs="+", help="Plain-language request.")
+    options = parser.parse_args(argv)
+    return " ".join(options.request), False if options.non_interactive else None, options.write
+
+
+def main(argv=None):
+    request, interactive, allow_write = parse_cli(argv)
+    run(request, interactive=interactive, allow_write=allow_write)
 
 
 if __name__ == "__main__":
-    request, interactive = parse_cli(sys.argv[1:])
-    if not request:
-        print('Usage: python agent.py [--non-interactive] "<free text request>"')
-        raise SystemExit(1)
-    run(request, interactive=interactive)
+    main()

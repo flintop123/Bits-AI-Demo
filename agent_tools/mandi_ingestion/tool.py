@@ -14,7 +14,7 @@ untouched by this module.
 
 from langchain_core.tools import tool
 
-from agent_tools._shared import extract_days, wants_dry_run
+from agent_tools._shared import extract_days, ingestion_is_dry_run
 from agent_tools.agent_logging import get_logger
 from phase4.mandi_api_client import BiharMandiApiClient
 from phase4.mandi_orchestrator import DailyMandiOrchestrator
@@ -34,7 +34,7 @@ def ingest_mandi_prices(instruction: str = "") -> str:
     try:
         days = extract_days(instruction, default=1)
         dates = resolve_dates(None, days)
-        dry_run = wants_dry_run(instruction)
+        dry_run = ingestion_is_dry_run(instruction)
 
         database = None
         if not dry_run:

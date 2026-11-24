@@ -1,0 +1,69 @@
+{
+  "schema_version": "1.0",
+  "evidence_date": "2026-11-15",
+  "branch": "anuj/agentic-bilingual-normalization",
+  "react_layer_modified": false,
+  "commits": [
+    "66eb4fb",
+    "adcf1c9",
+    "54bbf5a",
+    "114ef40"
+  ],
+  "models": {
+    "marian_hi_en": "Helsinki-NLP/opus-mt-hi-en",
+    "marian_en_hi": "Helsinki-NLP/opus-mt-en-hi",
+    "qwen_fallback": "qwen3:4b",
+    "embedding_experiment": "bge-m3"
+  },
+  "live_findings": [
+    {
+      "official_value": "कुलथी",
+      "unsafe_model_label": "Total",
+      "final_label": "Horse gram",
+      "final_method": "reviewed_bilingual_alias",
+      "official_value_preserved": true
+    },
+    {
+      "official_value": "हल्दी",
+      "qwen_proposed_label": "turmeric",
+      "marian_round_trip_candidate": "गोथिक",
+      "automatic_decision": "rejected",
+      "review_decision": "approved",
+      "final_label": "Turmeric",
+      "final_method": "reviewed_bilingual_alias",
+      "prior_evidence_preserved_in": "translation_history",
+      "official_value_preserved": true
+    }
+  ],
+  "embedding_calibration": {
+    "threshold_adopted": false,
+    "reason": "Correct and incorrect pairs did not exhibit a reliable universal separation.",
+    "raw_scores": {
+      "haldi_turmeric": 0.4427,
+      "haldi_total": 0.4378,
+      "kulthi_horse_gram": 0.3141,
+      "kulthi_total": 0.5379,
+      "aloo_potato": 0.5851,
+      "aloo_onion": 0.5593,
+      "gehun_wheat": 0.7303,
+      "gehun_rice": 0.6560
+    },
+    "contextual_scores": {
+      "haldi_turmeric": 0.6744,
+      "haldi_total": 0.444,
+      "kulthi_horse_gram": 0.5983,
+      "kulthi_total": 0.4938,
+      "aloo_potato": 0.7338,
+      "aloo_onion": 0.7347,
+      "gehun_wheat": 0.7807,
+      "gehun_rice": 0.7589
+    }
+  },
+  "cache_policy_version": 6,
+  "checks": {
+    "focused_tests": "31/31 passed",
+    "full_regression_tests": "231/231 passed",
+    "pip_check": "No broken requirements found",
+    "git_diff_check": "passed"
+  }
+}

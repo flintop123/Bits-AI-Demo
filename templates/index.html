@@ -5,7 +5,10 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="description" content="Grounded agriculture information for Bihar">
   <title>Bihar Agriculture Intelligence</title>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+        integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="anonymous">
   <link rel="stylesheet" href="{{ url_for('static', filename='app.css') }}">
+  <link rel="stylesheet" href="{{ url_for('market_explorer_asset', asset_name='market-explorer.css') }}">
 </head>
 <body>
   <div class="page-shell">
@@ -27,7 +30,10 @@
         <a href="#dashboard">Dashboard</a>
         <a href="#intelligence-heading">Market intelligence</a>
         <a href="#nearby-heading">Nearby markets</a>
+        <a href="#district-trends-heading">District trends</a>
+        <a href="#period-reports-heading">Period reports</a>
         <a href="#ask-heading">Ask the data</a>
+        <a href="#viva-upload-heading">PDF upload</a>
       </nav>
       <div class="system-state" id="system-state" aria-live="polite">
         <span class="status-dot"></span>
@@ -44,6 +50,10 @@
             Monitor daily mandi collection, geographic coverage and market-price
             movement, then ask grounded questions in English or Hindi.
           </p>
+          <div class="viva-jumps" aria-label="Viva shortcuts">
+            <a href="#ask-heading" id="open-react-demo">Try ReAct</a>
+            <a href="#viva-upload-heading">Upload a PDF</a>
+          </div>
         </div>
         <div class="metrics" aria-label="Available data">
           <article>
@@ -121,13 +131,20 @@
             <div id="district-bars" class="rank-bars"></div>
           </article>
 
-          <article class="visual-card visual-wide map-card">
+          <article class="visual-card visual-wide map-card market-explorer" data-maptiler-key="{{ maptiler_public_key }}">
             <div class="visual-heading">
-              <div><span>Verified coordinate coverage</span><h3>Bihar mandi location plot</h3></div>
-              <span id="market-map-total" class="chart-note">Verified market points</span>
+              <div><span>Verified coordinate coverage</span><h3>Bihar market explorer</h3></div>
             </div>
-            <div id="market-map" class="market-map" role="img" aria-label="Verified mandi locations plotted by longitude and latitude"></div>
-            <p class="map-note">Coordinate plot of verified locality centroids; it is not a road map or market-gate survey.</p>
+            <div class="market-explorer-controls" role="group" aria-label="Market map filters"></div>
+            <div id="market-map" class="market-map" role="region" aria-label="Verified mandi locations"></div>
+            <p class="market-explorer-status" aria-live="polite"></p>
+            <p class="market-explorer-summary" aria-live="polite"></p>
+            <div class="market-explorer-legend"><span>Verified market</span><span>Within radius or in returned results</span></div>
+            <div class="market-explorer-body">
+              <div class="market-explorer-directory" role="group" aria-label="Matching markets"></div>
+              <div class="market-explorer-details" aria-live="polite"></div>
+            </div>
+            <p class="map-note">Markers show verified locality centroids, not surveyed market gates. Radius distances are straight-line, not road distance.</p>
           </article>
 
           <article class="visual-card operations-card">
@@ -226,6 +243,11 @@
             <div class="form-actions">
               <div class="answer-controls">
                 <span class="character-count"><span id="character-count">0</span>/500</span>
+                <label for="question-mode">Workflow</label>
+                <select id="question-mode" name="question_mode">
+                  <option value="direct">Direct QA</option>
+                  <option value="react">ReAct agent</option>
+                </select>
                 <label for="answer-language">Answer</label>
                 <select id="answer-language" name="answer_language">
                   <option value="auto">Automatic language</option>
@@ -239,6 +261,7 @@
               </button>
             </div>
           </form>
+          <p class="viva-note">ReAct shows which tool answered. To ingest a new document, <a href="#viva-upload-heading">upload a PDF</a>.</p>
 
           <div class="examples">
             <span>Try a question</span>
@@ -282,21 +305,62 @@
           <span class="local-badge">MongoDB 2dsphere</span>
         </div>
         <p class="nearby-intro">
-          Search only markets with conservatively verified coordinates. Your
-          browser location is used for this request only and is not stored.
+          Search only markets with conservatively verified coordinates. Search
+          coordinates may appear in local server logs; the basemap requests tiles
+          for the displayed area from OpenStreetMap. Use the Arwal preset to try
+          the demo without sharing your own location.
         </p>
         <form id="nearby-form" class="nearby-form">
-          <label>Latitude<input id="nearby-latitude" type="number" step="any" min="-90" max="90" placeholder="25.5941" required></label>
-          <label>Longitude<input id="nearby-longitude" type="number" step="any" min="-180" max="180" placeholder="85.1376" required></label>
+          <label>Latitude<input id="nearby-latitude" type="number" step="any" min="-90" max="90" placeholder="25.24324" required></label>
+          <label>Longitude<input id="nearby-longitude" type="number" step="any" min="-180" max="180" placeholder="84.662895" required></label>
           <label>Radius (km)<input id="nearby-radius" type="number" min="1" max="300" value="75" required></label>
           <label>Crop (optional)<input id="nearby-crop" type="text" placeholder="आलू"></label>
           <div class="nearby-actions">
+            <button id="arwal-preset" type="button" class="secondary-button">Use verified Arwal demo point</button>
             <button id="use-location" type="button" class="secondary-button">Use my location</button>
             <button id="nearby-search" type="submit">Find nearby prices</button>
           </div>
         </form>
         <p id="nearby-status" class="nearby-status" aria-live="polite"></p>
+        <a id="nearby-map-link" href="#market-map" hidden>View the measured radius on the market map</a>
         <div id="nearby-results" class="nearby-results"></div>
+      </section>
+
+      <section class="nearby-panel" aria-labelledby="district-trends-heading">
+        <div class="panel-heading">
+          <div><p class="section-kicker">Stored observations</p><h2 id="district-trends-heading">District price trends</h2></div>
+          <span class="local-badge">Observed data</span>
+        </div>
+        <p class="nearby-intro">Compare the last 12 populated or partial calendar periods for a district and crop. Different price units are shown on separate rows.</p>
+        <form id="district-trends-form" class="nearby-form">
+          <label>District<select id="district-trends-district" required><option value="">Select a district</option></select></label>
+          <label>Crop<select id="district-trends-crop" required><option value="">Select a crop</option></select></label>
+          <label>Frequency<select id="district-trends-frequency"><option value="daily">Daily</option><option value="weekly" selected>Weekly</option><option value="monthly">Monthly</option></select></label>
+          <button type="submit">Show district trend</button>
+        </form>
+        <p id="district-trends-status" role="status"></p>
+        <div id="district-trends-results" class="period-records"></div>
+      </section>
+
+      <section class="nearby-panel" aria-labelledby="period-reports-heading">
+        <div class="panel-heading">
+          <div>
+            <p class="section-kicker">Read-only report intake</p>
+            <h2 id="period-reports-heading">Weekly and monthly district reports</h2>
+          </div>
+          <span class="local-badge">Preview only</span>
+        </div>
+        <p class="nearby-intro">Load exported district summary CSVs in their matching views. They are not merged into daily prices or stored in MongoDB.</p>
+        <div class="period-previews">
+          {% for frequency in ("weekly", "monthly") %}
+          <div class="period-preview" data-period-preview="{{ frequency }}">
+            <h3>{{ frequency|capitalize }} reports</h3>
+            <label>Choose {{ frequency }} CSV <input type="file" accept=".csv,text/csv"></label>
+            <p class="period-status" role="status"></p>
+            <div class="period-records"></div>
+          </div>
+          {% endfor %}
+        </div>
       </section>
 
       <section id="result-section" class="result-section" hidden aria-live="polite">
@@ -323,6 +387,7 @@
             </div>
           </div>
           <p id="answer-text" class="answer-text"></p>
+          <p id="react-trace" class="viva-trace" hidden></p>
 
           <div id="filter-block" class="filter-block" hidden>
             <span>Applied query</span>
@@ -343,6 +408,113 @@
           </details>
         </div>
       </section>
+
+      <section class="nearby-panel viva-panel" aria-labelledby="viva-upload-heading">
+        <div class="panel-heading">
+          <div>
+            <p class="section-kicker">Viva document intake</p>
+            <h2 id="viva-upload-heading">Upload and verify a PDF</h2>
+          </div>
+          <span class="local-badge">Separate demo collection</span>
+        </div>
+        <p class="nearby-intro">Preview the extraction, verify what MongoDB saved, and trace an answer back to its source. Uploads stay separate from curated reports; the original PDF is not stored.</p>
+        <ol class="viva-steps" aria-label="PDF workflow">
+          <li data-viva-step="upload" aria-current="step"><span>01</span> Preview PDF</li>
+          <li data-viva-step="review"><span>02</span> Review and save</li>
+          <li data-viva-step="verified"><span>03</span> Ask and inspect</li>
+        </ol>
+        <form id="viva-upload-form" class="viva-controls">
+          <label for="viva-pdf">PDF <small>Up to 10 MiB and 25 pages</small>
+            <input id="viva-pdf" name="document" type="file" accept=".pdf,application/pdf" required>
+          </label>
+          <label class="viva-checkbox"><input id="viva-force-ocr" name="force_ocr" type="checkbox" value="1"> Force OCR for a scan</label>
+          <button type="submit" id="viva-preview">Extract and preview</button>
+        </form>
+        <p id="viva-status" class="viva-note viva-status" role="status"></p>
+        <section id="viva-evidence" aria-label="Upload evidence" hidden>
+          <dl id="viva-facts" class="viva-facts"></dl>
+          <details id="viva-audit" class="viva-audit">
+            <summary>Run ID, fingerprints and audit details</summary>
+            <dl id="viva-audit-facts" class="viva-facts"></dl>
+          </details>
+          <ul id="viva-warnings" class="viva-warnings" hidden></ul>
+          <div class="viva-workflow-actions">
+            <button type="button" id="viva-save" disabled>Save to MongoDB</button>
+            <button type="button" id="viva-export" class="secondary-button" hidden>Download verified evidence</button>
+          </div>
+          <form id="viva-attach" class="viva-controls" hidden>
+            <label for="viva-original">Reattach original PDF to see the page highlight
+              <input id="viva-original" name="document" type="file" accept=".pdf,application/pdf" required>
+            </label>
+            <button type="submit" class="secondary-button">Verify and attach</button>
+          </form>
+          <section id="viva-doc-qa" class="viva-doc-qa" aria-labelledby="viva-doc-qa-heading" hidden>
+            <p class="section-kicker">Saved document only</p>
+            <h3 id="viva-doc-qa-heading">Ask this PDF</h3>
+            <p class="viva-qa-intro">Ask in English or Hindi. Reviewed table answers link to the exact cell; other answers quote the saved text in its original language.</p>
+            <form id="viva-doc-question-form" class="viva-controls viva-question-controls">
+              <label for="viva-doc-question">Question in English or Hindi
+                <input id="viva-doc-question" name="question" maxlength="500" required placeholder="Ask a question about this saved PDF" dir="auto">
+              </label>
+              <label for="viva-doc-language">Table answer language
+                <select id="viva-doc-language" name="answer_language">
+                  <option value="auto">Auto</option>
+                  <option value="en">English</option>
+                  <option value="hi" lang="hi">हिन्दी</option>
+                </select>
+              </label>
+              <button type="submit">Ask this PDF</button>
+            </form>
+            <div id="viva-examples" class="viva-examples" aria-label="Example questions" hidden>
+              <span>Try a question</span>
+              <button type="button" class="secondary-button" data-viva-question="What was Bihar’s wheat production in 2024–25?" data-language="en">Wheat production</button>
+              <button type="button" class="secondary-button" data-viva-question="बिहार में 2024–25 में गेहूँ का उत्पादन कितना था?" data-language="en"><span lang="hi">हिंदी सवाल</span> / English answer</button>
+            </div>
+            <p id="viva-doc-qa-status" class="viva-note" role="status"></p>
+            <div id="viva-doc-citations" class="viva-records"></div>
+          </section>
+          <details id="viva-table-panel" class="viva-table-panel" hidden>
+            <summary>Verified table cells</summary>
+            <p>These cells match a reviewed layout and the fingerprint of this official PDF.</p>
+            <div id="viva-tables"></div>
+          </details>
+          <div id="viva-passage-filter" class="viva-controls" hidden>
+            <label for="viva-filter">Find text in extracted passages
+              <input id="viva-filter" type="search" maxlength="100" placeholder="For example: organic corridor">
+            </label>
+          </div>
+          <div class="viva-record-nav" id="viva-record-nav" hidden>
+            <button type="button" class="secondary-button" id="viva-previous">Previous passages</button>
+            <span id="viva-record-count" aria-live="polite"></span>
+            <button type="button" class="secondary-button" id="viva-next">Next passages</button>
+          </div>
+          <div id="viva-records" class="viva-records"></div>
+        </section>
+        <details class="viva-reopen">
+          <summary>Reopen a saved upload</summary>
+          <form id="viva-reopen-form" class="viva-controls">
+            <label for="viva-run-id">Run ID
+              <input id="viva-run-id" autocomplete="off" required pattern="[0-9a-fA-F\-]{36}" maxlength="36" spellcheck="false">
+            </label>
+            <button type="submit" class="secondary-button">Read from MongoDB</button>
+          </form>
+        </details>
+      </section>
+      <dialog id="viva-proof" class="viva-proof" aria-labelledby="viva-proof-heading">
+        <p class="section-kicker">Original PDF · Source viewer</p>
+        <div class="viva-proof-header">
+          <h2 id="viva-proof-heading">Source evidence</h2>
+          <form method="dialog"><button type="submit" class="secondary-button" autofocus>Close</button></form>
+        </div>
+        <p id="viva-proof-status" class="viva-note viva-proof-status" role="status"></p>
+        <div class="viva-proof-body">
+          <div class="viva-proof-detail">
+            <h3>Selected evidence</h3>
+            <p id="viva-proof-text" class="viva-proof-text" dir="auto"></p>
+          </div>
+          <div class="viva-proof-paper"><img id="viva-proof-image" hidden alt=""></div>
+        </div>
+      </dialog>
     </main>
 
     <footer>
@@ -350,6 +522,10 @@
       <span>Answers are limited to indexed evidence</span>
     </footer>
   </div>
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+          integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin="anonymous" defer></script>
+  <script src="{{ url_for('market_explorer_asset', asset_name='market-explorer.js') }}" defer></script>
   <script src="{{ url_for('static', filename='app.js') }}" defer></script>
+  <script src="{{ url_for('static', filename='viva-dashboard.js') }}" defer></script>
 </body>
 </html>

@@ -1,11 +1,12 @@
-"""Synchronize every document in a MongoDB database to a Milvus collection."""
+"""Build an explicitly approved public-document corpus in a new collection."""
 
 import hashlib
 import json
 import os
+import re
 from itertools import islice
+from urllib.parse import urlsplit
 
-from bson import json_util
 from pymongo import MongoClient
 from pymilvus import (
     Collection,
@@ -17,6 +18,36 @@ from pymilvus import (
 )
 
 from services.ollama_embedding_client import OllamaEmbeddingClient
+
+
+PUBLIC_COLLECTION = "agriculture_documents"
+PUBLIC_FIELDS = {
+    "_id": 1, "source_url": 1, "document_title": 1, "page_number": 1,
+    "chunk_index": 1, "content": 1, "source_hash": 1,
+}
+COLLECTION_NAME = re.compile(r"[A-Za-z_][A-Za-z0-9_]{0,62}\Z")
+
+
+def milvus_settings(config):
+    settings = config.get("milvus") or {}
+    host, port = settings.get("host", "127.0.0.1"), settings.get("port", 19530)
+    uri = os.getenv("AGRI_MILVUS_URI") or f"http://{host}:{port}"
+    parsed = urlsplit(uri)
+    if parsed.scheme not in {"http", "https"} or not parsed.hostname or (
+        parsed.username or parsed.password or parsed.query or parsed.fragment
+        or parsed.path not in {"", "/"}
+    ):
+        raise ValueError("Invalid Milvus URI")
+    local = parsed.hostname in {"localhost", "127.0.0.1", "::1"}
+    if not local and parsed.scheme != "https":
+        raise ValueError("A remote Milvus URI must use HTTPS")
+    token = os.getenv("AGRI_MILVUS_TOKEN")
+    kwargs = {"uri": uri, "secure": parsed.scheme == "https"}
+    if token:
+        if not kwargs["secure"]:
+            raise ValueError("Use HTTPS with a Milvus token")
+        kwargs["token"] = token
+    return kwargs, local
 
 
 def describe_milvus_collection(collection, config):
@@ -234,14 +265,18 @@ class MongoToMilvusIndexer:
         database_name="bihar_agriculture",
         batch_size=16,
         field_config=None,
+        approved_sources=(),
+        max_documents=2000,
     ):
-        if batch_size < 1:
-            raise ValueError("batch_size must be at least 1")
+        if not 1 <= batch_size <= 32 or not 1 <= max_documents <= 10000:
+            raise ValueError("Use batch size 1–32 and a document limit of 1–10,000")
         self.mongo_database = mongo_database
         self.milvus_collection = milvus_collection
         self.embedder = embedder or OllamaEmbeddingClient()
         self.database_name = database_name
         self.batch_size = batch_size
+        self.approved_sources = tuple(approved_sources)
+        self.max_documents = max_documents
         self.details = describe_milvus_collection(
             milvus_collection,
             field_config or {},
@@ -250,25 +285,32 @@ class MongoToMilvusIndexer:
         self.vector_dimension = int(dimension) if dimension else None
 
     def run(self):
-        collection_names = self.mongo_database.list_collection_names()
+        if not self.approved_sources:
+            raise ValueError("No reviewed public document sources configured")
+        collection = self.mongo_database[PUBLIC_COLLECTION]
+        selector = {"source_url": {"$in": list(self.approved_sources)}}
+        if not 0 < collection.count_documents(selector, limit=self.max_documents + 1) <= self.max_documents:
+            raise ValueError("No approved documents, or the reviewed document limit was exceeded")
         documents_read = 0
         vectors_upserted = 0
-        for collection_name in collection_names:
-            source_collection = self.mongo_database[collection_name]
-            cursor = iter(source_collection.find({}))
+        with collection.find(selector, PUBLIC_FIELDS) as cursor:
             while True:
                 batch = list(islice(cursor, self.batch_size))
                 if not batch:
                     break
                 documents_read += len(batch)
-                rows = self._prepare_rows(collection_name, batch)
+                if documents_read > self.max_documents:
+                    raise ValueError("Source changed during indexing; discard the incomplete build")
+                if any(doc.get("source_url") not in self.approved_sources for doc in batch):
+                    raise ValueError("Unapproved source returned; discard the incomplete build")
+                rows = self._prepare_rows(PUBLIC_COLLECTION, batch)
                 if rows:
                     self._upsert_rows(rows)
                     vectors_upserted += len(rows)
 
         return {
             "database": self.database_name,
-            "mongo_collections": len(collection_names),
+            "mongo_collections": 1,
             "documents_read": documents_read,
             "vectors_upserted": vectors_upserted,
             "embedding_model": self.embedder.model,
@@ -285,7 +327,7 @@ class MongoToMilvusIndexer:
     def _prepare_rows(self, collection_name, documents):
         pending = []
         rows = []
-        max_bytes = min(self.details["text_max_length"], 8192)
+        max_bytes = min(self.details["text_max_length"], 3000)
         for document in documents:
             mongo_id = document.get("_id")
             if mongo_id is None:
@@ -293,6 +335,10 @@ class MongoToMilvusIndexer:
                     f"MongoDB document in {collection_name} has no _id"
                 )
             text = self._document_text(document)
+            if not text:
+                raise ValueError("Approved corpus contains a document without source text")
+            if len(text.encode("utf-8")) > 30000:
+                raise ValueError("Approved document is too large; extract reviewed page chunks first")
             chunks = _chunks_by_utf8_size(text, max_bytes)
             for chunk_index, chunk in enumerate(chunks):
                 source_id = (
@@ -303,7 +349,12 @@ class MongoToMilvusIndexer:
                     "mongo_database": self.database_name,
                     "mongo_collection": collection_name,
                     "mongo_id": str(mongo_id),
-                    "chunk_index": chunk_index,
+                    "part_index": chunk_index,
+                    "page_number": document.get("page_number"),
+                    "chunk_index": document.get("chunk_index"),
+                    "source_hash": document.get("source_hash"),
+                    "document_title": str(document.get("document_title", ""))[:300],
+                    "embedding_model": self.embedder.model,
                 }
                 source = (
                     document.get("source_url")
@@ -371,42 +422,57 @@ class MongoToMilvusIndexer:
 
     @staticmethod
     def _document_text(document):
-        content = {
-            key: value
-            for key, value in document.items()
-            if key not in {
-                "embedding",
-                "embedding_model",
-                "embedding_dimension",
-                "embedding_content_hash",
-                "embedded_at",
-            }
-        }
-        return json_util.dumps(
-            content,
-            ensure_ascii=False,
-            sort_keys=True,
-        )
+        content = document.get("content")
+        return content.strip() if isinstance(content, str) else ""
 
 
 def sync_mongodb_to_milvus(
     config,
     *,
+    collection_name,
+    write=False,
+    allow_remote=False,
+    max_documents=2000,
     mongo_client=None,
-    milvus_collection=None,
     embedder=None,
 ):
     ingestion_config = config.get("document_ingestion", {})
-    milvus_config = config.get("milvus") or {}
+    if not COLLECTION_NAME.fullmatch(collection_name):
+        raise ValueError("Use a Milvus collection name containing only letters, digits and underscores")
+    approved_sources = ingestion_config.get("approved_document_sources", ())
+    if not isinstance(approved_sources, (list, tuple)) or len(approved_sources) > 100:
+        raise ValueError("Use a list of up to 100 exact reviewed public HTTPS source URLs")
+    for source in approved_sources:
+        parsed = urlsplit(source)
+        if (
+            parsed.scheme != "https" or not parsed.hostname or parsed.username
+            or parsed.password or parsed.query or parsed.fragment or len(source) > 2048
+        ):
+            raise ValueError("Approved sources must be exact public HTTPS URLs without credentials or query tokens")
+    if not 1 <= max_documents <= 10000:
+        raise ValueError("Document limit must be between 1 and 10,000")
     database_name = ingestion_config.get(
         "mongo_database",
         config.get("mongodb", {}).get("database", "bihar_agriculture"),
     )
     batch_size = int(ingestion_config.get("milvus_batch_size", 16))
+    if not 1 <= batch_size <= 32:
+        raise ValueError("Milvus batch size must be between 1 and 32")
+    plan = {
+        "database": database_name, "mongo_collection": PUBLIC_COLLECTION,
+        "milvus_collection": collection_name, "approved_sources": list(approved_sources),
+        "max_documents": max_documents, "replace_existing": False,
+    }
+    if not write:
+        return {**plan, "mode": "plan_only", "saved": False}
+    if not approved_sources:
+        raise ValueError("Configure reviewed public sources before enabling writes")
+    connection_options, local = milvus_settings(config)
+    if not local and not allow_remote:
+        raise ValueError("Remote indexing requires a separately confirmed --allow-remote")
     owns_mongo_client = mongo_client is None
     connected_milvus = False
-    alias = "mongo_milvus_sync"
-    collection_created = False
+    alias = "mongo_milvus_build"
     embedder = embedder or OllamaEmbeddingClient()
 
     try:
@@ -417,45 +483,17 @@ def sync_mongodb_to_milvus(
                     "uri", "mongodb://localhost:27017/"
                 ),
             )
-            mongo_client = MongoClient(mongo_uri)
+            mongo_client = MongoClient(mongo_uri, serverSelectionTimeoutMS=5000)
             mongo_client.admin.command("ping")
         mongo_database = mongo_client[database_name]
 
-        if milvus_collection is None:
-            collection_name = milvus_config.get("collectionName")
-            uri = milvus_config.get("zilliz_uri")
-            if not uri:
-                host = milvus_config.get("host")
-                port = milvus_config.get("port")
-                if not host or not port:
-                    raise ValueError(
-                        "Set milvus.zilliz_uri or milvus.host and "
-                        "milvus.port in config.yaml"
-                    )
-                uri = f"http://{host}:{port}"
-            if not collection_name:
-                raise ValueError(
-                    "Set milvus.collectionName in config.yaml"
-                )
-
-            connection_options = {
-                "alias": alias,
-                "uri": uri,
-                "secure": uri.lower().startswith("https://"),
-            }
-            token = milvus_config.get("zilliz_token")
-            if token:
-                connection_options["token"] = token
-            connections.connect(**connection_options)
-            connected_milvus = True
-            milvus_collection, collection_created = (
-                _get_or_create_milvus_collection(
-                    collection_name,
-                    alias,
-                    milvus_config,
-                    embedder,
-                )
-            )
+        connections.connect(alias=alias, timeout=10, **connection_options)
+        connected_milvus = True
+        milvus_collection, created = _get_or_create_milvus_collection(
+            collection_name, alias, {"collectionName": collection_name}, embedder,
+        )
+        if not created:
+            raise ValueError("Build requires a new collection name; existing data was not touched")
 
         indexer = MongoToMilvusIndexer(
             mongo_database,
@@ -463,11 +501,15 @@ def sync_mongodb_to_milvus(
             embedder,
             database_name=database_name,
             batch_size=batch_size,
-            field_config=milvus_config,
+            approved_sources=approved_sources,
+            max_documents=max_documents,
         )
         summary = indexer.run()
-        summary["milvus_collection_created"] = collection_created
-        return summary
+        milvus_collection.flush(timeout=60)
+        milvus_collection.load(timeout=60)
+        utility.wait_for_loading_complete(collection_name, using=alias, timeout=60)
+        return {**plan, **summary, "saved": True, "mode": "new_corpus",
+                "activated": False, "ready_for_review": True}
     finally:
         if connected_milvus:
             connections.disconnect(alias)

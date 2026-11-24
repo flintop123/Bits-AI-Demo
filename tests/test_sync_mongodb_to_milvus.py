@@ -1,4 +1,5 @@
 import unittest
+from contextlib import nullcontext
 from types import SimpleNamespace
 from unittest.mock import Mock, patch
 
@@ -66,9 +67,16 @@ class FakeMongoCollection:
     def __init__(self, documents):
         self.documents = documents
 
-    def find(self, query):
+    def _selected(self, query):
+        return [row for row in self.documents if row.get("source_url") in query["source_url"]["$in"]]
+
+    def count_documents(self, query, limit):
+        return min(limit, len(self._selected(query)))
+
+    def find(self, query, projection):
         self.asserted_query = query
-        return iter(self.documents)
+        self.asserted_projection = projection
+        return nullcontext(iter(self._selected(query)))
 
 
 class FakeMongoDatabase:
@@ -145,7 +153,8 @@ class MongoToMilvusTests(unittest.TestCase):
         self.assertIsNotNone(collection_factory.call_args.kwargs["schema"])
         new_collection.create_index.assert_called_once()
 
-    def test_reads_all_collections_and_upserts_stable_vector_rows(self):
+    def test_reads_only_approved_documents_and_upserts_stable_vector_rows(self):
+        approved = "https://example.test/public.pdf"
         mongo = FakeMongoDatabase({
             "api_documents": FakeMongoCollection([
                 {
@@ -155,7 +164,8 @@ class MongoToMilvusTests(unittest.TestCase):
                 },
             ]),
             "agriculture_documents": FakeMongoCollection([
-                {"_id": "record-2", "content": "English text"},
+                {"_id": "record-2", "content": "English text", "source_url": approved},
+                {"_id": "record-3", "content": "Private text", "source_url": "https://example.test/private.pdf"},
             ]),
         })
         milvus = FakeMilvusCollection()
@@ -165,20 +175,21 @@ class MongoToMilvusTests(unittest.TestCase):
             FakeEmbedder(),
             database_name="bihar_agriculture",
             batch_size=2,
+            approved_sources=[approved],
         )
 
         result = indexer.run()
 
-        self.assertEqual(result["mongo_collections"], 2)
-        self.assertEqual(result["documents_read"], 2)
-        self.assertEqual(result["vectors_upserted"], 2)
+        self.assertEqual(result["mongo_collections"], 1)
+        self.assertEqual(result["documents_read"], 1)
+        self.assertEqual(result["vectors_upserted"], 1)
         self.assertEqual(result["milvus_collection"], "configured_collection")
-        self.assertEqual(len(milvus.upserts), 2)
+        self.assertEqual(len(milvus.upserts), 1)
         self.assertTrue(milvus.upserts[0]["pk"])
         self.assertEqual(milvus.upserts[0]["embedding"], [0.1, 0.2, 0.3])
         self.assertEqual(
             milvus.upserts[0]["metadata"]["mongo_collection"],
-            "api_documents",
+            "agriculture_documents",
         )
         self.assertNotIn('"embedding"', milvus.upserts[0]["text_content"])
 
@@ -198,10 +209,13 @@ class MongoToMilvusTests(unittest.TestCase):
 
         indexer = MongoToMilvusIndexer(
             FakeMongoDatabase({
-                "sample": FakeMongoCollection([{"_id": "one"}]),
+                "agriculture_documents": FakeMongoCollection([{
+                    "_id": "one", "source_url": "https://example.test/report.pdf", "content": "Evidence",
+                }]),
             }),
             FakeMilvusCollection(),
             BadEmbedder(),
+            approved_sources=["https://example.test/report.pdf"],
         )
 
         with self.assertRaisesRegex(ValueError, "does not match"):

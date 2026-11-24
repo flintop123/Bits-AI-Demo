@@ -66,7 +66,7 @@ class FakeMilvusConnector:
             "text_content": "Matching Milvus evidence",
             "source": "https://example.test/source",
             "metadata": {},
-            "distance": 0.2,
+            "distance": 0.8,
         }]
 
 
@@ -149,8 +149,8 @@ class RagWorkflowTests(unittest.TestCase):
             "subQuestions": subquestions,
         })
 
-        self.assertEqual(connector.queries, subquestions)
-        self.assertEqual(embedder.queries, subquestions)
+        self.assertEqual(connector.queries, ["original question", *subquestions])
+        self.assertEqual(embedder.queries, ["original question", *subquestions])
         self.assertEqual(len(result["retrieved_documents"]), 1)
         self.assertEqual(
             result["retrieved_documents"][0]["text_content"],

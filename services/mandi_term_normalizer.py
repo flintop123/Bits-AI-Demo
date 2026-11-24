@@ -6,6 +6,10 @@ from pathlib import Path
 
 import yaml
 
+from services.catalog_translation_agent import (
+    CatalogTranslationAgent,
+    CatalogTranslationError,
+)
 from services.local_translation_service import (
     LocalTranslationError,
     LocalTranslationService,
@@ -77,12 +81,23 @@ def _normal(value):
 class MandiTermNormalizer:
     """Resolve bilingual input only to values present in the live catalog."""
 
-    def __init__(self, translator=None, market_alias_path=None):
+    def __init__(
+        self,
+        translator=None,
+        market_alias_path=None,
+        translation_agent=None,
+        term_alias_path=None,
+    ):
         self.translator = translator
+        self.translation_agent = translation_agent
         self.market_alias_path = Path(
             market_alias_path or "sources/mandi_market_aliases.yaml"
         )
+        self.term_alias_path = Path(
+            term_alias_path or "sources/mandi_term_aliases.yaml"
+        )
         self._market_groups = None
+        self._reviewed_term_groups = None
 
     def resolve_filters(self, filters, catalog):
         resolved = {}
@@ -108,6 +123,23 @@ class MandiTermNormalizer:
             }
             if translated:
                 evidence[field]["translated_candidate"] = translated
+                source_language = self._language(value)
+                target_language = (
+                    "en" if source_language == "hi" else "hi"
+                )
+                validation_status = {
+                    "offline_translation": "accepted_exact_catalog_match",
+                    "offline_translation_alias": "accepted_catalog_alias",
+                    "unresolved": "rejected_not_in_live_catalog",
+                }.get(method, "not_applicable")
+                evidence[field]["translation_evidence"] = (
+                    self._translation_evidence(
+                        self.translator,
+                        source_language,
+                        target_language,
+                        validation_status,
+                    )
+                )
         return resolved, evidence
 
     def localized_options(self, values, field, language):
@@ -118,11 +150,7 @@ class MandiTermNormalizer:
         official_values = sorted({
             str(value).strip() for value in values if str(value or "").strip()
         })
-        groups = {
-            "crop": CROP_GROUPS,
-            "district": DISTRICT_GROUPS,
-            "market": self._market_alias_groups(),
-        }.get(field, ())
+        groups = self._alias_groups(field)
         entries = []
         pending = []
 
@@ -130,28 +158,59 @@ class MandiTermNormalizer:
             source_language = self._language(value)
             if source_language == language:
                 entries.append(self._option(
-                    value, value, language, "official_catalog_label"
+                    value,
+                    value,
+                    language,
+                    "official_catalog_label",
+                    self._non_model_evidence(
+                        source_language,
+                        language,
+                        "not_required",
+                    ),
                 ))
                 continue
             alias = self._group_label(value, groups, language)
             if alias:
                 entries.append(self._option(
-                    value, alias, language, "reviewed_bilingual_alias"
+                    value,
+                    alias,
+                    language,
+                    "reviewed_bilingual_alias",
+                    self._non_model_evidence(
+                        source_language,
+                        language,
+                        "accepted_reviewed_alias",
+                    ),
                 ))
                 continue
             if field == "market":
                 if source_language == "hi" and language == "en":
                     label = self._transliterate_market_name(value)
                     entries.append(self._option(
-                        value, label, "en", "devanagari_transliteration"
+                        value,
+                        label,
+                        "en",
+                        "devanagari_transliteration",
+                        self._non_model_evidence(
+                            source_language,
+                            language,
+                            "accepted_proper_name_transliteration",
+                        ),
                     ))
                 else:
                     # Place names must never be sent through an unconstrained
                     # semantic translation model. Retaining the official name
                     # is safer than inventing a different locality.
                     entries.append(self._option(
-                        value, value, source_language,
+                        value,
+                        value,
+                        source_language,
                         "official_place_name_translation_unavailable",
+                        self._non_model_evidence(
+                            source_language,
+                            language,
+                            "translation_unavailable",
+                        ),
                     ))
                 continue
             pending.append((value, source_language))
@@ -160,18 +219,39 @@ class MandiTermNormalizer:
             source_values = [
                 item[0] for item in pending if item[1] == source_language
             ]
-            translations = self._translate_catalog_values(
-                source_values, source_language, language
+            translations, translation_evidence, translation_methods = (
+                self._translate_catalog_values(
+                    source_values, source_language, language, field
+                )
             )
-            for value, translated in zip(source_values, translations):
+            for value, translated, item_evidence, item_method in zip(
+                source_values,
+                translations,
+                translation_evidence,
+                translation_methods,
+            ):
                 if translated:
                     entries.append(self._option(
-                        value, translated, language, "offline_translation"
+                        value,
+                        translated,
+                        language,
+                        item_method,
+                        item_evidence,
                     ))
                 else:
+                    rejected = item_evidence.get(
+                        "validation_status"
+                    ) == "rejected_round_trip_mismatch"
                     entries.append(self._option(
-                        value, value, source_language,
-                        "official_label_translation_unavailable",
+                        value,
+                        value,
+                        source_language,
+                        (
+                            "official_label_translation_rejected"
+                            if rejected
+                            else "official_label_translation_unavailable"
+                        ),
+                        item_evidence,
                     ))
 
         return sorted(
@@ -241,27 +321,133 @@ class MandiTermNormalizer:
         return " ".join(words) or value
 
     def _translate_catalog_values(
-        self, values, source_language, target_language
+        self, values, source_language, target_language, field
     ):
         if not values:
-            return []
+            return [], [], []
         translator = self.translator
         if translator is None:
             translator = LocalTranslationService()
             self.translator = translator
+        translation_evidence = self._translation_evidence(
+            translator,
+            source_language,
+            target_language,
+            "model_candidate_generated",
+        )
         try:
             if hasattr(translator, "translate_many"):
-                return translator.translate_many(
+                translated = translator.translate_many(
                     values, source_language, target_language
                 )
-            return [
-                translator.translate(
-                    value, source_language, target_language
+                round_trips = translator.translate_many(
+                    translated, target_language, source_language
                 )
-                for value in values
-            ]
+            else:
+                translated = [
+                    translator.translate(
+                        value, source_language, target_language
+                    )
+                    for value in values
+                ]
+                round_trips = [
+                    translator.translate(
+                        value, target_language, source_language
+                    )
+                    for value in translated
+                ]
+            accepted = []
+            evidence_items = []
+            methods = []
+            for source, candidate, round_trip in zip(
+                values, translated, round_trips
+            ):
+                evidence = dict(translation_evidence)
+                evidence["round_trip_candidate"] = round_trip
+                if self._round_trip_matches(source, round_trip):
+                    evidence["validation_status"] = (
+                        "accepted_round_trip_match"
+                    )
+                    accepted.append(candidate)
+                    methods.append("offline_translation")
+                else:
+                    evidence["validation_status"] = (
+                        "rejected_round_trip_mismatch"
+                    )
+                    agent_result = self._agentic_catalog_translation(
+                        source,
+                        field,
+                        source_language,
+                        target_language,
+                        translator,
+                    )
+                    if agent_result is not None and agent_result.accepted:
+                        accepted.append(agent_result.translated_label)
+                        methods.append("agentic_offline_translation")
+                        evidence = dict(
+                            agent_result.translation_evidence
+                        )
+                        evidence["proposed_label"] = (
+                            agent_result.proposed_label
+                        )
+                        evidence["round_trip_candidate"] = (
+                            agent_result.round_trip_candidate
+                        )
+                    else:
+                        accepted.append(None)
+                        methods.append(None)
+                        if agent_result is not None:
+                            evidence["agentic_fallback"] = {
+                                **agent_result.translation_evidence,
+                                "proposed_label": (
+                                    agent_result.proposed_label
+                                ),
+                                "round_trip_candidate": (
+                                    agent_result.round_trip_candidate
+                                ),
+                            }
+                evidence_items.append(evidence)
+            return accepted, evidence_items, methods
         except (LocalTranslationError, OSError, ValueError):
-            return [None] * len(values)
+            translation_evidence["validation_status"] = (
+                "translation_failed"
+            )
+            return (
+                [None] * len(values),
+                [dict(translation_evidence) for _value in values],
+                [None] * len(values),
+            )
+
+    def _agentic_catalog_translation(
+        self,
+        value,
+        field,
+        source_language,
+        target_language,
+        back_translator,
+    ):
+        agent = self.translation_agent
+        if agent is False:
+            return None
+        if agent is None:
+            agent = CatalogTranslationAgent(
+                back_translator=back_translator
+            )
+            self.translation_agent = agent
+        try:
+            return agent.translate({
+                "official_value": value,
+                "entity_type": field,
+                "source_language": source_language,
+                "target_language": target_language,
+            })
+        except CatalogTranslationError:
+            return None
+
+    @staticmethod
+    def _round_trip_matches(source, round_trip):
+        """Conservatively accept only a normalized exact round trip."""
+        return _normal(source) == _normal(round_trip)
 
     @classmethod
     def _group_label(cls, value, groups, language):
@@ -275,13 +461,72 @@ class MandiTermNormalizer:
         return None
 
     @staticmethod
-    def _option(value, label, language, method):
-        return {
+    def _option(
+        value, label, language, method, translation_evidence=None
+    ):
+        option = {
             "value": value,
             "label": MandiTermNormalizer._display_case(label, language),
             "label_language": language,
             "method": method,
         }
+        if translation_evidence is not None:
+            option["translation_evidence"] = translation_evidence
+        return option
+
+    @staticmethod
+    def _non_model_evidence(
+        source_language, target_language, validation_status
+    ):
+        return {
+            "provider": None,
+            "model_family": None,
+            "model_name": None,
+            "source_language": source_language,
+            "target_language": target_language,
+            "execution": "deterministic",
+            "remote_api_used": False,
+            "validation_status": validation_status,
+            "confidence": None,
+            "confidence_basis": "not_calibrated",
+            "official_value_preserved": True,
+        }
+
+    @classmethod
+    def _translation_evidence(
+        cls,
+        translator,
+        source_language,
+        target_language,
+        validation_status,
+    ):
+        metadata_method = getattr(
+            type(translator), "translation_metadata", None
+        )
+        if callable(metadata_method):
+            metadata = dict(translator.translation_metadata(
+                source_language, target_language
+            ))
+        else:
+            model_name = getattr(translator, "model_name", None)
+            if model_name is not None and not isinstance(model_name, str):
+                model_name = type(translator).__name__
+            metadata = {
+                "provider": "injected_translator",
+                "model_family": type(translator).__name__,
+                "model_name": model_name,
+                "source_language": source_language,
+                "target_language": target_language,
+                "execution": "local_or_test_double",
+                "remote_api_used": False,
+            }
+        metadata.update({
+            "validation_status": validation_status,
+            "confidence": None,
+            "confidence_basis": "not_calibrated",
+            "official_value_preserved": True,
+        })
+        return metadata
 
     @staticmethod
     def _display_case(value, language):
@@ -303,11 +548,7 @@ class MandiTermNormalizer:
         if direct is not None:
             return direct, "exact_catalog_match", None
 
-        groups = {
-            "crop": CROP_GROUPS,
-            "district": DISTRICT_GROUPS,
-            "market": self._market_alias_groups(),
-        }.get(field, ())
+        groups = self._alias_groups(field)
         alias = self._group_match(requested, choice_lookup, groups)
         if alias is not None:
             return alias, "bilingual_alias", None
@@ -360,3 +601,47 @@ class MandiTermNormalizer:
                 groups.append(tuple(value for value in values if value))
         self._market_groups = tuple(groups)
         return self._market_groups
+
+    def _alias_groups(self, field):
+        built_in = {
+            "crop": CROP_GROUPS,
+            "district": DISTRICT_GROUPS,
+            "market": self._market_alias_groups(),
+        }.get(field, ())
+        reviewed = self._reviewed_alias_groups().get(field, ())
+        return tuple(built_in) + tuple(reviewed)
+
+    def _reviewed_alias_groups(self):
+        if self._reviewed_term_groups is not None:
+            return self._reviewed_term_groups
+        groups = {"crop": [], "district": [], "market": [], "variety": []}
+        if self.term_alias_path.exists():
+            payload = yaml.safe_load(
+                self.term_alias_path.read_text(encoding="utf-8")
+            ) or {}
+            for item in payload.get("aliases", []):
+                if item.get("review_status") != "approved":
+                    continue
+                entity_type = item.get("entity_type")
+                official_value = str(
+                    item.get("official_value") or ""
+                ).strip()
+                labels = item.get("labels") or {}
+                if entity_type not in groups or not official_value:
+                    continue
+                values = [official_value]
+                values.extend(
+                    str(value).strip()
+                    for value in labels.values()
+                    if str(value or "").strip()
+                )
+                values.extend(
+                    str(value).strip()
+                    for value in item.get("aliases", [])
+                    if str(value or "").strip()
+                )
+                groups[entity_type].append(tuple(dict.fromkeys(values)))
+        self._reviewed_term_groups = {
+            field: tuple(values) for field, values in groups.items()
+        }
+        return self._reviewed_term_groups

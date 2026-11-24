@@ -1,8 +1,26 @@
 # AgriAgent — CS F407 Artificial Intelligence, Group 17
 
+## Phase III handoff
+
+Start with the [Windows setup](#clean-clone-prerequisites-windows).
+Use the [dashboard-only viva workflow](docs/VIVA_DASHBOARD.md) to demonstrate
+ReAct, upload an unseen PDF, and show the passages saved in MongoDB.
+The [ten-query rehearsal guide](eval/round2_demo_README.md) records the
+questions, expected answers, and source locators. Its offline check
+verifies a fixed snapshot; it is not a live product score.
+
+| Submission evidence | Location |
+|---|---|
+| Data inventory, schema, and portable dump | [Manifest](data/manifest.csv), [data dictionary](docs/DATABASE_SCHEMA.md), [JSONL dump](db/dump/) |
+| Evaluation methods and recorded results | [Agent evaluation](docs/PHASE2_AGENT_EVALUATION.md), [raw cases and results](eval/), [evidence](docs/evidence/) |
+| Base/adapter experiment | [Saved comparison](eval/adapter_comparison.csv), [training/evaluation script](eval/run_adapter_experiment.py); see [scope below](#evaluation-evidence) |
+| Team roles and Git evidence | [Contributions](CONTRIBUTIONS.md) |
+
+The Phase II numbers below are historical baselines.
+
 ## Academic Phase II evaluation submission
 
-This section maps the repository to the faculty's Phase II demonstration protocol. Older headings such as “Phase 4” or “Phase 7” below are internal engineering workstream names; they are not claims about the course evaluation stage. The current academic stage is **Phase II evaluation**.
+This section maps the repository to the faculty's Phase II demonstration protocol. Older headings such as “Phase 4” or “Phase 7” below are internal engineering workstream names; they are not claims about the course evaluation stage.
 
 Repository: <https://github.com/flintop123/Bits-AI-Demo>
 
@@ -61,13 +79,20 @@ docker run -d --name bihar-mongodb -p 127.0.0.1:27017:27017 mongo:7
 docker ps --filter "name=bihar-mongodb"
 ```
 
-Validate the portable database dump and load it into MongoDB when the database
-is empty:
+Validate the portable dump first. To seed a fresh, empty local MongoDB
+instance, keep the app and schedulers stopped and run:
 
 ```powershell
 python db\load_dump.py --validate-only
-python db\load_dump.py
+python db\load_dump.py --mongo
 ```
+
+`--mongo` only connects to loopback port 27017 and refuses existing records
+in `bihar_agriculture`. It creates the location and document text indexes
+needed by the demo, and prints read-back counts. Skip the seed if your
+database is already populated. If a seed is interrupted, use a fresh,
+disposable MongoDB instance rather than clearing an existing database.
+With neither flag, the loader builds a SQLite mirror instead.
 
 Install and start Ollama, then make both submitted local-model dependencies
 available. `qwen3:4b` performs grounded planning and answer generation;
@@ -107,56 +132,28 @@ python run.py --input <file>
 
 The command accepts PDF, Excel, CSV and JSON inputs, selects a bounded extractor, writes an auditable JSON trace under `artifacts/phase2/`, and does not write to MongoDB. Use `--force-ocr` only when an unseen scanned PDF requires it.
 
-### Ingest a PDF or generic API response into MongoDB
+### Optional public-document retrieval lab
 
-Add local PDF paths and generic API URLs under `document_ingestion` in
-`config.yaml`, then start the existing application entry point:
+The main dashboard remains `python data_api.py`. Its market explorer supports
+search, district filters, a keyboard-accessible directory, verified market
+details, a straight-line radius, and nearby live price results. The GitHub Pages
+map browses the committed snapshot; it does not make live price queries. An
+unavailable basemap does not prevent searching the directory or measuring from
+a selected market. Unresolved coordinates are never guessed.
 
-```yaml
-document_ingestion:
-  pdf_paths:
-    - 'data\pdfs\report.pdf'
-  api_urls:
-    - 'https://example.test/api/data'
-  api_headers: {}
-  api_timeout_ms: 60000
-  force_ocr: false
-  ocr_enabled: true
-  run_mandi_ingestion: true
+Jitendra's separate intake and Milvus pipeline is opt-in:
+
+```text
+python main.py preview-pdf --input path/to/report.pdf
+python main.py preview-api --url https://example.test/public.json
+python main.py sync --collection agri_public_v1
+python main.py serve
 ```
 
-Then run:
-
-```powershell
-python main.py
-```
-
-The Flask endpoint is available at
-`http://127.0.0.1:5000/bihar-crop-chatbot/ask?question=hello`. Greeting-only
-inputs receive a greeting. Other inputs produce exactly four subquestions;
-each is used to retrieve evidence from Milvus before the final grounded answer
-is generated. The API response includes the final `answer`, the four
-`questions`, and their `source` references. Reuse the returned `thread_id` in
-the `X-Thread-ID` request header to continue the LangGraph checkpoint thread.
-The default `MemorySaver` checkpoint is retained while the process is running.
-
-With `sync_mongodb_to_milvus: true`, the main ingestion class reads every
-collection in `mongo_database`, creates deterministic embeddings with the
-configured Ollama embedding model, inspects the Milvus collection schema, and
-upserts the vectors into the collection named by `milvus.collectionName`.
-MongoDB records are embedded as JSON text; existing embedding fields are
-excluded to avoid re-embedding stored vectors.
-
-PDF pages are extracted and language-detected. Hindi chunks are translated to
-English with the local Helsinki-NLP model from `tools/translateEngToHindi/translate.py`;
-the original Hindi text is retained in MongoDB. The model is downloaded on first
-use. API responses can be JSON, HTML tables, HTML text, or plain text. API
-records are stored in the `api_documents` collection and deduplicated by source
-URL and content hash; PDF chunks use the existing `agriculture_documents`
-collection and source/page/chunk upsert identity. Playwright is used to fetch
-API responses and render client-side HTML tables. Set `run_mandi_ingestion` to
-`false` to skip the existing mandi-specific scraper. Set `MONGODB_URI` to use a
-MongoDB instance other than `mongodb://localhost:27017/`.
+These examples do not write. The optional chat endpoint runs on loopback port
+5002; it does not replace the dashboard's evidence-grounded QA. See
+[Product integration and verification](docs/PRODUCT_INTEGRATION.md) for the
+reviewed-source, local staging, and citation contracts.
 
 ```mermaid
 flowchart TD
@@ -184,9 +181,17 @@ flowchart TD
 - Runtime schema, dictionary and reproducible dump: `db/`
 - Honest base/adapter comparison: `eval/adapter_comparison.csv`
 
-M18 is intentionally left pending until the same held-out set has been run against both the base model and a genuine LoRA/QLoRA adapter. The protocol rewards the documented comparison, not an invented positive gain.
+The saved M18 comparison records **2/10 base and 4/10 adapter** intent routes
+correct on the same ten held-out cases: two additional correct routes, or
+20 percentage points. Six remained incorrect. To reproduce the calculation
+from the saved results without training, run
+`python scripts/summarize_adapter_comparison.py`.
 
 Run the CPU-compatible LoRA experiment with `python eval/run_adapter_experiment.py`. It adapts only the QA intent-routing decision using a separate training set and compares the same base checkpoint before and after PEFT LoRA on all ten held-out QA cases. It does **not** claim that the deployed Qwen answer model was fine-tuned.
+
+The [Round 2 feedback and rehearsal guide](docs/ROUND2_FEEDBACK_IMPLEMENTATION.md)
+covers read-only map and report checks, field accuracy, live progress,
+supported formats, and pending-source acceptance gates.
 
 ## Phase 7: spatiotemporal market intelligence
 
@@ -361,15 +366,18 @@ mapping, evaluation criteria, database fields, limitations, and LangSmith setup.
 
 The supervisor above is deterministic: the source type is already known
 before the run starts. `run_extractor.py` covers the opposite case — a
-free-text request where the matching capability isn't known in advance. A
-LangChain ReAct agent (Ollama `qwen3:4b`) decides which of four
-already-tested capabilities to call, in a Thought/Action/Observation loop,
-never gaining any capability beyond those four fixed tools:
+free-text request. A rule-based resolver chooses one of four known
+capabilities or asks the user to clarify. Rishi's LangChain ReAct agent
+(Ollama `qwen3:4b`) receives only the chosen tool and supplies its argument:
 
 ```powershell
 python run_extractor.py "load last seven days of mandi data via api"
 python run_extractor.py "what was total rice production in 2024-25?"
 ```
+
+Ingestion previews by default. Only an explicit `--write` flag authorizes
+ingestion writes, and an original request saying "dry run" still takes
+precedence. Do not use `--write` for the rehearsal.
 
 Configure the Ollama model and MongoDB connection for this agent in one
 place via `.env` (copy `.env.example`); see `agent_config.py`. Run
@@ -377,6 +385,10 @@ place via `.env` (copy `.env.example`); see `agent_config.py`. Run
 against a scripted fake model, without needing Ollama or MongoDB running.
 See `docs/REACT_AGENT.md` for the full design, including which decisions
 are made by the model and which by fixed code.
+
+The local dashboard reuses the same agent builder and resolver for its
+ReAct option, with one read-only QA tool. It does not expose the CLI's
+ingestion tools or give the model a choice among multiple dashboard tools.
 
 Run the final manifest-driven evaluation across the live mandi source, Excel,
 English PDF text extraction, Hindi OCR, English/Hindi grounded QA, and a

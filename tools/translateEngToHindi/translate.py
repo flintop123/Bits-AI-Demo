@@ -1,103 +1,51 @@
+"""Jitendra's Hindi-to-English PDF translation, as a derived review aid."""
 
 import argparse
 import re
-import sys
+from pathlib import Path
 
 import torch
+from pypdf import PdfReader
 from transformers import AutoModelForSeq2SeqLM, AutoTokenizer
 
 MODEL_NAME = "Helsinki-NLP/opus-mt-hi-en"
-DEVICE = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-
-
-def split_sentences(text: str) -> list[str]:
-    """Split text at sentence endings and newlines."""
-    parts = re.split(r"(?<=[।.?!])\s+|\n+", text)
-    return [part.strip() for part in parts if part.strip()]
-
-
-from pypdf import PdfReader
-
-from pathlib import Path
-from pypdf import PdfReader
-
-# 1. Use a raw string (r"...") so backslashes aren't treated as escape characters
-pdf_path = Path(r"C:\\Users\\JitendraKumar\\Downloads\\apeda_makhana_report_hindi-1-5.pdf")
-
-def extract_pdf(path: Path) -> str:
-    # Verify existence with pathlib
-    if not path.is_file():
-        raise FileNotFoundError(f"Python cannot see the file at: {path}")
-
-    reader = PdfReader(path)
-    text_content = []
-    for page in reader.pages:
-        extracted = page.extract_text()
-        if extracted:
-            text_content.append(extracted)
-
-    return "\n".join(text_content)
-
-
 
 
 class Translator:
+    model_name = MODEL_NAME
+
     def __init__(self):
-        print(f"Loading {MODEL_NAME} on {DEVICE} ...", file=sys.stderr)
+        self.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+        self.tokenizer = AutoTokenizer.from_pretrained(self.model_name)
+        self.model = AutoModelForSeq2SeqLM.from_pretrained(self.model_name).to(self.device)
+        self.model.eval()
 
-        self.tokenizer = AutoTokenizer.from_pretrained(MODEL_NAME)
-        self.model = AutoModelForSeq2SeqLM.from_pretrained(MODEL_NAME).to(DEVICE)
-
-        print("Translator ready.", file=sys.stderr)
-
-    def translate(self, text: str, batch_size: int = 8) -> str:
-        """Translate Hindi text into English in batches."""
-        if not text or not text.strip():
+    def translate(self, text, batch_size=8):
+        if not isinstance(text, str) or not text.strip():
             return ""
-
-        if batch_size < 1:
-            raise ValueError("batch_size must be at least 1")
-
-        sentences = split_sentences(text)
+        if not 1 <= batch_size <= 16:
+            raise ValueError("Translation batch size must be 1–16")
+        segments = [part.strip() for part in re.split(r"(?<=[।.?!])\s+|\n+", text) if part.strip()]
+        for segment in segments:
+            if len(self.tokenizer.encode(segment, add_special_tokens=True)) > 512:
+                raise ValueError("A translation segment exceeds 512 tokens; review or split the source chunk")
         results = []
-
-        for start in range(0, len(sentences), batch_size):
-            batch = sentences[start:start + batch_size]
-
+        for start in range(0, len(segments), batch_size):
             inputs = self.tokenizer(
-                batch,
-                truncation=True,
-                padding=True,
-                max_length=512,
-                return_tensors="pt",
-            ).to(DEVICE)
-
+                segments[start:start + batch_size], padding=True, truncation=False, return_tensors="pt",
+            ).to(self.device)
             with torch.inference_mode():
-                outputs = self.model.generate(
-                    **inputs,
-                    num_beams=4,
-                    max_new_tokens=512,
-                )
-
-            translated = self.tokenizer.batch_decode(
-                outputs,
-                skip_special_tokens=True,
-            )
-            results.extend(translated)
-
-        return " ".join(result.strip() for result in results).strip()
-
-
-def main() -> None:
-    try:
-        text_content = extract_pdf(pdf_path)
-        # englisth_content = translates("अनाज या अनाज उतपािों को फु लाकर या भूनकर प्राप्त िाद्य पिाथ्व", 8)
-        # print(f"Successfully extracted {len(text)} characters from PDF.")
-        englisth_content = Translator().translate(text_content, 8)
-        print(englisth_content)
-    except Exception as e:
-        print(f"Error: {e}")
+                outputs = self.model.generate(**inputs, num_beams=4, max_new_tokens=512)
+            translated = self.tokenizer.batch_decode(outputs, skip_special_tokens=True)
+            if len(translated) != len(segments[start:start + batch_size]) or any(not row.strip() for row in translated):
+                raise RuntimeError("Translation omitted one or more source segments")
+            results.extend(row.strip() for row in translated)
+        return " ".join(results)
 
 
 if __name__ == "__main__":
-    main()
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--input", type=Path, required=True)
+    args = parser.parse_args()
+    source = "\n".join(page.extract_text() or "" for page in PdfReader(args.input).pages)
+    print(Translator().translate(source))
