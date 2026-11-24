@@ -247,6 +247,7 @@
                 <select id="question-mode" name="question_mode">
                   <option value="direct">Direct QA</option>
                   <option value="react">ReAct agent</option>
+                  <option value="document_chat">Document Chat · local reports</option>
                 </select>
                 <label for="answer-language">Answer</label>
                 <select id="answer-language" name="answer_language">
@@ -261,7 +262,7 @@
               </button>
             </div>
           </form>
-          <p class="viva-note">ReAct shows which tool answered. To ingest a new document, <a href="#viva-upload-heading">upload a PDF</a>.</p>
+          <p class="viva-note">ReAct shows which tool answered. Document Chat searches indexed reports only. For market prices, use Direct QA or ReAct. To ingest a new document, <a href="#viva-upload-heading">upload a PDF</a>.</p>
 
           <div class="examples">
             <span>Try a question</span>
@@ -271,6 +272,7 @@
               <button type="button" data-question="How did potato prices change in Arwal over the last 30 days?">Price trend</button>
               <button type="button" data-question="पिछले 30 दिनों में अरवल में आलू के भाव में क्या बदलाव आया?">भाव का रुझान</button>
               <button type="button" data-question="What does the report say about the organic farming corridor?">Organic farming policy</button>
+              <button type="button" id="document-chat-example">Document Chat: organic farming</button>
               <button type="button" data-question="पीएमएफएमई मखाना पुस्तिका में प्रसंस्करण के बारे में क्या बताया गया है?">मखाना प्रसंस्करण</button>
             </div>
           </div>
@@ -386,8 +388,17 @@
               <span id="model-badge" class="model-badge"></span>
             </div>
           </div>
+          <p id="document-chat-answer-label" class="section-kicker" hidden>Generated summary</p>
           <p id="answer-text" class="answer-text"></p>
           <p id="react-trace" class="viva-trace" hidden></p>
+          <section id="document-chat-trace" class="viva-trace" aria-labelledby="document-chat-title" hidden>
+            <h3 id="document-chat-title">Document Chat · local MongoDB reports</h3>
+            <p id="document-chat-outcome"></p>
+            <details>
+              <summary>Search terms used</summary>
+              <ol id="document-chat-queries"></ol>
+            </details>
+          </section>
 
           <div id="filter-block" class="filter-block" hidden>
             <span>Applied query</span>

@@ -90,7 +90,7 @@ def is_local_dashboard_origin(origin):
     )
 
 
-def create_app(service=None, qa_service=None, *, viva_react=None, viva_upload_store=None):
+def create_app(service=None, qa_service=None, *, viva_react=None, viva_upload_store=None, viva_document_chat=None):
     app = Flask(__name__)
     query_service = service or AgricultureQueryService()
     if service is None:
@@ -98,7 +98,7 @@ def create_app(service=None, qa_service=None, *, viva_react=None, viva_upload_st
     agriculture_qa = qa_service or AgricultureQAService(query_service)
     app.register_blueprint(viva_blueprint(
         agriculture_qa, lambda: query_service.database,
-        react=viva_react, upload_store=viva_upload_store,
+        react=viva_react, upload_store=viva_upload_store, document_chat=viva_document_chat,
     ))
 
     @app.after_request

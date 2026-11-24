@@ -160,7 +160,8 @@ function renderSources(sources) {
       card.target = "_blank";
       card.rel = "noopener noreferrer";
     }
-    card.append(textElement("strong", source.document_title || source.source_file || "Data source"));
+    const title = source.document_title || source.source_file || "Data source";
+    card.append(textElement("strong", source.citation_id ? `[${source.citation_id}] ${title}` : title));
     const detail = source.page_number ? `Page ${source.page_number}` : (source.source_file || "Source record");
     card.append(textElement("small", detail));
     list.append(card);
@@ -220,9 +221,25 @@ function showAnswer(data) {
   const trace = document.querySelector("#react-trace");
   trace.hidden = !data.react?.tool_called;
   trace.textContent = trace.hidden ? "" : `ReAct tool: ${data.react.tool} · ${data.react.resolution}`;
+  const docChat = data.document_chat;
+  document.querySelector("#document-chat-answer-label").hidden = docChat?.status !== "cited";
+  const docTrace = document.querySelector("#document-chat-trace");
+  docTrace.hidden = !docChat;
+  document.querySelector("#document-chat-outcome").textContent = {
+    cited: "Generated summary. Verify it against the cited source excerpts below.",
+    evidence_only: "Exact source excerpts only. A generated summary was not verified.",
+    no_evidence: "No answer backed by an exact source excerpt.",
+    greeting: "No retrieval needed.",
+  }[docChat?.status] || "";
+  document.querySelector("#document-chat-queries").replaceChildren(...(docChat?.searches || []).map((search) => {
+    const item = textElement("li", search);
+    item.dir = "auto";
+    return item;
+  }));
   renderFilters(data.filters || {});
   renderSources(data.sources || []);
   renderRecords(data.records || []);
+  if (docChat && data.records?.length) document.querySelector("#records-block").open = true;
 }
 
 const svgNamespace = "http://www.w3.org/2000/svg";
@@ -603,10 +620,10 @@ form.addEventListener("submit", async (event) => {
   if (!question) return;
   showLoading();
   try {
-    const react = questionMode.value === "react";
-    const response = await fetch(react ? "/api/v1/viva/react" : "/api/v1/ask", {
+    const localPath = {react: "react", document_chat: "document-chat"}[questionMode.value];
+    const response = await fetch(localPath ? `/api/v1/viva/${localPath}` : "/api/v1/ask", {
       method: "POST",
-      headers: { "Content-Type": "application/json", ...(react ? { "X-Agri-Dashboard": "1" } : {}) },
+      headers: { "Content-Type": "application/json", ...(localPath ? { "X-Agri-Dashboard": "1" } : {}) },
       body: JSON.stringify({
         question,
         answer_language: answerLanguage.value,
@@ -632,6 +649,13 @@ document.querySelectorAll("[data-question]").forEach((button) => {
     questionInput.dispatchEvent(new Event("input"));
     questionInput.focus();
   });
+});
+
+document.querySelector("#document-chat-example").addEventListener("click", () => {
+  questionMode.value = "document_chat";
+  questionInput.value = "What does the report say about Bihar’s organic farming corridor?";
+  questionInput.dispatchEvent(new Event("input"));
+  questionInput.focus();
 });
 
 loadHealth();

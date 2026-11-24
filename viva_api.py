@@ -5,11 +5,12 @@ from ipaddress import ip_address
 from threading import BoundedSemaphore
 from urllib.parse import urlsplit
 
-from flask import Blueprint, Response, jsonify, request
+from flask import Blueprint, Response, current_app, jsonify, request
 from pymongo import timeout
 from pymongo.errors import PyMongoError
 from werkzeug.exceptions import RequestEntityTooLarge
 
+from services.dashboard_document_chat import DashboardDocumentChat, DocumentChatUnavailable
 from services.viva_dashboard import (
     COLLECTION, Drafts, MAX_PDF_BYTES, ReactDashboard, ReactNoEvidence,
     UploadReadbackError, VivaUploadStore, preview_pdf,
@@ -22,10 +23,12 @@ from services.viva_evidence import (
 VIVA_PREFIX = "/api/v1/viva"
 
 
-def viva_blueprint(qa, database, *, react=None, upload_store=None):
+def viva_blueprint(qa, database, *, react=None, upload_store=None, document_chat=None):
     bp = Blueprint("viva", __name__, url_prefix=VIVA_PREFIX)
     drafts, sources, worker = Drafts(), Drafts(), BoundedSemaphore(1)
     react = react if react is not None else ReactDashboard(qa)
+    document_chat = document_chat if document_chat is not None else DashboardDocumentChat()
+    chat_worker = BoundedSemaphore(1)
 
     def store():
         return upload_store if upload_store is not None else VivaUploadStore(database())
@@ -81,6 +84,31 @@ def viva_blueprint(qa, database, *, react=None, upload_store=None):
             return jsonify(react.ask(question, language))
         finally:
             worker.release()
+
+    @bp.post("/document-chat")
+    def ask_document_chat():
+        body = request.get_json(silent=True)
+        if (
+            request.args or not isinstance(body, dict)
+            or set(body) - {"question", "answer_language"}
+            or not isinstance(body.get("question"), str)
+        ):
+            raise ValueError("Document Chat accepts a question and optional answer language.")
+        question = body["question"].strip()
+        language = body.get("answer_language", "auto")
+        if not 0 < len(question) <= 500 or language not in ("auto", "en", "hi"):
+            raise ValueError("Enter 1–500 characters and choose a valid answer language.")
+        if not chat_worker.acquire(blocking=False):
+            return jsonify(error="Document Chat is busy. Retry shortly."), 429
+        try:
+            return jsonify(document_chat.ask(question, language))
+        except DocumentChatUnavailable as error:
+            return jsonify(error=str(error)), 503
+        except Exception as error:
+            current_app.logger.warning("Document Chat failed (%s)", type(error).__name__)
+            return jsonify(error="Document Chat did not finish. Check local MongoDB and Ollama."), 503
+        finally:
+            chat_worker.release()
 
     def uploaded_pdf():
         request.max_content_length = MAX_PDF_BYTES + 64 * 1024

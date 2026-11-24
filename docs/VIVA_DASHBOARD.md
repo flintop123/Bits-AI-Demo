@@ -18,6 +18,34 @@ ReAct declines or does not call it, the UI reports that outcome rather
 than inventing a tool invocation. **Direct QA** remains a separate mode.
 For a new document, use the upload flow, not the ReAct question box.
 
+## Ask Document Chat about indexed reports
+
+Choose **Ask the data → Document Chat · local reports**. The existing
+Jeetendra LangGraph workflow is reused with the dashboard’s local MongoDB
+text index instead of its cloud-backed Milvus connector. This mode uses
+loopback MongoDB and Ollama only; it does not use a cloud token, modify an
+index, or sync data. It does not search new PDF uploads or report live
+market prices. Use **Ask this PDF** for a saved upload and **Direct QA**
+or **ReAct agent** for mandi prices.
+
+The local model proposes English and Hindi search variants, including
+translations beyond the reviewed vocabulary list. It then selects exact
+quotes in their original language. The dashboard checks the quote and its
+page and chunk, and labels any generated summary separately. A number not
+present in the selected excerpts is withheld from the summary; a matched
+number alone does not establish the meaning of a generated explanation.
+
+Try **“How many districts are in the organic farming corridor in the
+Bihar Annual Scheme report?”**. In the stored 2022–23 report, physical PDF
+page 14 describes 13 districts. Ask **“बीएआईपीपी पुस्तिका के अनुसार
+पीएमएफएमई में खाद्य प्रसंस्करण इकाई के उन्नयन के लिए वित्तीय सहायता
+कितनी है?”** and select Hindi for a Hindi explanation with an unchanged
+English source excerpt (physical PDF page 11). **“Where does the APEDA
+report say makhana is mainly cultivated in Bihar?”** is the reverse
+English-to-Hindi-source check (physical PDF page 11). Verify the cited
+pages. Search omissions or unavailable services are not a reason to run
+an ingestion job, rebuild an index, or use a cloud credential.
+
 ## Examiner walkthrough: unseen PDF to verified evidence
 
 1. Open **PDF upload**. Select the examiner's PDF, up to 10 MiB and
