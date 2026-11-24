@@ -8,6 +8,7 @@ import logging
 import os
 import re
 from time import monotonic
+from unicodedata import category
 from urllib.parse import urlsplit
 from uuid import uuid4
 
@@ -410,6 +411,76 @@ def _amount_mentions(text):
     return labels
 
 
+# Match an entire explicitly INR expression, not an unlabelled digit string.
+# Capture the whole scale run so even a valid-looking prefix of a chained
+# amount (for example "10 lakh crore rupees") cannot be accepted.
+_INR_CANDIDATE = re.compile(
+    rf"(?:(?P<prefix>{_RUPEES})\s*)?(?P<number>{_NUMERIC_TOKEN})"
+    rf"(?P<scales>(?:\s*{_SCALE})*)(?:\s*(?P<suffix>{_RUPEES}))?", re.I,
+)
+_INR_MARK = re.compile(_RUPEES, re.I)
+_INR_SCALE = re.compile(_SCALE, re.I)
+_INR_GROUPING = re.compile(
+    r"-?(?:[0-9]+|[0-9]{1,3}(?:,[0-9]{3})+|[0-9]{1,2}(?:,[0-9]{2})+,[0-9]{3})(?:\.[0-9]+)?",
+)
+_INR_EXPONENT = dict.fromkeys(("lakh", "lakhs", "lac", "lacs", "लाख"), 5)
+_INR_EXPONENT.update(dict.fromkeys(("crore", "crores", "करोड़", "करोड"), 7))
+_OTHER_CURRENCY = r"(?:[$€£¥]|(?:usd|dollars?|eur|euros?|gbp|pounds?|jpy|yen)\b)"
+_PERCENT_UNIT = r"(?:%|per\s*cent\b|प्रतिशत|फ़ीसदी|फीसदी)"
+_INR_RIGHT_CONFLICT = re.compile(
+    rf"^(?:[.,]+[0-9]|\s*(?:{_RUPEES}|{_OTHER_CURRENCY}|{_SCALE}|{_PERCENT_UNIT}|[0-9]))", re.I,
+)
+_INR_LEFT_CONFLICT = re.compile(
+    rf"(?:[0-9][.,]+|(?:{_RUPEES}|{_OTHER_CURRENCY}|{_PERCENT_UNIT}|[0-9])\s*)$", re.I,
+)
+_DANGLING_INR_PREFIX = re.compile(r"^[\s+.,-]*[0-9]")
+_DANGLING_INR_SUFFIX = re.compile(
+    rf"[0-9][.,]*(?:\s*(?:{_SCALE}|thousand|millions?|billions?))*\s*$", re.I,
+)
+
+
+def _wordish(char):
+    return bool(char) and (char.isalnum() or char == "_" or category(char).startswith("M"))
+
+
+def _inr_amounts(text):
+    """Return exact rupee values, text outside trusted spans, and validity."""
+    normalized = text.translate(_DIGITS)
+    masking = list(normalized)
+    amounts = set()
+    malformed = False
+    for match in _INR_CANDIDATE.finditer(normalized):
+        prefix, number, scales, suffix = match.group("prefix", "number", "scales", "suffix")
+        if not (prefix or suffix):
+            continue
+        units = _INR_SCALE.findall(scales)
+        start, end = match.span()
+        before, after = normalized[:start], normalized[end:]
+        if (len(units) > 1 or not _INR_GROUPING.fullmatch(number) or
+                _wordish(before[-1:]) or _wordish(after[:1]) or
+                before.endswith(("+", "-")) or
+                _INR_LEFT_CONFLICT.search(before) or _INR_RIGHT_CONFLICT.search(after)):
+            malformed = True
+            continue
+        raw = _decimal(number).as_tuple()
+        shift = _INR_EXPONENT[units[0].casefold()] if units else 0
+        amounts.add(Decimal((raw.sign, raw.digits, raw.exponent + shift)))
+        masking[start:end] = " " * (end - start)
+    rest = "".join(masking)
+    # Examples like "₹.5", "₹+10", and duplicated or truncated units
+    # must not disappear from validation merely because the grammar missed them.
+    for marker in _INR_MARK.finditer(rest):
+        before, after = rest[:marker.start()], rest[marker.end():]
+        if _DANGLING_INR_PREFIX.search(after) or _DANGLING_INR_SUFFIX.search(before):
+            malformed = True
+    return amounts, rest, malformed
+
+
+def _bare_numbers(text):
+    # A plain number may not borrow matching digits from a typed quantity.
+    return _numbers(_PERCENT.sub(" ", _NUMBER_WITH_SCALE.sub(" ", text)))
+
+
 def _summary_status(summary, language, records):
     if not summary:
         return "missing"
@@ -427,12 +498,20 @@ def _summary_status(summary, language, records):
     if not markers <= {row["citation_id"] for row in records}:
         return "unknown_citation"
     text = _MARKER.sub("", summary)
-    numbers = set().union(*(_numbers(row["content"]) for row in records))
-    if not _numbers(text) <= numbers:
-        return "unsupported_number"
-    mentions = set().union(*(_amount_mentions(row["content"]) for row in records))
-    if not _amount_mentions(text) <= mentions:
+    source = [_inr_amounts(row["content"]) for row in records]
+    inr, outside_inr, malformed = _inr_amounts(text)
+    if malformed:
         return "unsupported_amount_unit"
+    if not inr <= set().union(*(values for values, _, _ in source)):
+        # Keep the existing distinction between unknown digits and changed units.
+        numbers = set().union(*(_numbers(row["content"]) for row in records))
+        return "unsupported_amount_unit" if _numbers(text) <= numbers else "unsupported_number"
+    if not _bare_numbers(outside_inr) <= set().union(*(_bare_numbers(rest) for _, rest, _ in source)):
+        return "unsupported_number"
+    mentions = set().union(*(_amount_mentions(rest) for _, rest, _ in source))
+    if not _amount_mentions(outside_inr) <= mentions:
+        numbers = set().union(*(_numbers(row["content"]) for row in records))
+        return "unsupported_amount_unit" if _numbers(outside_inr) <= numbers else "unsupported_number"
     return "accepted"
 
 

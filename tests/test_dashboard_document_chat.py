@@ -11,7 +11,7 @@ from pymongo.errors import OperationFailure
 from data_api import create_app
 from services.dashboard_document_chat import (
     DashboardDocumentChat, DocumentChatUnavailable, MongoDocumentRetriever,
-    _GroundedAnswer, _LocalOllama, _RenderedSummary, _sentence_spans,
+    _GroundedAnswer, _LocalOllama, _RenderedSummary, _sentence_spans, _summary_status,
 )
 
 
@@ -387,6 +387,64 @@ class DocumentChatTests(TestCase):
         self.assertIn(QUOTE_EN, render_input)
         self.assertIn("Hindi in Devanagari", model.calls[-1][1][0].content)
         self.assertEqual(set(_RenderedSummary.model_json_schema()["properties"]), {"summary"})
+
+    def test_hindi_render_accepts_live_equivalent_explicit_inr_amount(self):
+        sample = pinned_row(SOURCE_EN, 11)
+        chat, _, model = self.fixture(
+            sample, "pmfme", "", QUOTE_EN,
+            ["PMFME coverage", "PMFME individual subsidy", "खाद्य इकाई सहायता", "पूंजी अनुदान"],
+        )
+        for same_amount in ("10,00,000 रुपये", "1,000,000 रुपये", "₹१०,००,०००", "INR 1000000.00"):
+            with self.subTest(same_amount=same_amount):
+                model.rendered_summary = (
+                    f"पात्र परियोजना लागत पर 35% सहायता है, अधिकतम {same_amount} प्रति इकाई।"
+                )
+                result = chat.ask(QUERY_HI, "hi")
+                self.assertEqual(result["document_chat"]["status"], "cited")
+                self.assertEqual(result["answer"], model.rendered_summary)
+                self.assertEqual(result["document_chat"]["summary"],
+                                 {"initial": "missing", "render": "accepted"})
+                self.assertIn(QUOTE_EN, result["records"][0]["content"])
+                self.assertEqual((result["records"][0]["page_number"], result["records"][0]["chunk_index"]),
+                                 (11, 0))
+
+    def test_hindi_render_retains_evidence_for_invalid_amounts(self):
+        sample = pinned_row(SOURCE_EN, 11)
+        chat, _, model = self.fixture(
+            sample, "pmfme", "", QUOTE_EN,
+            ["PMFME coverage", "PMFME individual subsidy", "खाद्य इकाई सहायता", "पूंजी अनुदान"],
+        )
+        drafts = (
+            "अधिकतम ₹40,000 प्रति इकाई है।", "अधिकतम ₹11 लाख प्रति इकाई है।",
+            "अधिकतम 10 लाख करोड़ रुपये प्रति इकाई है।", "अधिकतम ₹10 लाख करोड़ प्रति इकाई है।",
+            "अधिकतम ₹35 लाख और 10 प्रतिशत सहायता है।", "अधिकतम ₹35 और 10 लाख प्रतिशत सहायता है।",
+            "अधिकतम 1000000 प्रति इकाई है।", "अधिकतम ₹1000000% सहायता है।",
+            "अधिकतम 10,00,000 USD प्रति इकाई है।", "अधिकतम ₹10,0,000 प्रति इकाई है।",
+            "अधिकतम ₹1,000,000USD प्रति इकाई है।", "अधिकतम ₹1,000,000 USD प्रति इकाई है।",
+            "अधिकतम ₹1,000,000.0.1 प्रति इकाई है।", "अधिकतम ₹1,,000,000 प्रति इकाई है।",
+            "अधिकतम 11000000 रुपये प्रति इकाई है।", "अधिकतम 10 लाख रुपयेकर है।",
+        )
+        for draft in drafts:
+            with self.subTest(draft=draft):
+                model.rendered_summary = draft
+                result = chat.ask(QUERY_HI, "hi")
+                self.assertEqual(result["document_chat"]["status"], "evidence_only")
+                self.assertIn(result["document_chat"]["summary"]["render"],
+                              {"unsupported_number", "unsupported_amount_unit"})
+                self.assertNotEqual(result["answer"], draft)
+                self.assertIn(QUOTE_EN, result["records"][0]["content"])
+
+    def test_equivalent_explicit_inr_is_exact_and_separate_from_plain_count_and_percent(self):
+        source = [{"content": "At 35 percent, up to Rs. 10.0 lacs for 150 units.", "citation_id": 2}]
+        self.assertEqual(_summary_status(
+            "Up to INR 1,000,000 for 150 units at 35%. [2]", "en", source,
+        ), "accepted")
+        for draft in ("Up to INR 1,000,000.01.", "Up to USD 1,000,000.",
+                      "There are 35 units.", "There are 10 units.",
+                      "The rate is 150%.", "The rate is 35 dollars.",
+                      "An amount of 1,000,000 is offered."):
+            with self.subTest(draft=draft):
+                self.assertNotEqual(_summary_status(draft, "en", source), "accepted")
 
     def test_valid_initial_summary_has_no_render_call(self):
         sample = pinned_row(SOURCE_EN, 11)

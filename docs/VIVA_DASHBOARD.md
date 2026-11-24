@@ -40,7 +40,10 @@ Generated summaries are labeled separately. If the first pass does not
 produce a publishable summary, one optional local call can render only the
 selected excerpts in the requested language within the existing time
 budget. If that fails, the original citations still appear. Unsupported
-numbers or recognized amount-unit changes are withheld; these checks do
+numbers or recognized amount-unit changes are withheld. An explicitly
+stated INR amount may use different digit grouping or lakh/crore notation
+if its exact rupee value matches the selected source; plain numbers and
+percentages cannot borrow that equivalence. These checks do
 not establish that every statement in a generated explanation follows from
 the source.
 
