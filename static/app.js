@@ -8,9 +8,42 @@ const loadingState = document.querySelector("#loading-state");
 const errorState = document.querySelector("#error-state");
 const answerState = document.querySelector("#answer-state");
 
-document.querySelector("#open-react-demo")?.addEventListener("click", () => {
-  questionMode.value = "react";
+const chatDialog = document.querySelector("#agri-chat");
+const chatLauncher = document.querySelector("#ask-agriagent");
+const chatOpeners = document.querySelectorAll("[data-chat-open]");
+let chatReturnFocus = null;
+
+function openChat(opener) {
+  if (opener?.dataset.chatOpen === "react") questionMode.value = "react";
+  if (chatDialog.open) return;
+  chatReturnFocus = opener || chatLauncher;
+  chatDialog.showModal();
+  chatOpeners.forEach((trigger) => trigger.setAttribute("aria-expanded", "true"));
+}
+
+chatOpeners.forEach((trigger) => {
+  trigger.addEventListener("click", (event) => {
+    if (event.ctrlKey || event.metaKey || event.shiftKey || event.altKey) return;
+    event.preventDefault();
+    openChat(trigger);
+  });
 });
+chatDialog.querySelector("[data-chat-close]").addEventListener("click", () => chatDialog.close());
+chatDialog.querySelector("[data-chat-intake]").addEventListener("click", () => {
+  chatReturnFocus = document.querySelector("#viva-upload-heading");
+  chatDialog.close();
+});
+chatDialog.addEventListener("close", () => {
+  chatOpeners.forEach((trigger) => trigger.setAttribute("aria-expanded", "false"));
+  chatReturnFocus?.focus({ preventScroll: true });
+  chatReturnFocus = null;
+});
+
+function openChatAnchor() {
+  if (location.hash === "#ask-heading") openChat(chatLauncher);
+}
+window.addEventListener("hashchange", openChatAnchor);
+openChatAnchor();
 
 const formatNumber = (value) => new Intl.NumberFormat("en-IN").format(value || 0);
 const humanize = (value) => String(value || "").replaceAll("_", " ").replace(/\b\w/g, (letter) => letter.toUpperCase());
@@ -199,7 +232,7 @@ function showLoading() {
   errorState.hidden = true;
   answerState.hidden = true;
   askButton.disabled = true;
-  resultSection.scrollIntoView({ behavior: "smooth", block: "start" });
+  resultSection.scrollIntoView({ block: "start" });
 }
 
 function showError(message) {
@@ -619,7 +652,7 @@ intelligenceCatalogLanguage.addEventListener("change", applyIntelligenceCatalogL
 form.addEventListener("submit", async (event) => {
   event.preventDefault();
   const question = questionInput.value.trim();
-  if (!question) return;
+  if (!question || askButton.disabled) return;
   showLoading();
   try {
     const localPath = {react: "react", document_chat: "document-chat"}[questionMode.value] || "ask";

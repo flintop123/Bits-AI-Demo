@@ -7,7 +7,7 @@ demo, the following actions all take place in the dashboard.
 
 ## Show ReAct
 
-1. Open **Ask the data**, choose **ReAct agent** in **Workflow**, and
+1. Open **Ask AgriAgent** at the bottom right, choose **ReAct agent** in **Workflow**, and
    enter a question about stored evidence in English or Hindi.
 2. Show the actual tool invocation next to the grounded response. Open a
    citation and, if needed, inspect the retrieved evidence.
@@ -20,7 +20,7 @@ For a new document, use the upload flow, not the ReAct question box.
 
 ## Ask Document Chat about indexed reports
 
-Choose **Ask the data → Document Chat · local reports**. The existing
+Choose **Ask AgriAgent → Document Chat · local reports**. The existing
 Jeetendra LangGraph workflow is reused with the dashboard’s local MongoDB
 text index instead of its cloud-backed Milvus connector. This mode uses
 loopback MongoDB and Ollama only; it does not use a cloud token, modify an
@@ -80,7 +80,7 @@ an ingestion job, rebuild an index, or use a cloud credential.
 
 ## Examiner walkthrough: unseen PDF to verified evidence
 
-1. Open **PDF upload**. Select the examiner's PDF, up to 10 MiB and
+1. Open **File intake → PDF preview and verification**. Select the examiner's PDF, up to 10 MiB and
    25 pages. Use **Force OCR for a scan** if you need to demonstrate OCR.
 2. Select **Extract and preview**. Show the page and
    chunk, extraction method, and validation counts. Select **Inspect
