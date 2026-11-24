@@ -36,9 +36,13 @@ number in an unrelated scheme is not evidence. The dashboard creates
 numbered excerpts from the top passages; the model selects IDs rather than
 transcribing quotations. The dashboard validates those IDs and shows the
 source text in its original language with page and chunk locators.
-Generated summaries are labeled separately. A number not
-present in the selected excerpts is withheld from the summary; a matched
-number alone does not establish the meaning of a generated explanation.
+Generated summaries are labeled separately. If the first pass does not
+produce a publishable summary, one optional local call can render only the
+selected excerpts in the requested language within the existing time
+budget. If that fails, the original citations still appear. Unsupported
+numbers or recognized amount-unit changes are withheld; these checks do
+not establish that every statement in a generated explanation follows from
+the source.
 
 Try **“How many districts are in the organic farming corridor in the
 Bihar Annual Scheme report?”**. In the stored 2022–23 report, physical PDF

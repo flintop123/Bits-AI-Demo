@@ -11,7 +11,7 @@ from pymongo.errors import OperationFailure
 from data_api import create_app
 from services.dashboard_document_chat import (
     DashboardDocumentChat, DocumentChatUnavailable, MongoDocumentRetriever,
-    _GroundedAnswer, _LocalOllama, _sentence_spans,
+    _GroundedAnswer, _LocalOllama, _RenderedSummary, _sentence_spans,
 )
 
 
@@ -42,6 +42,8 @@ class ScriptedModel:
     def __init__(self, phrases, summary, target_quote=None):
         self.phrases, self.summary, self.target_quote = phrases, summary, target_quote
         self.evidence = None
+        self.rendered_summary = ""
+        self.render_error = None
         self.calls = []
 
     def with_structured_output(self, schema):
@@ -49,6 +51,10 @@ class ScriptedModel:
             self.calls.append((schema.__name__, messages))
             if schema.__name__ == "QuestionSuggestions":
                 return {"questions": self.phrases}
+            if schema.__name__ == "_RenderedSummary":
+                if self.render_error:
+                    raise self.render_error
+                return {"summary": self.rendered_summary}
             evidence = self.evidence
             if evidence is None:
                 evidence = [
@@ -357,3 +363,87 @@ class DocumentChatTests(TestCase):
         self.assertTrue(any("Rs. 10 lakh where applicable." in item for item in spans))
         self.assertTrue(any("4.5%" in item for item in spans))
         self.assertTrue(all(item in source and len(item) <= 400 for item in spans))
+
+    def test_missing_hindi_summary_is_rendered_using_only_selected_source_excerpt(self):
+        sample = pinned_row(SOURCE_EN, 11)
+        chat, _, model = self.fixture(
+            sample, "pmfme", "", QUOTE_EN,
+            ["PMFME coverage", "PMFME individual subsidy", "खाद्य इकाई सहायता", "पूंजी अनुदान"],
+        )
+        model.rendered_summary = "पात्र परियोजना लागत पर ३५ प्रतिशत सहायता है, अधिकतम १० लाख रुपये प्रति इकाई।"
+        result = chat.ask(QUERY_HI, "hi")
+        self.assertEqual(result["document_chat"]["status"], "cited")
+        self.assertEqual(result["document_chat"]["summary"], {"initial": "missing", "render": "accepted"})
+        self.assertEqual(result["answer"], model.rendered_summary)
+        self.assertIn(QUOTE_EN, result["records"][0]["content"])
+        self.assertEqual(result["records"][0]["page_number"], 11)
+        self.assertEqual([schema for schema, _ in model.calls],
+                         ["QuestionSuggestions", "_GroundedAnswer", "_RenderedSummary"])
+        selection_input = model.calls[1][1][-1].content
+        render_input = model.calls[-1][1][-1].content
+        self.assertIn("Key Objective of PMFME", selection_input)
+        self.assertNotIn("Key Objective of PMFME", render_input)
+        self.assertIn("Selected excerpts:", render_input)
+        self.assertIn(QUOTE_EN, render_input)
+        self.assertIn("Hindi in Devanagari", model.calls[-1][1][0].content)
+        self.assertEqual(set(_RenderedSummary.model_json_schema()["properties"]), {"summary"})
+
+    def test_valid_initial_summary_has_no_render_call(self):
+        sample = pinned_row(SOURCE_EN, 11)
+        chat, _, model = self.fixture(
+            sample, "pmfme", "पात्र लागत पर 35% सहायता, अधिकतम ₹10 लाख प्रति इकाई।", QUOTE_EN,
+            ["PMFME coverage", "PMFME individual subsidy", "खाद्य इकाई सहायता", "पूंजी अनुदान"],
+        )
+        result = chat.ask(QUERY_HI)
+        self.assertEqual(result["document_chat"]["summary"], {"initial": "accepted", "render": "not_attempted"})
+        self.assertEqual([schema for schema, _ in model.calls], ["QuestionSuggestions", "_GroundedAnswer"])
+
+    def test_rejected_initial_summary_reports_reason_and_render_keeps_numbers_and_units(self):
+        sample = pinned_row(SOURCE_EN, 11)
+        chat, _, model = self.fixture(
+            sample, "pmfme", "PMFME support is 35% up to 10 lakh rupees.", QUOTE_EN,
+            ["PMFME coverage", "PMFME individual subsidy", "खाद्य इकाई सहायता", "पूंजी अनुदान"],
+        )
+        model.rendered_summary = "परियोजना लागत पर 35% सहायता और अधिकतम 10 करोड़ रुपये प्रति इकाई।"
+        result = chat.ask(QUERY_HI, "hi")
+        self.assertEqual(result["document_chat"]["status"], "evidence_only")
+        self.assertEqual(result["document_chat"]["summary"],
+                         {"initial": "wrong_language", "render": "unsupported_amount_unit"})
+        self.assertNotIn("करोड़", result["answer"])
+        self.assertIn("Rs.10 lakh", result["records"][0]["content"])
+        model.rendered_summary = "अधिकतम ₹35 लाख और 10 प्रतिशत सहायता मिलती है।"
+        result = chat.ask(QUERY_HI, "hi")
+        self.assertEqual(result["document_chat"]["summary"]["render"], "unsupported_amount_unit")
+        model.rendered_summary = "अधिकतम ₹99 लाख प्रति इकाई है।"
+        result = chat.ask(QUERY_HI, "hi")
+        self.assertEqual(result["document_chat"]["summary"]["render"], "unsupported_number")
+
+    def test_optional_render_timeout_cannot_take_away_verified_source(self):
+        sample = pinned_row(SOURCE_EN, 11)
+        chat, _, model = self.fixture(
+            sample, "pmfme", "", QUOTE_EN,
+            ["PMFME coverage", "PMFME individual subsidy", "खाद्य इकाई सहायता", "पूंजी अनुदान"],
+        )
+        model.render_error = DocumentChatUnavailable("Do not expose internals")
+        result = chat.ask(QUERY_HI, "hi")
+        self.assertEqual(result["document_chat"]["status"], "evidence_only")
+        self.assertEqual(result["document_chat"]["summary"], {"initial": "missing", "render": "unavailable"})
+        self.assertIn(QUOTE_EN, result["records"][0]["content"])
+        self.assertNotIn("internals", result["answer"])
+
+    @patch("services.dashboard_document_chat.monotonic", side_effect=[0, 115, 149])
+    @patch("httpx.Client")
+    def test_summary_can_start_with_remaining_budget_but_skips_when_nearly_exhausted(self, factory, clock):
+        client = factory.return_value.__enter__.return_value
+        response = httpx.Response(
+            200, request=httpx.Request("POST", "http://127.0.0.1:11434/api/chat"),
+            json={"message": {"content": '{"summary":""}'}},
+        )
+        client.post.return_value = response
+        render = _LocalOllama("http://127.0.0.1:11434", "test").with_structured_output(_RenderedSummary)
+        self.assertEqual(render.invoke([]).summary, "")
+        self.assertEqual(factory.call_args.kwargs["timeout"].read, 35)
+        self.assertEqual(client.post.call_args.kwargs["json"]["options"]["num_predict"], 240)
+        with self.assertRaisesRegex(DocumentChatUnavailable, "time limit"):
+            render.invoke([])
+        self.assertEqual(client.post.call_count, 1)
