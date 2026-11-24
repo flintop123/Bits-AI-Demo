@@ -10,7 +10,8 @@ Document Chat, the normal server, the team configuration, or MongoDB indexes.
 Prerequisites: the project's Python environment, local Ollama on
 `127.0.0.1:11434`, and already installed `bge-m3` and `qwen3:4b` models.
 Use only an endpoint, collection, and appropriate token approved by their
-owner. Each command requests the token via hidden interactive entry. Do not
+owner. By default the launcher requests the token via hidden interactive entry.
+The optional personal-config launcher described below removes that prompt. Do not
 put it in CMD, a chat, the project files, or a recording. Do not use a
 previously committed secret. Remove the token from sight before recording.
 
@@ -47,6 +48,61 @@ the draft or service details. In the terminal, `Generation check` shows the
 same status. The displayed model answer must be one or two exact source
 sentences with the citation. Drafting or reasoning text never appears.
 Testing this mode does not change the collection or require reseeding.
+
+## Optional: read the token from a personal config file each launch
+
+Use a new least-privilege read-only credential approved for that collection.
+Store it in `~/.agriagent/milvus-demo.json` outside every Git checkout. Do not
+use the repository's `config.yaml`, make a link to it, or put this file in a
+shared/synced folder. This file is plaintext protected by your account's
+permissions. Do not commit, email, screen-share, or record it. Each launch
+reads the current file; restart the launcher after rotating the token.
+
+**Windows CMD** (your local profile access only; do not grant other users
+permissions):
+
+```bat
+if not exist "%USERPROFILE%\.agriagent" mkdir "%USERPROFILE%\.agriagent"
+notepad "%USERPROFILE%\.agriagent\milvus-demo.json"
+```
+
+**macOS/Linux terminal:**
+
+```sh
+(umask 077; mkdir -p "$HOME/.agriagent"; touch "$HOME/.agriagent/milvus-demo.json")
+chmod 700 "$HOME/.agriagent"
+chmod 600 "$HOME/.agriagent/milvus-demo.json"
+nano "$HOME/.agriagent/milvus-demo.json"
+```
+
+In the editor, use these exact fields and replace the placeholders privately:
+
+```json
+{
+  "endpoint": "https://YOUR-APPROVED-ENDPOINT.zillizcloud.com",
+  "collection": "YOUR_APPROVED_COLLECTION",
+  "token": "YOUR_FRESH_APPROVED_READ_ONLY_TOKEN"
+}
+```
+
+From the project root, launch the local dashboard with the saved config:
+
+```bat
+.venv\Scripts\python.exe milvus_public_demo.py serve --local-config
+```
+
+```sh
+.venv/bin/python milvus_public_demo.py serve --local-config
+```
+
+This flag works only for `serve`. A collection named `agriagent_demo_<12 hex>`
+uses the seeded demo's passage layout; other approved collection names use
+the shared sync layout described above. It never seeds, writes, or loads
+either collection. The collection must already be loaded (the seed command
+normally loads a new collection when creating its index). It cannot be
+combined with connection flags. A missing, unsafe or malformed personal file stops startup;
+there is no password prompt, environment-variable fallback or lookup of
+project credentials in this mode. The browser never receives the token.
 
 ## Alternative: seed a new isolated collection (upload)
 

@@ -344,8 +344,10 @@ class _LoopbackChat:
 
 
 class PublicMilvusDemo:
-    def __init__(self, target, token, *, rows=None, embedder=None, client_factory=None, model_factory=None):
+    def __init__(self, target, token, *, rows=None, embedder=None, client_factory=None,
+                 model_factory=None, allow_collection_load=True):
         self.target = target
+        self._allow_collection_load = allow_collection_load
         self._token = token
         self._rows = public_passages() if rows is None else _require_reviewed_passages(rows)
         self._embedder = embedder or _LoopbackEmbedder()
@@ -360,10 +362,10 @@ class PublicMilvusDemo:
         try:
             if not client.has_collection(self.target.collection, timeout=12):
                 raise DemoError("The approved Milvus collection was not found.")
-            if not self.target.shared_read_only:
+            if self._allow_collection_load and not self.target.shared_read_only:
                 client.load_collection(self.target.collection, timeout=25)
-            # Shared collections must already be loaded by their owner; this
-            # request path does not load, index, seed, delete or update them.
+            # Shared collections and saved-credential mode must already be
+            # loaded. Neither request path manages or changes such collections.
             node = RetrieveDocumentsNode(
                 connector=_PinnedRetrieval(client, self.target, self._rows), embedder=self._embedder, top_k=6,
             )
