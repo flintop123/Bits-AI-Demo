@@ -22,25 +22,28 @@ For a new document, use the upload flow, not the ReAct question box.
 
 1. Open **PDF upload**. Select the examiner's PDF, up to 10 MiB and
    25 pages. Use **Force OCR for a scan** if you need to demonstrate OCR.
-2. Select **Extract and preview**. Show the PDF fingerprint, page and
+2. Select **Extract and preview**. Show the page and
    chunk, extraction method, and validation counts. Select **Inspect
    source** to compare the extracted passage with a highlighted original
    page. An **exact excerpt** is only a verified part of the passage.
    **Page only** means the app could not prove a location on the page;
    this is always the case for OCR-derived chunks. Preview writes nothing
    to MongoDB.
-3. Select **Save to MongoDB**. The page shows the verified read-back count,
-   run ID, collection, record hash and saved passages. The server saves
+3. Select **Save to MongoDB**. The page shows the verified read-back count.
+   Expand **Run ID, fingerprints and audit details** for the run ID,
+   collection, and source and read-back checksums. The server saves
    the reviewed passages from its draft, not text submitted by the
    browser, and verifies the returned record count and hash. Identical
    PDF bytes reuse the original saved run, even if the file was renamed.
    A different scan, edit, or re-export may have a new fingerprint.
-4. Use **Ask this PDF**. Ask a direct question with terms from the source,
-   then select the answer's citation. The app displays checked verbatim
-   quotes from the selected saved run and highlights the exact quote
-   when the PDF text layer provides a unique match. Unsupported or
-   unverifiable answers are not presented as facts. The quoted text is
-   not translated, even if the question was asked in the other language.
+4. Use **Ask this PDF**. For a reviewed table, ask for one crop or row and
+   the metric and year. Try “बिहार में 2024–25 में गेहूँ का उत्पादन कितना था?”
+   with **Table answer language → English**. The answer uses the saved,
+   read-back-verified table (no Ollama call) and **View exact source cell**
+   opens the original highlight. Unsupported or ambiguous table requests
+   do not fall back to OCR numbers. For prose, the app shows checked
+   verbatim quotes from extracted text when available, not translations.
+   The exact quote is highlighted only if it can be located in the PDF.
 5. To demonstrate persisted records after refresh, open **Reopen a saved
    upload**, paste the run ID, and select **Read from MongoDB**. The
    PDF bytes are not stored in MongoDB. If the temporary source cache is

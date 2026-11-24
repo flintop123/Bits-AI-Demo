@@ -9,6 +9,7 @@ import unicodedata
 from pydantic import BaseModel, ConfigDict, Field, ValidationError
 
 from services.ollama_client import OllamaClient, OllamaUnavailableError
+from services.viva_table_qa import answer_from_verified_tables
 
 
 PROFILES = Path(__file__).resolve().parents[1] / "docs" / "ingestion_profiles"
@@ -188,9 +189,13 @@ class QuoteSelection(BaseModel):
     citations: list[Quote] = Field(max_length=3)
 
 
-def answer_from_pdf(question, verified, *, llm=None):
-    """Return checked verbatim quotations from just one MongoDB run."""
-    terms = _terms(question)
+def answer_from_pdf(question, verified, *, llm=None, answer_language="auto"):
+    """Prefer reviewed table facts; otherwise return checked quotes from this run."""
+    base = {"run_id": verified["run_id"], "source_file": verified["source_file"], "citations": []}
+    table_answer = answer_from_verified_tables(question, verified, answer_language)
+    if table_answer is not None:
+        return {**base, **table_answer}
+    terms = {word for word in _terms(question) if not word.isdecimal()}
     hits = []
     for row in verified["records"]:
         shared = terms & _terms(row["content"])
@@ -198,10 +203,9 @@ def answer_from_pdf(question, verified, *, llm=None):
             hits.append((sum(min(len(term), 15) for term in shared), row))
     hits.sort(key=lambda item: -item[0])
     candidates = [row for _, row in hits[:4]]
-    base = {"run_id": verified["run_id"], "source_file": verified["source_file"], "citations": []}
     if not candidates:
         return {**base, "status": "unsupported",
-                "message": "No matching passages were found in this PDF. Try terms used in the source."}
+                "message": "No verified answer found. For passage search, try words used in the original PDF."}
     llm = llm or OllamaClient(timeout=35)
     try:
         selection = QuoteSelection.model_validate(llm.chat_json([
@@ -217,8 +221,7 @@ def answer_from_pdf(question, verified, *, llm=None):
         ], QuoteSelection.model_json_schema()))
     except (OllamaUnavailableError, ValidationError):
         return {**base, "status": "unavailable",
-                "message": "No valid model answer was available. Inspect the matching passages below.",
-                "matches": [_citation(row) for row in candidates]}
+                "message": "No valid passage answer was available. You can still search the extracted passages below."}
     citations, seen = [], set()
     for citation in selection.citations:
         if not 1 <= citation.evidence_id <= len(candidates):
@@ -230,10 +233,10 @@ def answer_from_pdf(question, verified, *, llm=None):
             citations.append({**_citation(row), "quote": quote})
     if not citations:
         return {**base, "status": "unsupported",
-                "message": "No answer with a valid source quote was found. Inspect the matching passages below.",
-                "matches": [_citation(row) for row in candidates]}
+                "message": "No answer with a verifiable quote was found. You can still search the extracted passages below."}
     return {**base, "status": "answered", "citations": citations,
-            "message": "Verified verbatim excerpts from this saved PDF."}
+            "method": "source_quotes",
+            "message": "Verbatim excerpts from this PDF's extracted text, not translations. OCR can contain errors."}
 
 
 def _citation(row):

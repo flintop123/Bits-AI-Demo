@@ -222,6 +222,9 @@ def viva_blueprint(qa, database, *, react=None, upload_store=None):
         question = body.get("question") if isinstance(body, dict) else None
         if not isinstance(question, str) or not 1 <= len(question.strip()) <= 500:
             raise ValueError("Enter a question of 1–500 characters.")
+        language = body.get("answer_language", "auto")
+        if language not in ("auto", "en", "hi"):
+            raise ValueError("Choose a valid answer language.")
         with timeout(8):
             run = store().read(str(run_id))
         if run is None:
@@ -229,7 +232,7 @@ def viva_blueprint(qa, database, *, react=None, upload_store=None):
         if not worker.acquire(blocking=False):
             return jsonify(error="The dashboard is busy. Retry your question shortly."), 429
         try:
-            return jsonify(answer_from_pdf(question.strip(), run))
+            return jsonify(answer_from_pdf(question.strip(), run, answer_language=language))
         finally:
             worker.release()
 

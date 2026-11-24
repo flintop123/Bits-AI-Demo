@@ -22,6 +22,22 @@ TEXT = (
     "The independent Bihar viva sample documents drainage and seasonal crop "
     "planning. This sentence is directly extracted and verified by source page."
 )
+TABLES = [{
+    "profile": "bihar_des_final_2024_25_crop_page3", "page_number": 3,
+    "context": {"geography": {"text": "Jurisdiction: Bihar", "page": 2},
+                "period": {"text": "2024-25", "page": 3},
+                "estimate_stage": {"text": "Final Estimation", "page": 3}},
+    "cells": [
+        {"page_number": 3, "row": "Wheat", "column": column, "unit": unit,
+         "value": value, "printed_text": printed,
+         "source_anchor": {"kind": "verified_table_cell", "boxes": [[.5, .4, .64, .45]]}}
+        for column, unit, value, printed in (
+            ("Area (Hectare)", "Hectare", "2340356", "23,40,356"),
+            ("Production (MT)", "MT", "7826998", "78,26,998"),
+            ("Yield (KG/Hectare)", "KG/Hectare", "3344", "3,344"),
+        )
+    ],
+}]
 
 
 def pdf_bytes(pages=2, *, blank=False):
@@ -168,6 +184,30 @@ class UploadTests(TestCase):
         self.assertEqual(ask.call_args.args[1]["records"], saved["records"])
         self.assertEqual(self.db.uploads.writes, 1)
 
+    def test_bilingual_table_answer_links_to_exact_cell_and_never_writes(self):
+        with patch("services.viva_dashboard.known_table_evidence", return_value=(TABLES, [])):
+            draft = self.preview(pdf_bytes(3)).json
+        saved = self.client.post(f"{URL}/uploads/{draft['run_id']}/save", headers=HEADERS).json
+        path = f"{URL}/uploads/{saved['run_id']}"
+        request = {"question": "बिहार में 2024–25 में गेहूँ का उत्पादन कितना था?", "answer_language": "en"}
+        with patch("services.viva_evidence.OllamaClient", side_effect=AssertionError("Model should not run")):
+            response = self.client.post(path + "/ask", headers=HEADERS, json=request)
+        self.assertEqual(response.status_code, 200, response.json)
+        result = response.json
+        self.assertEqual((result["method"], result["answer_language"]), ("verified_table", "en"))
+        cell = result["table_cells"][0]
+        self.assertEqual(cell["display_value"], "7,826,998")
+        self.assertEqual((cell["page_number"], cell["unit"], cell["printed_text"]), (3, "MT", "78,26,998"))
+        evidence = self.client.get(path + f"/table-evidence/{cell['table_index']}/{cell['cell_index']}",
+                                   headers=HEADERS)
+        self.assertEqual(evidence.status_code, 200)
+        self.assertEqual(evidence.headers["X-Source-Anchor"], "verified_table_cell")
+        self.assertEqual(self.db.uploads.writes, 1)
+        self.assertEqual(self.client.post(path + "/ask", headers=HEADERS,
+                                          json={**request, "answer_language": "xx"}).status_code, 400)
+        self.db.uploads.rows[saved["run_id"]]["tables"][0]["cells"][1]["value"] = "1"
+        self.assertEqual(self.client.post(path + "/ask", headers=HEADERS, json=request).status_code, 409)
+
     def test_duplicate_reuses_legacy_run_without_mutation(self):
         preview = self.preview().json
         previous_id = str(uuid4())
@@ -233,6 +273,55 @@ class ScriptedModel(FakeMessagesListChatModel):
 
 
 class SourceEvidenceTests(TestCase):
+    def test_reviewed_cell_answers_bypass_ocr_and_model(self):
+        saved = {"run_id": "test", "source_file": "report.pdf",
+                 "records": [{"page_number": 8, "chunk_index": 0,
+                              "content": "Wheat 2024-25 OCR yield 8,844."}],
+                 "tables": TABLES}
+        model = Mock()
+        for question, language, values in (
+            ("What was Bihar’s wheat production in 2024–25?", "en", ["7,826,998"]),
+            ("How much wheat did Bihar produce in 2024-2025?", "en", ["7,826,998"]),
+            ("बिहार में २०२४–२५ में गेहूँ का उत्पादन कितना था? उत्तर अंग्रेज़ी में दें।", "en", ["7,826,998"]),
+            ("बिहार में 2024–25 में गेहूं का उत्पादन और उपज कितनी थी?", "hi", ["78,26,998", "3,344"]),
+            ("Wheat area and yield in 2024–25", "en", ["2,340,356", "3,344"]),
+        ):
+            with self.subTest(question=question):
+                result = answer_from_pdf(question, saved, llm=model)
+                self.assertEqual((result["status"], result["answer_language"]), ("answered", language))
+                self.assertEqual([cell["display_value"] for cell in result["table_cells"]], values)
+                self.assertEqual(result["citations"], [])
+        model.chat_json.assert_not_called()
+
+    def test_table_lookup_rejects_unproved_or_ambiguous_scope(self):
+        saved = {"run_id": "test", "source_file": "report.pdf", "records": [], "tables": TABLES}
+        model = Mock()
+        for question in (
+            "What was wheat production in Bihar in 2023–24?",
+            "What was wheat production in Bihar in 2024–25 and 2023–24?",
+            "What was the wheat production in Patna?",
+            "How much was wheat production in the winter season?",
+            "What was the wheat or sorghum production in Bihar?",
+            "What was the wheat production in Bihar in 2024–25 in lakh tonnes?",
+            "What was Bihar’s wheat outlay in 2024–25?",
+        ):
+            with self.subTest(question=question):
+                result = answer_from_pdf(question, saved, llm=model)
+                self.assertEqual(result["status"], "unsupported")
+                self.assertNotIn("table_cells", result)
+        result = answer_from_pdf("What was wheat production?", {**saved, "tables": TABLES * 2}, llm=model)
+        self.assertEqual(result["status"], "unsupported")
+        model.chat_json.assert_not_called()
+
+    def test_a_shared_year_is_not_a_passage_match(self):
+        saved = {"run_id": "test", "source_file": "report.pdf",
+                 "records": [{"page_number": 1, "chunk_index": 0, "content": "Agriculture 2024-25"}]}
+        model = Mock()
+        result = answer_from_pdf("बिहार में 2024–25 में गेहूँ का उत्पादन कितना था?", saved, llm=model)
+        self.assertEqual(result["status"], "unsupported")
+        self.assertNotIn("matches", result)
+        model.chat_json.assert_not_called()
+
     def test_ambiguous_text_never_gets_a_highlight(self):
         with pymupdf.open() as document:
             page = document.new_page()

@@ -417,7 +417,12 @@
           </div>
           <span class="local-badge">Separate demo collection</span>
         </div>
-        <p class="nearby-intro">Review extracted passages before saving them. Then inspect the actual MongoDB read-back, including page and chunk. The original PDF is not stored, and saved passages do not enter the curated search corpus.</p>
+        <p class="nearby-intro">Preview the extraction, verify what MongoDB saved, and trace an answer back to its source. Uploads stay separate from curated reports; the original PDF is not stored.</p>
+        <ol class="viva-steps" aria-label="PDF workflow">
+          <li data-viva-step="upload" aria-current="step"><span>01</span> Preview PDF</li>
+          <li data-viva-step="review"><span>02</span> Review and save</li>
+          <li data-viva-step="verified"><span>03</span> Ask and inspect</li>
+        </ol>
         <form id="viva-upload-form" class="viva-controls">
           <label for="viva-pdf">PDF <small>Up to 10 MiB and 25 pages</small>
             <input id="viva-pdf" name="document" type="file" accept=".pdf,application/pdf" required>
@@ -425,9 +430,13 @@
           <label class="viva-checkbox"><input id="viva-force-ocr" name="force_ocr" type="checkbox" value="1"> Force OCR for a scan</label>
           <button type="submit" id="viva-preview">Extract and preview</button>
         </form>
-        <p id="viva-status" class="viva-note" role="status"></p>
+        <p id="viva-status" class="viva-note viva-status" role="status"></p>
         <section id="viva-evidence" aria-label="Upload evidence" hidden>
           <dl id="viva-facts" class="viva-facts"></dl>
+          <details id="viva-audit" class="viva-audit">
+            <summary>Run ID, fingerprints and audit details</summary>
+            <dl id="viva-audit-facts" class="viva-facts"></dl>
+          </details>
           <ul id="viva-warnings" class="viva-warnings" hidden></ul>
           <div class="viva-workflow-actions">
             <button type="button" id="viva-save" disabled>Save to MongoDB</button>
@@ -442,13 +451,25 @@
           <section id="viva-doc-qa" class="viva-doc-qa" aria-labelledby="viva-doc-qa-heading" hidden>
             <p class="section-kicker">Saved document only</p>
             <h3 id="viva-doc-qa-heading">Ask this PDF</h3>
-            <p>Get verified quotes from this saved upload. A question here never searches the curated reports.</p>
-            <form id="viva-doc-question-form" class="viva-controls">
+            <p class="viva-qa-intro">Ask in English or Hindi. Reviewed table answers link to the exact cell; other answers quote the saved text in its original language.</p>
+            <form id="viva-doc-question-form" class="viva-controls viva-question-controls">
               <label for="viva-doc-question">Question in English or Hindi
-                <input id="viva-doc-question" name="question" maxlength="500" required placeholder="What does this report say about organic farming?">
+                <input id="viva-doc-question" name="question" maxlength="500" required placeholder="Ask a question about this saved PDF" dir="auto">
+              </label>
+              <label for="viva-doc-language">Table answer language
+                <select id="viva-doc-language" name="answer_language">
+                  <option value="auto">Auto</option>
+                  <option value="en">English</option>
+                  <option value="hi" lang="hi">हिन्दी</option>
+                </select>
               </label>
               <button type="submit">Ask this PDF</button>
             </form>
+            <div id="viva-examples" class="viva-examples" aria-label="Example questions" hidden>
+              <span>Try a question</span>
+              <button type="button" class="secondary-button" data-viva-question="What was Bihar’s wheat production in 2024–25?" data-language="en">Wheat production</button>
+              <button type="button" class="secondary-button" data-viva-question="बिहार में 2024–25 में गेहूँ का उत्पादन कितना था?" data-language="en"><span lang="hi">हिंदी सवाल</span> / English answer</button>
+            </div>
             <p id="viva-doc-qa-status" class="viva-note" role="status"></p>
             <div id="viva-doc-citations" class="viva-records"></div>
           </section>
@@ -480,17 +501,18 @@
         </details>
       </section>
       <dialog id="viva-proof" class="viva-proof" aria-labelledby="viva-proof-heading">
+        <p class="section-kicker">Original PDF · Source viewer</p>
         <div class="viva-proof-header">
           <h2 id="viva-proof-heading">Source evidence</h2>
           <form method="dialog"><button type="submit" class="secondary-button" autofocus>Close</button></form>
         </div>
-        <p id="viva-proof-status" class="viva-note" role="status"></p>
+        <p id="viva-proof-status" class="viva-note viva-proof-status" role="status"></p>
         <div class="viva-proof-body">
-          <div>
+          <div class="viva-proof-detail">
             <h3>Selected evidence</h3>
             <p id="viva-proof-text" class="viva-proof-text" dir="auto"></p>
           </div>
-          <div><img id="viva-proof-image" hidden alt=""></div>
+          <div class="viva-proof-paper"><img id="viva-proof-image" hidden alt=""></div>
         </div>
       </dialog>
     </main>

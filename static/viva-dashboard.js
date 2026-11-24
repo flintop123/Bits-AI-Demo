@@ -10,6 +10,8 @@
   const runInput = byId("viva-run-id");
   const attach = byId("viva-attach");
   const ask = byId("viva-doc-question-form");
+  const questionInput = byId("viva-doc-question");
+  const answerLanguage = byId("viva-doc-language");
   const proof = byId("viva-proof");
   const proofImage = byId("viva-proof-image");
   const filter = byId("viva-filter");
@@ -29,6 +31,16 @@
   function clearSource() {
     if (sourceUrl) URL.revokeObjectURL(sourceUrl);
     sourceUrl = null;
+  }
+  function setStep(step) {
+    document.querySelectorAll("[data-viva-step]").forEach((item) => {
+      if (item.dataset.vivaStep === step) item.setAttribute("aria-current", "step");
+      else item.removeAttribute("aria-current");
+    });
+  }
+  function setStatus(message, tone = "info") {
+    status.textContent = message;
+    status.dataset.tone = tone;
   }
   function setBusy(value) {
     busy = value;
@@ -52,6 +64,7 @@
     proofUrl = null;
     proofImage.removeAttribute("src");
     proofImage.hidden = true;
+    byId("viva-proof-status").removeAttribute("data-tone");
   }
   proof.addEventListener("close", clearProof);
 
@@ -88,12 +101,16 @@
         const image = await response.blob();
         if (proofRequest !== controller) return;
         proofUrl = URL.createObjectURL(image);
+        proofStatus.dataset.tone = kind in anchorLabels && kind !== "page_only" ? "success" : "info";
         proofStatus.textContent = anchorLabels[kind] || anchorLabels.page_only;
         proofImage.alt = `Original PDF source for ${title}. ${proofStatus.textContent}.`;
         proofImage.src = proofUrl;
         proofImage.hidden = false;
       } catch (error) {
-        if (proofRequest === controller) proofStatus.textContent = error.message;
+        if (proofRequest === controller) {
+          proofStatus.dataset.tone = "error";
+          proofStatus.textContent = error.message;
+        }
       }
     });
     return button;
@@ -104,7 +121,8 @@
     const container = byId("viva-tables");
     container.replaceChildren();
     panel.hidden = !tables.length;
-    tables.forEach((table, tableIndex) => {
+    tables.map((table, index) => ({table, index})).sort((a, b) =>
+      a.table.page_number - b.table.page_number).forEach(({table, index: tableIndex}) => {
       const group = document.createElement("details");
       group.append(node("summary", `Page ${table.page_number} · ${table.cells.length} verified cells`));
       const context = Object.values(table.context).map((entry) => `${entry.text} (p. ${entry.page})`);
@@ -121,7 +139,7 @@
       const body = grid.createTBody();
       table.cells.forEach((cell, cellIndex) => {
         const row = body.insertRow();
-        [cell.row, cell.column, cell.value, cell.unit].forEach((value) => {
+        [cell.row, cell.column, cell.printed_text, cell.unit].forEach((value) => {
           row.append(node("td", value));
         });
         row.insertCell().append(proofButton(`table-evidence/${tableIndex}/${cellIndex}`,
@@ -175,30 +193,46 @@
     byId("viva-next").disabled = end === records.length;
   }
   function render(result) {
-    if (active?.run_id !== result.run_id) filter.value = "";
+    const differentRun = active?.run_id !== result.run_id;
+    if (differentRun) {
+      filter.value = "";
+      questionInput.value = "";
+      answerLanguage.value = "auto";
+      byId("viva-audit").open = false;
+    }
     active = result;
     offset = 0;
     const verified = result.status === "verified";
     const facts = byId("viva-facts");
+    const audit = byId("viva-audit-facts");
     facts.replaceChildren();
+    audit.replaceChildren();
+    const tables = result.tables || [];
+    const cellCount = tables.reduce((count, table) => count + table.cells.length, 0);
     const fields = [
-      ["Source PDF", result.source_file], ["PDF SHA-256", result.source_sha256],
-      ["Run ID", result.run_id], ["Pages with text", `${result.extracted_pages} / ${result.page_count}`],
-      ["Candidate passages", result.candidate_count], ["Validated passages", result.valid_count],
-      ["Rejected passages", result.rejected.length], ["Validation", "Fixed PDF passage schema"],
+      ["Source PDF", result.source_file],
+      ["Pages with text", `${result.extracted_pages} / ${result.page_count}`],
+      [verified ? "Saved passages verified" : "Validated passages", verified ? result.saved_count : result.valid_count],
+      ["Verified table cells", cellCount],
     ];
-    if (verified) fields.push(["Database and collection", `${result.database}.${result.collection}`],
-      ["Saved passages verified", result.saved_count], ["Read-back SHA-256", result.records_sha256],
-      ["Saved at (UTC)", result.saved_at]);
     const anchored = result.records.filter((row) =>
       ["exact_passage", "exact_excerpt"].includes(row.source_anchor?.kind)).length;
-    fields.push(["Passages with a verified highlight", `${anchored} / ${result.records.length}`]);
-    const tables = result.tables || [];
-    if (verified && tables.length) fields.push(["Table evidence SHA-256", result.tables_sha256]);
-    for (const [key, value] of fields) {
-      const item = document.createElement("div");
-      item.append(node("dt", key), node("dd", value));
-      facts.append(item);
+    const details = [
+      ["Run ID", result.run_id], ["PDF SHA-256", result.source_sha256],
+      ["Candidate passages", result.candidate_count], ["Rejected passages", result.rejected.length],
+      ["Validation", "Fixed PDF passage schema"],
+      ["Passages with a verified highlight", `${anchored} / ${result.records.length}`],
+    ];
+    if (verified) details.push(["Database and collection", `${result.database}.${result.collection}`],
+      ["Read-back SHA-256", result.records_sha256], ["Saved at (UTC)", result.saved_at]);
+    if (verified && tables.length) details.push(["Table evidence SHA-256", result.tables_sha256]);
+    for (const [target, entries] of [[facts, fields], [audit, details]]) {
+      for (const [key, value] of entries) {
+        const item = document.createElement("div");
+        if (key.endsWith("SHA-256") || key === "Run ID") item.className = "viva-audit-code";
+        item.append(node("dt", key), node("dd", value));
+        target.append(item);
+      }
     }
     const warnings = byId("viva-warnings");
     warnings.replaceChildren(...[...result.warnings, ...result.rejected.map((item) =>
@@ -209,19 +243,23 @@
     save.hidden = verified;
     byId("viva-export").hidden = !verified;
     byId("viva-doc-qa").hidden = !verified;
+    byId("viva-examples").hidden = !tables.some((table) => table.profile === "bihar_des_final_2024_25_crop_page3");
     byId("viva-doc-qa-status").textContent = "";
+    byId("viva-doc-qa-status").removeAttribute("data-tone");
+    byId("viva-doc-qa-status").removeAttribute("lang");
     byId("viva-doc-citations").replaceChildren();
     attach.hidden = !verified || result.source_available;
     renderTables(tables);
     byId("viva-passage-filter").hidden = !result.records.length;
     evidence.hidden = false;
     renderRecords();
-    status.textContent = verified
+    setStep(verified ? "verified" : "review");
+    setStatus(verified
       ? result.already_saved
         ? `This PDF was already saved. Reused its verified run; nothing was added.${result.preview_matches_saved_passages ? "" : " Showing the earlier saved extraction, not replacing it."}`
         : `MongoDB read-back verified: ${result.saved_count} saved passages.`
       : result.valid_count ? "Preview ready. Review the passages before saving. Nothing saved yet."
-      : "No validated passages were extracted. Nothing can be saved.";
+      : "No validated passages were extracted. Nothing can be saved.", verified ? "success" : "info");
   }
 
   upload.addEventListener("submit", async (event) => {
@@ -233,13 +271,13 @@
     clearSource();
     evidence.hidden = true;
     setBusy(true);
-    status.textContent = "Extracting and validating PDF passages…";
+    setStatus("Extracting and validating PDF passages…");
     try {
       const result = await api("/preview", { method: "POST", body: form });
       sourceUrl = URL.createObjectURL(new Blob([selected], { type: "application/pdf" }));
       render(result);
     } catch (error) {
-      status.textContent = error.message;
+      setStatus(error.message, "error");
     } finally {
       setBusy(false);
     }
@@ -250,16 +288,17 @@
     clearSource();
     evidence.hidden = true;
     save.disabled = true;
-    status.textContent = "";
+    setStep("upload");
+    setStatus("");
   });
   save.addEventListener("click", async () => {
     if (busy || active?.status !== "preview" || !active.valid_count) return;
     setBusy(true);
-    status.textContent = "Saving the reviewed passages, then reading them back from MongoDB…";
+    setStatus("Saving the reviewed passages, then reading them back from MongoDB…");
     try {
       render(await api(`/${encodeURIComponent(active.run_id)}/save`, { method: "POST" }));
     } catch (error) {
-      status.textContent = error.message;
+      setStatus(error.message, "error");
     } finally {
       setBusy(false);
     }
@@ -269,13 +308,13 @@
     if (busy) return;
     const id = runInput.value.trim();
     setBusy(true);
-    status.textContent = "Reading the saved run from MongoDB…";
+    setStatus("Reading the saved run from MongoDB…");
     try {
       const result = await api(`/${encodeURIComponent(id)}`, { method: "GET" });
       if (id !== active?.run_id) clearSource();
       render(result);
     } catch (error) {
-      status.textContent = error.message;
+      setStatus(error.message, "error");
     } finally {
       setBusy(false);
     }
@@ -287,38 +326,80 @@
     if (!original) return;
     const form = new FormData(attach);
     setBusy(true);
-    status.textContent = "Checking the original PDF fingerprint…";
+    setStatus("Checking the original PDF fingerprint…");
     try {
       const result = await api(`/${active.run_id}/attach`, {method: "POST", body: form});
       clearSource();
       sourceUrl = URL.createObjectURL(new Blob([original], {type: "application/pdf"}));
       render(result);
-      status.textContent = "Original PDF matched. Source pages are ready to inspect.";
+      setStatus("Original PDF matched. Source pages are ready to inspect.", "success");
     } catch (error) {
-      status.textContent = error.message;
+      setStatus(error.message, "error");
     } finally {
       setBusy(false);
     }
   });
+  byId("viva-examples").addEventListener("click", (event) => {
+    const example = event.target.closest("button[data-viva-question]");
+    if (!example || busy) return;
+    questionInput.value = example.dataset.vivaQuestion;
+    answerLanguage.value = example.dataset.language;
+    questionInput.focus();
+  });
+  function renderTableAnswer(result) {
+    const answer = document.createElement("article");
+    answer.className = "viva-table-answer";
+    answer.lang = result.answer_language;
+    const hindi = result.answer_language === "hi";
+    const label = node("p", hindi ? "सत्यापित तालिका" : "Verified table answer");
+    label.className = "viva-answer-label";
+    answer.append(label, node("h4", result.heading));
+    if (result.estimate) answer.append(node("p", result.estimate));
+    const facts = document.createElement("div");
+    facts.className = "viva-answer-facts";
+    for (const item of result.table_cells) {
+      const fact = document.createElement("div");
+      const value = node("strong", item.display_value);
+      const numeric = document.createElement("div");
+      numeric.className = "viva-answer-number";
+      numeric.append(value, node("span", item.display_unit));
+      const page = node("small", hindi ? `पृष्ठ ${item.page_number}` : `Page ${item.page_number}`);
+      const actions = document.createElement("div");
+      actions.className = "viva-card-actions";
+      actions.append(page, proofButton(`table-evidence/${item.table_index}/${item.cell_index}`,
+        `Page ${item.page_number} · ${item.row}`,
+        `${item.column}: ${item.printed_text} ${item.unit}`,
+        hindi ? "मूल सेल देखें" : "View exact source cell"));
+      fact.append(node("h5", item.label), numeric, actions);
+      facts.append(fact);
+    }
+    answer.append(facts);
+    return answer;
+  }
   ask.addEventListener("submit", async (event) => {
     event.preventDefault();
     if (busy || active?.status !== "verified") return;
-    const question = byId("viva-doc-question").value.trim();
+    const question = questionInput.value.trim();
     if (!question) return;
     setBusy(true);
     const message = byId("viva-doc-qa-status");
     const citations = byId("viva-doc-citations");
     citations.replaceChildren();
+    message.removeAttribute("data-tone");
+    message.removeAttribute("lang");
     message.textContent = "Searching only this saved PDF…";
     try {
       const response = await fetch(`/api/v1/viva/uploads/${active.run_id}/ask`, {
         method: "POST", headers: {"X-Agri-Dashboard": "1", "Content-Type": "application/json"},
-        body: JSON.stringify({question}), cache: "no-store",
+        body: JSON.stringify({question, answer_language: answerLanguage.value}), cache: "no-store",
       });
       const result = await response.json();
       if (!response.ok) throw new Error(result.error || "Could not answer from this PDF.");
       message.textContent = result.message;
-      for (const item of (result.citations.length ? result.citations : (result.matches || []))) {
+      message.dataset.tone = result.status === "answered" ? "success" : "info";
+      if (result.answer_language) message.lang = result.answer_language;
+      if (result.table_cells?.length) citations.append(renderTableAnswer(result));
+      for (const item of (result.citations || [])) {
         const card = document.createElement("article");
         card.className = "viva-record";
         const title = `Page ${item.page_number} · Chunk ${item.chunk_index}`;
@@ -327,11 +408,15 @@
         quote.dir = "auto";
         const path = `evidence/${item.page_number}/${item.chunk_index}` +
           (item.quote ? `?quote=${encodeURIComponent(item.quote)}` : "");
-        card.append(quote, proofButton(path, title,
+        const actions = document.createElement("div");
+        actions.className = "viva-card-actions";
+        actions.append(proofButton(path, title,
           item.quote ? `Answer quote:\n${item.quote}\n\nFull passage:\n${item.content}` : item.content));
+        card.append(quote, actions);
         citations.append(card);
       }
     } catch (error) {
+      message.dataset.tone = "error";
       message.textContent = error.message;
     } finally {
       setBusy(false);
