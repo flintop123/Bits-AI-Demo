@@ -1,0 +1,81 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Extractor agent</title>
+  <link rel="stylesheet" href="/extractor/assets/extractor.css">
+</head>
+<body>
+  <main class="shell">
+    <header>
+      <p class="back"><a href="/">&larr; Back to dashboard</a></p>
+      <h1>Extractor agent</h1>
+      <p class="sub">Describe what to load or ask. The ReAct agent picks the tool and the log streams below.
+        Runs write to MongoDB unless <strong>Dry run</strong> is ticked.</p>
+    </header>
+
+    <form id="run-form" class="card" autocomplete="off">
+      <label for="request">Request</label>
+      <textarea id="request" rows="3" maxlength="1000"
+        placeholder="e.g. load last seven days of mandi data via api"></textarea>
+      <div class="row">
+        <label class="check"><input type="checkbox" id="dry-run"> Dry run (validate only, no write to MongoDB)</label>
+        <button type="submit" id="run-button">Run</button>
+      </div>
+      <p id="form-error" class="error" role="alert" hidden></p>
+    </form>
+
+    <section class="card" aria-live="polite">
+      <div class="row">
+        <h2>Run</h2>
+        <span id="status" class="pill idle">Idle</span>
+      </div>
+      <p id="run-meta" class="meta" hidden></p>
+      <pre id="log" class="log" aria-label="Agent log"></pre>
+      <div id="result" hidden>
+        <h3 id="result-title">Result</h3>
+        <pre id="result-text" class="result"></pre>
+      </div>
+    </section>
+
+    <section class="card" aria-labelledby="history-heading">
+      <h2 id="history-heading">Past runs</h2>
+      <p id="history-empty" class="meta" hidden>No completed runs yet.</p>
+      <p id="history-error" class="error" role="alert" hidden></p>
+      <div class="table-wrap">
+        <table id="history-table" hidden>
+          <thead>
+            <tr><th>Started (UTC)</th><th>Request</th><th>Mode</th><th>Status</th><th></th></tr>
+          </thead>
+          <tbody id="history-body"></tbody>
+        </table>
+      </div>
+      <div id="history-pager" class="row" hidden>
+        <button type="button" id="history-prev" class="secondary">Previous</button>
+        <span id="history-page" class="meta"></span>
+        <button type="button" id="history-next" class="secondary">Next</button>
+      </div>
+    </section>
+  </main>
+
+  <dialog id="details">
+    <h2>Run details</h2>
+    <dl id="details-list" class="details"></dl>
+    <h3>Log</h3>
+    <pre id="details-log" class="log" aria-label="Saved agent log"></pre>
+    <div class="row end"><button type="button" id="details-close" class="secondary">Close</button></div>
+  </dialog>
+
+  <dialog id="clarify">
+    <form method="dialog" id="clarify-form">
+      <h2>Which source do you mean?</h2>
+      <p id="clarify-message" class="meta"></p>
+      <div id="clarify-options" class="options"></div>
+      <div class="row end"><button type="button" id="clarify-cancel" class="secondary">Cancel run</button></div>
+    </form>
+  </dialog>
+
+  <script src="/extractor/assets/extractor.js" defer></script>
+</body>
+</html>

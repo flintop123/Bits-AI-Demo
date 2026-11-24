@@ -17,6 +17,7 @@ from services.multilingual_query_expansion import expand_document_query
 from services.agriculture_qa_service import AgricultureQAService
 from services.ollama_client import OllamaUnavailableError
 from viva_api import VIVA_PREFIX, viva_blueprint
+from extractor_ui import extractor_blueprint
 
 
 def parse_limit(raw_limit):
@@ -100,6 +101,7 @@ def create_app(service=None, qa_service=None, *, viva_react=None, viva_upload_st
         agriculture_qa, lambda: query_service.database,
         react=viva_react, upload_store=viva_upload_store, document_chat=viva_document_chat,
     ))
+    app.register_blueprint(extractor_blueprint(database=lambda: query_service.database))
 
     @app.after_request
     def allow_local_static_dashboard(response):
